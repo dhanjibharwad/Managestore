@@ -1,13 +1,26 @@
 // lib/db.ts
-import pkg from "pg";
-const { Pool } = pkg;
+import { Pool } from "pg";
 
-const pool = new Pool({
-  user: process.env.DB_USER,       // e.g., "postgres"
-  host: process.env.DB_HOST,       // e.g., "localhost"
-  database: process.env.DB_NAME,   // e.g., "storemanager"
-  password: process.env.DB_PASSWORD,
-  port: Number(process.env.DB_PORT) || 5432,
-});
+/**
+ * Use a global variable to avoid creating multiple pools during hot reload
+ * in Next.js dev mode.
+ */
+declare global {
+  // eslint-disable-next-line no-var
+  var __pgPool__: Pool | undefined;
+}
 
-export default pool;
+const pool =
+  global.__pgPool__ ??
+  new Pool({
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+    password: process.env.DB_PASSWORD,
+    port: Number(process.env.DB_PORT) || 5432,
+  });
+
+if (!global.__pgPool__) global.__pgPool__ = pool;
+
+export const db = pool;    // named export (matches your import)
+export default pool;       // also keep default export (optional)
