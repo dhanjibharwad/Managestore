@@ -2,8 +2,8 @@
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-4xl flex-col items-center justify-center py-16 px-8 bg-white dark:bg-gray-900 rounded-lg shadow-lg">
+    <div className="flex items-center justify-center bg-white font-sans dark:bg-black">
+      <main className="flex min-h-screen w-full max-w-7xl flex-col items-center justify-center bg-white dark:bg-gray-900 rounded-lg shadow-lg">
 
 
         {/* Heading */}
