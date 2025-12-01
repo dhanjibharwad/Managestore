@@ -53,12 +53,12 @@ export default function AdminSidebar() {
       </button>
 
       {/* Sidebar Content */}
-      <div className="flex-1 p-5 overflow-y-auto">
+      <div className="flex-1 p-5">
         {/* Logo */}
         <div className="mb-8">
           {!isCollapsed ? (
             <Link 
-              href="/admin/dashboard" 
+              href="/home" 
               className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
             >
               <img 
@@ -69,7 +69,7 @@ export default function AdminSidebar() {
             </Link>
           ) : (
             <Link 
-              href="/admin/dashboard" 
+              href="/home" 
               className="flex justify-center transition-transform duration-200 hover:scale-110"
             >
               <img 

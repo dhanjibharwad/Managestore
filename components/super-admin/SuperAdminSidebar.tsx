@@ -56,7 +56,7 @@ export default function SuperAdminSidebar() {
         <div className="mb-8">
           {!isCollapsed ? (
             <Link 
-              href="/super-admin/dashboard" 
+              href="/home" 
               className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
             >
               <img 
@@ -67,7 +67,7 @@ export default function SuperAdminSidebar() {
             </Link>
           ) : (
             <Link 
-              href="/super-admin/dashboard" 
+              href="/home" 
               className="flex justify-center transition-transform duration-200 hover:scale-110"
             >
               <img 
