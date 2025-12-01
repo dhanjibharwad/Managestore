@@ -122,7 +122,7 @@ export default function CustomerSidebar() {
       <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
         {!isCollapsed ? (
           <div className="text-xs text-gray-500 text-center">
-            BytePhase © 2024
+            StoreManager © 2026
           </div>
         ) : (
           <div className="text-xs text-gray-500 font-semibold">
