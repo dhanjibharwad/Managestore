@@ -47,7 +47,7 @@ export default function CustomerSidebar() {
       </button>
 
       {/* Sidebar Content */}
-      <div className="flex-1 p-5 overflow-y-auto">
+      <div className="flex-1 p-5">
         {/* Logo */}
         <div className="mb-8">
           {!isCollapsed ? (
@@ -126,7 +126,7 @@ export default function CustomerSidebar() {
           </div>
         ) : (
           <div className="text-xs text-gray-500 font-semibold">
-            BP
+            SM
           </div>
         )}
       </div>

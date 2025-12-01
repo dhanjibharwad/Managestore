@@ -1,43 +1,139 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { 
+  LayoutDashboard, 
+  Building2, 
+  CreditCard, 
+  BarChart3, 
+  UserCog, 
+  Settings, 
+  ChevronLeft, 
+  ChevronRight 
+} from 'lucide-react';
 
-const menu = [
-  { label: "Companies", href: "/super-admin/companies" },
-  { label: "Subscriptions", href: "/super-admin/subscriptions" },
-  { label: "Usage", href: "/super-admin/usage" },
-  { label: "Admins", href: "/super-admin/admins" },
-  { label: "Settings", href: "/super-admin/settings" },
+const navItems = [
+  { label: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
+  { label: "Companies", href: "/super-admin/companies", icon: Building2 },
+  { label: "Subscriptions", href: "/super-admin/subscriptions", icon: CreditCard },
+  { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
+  { label: "Admins", href: "/super-admin/admins", icon: UserCog },
+  { label: "Settings", href: "/super-admin/settings", icon: Settings },
 ];
 
 export default function SuperAdminSidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
 
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <aside className="w-64 bg-white shadow-lg p-5 hidden lg:block">
-      <h2 className="text-xl font-bold mb-8">Super Admin</h2>
+    <aside 
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${
+        isCollapsed ? 'w-20' : 'w-64'
+      }`}
+    >
+      {/* Toggle Button */}
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-6 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50"
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {isCollapsed ? (
+          <ChevronRight className="w-4 h-4 text-gray-600" />
+        ) : (
+          <ChevronLeft className="w-4 h-4 text-gray-600" />
+        )}
+      </button>
 
-      <ul className="space-y-2">
-        {menu.map((item) => {
-          const active = pathname.startsWith(item.href);
+      {/* Sidebar Content */}
+      <div className="flex-1 p-5">
+        {/* Logo */}
+        <div className="mb-8">
+          {!isCollapsed ? (
+            <Link 
+              href="/super-admin/dashboard" 
+              className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+            >
+              <img 
+                src="/images/lg1.png" 
+                alt="BytePhase Logo" 
+                className="h-25 w-auto"
+              />
+            </Link>
+          ) : (
+            <Link 
+              href="/super-admin/dashboard" 
+              className="flex justify-center transition-transform duration-200 hover:scale-110"
+            >
+              <img 
+                src="/images/np.png" 
+                alt="Storremanager Logo" 
+                className="h-8 w-8 object-contain"
+              />
+            </Link>
+          )}
+        </div>
 
-          return (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`block px-4 py-2 rounded-lg text-sm font-medium ${
-                  active
-                    ? "bg-purple-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
-              >
-                {item.label}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+        {/* Navigation Items */}
+        <nav>
+          <ul className="space-y-2">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+
+              return (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${
+                      isActive
+                        ? 'bg-[#4A70A9] text-white shadow-md'
+                        : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
+                    } ${isCollapsed ? 'justify-center' : ''}`}
+                    title={isCollapsed ? item.label : ''}
+                  >
+                    
+                    <Icon 
+                      className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0 transition-transform duration-200 ${
+                        !isActive && 'group-hover:scale-110'
+                      }`} 
+                    />
+                    
+                    {!isCollapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
+
+                    {/* Tooltip for collapsed state */}
+                    {isCollapsed && (
+                      <span className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                        {item.label}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
+
+      {/* Footer */}
+      <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
+        {!isCollapsed ? (
+          <div className="text-xs text-gray-500 text-center">
+            BytePhase © 2024
+          </div>
+        ) : (
+          <div className="text-xs text-gray-500 font-semibold">
+            BP
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
