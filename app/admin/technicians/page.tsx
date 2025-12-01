@@ -1,9 +1,10 @@
-// app/(admin)/technicians/page.tsx
+import Link from "next/link";
+
 export default function TechniciansPage() {
   const techs = [
-    { name: "Arjun", phone: "9876543210", jobs: 22 },
-    { name: "Rohit", phone: "9871112233", jobs: 14 },
-    { name: "Aman", phone: "9988776655", jobs: 18 },
+    { id: 1, name: "Arjun", phone: "9876543210", jobs: 22 },
+    { id: 2, name: "Rohit", phone: "9871112233", jobs: 14 },
+    { id: 3, name: "Aman", phone: "9988776655", jobs: 18 },
   ];
 
   return (
@@ -17,6 +18,7 @@ export default function TechniciansPage() {
               <th className="pb-2 text-left">Name</th>
               <th className="text-left">Phone</th>
               <th className="text-left">Jobs</th>
+              <th className="text-left">Action</th>
             </tr>
           </thead>
 
@@ -26,6 +28,14 @@ export default function TechniciansPage() {
                 <td className="py-2">{t.name}</td>
                 <td>{t.phone}</td>
                 <td>{t.jobs}</td>
+                <td>
+                  <Link
+                    href={`/technicians/${t.id}/profile`}
+                    className="text-blue-600 hover:underline"
+                  >
+                    View Profile
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
