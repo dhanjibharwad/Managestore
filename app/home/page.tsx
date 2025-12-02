@@ -64,7 +64,7 @@ export default function UserHomePage() {
               interaction adds value and strengthens long-term partnerships.
             </p>
 
-            <Link href="/user/about">
+            <Link href="/home/about">
               <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-[#4A70A9] shadow-lg hover:opacity-90 transition cursor-pointer">
                 See About Us
               </button>
