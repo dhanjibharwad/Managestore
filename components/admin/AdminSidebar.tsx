@@ -22,6 +22,7 @@ const navItems = [
   { label: "Technicians", href: "/admin/technicians", icon: Wrench },
   { label: "Billing", href: "/admin/billing", icon: CreditCard },
   { label: "Inventory", href: "/admin/inventory", icon: CreditCard },
+  { label: "Employees", href: "/admin/employees", icon: CreditCard },
   { label: "Reports", href: "/admin/reports", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
