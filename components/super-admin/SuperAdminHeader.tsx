@@ -51,10 +51,10 @@ export default function SuperAdminHeader() {
                 <span>Business Settings</span>
               </button>
               
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              {/* <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Download className="w-4 h-4 text-gray-500" />
                 <span>Install App</span>
-              </button>
+              </button> */}
               
               <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Key className="w-4 h-4 text-gray-500" />
@@ -66,10 +66,10 @@ export default function SuperAdminHeader() {
                 <span>Clear Cache</span>
               </button>
               
-              <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
+              {/* <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
                 <Layers className="w-4 h-4" />
                 <span>App Version 3.1.0</span>
-              </div>
+              </div> */}
               
               <div className="border-t border-gray-200 my-1"></div>
               

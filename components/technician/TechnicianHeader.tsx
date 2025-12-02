@@ -16,7 +16,7 @@ export default function TechnicianHeader() {
           <input
             type="text"
             placeholder="Search jobs, leads, tasks, customer..."
-            className="w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+            className="w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
           />
         </div>
         {/* Notification bell with badge */}
@@ -51,11 +51,11 @@ export default function TechnicianHeader() {
                 <span>Business Settings</span>
               </button>
               
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              {/* <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Download className="w-4 h-4 text-gray-500" />
                 <span>Install App</span>
               </button>
-              
+               */}
               <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Key className="w-4 h-4 text-gray-500" />
                 <span>Change Password</span>
@@ -66,10 +66,10 @@ export default function TechnicianHeader() {
                 <span>Clear Cache</span>
               </button>
               
-              <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
+              {/* <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
                 <Layers className="w-4 h-4" />
                 <span>App Version 3.1.0</span>
-              </div>
+              </div> */}
               
               <div className="border-t border-gray-200 my-1"></div>
               

@@ -61,7 +61,7 @@ export default function SuperAdminSidebar() {
             >
               <img 
                 src="/images/lg1.png" 
-                alt="BytePhase Logo" 
+                alt="Store Manager" 
                 className="h-25 w-auto"
               />
             </Link>
@@ -72,7 +72,7 @@ export default function SuperAdminSidebar() {
             >
               <img 
                 src="/images/np.png" 
-                alt="Storremanager Logo" 
+                alt="SM" 
                 className="h-8 w-8 object-contain"
               />
             </Link>
@@ -126,11 +126,11 @@ export default function SuperAdminSidebar() {
       <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
         {!isCollapsed ? (
           <div className="text-xs text-gray-500 text-center">
-            BytePhase © 2024
+            StoreManager © 2026
           </div>
         ) : (
           <div className="text-xs text-gray-500 font-semibold">
-            BP
+            SM
           </div>
         )}
       </div>

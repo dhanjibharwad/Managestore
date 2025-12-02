@@ -21,6 +21,7 @@ const navItems = [
   { label: "Customers", href: "/admin/customers", icon: Users },
   { label: "Technicians", href: "/admin/technicians", icon: Wrench },
   { label: "Billing", href: "/admin/billing", icon: CreditCard },
+  { label: "Inventory", href: "/admin/inventory", icon: CreditCard },
   { label: "Reports", href: "/admin/reports", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
@@ -128,11 +129,11 @@ export default function AdminSidebar() {
       <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
         {!isCollapsed ? (
           <div className="text-xs text-gray-500 text-center">
-            BytePhase © 2024
+            StoreManager © 2026
           </div>
         ) : (
           <div className="text-xs text-gray-500 font-semibold">
-            BP
+            SM
           </div>
         )}
       </div>

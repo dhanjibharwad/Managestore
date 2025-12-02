@@ -49,7 +49,8 @@ export default function AboutPage() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 py-32 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in">
+          {/* <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in"> */}
+          <h1 className="text-center mt-2 mb-6 text-4xl sm:text-5xl font-bold tracking-wide drop-shadow-md font-serif text-white">
             About Store Manager        </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in delay-200">
             Your trusted partner in solving technical queries through innovative online solutions,
@@ -103,52 +104,40 @@ export default function AboutPage() {
       {/* Services Overview */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="mb-6 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 text-center">How We Serve You</h2>
+          <h2 className="text-center mt-2 mb-4 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">How We Serve You</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaLaptop className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">Online Support</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Online Support</h3>
               <p className="text-gray-600 leading-relaxed">
                 Get instant help through our online platform. Submit your queries and receive
                 expert guidance from our technical team remotely.
               </p>
-              <div className="mt-6">
-                <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                  Learn More
-                </button>
-              </div>
+      
             </div>
             <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaHome className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">On-Site Visits</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">On-Site Visits</h3>
               <p className="text-gray-600 leading-relaxed">
                 Schedule convenient on-site visits for complex issues that require physical
                 inspection and hands-on technical expertise.
               </p>
-              <div className="mt-6">
-                <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                  Learn More
-                </button>
-              </div>
+            
             </div>
             <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaWrench className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">Technician Services</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Technician Services</h3>
               <p className="text-gray-600 leading-relaxed">
                 Connect with certified technicians who can handle repairs, installations,
                 and maintenance through our easy form-based booking system.
               </p>
-              <div className="mt-6">
-                <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                  Learn More
-                </button>
-              </div>
+              
             </div>
           </div>
         </div>
@@ -157,7 +146,7 @@ export default function AboutPage() {
       {/* Image Carousel */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">Our Work in Action</h2>
+          <h2 className="text-center mt-2 mb-6 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Our Work in Action</h2>
           <div className="relative overflow-hidden rounded-lg">
             <div
               className={`flex ${currentSlide >= images.length ? 'transition-none' : 'transition-transform duration-700 ease-[cubic-bezier(0.25,0.8,0.25,1)]'}`}
@@ -190,11 +179,11 @@ export default function AboutPage() {
       {/* Our Values */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">Our Core Values</h2>
+          <h2 className="text-center mt-2 mb-6 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Our Core Values</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <FaUsers className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-4">Customer First</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Customer First</h3>
               <p className="text-gray-600">
                 Every decision we make is centered around providing the best possible
                 experience for our customers.
@@ -202,7 +191,7 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <FaTools className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-4">Technical Excellence</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Technical Excellence</h3>
               <p className="text-gray-600">
                 We maintain the highest standards of technical expertise and continuously
                 update our skills with latest technologies.
@@ -210,7 +199,7 @@ export default function AboutPage() {
             </div>
             <div className="text-center">
               <FaHeadset className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-4">24/7 Support</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">24/7 Support</h3>
               <p className="text-gray-600">
                 Our commitment to availability means you can count on us whenever
                 technical issues arise.
@@ -223,7 +212,7 @@ export default function AboutPage() {
       {/* Team Section */}
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">Meet Our Team</h2>
+          <h2 className="text-center mt-2 mb-6 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Meet Our Team</h2>
           <div className="grid md:grid-cols-4 gap-8">
             {[1, 2, 3, 4].map((member) => (
               <div key={member} className="text-center">
@@ -232,7 +221,7 @@ export default function AboutPage() {
                   alt={`Team Member ${member}`}
                   className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
                 />
-                <h3 className="text-xl font-semibold mb-2">Team Member {member}</h3>
+                <h3 className="text-center mt-2 mb-1 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Team Member {member}</h3>
                 <p className="text-gray-600">Technical Specialist</p>
               </div>
             ))}
@@ -249,7 +238,7 @@ export default function AboutPage() {
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-center mt-2 mb-6 text-4xl sm:text-5xl font-bold tracking-wide drop-shadow-md font-serif text-white">
             Ready to Get Started?
           </h2>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">

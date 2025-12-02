@@ -57,7 +57,7 @@ export default function CustomerSidebar() {
             >
               <img 
                 src="/images/lg1.png" 
-                alt="BytePhase Logo" 
+                alt="Storremanager Logo" 
                 className="h-25 w-auto"
               />
             </Link>
