@@ -21,7 +21,8 @@ const navItems = [
   { label: "Profile", href: "/customer/profile", icon: User },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
   { label: "Quotations", href: "/customer/quotations", icon: Briefcase },
-  { label: "Self Check-In", href: "/customer/selfcheckin", icon: ClipboardList  },   
+  { label: "Self Check-In", href: "/customer/selfcheckin", icon: ClipboardList  },  
+  { label: "Sales", href: "/customer/sales", icon: ClipboardList  }, 
 ];
 
 export default function CustomerSidebar() {
