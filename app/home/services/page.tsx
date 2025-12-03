@@ -107,9 +107,9 @@ const ServicesPage = () => {
               {service.description}
             </p>
 
-            <button className="bg-[#4A70A9] hover:bg-[#4A70A9] text-white font-semibold py-2 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer">
+            {/* <button className="bg-[#4A70A9] hover:bg-[#4A70A9] text-white font-semibold py-2 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer">
               Start Learning
-            </button>
+            </button> */}
           </div>
         ))}
       </div>
