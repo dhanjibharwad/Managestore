@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  Briefcase, 
-  History, 
-  User, 
-  ChevronLeft, 
-  ChevronRight 
+import {
+  LayoutDashboard,
+  Briefcase,
+  History,
+  User,
+  ChevronLeft,
+  ChevronRight,
+  Truck,
+  ClipboardList 
 } from 'lucide-react';
 
 const navItems = [
@@ -17,6 +19,9 @@ const navItems = [
   { label: "Jobs", href: "/customer/jobs", icon: Briefcase },
   { label: "Service History", href: "/customer/service-history", icon: History },
   { label: "Profile", href: "/customer/profile", icon: User },
+  { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
+  { label: "Quotations", href: "/customer/quotations", icon: Briefcase },
+  { label: "Self Check-In", href: "/customer/selfcheckin", icon: ClipboardList  },   
 ];
 
 export default function CustomerSidebar() {
@@ -28,10 +33,9 @@ export default function CustomerSidebar() {
   };
 
   return (
-    <aside 
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${
-        isCollapsed ? 'w-20' : 'w-64'
-      }`}
+    <aside
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'
+        }`}
     >
       {/* Toggle Button */}
       <button
@@ -51,24 +55,24 @@ export default function CustomerSidebar() {
         {/* Logo */}
         <div className="mb-8">
           {!isCollapsed ? (
-            <Link 
-              href="/home" 
+            <Link
+              href="/home"
               className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
             >
-              <img 
-                src="/images/lg1.png" 
-                alt="Storremanager Logo" 
+              <img
+                src="/images/lg1.png"
+                alt="Storremanager Logo"
                 className="h-25 w-auto"
               />
             </Link>
           ) : (
-            <Link 
-              href="/home" 
+            <Link
+              href="/home"
               className="flex justify-center transition-transform duration-200 hover:scale-110"
             >
-              <img 
-                src="/images/np.png" 
-                alt="Storremanager Logo" 
+              <img
+                src="/images/np.png"
+                alt="Storremanager Logo"
                 className="h-8 w-8 object-contain"
               />
             </Link>
@@ -86,20 +90,18 @@ export default function CustomerSidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${
-                      isActive
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${isActive
                         ? 'bg-[#4A70A9] text-white shadow-md'
                         : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
-                    } ${isCollapsed ? 'justify-center' : ''}`}
+                      } ${isCollapsed ? 'justify-center' : ''}`}
                     title={isCollapsed ? item.label : ''}
                   >
-                    
-                    <Icon 
-                      className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0 transition-transform duration-200 ${
-                        !isActive && 'group-hover:scale-110'
-                      }`} 
+
+                    <Icon
+                      className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0 transition-transform duration-200 ${!isActive && 'group-hover:scale-110'
+                        }`}
                     />
-                    
+
                     {!isCollapsed && (
                       <span className="truncate">{item.label}</span>
                     )}
