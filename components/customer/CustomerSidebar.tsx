@@ -21,7 +21,7 @@ const navItems = [
   { label: "Profile", href: "/customer/profile", icon: User },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
   { label: "Quotations", href: "/customer/quotations", icon: Briefcase },
-  { label: "Self Check-In", href: "/customer/selfcheckin", icon: ClipboardList  },  
+  { label: "Self Check-In", href: "/customer/selfcheck", icon: ClipboardList  },  
   { label: "Sales", href: "/customer/sales", icon: ClipboardList  }, 
 ];
 
@@ -109,7 +109,7 @@ export default function CustomerSidebar() {
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <span className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                      <span className="absolute left-full ml-2 px-3 py-2 bg-[#4A70A9] text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
                         {item.label}
                       </span>
                     )}

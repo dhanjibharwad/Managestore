@@ -114,7 +114,7 @@ export default function AdminSidebar() {
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <span className="absolute left-full ml-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                      <span className="absolute left-full ml-2 px-3 py-2 bg-[#4A70A9] text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
                         {item.label}
                       </span>
                     )}
