@@ -31,7 +31,7 @@ const EmployeeTable = () => {
       active: true,
       onRide: false,
       lastLogin: '25-Nov-2025 03:19 PM',
-      avatar: '#10B981'
+      avatar: '#4A70A9'
     },
     {
       id: '2',
@@ -44,7 +44,7 @@ const EmployeeTable = () => {
       active: true,
       onRide: false,
       lastLogin: '',
-      avatar: '#EF4444'
+      avatar: '#4A70A9'
     }
   ]);
 

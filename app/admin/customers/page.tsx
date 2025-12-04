@@ -1,4 +1,6 @@
 // app/(admin)/customers/page.tsx
+
+import Link from "next/link";
 export default function CustomersPage() {
   const customers = [
     { 
@@ -62,10 +64,11 @@ export default function CustomersPage() {
           <button className="px-4 py-2 border border-zinc-300 rounded-lg text-sm font-medium hover:bg-gray-50">
             All Filters
           </button>
-          
+          <Link href="/admin/customers/add">
           <button className="px-4 py-2 bg-[#4A70A9] text-white rounded-lg text-sm font-medium hover:bg-[#3d5c8a]">
             + Add
           </button>
+          </Link>
         </div>
       </div>
 
