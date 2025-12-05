@@ -67,7 +67,7 @@ export default function JobPage() {
         <div className="max-w-[1600px] mx-auto px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-semibold text-zinc-800">Jobs</h1>
+              {/* <h1 className="text-2xl font-semibold text-zinc-800">Jobs</h1> */}
               <div className="flex space-x-1 border-b-2 border-transparent">
                 <button className="px-4 py-2 text-sm font-medium text-zinc-900 border-b-2 border-[#4A70A9]">
                   Open Jobs
@@ -197,16 +197,7 @@ export default function JobPage() {
           </div>
         </div>
 
-        {/* Link to All Jobs */}
-        <div className="mt-6 text-center">
-          <a
-            href="/customer/jobs/all"
-            className="inline-flex items-center space-x-2 text-[#4A70A9] hover:text-[#3d5d8f] font-medium"
-          >
-            <List size={20} />
-            <span>View All Jobs List</span>
-          </a>
-        </div>
+       
       </div>
 
       {/* Create Job Modal */}
