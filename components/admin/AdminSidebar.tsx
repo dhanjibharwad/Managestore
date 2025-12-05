@@ -19,7 +19,8 @@ import {
   ReceiptIndianRupee,
   ListTodo,
   ShoppingCart,
-  Truck
+  Truck,
+  LineChart
 } from 'lucide-react';
 
 const navItems = [
@@ -27,6 +28,7 @@ const navItems = [
   { label: "Jobs", href: "/admin/jobs", icon: Briefcase },
   { label: "Customers", href: "/admin/customers", icon: Users },
   // { label: "Technicians", href: "/admin/technicians", icon: Wrench },
+  { label: "Sales", href: "/admin/sales", icon: LineChart },
   { label: "Billing", href: "/admin/billing", icon: ReceiptIndianRupee },
   { label: "Inventory", href: "/admin/inventory", icon: Warehouse },
   { label: "Employees", href: "/admin/employees", icon: IdCard },
@@ -37,6 +39,7 @@ const navItems = [
    { label: "Purchase", href: "/admin/purchase", icon: ShoppingCart  },
    { label: "Pickup Drops", href: "/admin/pickupdrop", icon: Truck },
    { label: "Quotations", href: "/admin/quotations", icon: FileText  },
+   { label: "Expenses", href: "/admin/expenses", icon: Wrench },
 ];
 
 export default function AdminSidebar() {
@@ -78,7 +81,7 @@ export default function AdminSidebar() {
               <img 
                 src="/images/lg1.png" 
                 alt="BytePhase Logo" 
-                className="h-25 w-auto"
+                className="h-16 w-auto"
               />
             </Link>
           ) : (
@@ -97,7 +100,7 @@ export default function AdminSidebar() {
 
         {/* Navigation Items */}
         <nav>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -137,19 +140,6 @@ export default function AdminSidebar() {
           </ul>
         </nav>
       </div>
-
-      {/* Footer */}
-      {/* <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
-        {!isCollapsed ? (
-          <div className="text-xs text-gray-500 text-center">
-            StoreManager © 2026
-          </div>
-        ) : (
-          <div className="text-xs text-gray-500 font-semibold">
-            SM
-          </div>
-        )}
-      </div> */}
     </aside>
   );
 }

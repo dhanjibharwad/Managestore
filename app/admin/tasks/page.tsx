@@ -24,9 +24,9 @@ export default function TasksPage() {
     <div className="bg-white p-8">
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <h1 className="text-3xl font-semibold text-zinc-800">Tasks</h1>
-        </div>
+        </div> */}
 
         {/* Filters Bar */}
         <div className="flex items-center justify-end gap-4 mb-6">

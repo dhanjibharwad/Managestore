@@ -85,7 +85,7 @@ export default function CustomerSidebar() {
 
         {/* Navigation Items */}
         <nav>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
