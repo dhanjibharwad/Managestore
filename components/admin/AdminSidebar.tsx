@@ -8,23 +8,35 @@ import {
   Briefcase, 
   Users, 
   Wrench, 
-  CreditCard, 
   FileText, 
   Settings, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  UserPlus,
+  IndianRupee,
+  Warehouse,
+  IdCard,
+  ReceiptIndianRupee,
+  ListTodo,
+  ShoppingCart,
+  Truck
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { label: "Jobs", href: "/admin/jobs", icon: Briefcase },
   { label: "Customers", href: "/admin/customers", icon: Users },
-  { label: "Technicians", href: "/admin/technicians", icon: Wrench },
-  { label: "Billing", href: "/admin/billing", icon: CreditCard },
-  { label: "Inventory", href: "/admin/inventory", icon: CreditCard },
-  { label: "Employees", href: "/admin/employees", icon: CreditCard },
+  // { label: "Technicians", href: "/admin/technicians", icon: Wrench },
+  { label: "Billing", href: "/admin/billing", icon: ReceiptIndianRupee },
+  { label: "Inventory", href: "/admin/inventory", icon: Warehouse },
+  { label: "Employees", href: "/admin/employees", icon: IdCard },
+  { label: "Tasks", href: "/admin/tasks", icon: ListTodo },
   { label: "Reports", href: "/admin/reports", icon: FileText },
   { label: "Settings", href: "/admin/settings", icon: Settings },
+  { label: "Leads", href: "/admin/leads", icon: UserPlus },
+   { label: "Purchase", href: "/admin/purchase", icon: ShoppingCart  },
+   { label: "Pickup Drops", href: "/admin/pickupdrop", icon: Truck },
+   { label: "Quotations", href: "/admin/quotations", icon: FileText  },
 ];
 
 export default function AdminSidebar() {
@@ -127,7 +139,7 @@ export default function AdminSidebar() {
       </div>
 
       {/* Footer */}
-      <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
+      {/* <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
         {!isCollapsed ? (
           <div className="text-xs text-gray-500 text-center">
             StoreManager © 2026
@@ -137,7 +149,7 @@ export default function AdminSidebar() {
             SM
           </div>
         )}
-      </div>
+      </div> */}
     </aside>
   );
 }

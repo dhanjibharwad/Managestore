@@ -21,10 +21,10 @@ export default function AMCServicesPage() {
   const services: Service[] = [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Header Tabs */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             <Link
               href="/customer/amcs/"
@@ -49,7 +49,7 @@ export default function AMCServicesPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div>
           {/* Header */}
           <div className="flex justify-between items-center mb-6">

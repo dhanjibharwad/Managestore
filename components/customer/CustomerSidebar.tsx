@@ -11,18 +11,21 @@ import {
   ChevronLeft,
   ChevronRight,
   Truck,
-  ClipboardList 
+  UserCheck , 
+  LineChart,
+  FileText 
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/customer/dashboard", icon: LayoutDashboard },
   { label: "Jobs", href: "/customer/jobs", icon: Briefcase },
+    { label: "AMCS", href: "/customer/amcs", icon: LineChart  }, 
   { label: "Service History", href: "/customer/service-history", icon: History },
   { label: "Profile", href: "/customer/profile", icon: User },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
-  { label: "Quotations", href: "/customer/quotations", icon: Briefcase },
-  { label: "Self Check-In", href: "/customer/selfcheck", icon: ClipboardList  },  
-  { label: "Sales", href: "/customer/sales", icon: ClipboardList  }, 
+  { label: "Quotations", href: "/customer/quotations", icon: FileText  },
+  { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck   },  
+  { label: "Sales", href: "/customer/sales", icon: LineChart  }, 
 ];
 
 export default function CustomerSidebar() {

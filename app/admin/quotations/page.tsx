@@ -53,12 +53,12 @@ export default function QuotationsPage() {
             </select>
 
             {/* Add Button */}
-            {/* <button
+            <button
               style={{ backgroundColor: '#4A70A9' }}
               className="px-6 py-2 text-white rounded-md hover:opacity-90 transition-opacity font-medium"
             >
               + Add
-            </button> */}
+            </button>
           </div>
         </div>
       </div>
