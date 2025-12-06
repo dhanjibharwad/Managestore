@@ -66,7 +66,7 @@ export default function CustomerSidebar() {
               <img
                 src="/images/lg1.png"
                 alt="Storremanager Logo"
-                className="h-25 w-auto"
+                className="h-16 w-auto"
               />
             </Link>
           ) : (

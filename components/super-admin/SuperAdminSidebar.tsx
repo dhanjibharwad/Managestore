@@ -62,7 +62,7 @@ export default function SuperAdminSidebar() {
               <img 
                 src="/images/lg1.png" 
                 alt="Store Manager" 
-                className="h-25 w-auto"
+                className="h-16 w-auto"
               />
             </Link>
           ) : (
