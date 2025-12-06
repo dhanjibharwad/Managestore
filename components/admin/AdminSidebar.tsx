@@ -20,7 +20,8 @@ import {
   ListTodo,
   ShoppingCart,
   Truck,
-  LineChart
+  LineChart,
+  User
 } from 'lucide-react';
 
 const navItems = [
@@ -40,6 +41,7 @@ const navItems = [
    { label: "Pickup Drops", href: "/admin/pickupdrop", icon: Truck },
    { label: "Quotations", href: "/admin/quotations", icon: FileText  },
    { label: "Expenses", href: "/admin/expenses", icon: Wrench },
+    { label: "Profile", href: "/admin/profile", icon: User }
 ];
 
 export default function AdminSidebar() {
