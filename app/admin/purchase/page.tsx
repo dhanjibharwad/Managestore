@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react';
 import { ChevronUp, Search, Plus } from 'lucide-react';
+import Link from 'next/link';
 
 interface Purchase {
   id: string;
@@ -104,12 +105,14 @@ export default function PurchasePage() {
               />
             </div>
             {/* Add Button */}
+            <Link href="/admin/purchase/add">
             <button 
               className="bg-[#4A70A9] hover:bg-[#3d5d8f] text-white p-2 rounded-lg transition-colors"
               type="button"
             >
               <Plus className="w-5 h-5" />
             </button>
+            </Link>
           </div>
         </div>
 
