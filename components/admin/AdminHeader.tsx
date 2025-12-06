@@ -1,10 +1,23 @@
 "use client"
 
 import { Search, Bell, ChevronDown, User, Settings, Download, Key, Trash2, Layers, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
 
 export default function AdminHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3 flex justify-end items-center">
@@ -26,13 +39,13 @@ export default function AdminHeader() {
         </button>
 
         {/* User profile with dropdown */}
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 pl-2 pr-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              UD
+              U
             </div>
             <span className="text-sm font-medium text-gray-700">Uday</span>
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -41,10 +54,10 @@ export default function AdminHeader() {
           {/* Dropdown Menu */}
           {isDropdownOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <Link href="/admin/profile" className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700" onClick={() => setIsDropdownOpen(false)}>
                 <User className="w-4 h-4 text-gray-500" />
                 <span>Profile Account Actions</span>
-              </button>
+              </Link>
               
               <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Settings className="w-4 h-4 text-gray-500" />
@@ -73,7 +86,7 @@ export default function AdminHeader() {
               
               <div className="border-t border-gray-200 my-1"></div>
               
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <LogOut className="w-4 h-4 text-gray-500" />
                 <span>Logout</span>
               </button>

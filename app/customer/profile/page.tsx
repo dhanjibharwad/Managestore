@@ -1,97 +1,223 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import React, { useState } from 'react';
+import { Phone, Mail, User, MessageCircle, Package, FileText, CreditCard, Bell, Edit } from 'lucide-react';
 
-export default function CustomerProfilePage() {
-  const [form, setForm] = useState({
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    phone: "+91 9876543210",
-    address: "Hyderabad, India",
-  });
+export default function ProfilePage() {
+  const [activeTab, setActiveTab] = useState('Profile');
 
-  const updateField = (key: string, value: string) => {
-    setForm({ ...form, [key]: value });
-  };
+  const tabs = [
+    { name: 'Profile', icon: User },
+    { name: 'Contacts', icon: Phone },
+    { name: 'Jobs', icon: FileText },
+    { name: 'Sales', icon: Package },
+    { name: 'Referred List', icon: FileText },
+    { name: 'Payments', icon: CreditCard },
+    { name: 'Pickup Drops', icon: Package },
+    { name: 'Bulk Payments', icon: CreditCard },
+    { name: 'Invoices', icon: FileText },
+    { name: 'Notification Preferences', icon: Bell },
+  ];
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-6">My Profile</h1>
+    <div className="bg-gray-50 p-6">
+      <div className="mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex items-start justify-between">
+            {/* Profile Section */}
+            <div className="flex gap-6">
+              {/* Avatar */}
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-cyan-400 to-orange-300 flex-shrink-0 overflow-hidden">
+                <img 
+                  src="/api/placeholder/128/128" 
+                  alt="Profile" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-      <div className="bg-white shadow rounded-xl p-6 space-y-6">
+              {/* User Info */}
+              <div className="flex flex-col gap-4">
+                <h1 className="text-3xl font-semibold text-gray-900">Uday Mishra</h1>
+                
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Phone className="w-4 h-4" />
+                    <span className="text-sm">Phone:</span>
+                    <span className="text-sm font-medium text-[#4A70A9]">8208215900</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Mail className="w-4 h-4" />
+                    <span className="text-sm">Email:</span>
+                    <span className="text-sm font-medium text-[#4A70A9]">usermail@gmail.com</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">Role:</span>
+                    <span className="text-sm font-medium">End User</span>
+                  </div>
+                </div>
 
-        {/* Profile Section */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Personal Details</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm text-gray-600">Full Name</label>
-              <input
-                className="w-full border rounded-lg px-3 py-2 mt-1"
-                value={form.name}
-                onChange={(e) => updateField("name", e.target.value)}
-              />
+                {/* Action Buttons */}
+                <div className="flex gap-3 mt-2">
+                  <button className="flex items-center gap-2 px-4 py-2 border border-green-500 text-green-600 rounded-md hover:bg-green-50 transition-colors">
+                    <MessageCircle className="w-4 h-4" />
+                    <span className="text-sm font-medium">Whatsapp</span>
+                  </button>
+                  <button className="flex items-center gap-2 px-4 py-2 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 transition-colors">
+                    <Package className="w-4 h-4" />
+                    <span className="text-sm font-medium">Pickup Drops</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="text-sm text-gray-600">Email</label>
-              <input
-                className="w-full border rounded-lg px-3 py-2 mt-1"
-                value={form.email}
-                onChange={(e) => updateField("email", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600">Phone</label>
-              <input
-                className="w-full border rounded-lg px-3 py-2 mt-1"
-                value={form.phone}
-                onChange={(e) => updateField("phone", e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="text-sm text-gray-600">Address</label>
-              <input
-                className="w-full border rounded-lg px-3 py-2 mt-1"
-                value={form.address}
-                onChange={(e) => updateField("address", e.target.value)}
-              />
+            {/* Right Side Info */}
+            <div className="flex flex-col items-end gap-4">
+              <div className="flex items-center gap-2 text-gray-600">
+                <span className="text-sm">Creation Date:</span>
+                <span className="text-sm font-medium">Dec 3, 2025</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-600">Payment Remaining</span>
+                <span className="px-3 py-1 bg-red-500 text-white text-sm font-medium rounded-md">
+                  ₹ 0.00
+                </span>
+              </div>
             </div>
           </div>
-
-          <button className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg">
-            Update Profile
-          </button>
         </div>
 
-        {/* Change Password Section */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Change Password</h2>
+        {/* Navigation Tabs */}
+        <div className="bg-white rounded-lg shadow-sm mb-6">
+          <div className="flex border-b border-gray-200 overflow-x-auto">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.name}
+                  onClick={() => setActiveTab(tab.name)}
+                  className={`flex items-center gap-2 px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === tab.name
+                      ? 'text-[#4A70A9] border-b-2 border-[#4A70A9]'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {tab.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="password"
-              placeholder="Current Password"
-              className="border rounded-lg px-3 py-2"
-            />
-            <input
-              type="password"
-              placeholder="New Password"
-              className="border rounded-lg px-3 py-2"
-            />
-            <input
-              type="password"
-              placeholder="Confirm New Password"
-              className="border rounded-lg px-3 py-2 md:col-span-2"
-            />
+        {/* Content Area */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-semibold text-gray-900">Customer Information</h2>
+            <button className="flex items-center gap-2 px-4 py-2 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 transition-colors">
+              <Edit className="w-4 h-4" />
+              <span className="text-sm font-medium">Edit</span>
+            </button>
           </div>
 
-          <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg">
-            Change Password
-          </button>
+          {/* Customer Information Form */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Customer Name
+              </label>
+              <input
+                type="text"
+                value="Vishwanth Anna"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                readOnly
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mobile Number
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value="+91"
+                  className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  readOnly
+                />
+                <input
+                  type="text"
+                  value="8857859209"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  readOnly
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                placeholder="Eg: 91XXXXXXXXX"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400"
+              />
+            </div>
+          </div>
+
+          {/* Address Details Section */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Address Details <span className="text-gray-400 font-normal">(Optional)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Address Line
+                </label>
+                <input
+                  type="text"
+                  placeholder="House / building name/no, street name, locality"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Region/State
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400">
+                  <option>Select region / state</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  City/Town
+                </label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400">
+                  <option>Select city / town</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Postal Code/ Zip Code
+                </label>
+                <input
+                  type="text"
+                  placeholder="Type postal code / zip code"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

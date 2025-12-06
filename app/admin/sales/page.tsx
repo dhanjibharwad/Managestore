@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Search, ChevronDown, ChevronUp, Plus, Info } from 'lucide-react';
+import Link from 'next/link';
 
 interface Sale {
   saleNumber: string;
@@ -140,13 +141,15 @@ export default function SalesPage() {
               >
                 Export
               </button>
-
+              
+              <Link href="/admin/sales/add">
               <button
                 className="p-2 border-2 rounded-md text-sm font-medium transition-colors"
                 style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
               >
                 <Plus className="w-5 h-5" />
               </button>
+              </Link>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ export default function PickupDropsPage() {
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-semibold text-gray-800">
+          <h1 className="text-2xl font-semibold text-gray-800">
             Pickup/Drops
           </h1>
           

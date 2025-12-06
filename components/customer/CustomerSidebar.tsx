@@ -11,22 +11,23 @@ import {
   ChevronLeft,
   ChevronRight,
   Truck,
-  UserCheck , 
+  UserCheck,
   LineChart,
-  FileCheck
+  FileCheck,
+  FileText
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/customer/dashboard", icon: LayoutDashboard },
   { label: "Jobs", href: "/customer/jobs", icon: Briefcase },
-    { label: "AMCS", href: "/customer/amcs", icon: FileCheck  }, 
+  { label: "AMCS", href: "/customer/amcs", icon: FileCheck },
   // { label: "Service History", href: "/customer/service-history", icon: History },
-  { label: "Sales", href: "/customer/sales", icon: LineChart  },
-  { label: "Profile", href: "/customer/profile", icon: User },
+  { label: "Sales", href: "/customer/sales", icon: LineChart },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
- 
-  { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck },  
-   
+  { label: "Quotations", href: "/customer/quotations", icon: FileText },
+  { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck },
+  { label: "Profile", href: "/customer/profile", icon: User }
+
 ];
 
 export default function CustomerSidebar() {
@@ -96,8 +97,8 @@ export default function CustomerSidebar() {
                   <Link
                     href={item.href}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${isActive
-                        ? 'bg-[#4A70A9] text-white shadow-md'
-                        : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
+                      ? 'bg-[#4A70A9] text-white shadow-md'
+                      : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
                       } ${isCollapsed ? 'justify-center' : ''}`}
                     title={isCollapsed ? item.label : ''}
                   >
