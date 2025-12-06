@@ -37,7 +37,7 @@ const ReportsPage = () => {
               <button
                 key={tab.name}
                 onClick={() => setActiveTab(tab.name)}
-                className={`flex flex-col items-center justify-center px-20 py-3 text-sm font-medium transition-colors ${
+                className={`flex flex-col items-center justify-center px-20  py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.name
                     ? 'text-[#4A70A9] border-b-2 border-[#4A70A9]'
                     : 'text-gray-500 hover:text-gray-700'
@@ -65,7 +65,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -86,7 +86,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -111,7 +111,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -132,7 +132,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -203,7 +203,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -224,7 +224,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -270,7 +270,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -291,7 +291,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -312,7 +312,7 @@ const ReportsPage = () => {
                     <Info className="w-4 h-4 text-gray-400" />
                   </div>
                   <div className="flex items-center gap-1 text-cyan-500 text-sm">
-                    {/* <TrendingDown className="w-4 h-4" /> */}
+                    <TrendingDown className="w-4 h-4" />
                     <span>0%</span>
                   </div>
                 </div>
@@ -324,36 +324,6 @@ const ReportsPage = () => {
                 </div>
               </div>
             </>
-          )}
-
-          {activeTab === 'Inventory' && (
-            <div className="col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                      Part Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                      Min Quantity
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                      In Stock
-                    </th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                      Required Quantity
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan={4} className="px-6 py-16 text-center text-gray-400">
-                      No data
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
           )}
         </div>
       </div>
