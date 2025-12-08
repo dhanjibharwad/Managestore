@@ -34,15 +34,15 @@ export default function NotFound() {
               {/* Lost Person */}
               <g transform="translate(250, 180)">
                 {/* Head */}
-                <circle cx="0" cy="0" r="20" fill="#4A70A9" />
+                <circle cx="0" cy="0" r="20" fill="#2196F3" />
                 {/* Body */}
-                <rect x="-12" y="15" width="24" height="40" rx="12" fill="#4A70A9" />
+                <rect x="-12" y="15" width="24" height="40" rx="12" fill="#2196F3" />
                 {/* Arms - confused gesture */}
-                <path d="M -12 25 Q -25 20 -30 15" stroke="#4A70A9" strokeWidth="8" strokeLinecap="round" fill="none" />
-                <path d="M 12 25 Q 25 20 30 15" stroke="#4A70A9" strokeWidth="8" strokeLinecap="round" fill="none" />
+                <path d="M -12 25 Q -25 20 -30 15" stroke="#2196F3" strokeWidth="8" strokeLinecap="round" fill="none" />
+                <path d="M 12 25 Q 25 20 30 15" stroke="#2196F3" strokeWidth="8" strokeLinecap="round" fill="none" />
                 {/* Legs */}
-                <path d="M -8 55 L -8 75" stroke="#4A70A9" strokeWidth="8" strokeLinecap="round" />
-                <path d="M 8 55 L 8 75" stroke="#4A70A9" strokeWidth="8" strokeLinecap="round" />
+                <path d="M -8 55 L -8 75" stroke="#2196F3" strokeWidth="8" strokeLinecap="round" />
+                <path d="M 8 55 L 8 75" stroke="#2196F3" strokeWidth="8" strokeLinecap="round" />
                 {/* Question mark above head */}
                 <text x="25" y="-15" fontSize="30" fill="#6b7280" fontWeight="bold">?</text>
               </g>
@@ -55,7 +55,7 @@ export default function NotFound() {
                 <path d="M -5 20 L -80 20 L -85 30 L -80 40 L -5 40 Z" fill="#6b7280" />
                 <text x="-50" y="34" fontSize="12" fill="white" fontWeight="600" textAnchor="middle">HOME</text>
                 {/* Sign 2 - pointing right */}
-                <path d="M 5 60 L 80 60 L 85 70 L 80 80 L 5 80 Z" fill="#4A70A9" />
+                <path d="M 5 60 L 80 60 L 85 70 L 80 80 L 5 80 Z" fill="#2196F3" />
                 <text x="45" y="74" fontSize="12" fill="white" fontWeight="600" textAnchor="middle">404</text>
               </g>
 
@@ -78,7 +78,7 @@ export default function NotFound() {
 
           {/* 404 Error Section */}
           <div className="mb-12">
-            <h1 className="text-7xl md:text-8xl font-bold bg-[#4A70A9] bg-clip-text text-transparent mb-4">
+            <h1 className="text-7xl md:text-8xl font-bold bg-[#2196F3] bg-clip-text text-transparent mb-4">
               404
             </h1>
             <h2 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-4">
@@ -92,7 +92,7 @@ export default function NotFound() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 href="/home/"
-                className="inline-flex items-center bg-[#4A70A9] text-white px-8 py-3 rounded-full hover:from-gray-900 hover:to-gray-950 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center bg-[#2196F3] text-white px-8 py-3 rounded-full hover:from-gray-900 hover:to-gray-950 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
