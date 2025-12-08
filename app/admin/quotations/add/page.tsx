@@ -40,6 +40,7 @@ export default function QuotationPage() {
   const [termsConditions, setTermsConditions] = useState('');
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
+  const [showPartModal, setShowPartModal] = useState(false);
   
   // Service modal form state
   const [serviceForm, setServiceForm] = useState({
@@ -53,6 +54,24 @@ export default function QuotationPage() {
     taxCode: '',
     totalAmount: '',
     rateIncludingTax: false,
+  });
+
+  // Part modal form state
+  const [partForm, setPartForm] = useState({
+    part: '',
+    partName: '',
+    serialNumber: '',
+    description: '',
+    warranty: '',
+    price: '',
+    quantity: '1',
+    rateIncludingTax: false,
+    discount: '',
+    subTotal: '',
+    tax: '',
+    taxAmount: '',
+    taxCode: '',
+    totalAmount: '',
   });
 
   const openServiceModal = () => {
@@ -79,6 +98,10 @@ export default function QuotationPage() {
     setServiceForm(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePartFormChange = (field: string, value: any) => {
+    setPartForm(prev => ({ ...prev, [field]: value }));
+  };
+
   const saveService = () => {
     const newService: Service = {
       id: Date.now().toString(),
@@ -97,21 +120,48 @@ export default function QuotationPage() {
     closeServiceModal();
   };
 
-  const addPart = () => {
+  const openPartModal = () => {
+    setShowPartModal(true);
+    setPartForm({
+      part: '',
+      partName: '',
+      serialNumber: '',
+      description: '',
+      warranty: '',
+      price: '',
+      quantity: '1',
+      rateIncludingTax: false,
+      discount: '',
+      subTotal: '',
+      tax: '',
+      taxAmount: '',
+      taxCode: '',
+      totalAmount: '',
+    });
+  };
+
+  const closePartModal = () => {
+    setShowPartModal(false);
+  };
+
+  const savePart = () => {
     const newPart: Part = {
       id: Date.now().toString(),
-      description: '',
-      taxCode: '',
-      qty: 0,
-      price: 0,
-      disc: 0,
-      tax: 0,
-      taxAmt: 0,
-      subTotal: 0,
-      total: 0,
+      description: partForm.partName || partForm.part,
+      taxCode: partForm.taxCode,
+      qty: parseFloat(partForm.quantity) || 0,
+      price: parseFloat(partForm.price) || 0,
+      disc: parseFloat(partForm.discount) || 0,
+      tax: parseFloat(partForm.tax) || 0,
+      taxAmt: parseFloat(partForm.taxAmount) || 0,
+      subTotal: parseFloat(partForm.subTotal) || 0,
+      total: parseFloat(partForm.totalAmount) || 0,
     };
     setParts([...parts, newPart]);
+    closePartModal();
   };
+
+
 
   const calculateServiceTotals = () => {
     const totals = services.reduce(
@@ -293,7 +343,7 @@ export default function QuotationPage() {
                   Scan Part
                 </button>
                 <button
-                  onClick={addPart}
+                  onClick={openPartModal}
                   className="flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
                   style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
                 >
@@ -328,41 +378,15 @@ export default function QuotationPage() {
                   ) : (
                     parts.map((part) => (
                       <tr key={part.id} className="border-t border-gray-200">
-                        <td className="px-4 py-2">
-                          <input
-                            type="text"
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="Part description"
-                          />
-                        </td>
-                        <td className="px-4 py-2">
-                          <input
-                            type="text"
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-2">
-                          <input
-                            type="number"
-                            className="w-16 px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-2">
-                          <input
-                            type="number"
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-2">
-                          <input
-                            type="number"
-                            className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                          />
-                        </td>
-                        <td className="px-4 py-2 text-sm">0</td>
-                        <td className="px-4 py-2 text-sm">0.00</td>
-                        <td className="px-4 py-2 text-sm">0.00</td>
-                        <td className="px-4 py-2 text-sm">0.00</td>
+                        <td className="px-4 py-2 text-sm">{part.description}</td>
+                        <td className="px-4 py-2 text-sm">{part.taxCode}</td>
+                        <td className="px-4 py-2 text-sm">{part.qty}</td>
+                        <td className="px-4 py-2 text-sm">{part.price.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">{part.disc.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">{part.tax}</td>
+                        <td className="px-4 py-2 text-sm">{part.taxAmt.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">{part.subTotal.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">{part.total.toFixed(2)}</td>
                       </tr>
                     ))
                   )}
@@ -471,7 +495,7 @@ export default function QuotationPage() {
         <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
-            <div className="sticky top-0 flex items-center justify-between px-6 py-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-800">Add New Service</h2>
               <button
                 onClick={closeServiceModal}
@@ -647,6 +671,260 @@ export default function QuotationPage() {
                 style={{ backgroundColor: '#4A70A9' }}
               >
                 Save Service
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add New Part Modal */}
+      {showPartModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-800">Add New Part</h2>
+              <button
+                onClick={closePartModal}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="px-6 py-4">
+              {/* Part Selector */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Part
+                </label>
+                <select
+                  value={partForm.part}
+                  onChange={(e) => handlePartFormChange('part', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Search and select existing part or create new below</option>
+                  <option value="RAM">RAM</option>
+                  <option value="HDD">HDD</option>
+                  <option value="SSD">SSD</option>
+                </select>
+              </div>
+
+              {/* OR Divider */}
+              <div className="relative mb-4">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">OR</span>
+                </div>
+              </div>
+
+              {/* Part Name and Serial Number */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Part Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Eg: RAM, HDD"
+                    value={partForm.partName}
+                    onChange={(e) => handlePartFormChange('partName', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Serial Number
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Eg: C02CQ261MD6P"
+                    value={partForm.serialNumber}
+                    onChange={(e) => handlePartFormChange('serialNumber', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description
+                </label>
+                <textarea
+                  placeholder="Enter description (optional)"
+                  value={partForm.description}
+                  onChange={(e) => handlePartFormChange('description', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  rows={3}
+                />
+              </div>
+
+              {/* Warranty and Price */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Warranty
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Type warranty"
+                    value={partForm.warranty}
+                    onChange={(e) => handlePartFormChange('warranty', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Enter price"
+                    value={partForm.price}
+                    onChange={(e) => handlePartFormChange('price', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Rate Including Tax and Quantity */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="flex items-center">
+                  <label className="flex items-center gap-2 text-sm text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={partForm.rateIncludingTax}
+                      onChange={(e) => handlePartFormChange('rateIncludingTax', e.target.checked)}
+                      className="w-4 h-4 rounded border-gray-300"
+                    />
+                    Rate Including Tax
+                  </label>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Quantity <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    value={partForm.quantity}
+                    onChange={(e) => handlePartFormChange('quantity', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              {/* Discount and Sub Total */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Discount
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Discount"
+                    value={partForm.discount}
+                    onChange={(e) => handlePartFormChange('discount', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                    Sub Total
+                    <span className="text-gray-400 text-xs">(i)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Sub total"
+                    value={partForm.subTotal}
+                    onChange={(e) => handlePartFormChange('subTotal', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50 focus:outline-none"
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              {/* Tax and Tax Amount */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tax
+                  </label>
+                  <select
+                    value={partForm.tax}
+                    onChange={(e) => handlePartFormChange('tax', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select tax</option>
+                    <option value="5">5%</option>
+                    <option value="12">12%</option>
+                    <option value="18">18%</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                    Tax Amount
+                    <span className="text-gray-400 text-xs">(i)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Tax amount"
+                    value={partForm.taxAmount}
+                    onChange={(e) => handlePartFormChange('taxAmount', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50 focus:outline-none"
+                    readOnly
+                  />
+                </div>
+              </div>
+
+              {/* Tax Code and Total Amount */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Tax Code
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Eg: HSN code"
+                    value={partForm.taxCode}
+                    onChange={(e) => handlePartFormChange('taxCode', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
+                    Total Amount
+                    <span className="text-gray-400 text-xs">(i)</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Total amount"
+                    value={partForm.totalAmount}
+                    onChange={(e) => handlePartFormChange('totalAmount', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-gray-50 focus:outline-none"
+                    readOnly
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-200">
+              <button
+                onClick={closePartModal}
+                className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={savePart}
+                className="flex-1 px-4 py-2 text-white rounded"
+                style={{ backgroundColor: '#4A70A9' }}
+              >
+                Save Part
               </button>
             </div>
           </div>

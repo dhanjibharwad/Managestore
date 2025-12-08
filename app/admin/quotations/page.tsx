@@ -57,7 +57,7 @@ export default function QuotationsPage() {
             <Link href="/admin/quotations/add">
             <button
               style={{ backgroundColor: '#4A70A9' }}
-              className="px-6 py-2 text-white rounded-md hover:opacity-90 transition-opacity font-medium"
+              className="cursor-pointer px-6 py-2 text-white rounded-md hover:opacity-90 transition-opacity font-medium"
             >
               + Add
             </button>
