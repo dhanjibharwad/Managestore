@@ -38,9 +38,9 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Expert laptop repair services for all brands. Fast diagnostics and quality parts replacement.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
+            {/* <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
-            </button>
+            </button> */}
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-zinc-200">
@@ -57,9 +57,9 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Professional mobile repair with genuine parts. Screen replacement, battery issues, and more.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
+            {/* <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
-            </button>
+            </button> */}
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-zinc-200">
@@ -77,9 +77,9 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Complete desktop solutions including hardware upgrades, virus removal, & system optimization.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
+            {/* <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -51,9 +51,9 @@ export default function Navbar() {
         
       ]
     },
-    { name: "Pricing", href: "/user/pricing" },
+    // { name: "Pricing", href: "/user/pricing" },
     { name: "Contact", href: "/user/contact-us" },
-    { name: "Careers", href: "/user/careers" },
+    // { name: "Careers", href: "/user/careers" },
   ];
 
   return (
@@ -75,7 +75,7 @@ export default function Navbar() {
   <h1
     className={`${playfair.className} text-[30px] tracking-[0.05em] text-blue-600 dark:text-blue-400 font-semibold`}
   >
-    <span className="text-[38px] mr-[1px]">S</span>tore <span className="text-[38px] mr-[1px]">M</span>anager
+    <span className="text-[38px] mr-[1px]">S</span>TORE <span className="text-[38px] mr-[1px]">M</span>ANAGER
   </h1>
 </Link>
 
