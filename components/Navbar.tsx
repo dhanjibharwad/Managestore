@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, Sparkles } from "lucide-react";
+import { Menu, X, ChevronDown, Sparkles, Moon, Sun } from "lucide-react";
 import { Playfair_Display } from "next/font/google";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,7 +61,7 @@ export default function Navbar() {
       
       <nav
         className={`fixed left-0 w-full z-50 transition-all duration-500 ${scrolled
-            ? "bg-white/90 backdrop-blur-xl shadow-2xl shadow-indigo-500/5 py-2"
+            ? "bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl shadow-2xl shadow-indigo-500/5 py-2"
             : "bg-transparent backdrop-blur-sm py-2"
           }`}
       >
@@ -71,7 +73,7 @@ export default function Navbar() {
   className="relative flex items-center z-50"
 >
   <h1
-    className={`${playfair.className} text-[30px] tracking-[0.05em] text-blue-600 font-semibold`}
+    className={`${playfair.className} text-[30px] tracking-[0.05em] text-blue-600 dark:text-blue-400 font-semibold`}
   >
     <span className="text-[38px] mr-[1px]">S</span>tore <span className="text-[38px] mr-[1px]">M</span>anager
   </h1>
@@ -89,7 +91,7 @@ export default function Navbar() {
               >
                 <Link
                   href={item.href}
-                  className="relative px-5 py-4 text-gray-700 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group"
+                  className="relative px-5 py-4 text-gray-700 dark:text-gray-300 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group"
 
                 >
                   <span className="relative z-10">
@@ -107,7 +109,7 @@ export default function Navbar() {
 
                 {/* Dropdown Menu */}
                 {item.dropdown && activeDropdown === item.name && (
-                  <div className={`absolute top-full left-0 bg-white rounded-lg shadow-xl border border-gray-200 overflow-hidden z-50 ${
+                  <div className={`absolute top-full left-0 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 ${
                     item.dropdown.length > 8 ? 'w-96' : 'w-64'
                   }`}>
                     <div className={`py-3 ${
@@ -117,7 +119,7 @@ export default function Navbar() {
                         <Link
                           key={dropItem.name}
                           href={dropItem.href}
-                          className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 text-sm font-medium"
+                          className="block px-4 py-2.5 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 text-sm font-medium"
                           onClick={() => setActiveDropdown(null)}
                           style={{
                             animation: `fadeIn 0.3s ease-out ${index * 0.05}s both`
@@ -135,6 +137,12 @@ export default function Navbar() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            >
+              {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            </button>
             <Link
               href="/auth/login"
               className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-gray-900 bg-white border-1 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"

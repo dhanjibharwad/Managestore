@@ -153,7 +153,7 @@ export default function WallOfLove() {
   };
 
   return (
-    <div className="bg-white flex items-center justify-center p-8">
+    <div className="flex items-center justify-center p-8">
       <div className="max-w-7xl w-full">
 
         <div className="relative overflow-hidden">

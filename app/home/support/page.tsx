@@ -99,7 +99,7 @@ const AppFeaturesPage: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white py-26 px-4">
+    <div className="py-26 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
           {/* Left Features */}
@@ -110,10 +110,10 @@ const AppFeaturesPage: React.FC = () => {
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed dark:text-gray-300">
                     {feature.description}
                   </p>
                 </div>
@@ -214,10 +214,10 @@ const AppFeaturesPage: React.FC = () => {
                   {feature.icon}
                 </div>
                 <div>
-                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed dark:text-gray-300">
                     {feature.description}
                   </p>
                 </div>

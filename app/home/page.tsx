@@ -16,7 +16,7 @@ import ServiceManager from './specialdiv/page';
 export default function UserHomePage() {
 
   return (
-    <div className="min-h-screen bg-white ">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
 
       {/* <section className="relative h-[650px] flex items-center">
        
@@ -33,7 +33,7 @@ export default function UserHomePage() {
         <HeroSection />
       </ScrollAnimatedSection>
 
-      <ScrollAnimatedSection className="py-16 bg-white" delay={100}>
+      <ScrollAnimatedSection className="py-16 bg-white dark:bg-gray-900" delay={100}>
         <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Image */}
           <div className="relative w-full h-[400px] lg:h-[450px] overflow-hidden group">
@@ -47,17 +47,17 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 dark:text-blue-400 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               About Us
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
   We&apos;re Best In Service Provider
 </h2> */}
-            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
               We&apos;re Best In Service Provider
             </h2>
 
-            <p className="mt-4 text-lg text-gray-700 leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
               Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
               loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
               into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
@@ -78,7 +78,7 @@ export default function UserHomePage() {
         <ImageSectionPage />
       </ScrollAnimatedSection>
 
-      <ScrollAnimatedSection className="py-16 bg-white" delay={200}>
+      <ScrollAnimatedSection className="py-16 bg-white dark:bg-gray-900" delay={200}>
         <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Image */}
           <div className="relative w-full h-[400px] lg:h-[450px] overflow-hidden group">
@@ -93,17 +93,17 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 dark:text-blue-400 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               OUR MISSION
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
   We&apos;re Best In Service Provider
 </h2> */}
-            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
               What our mission stands for
             </h2>
 
-            <p className="mt-4 text-lg text-gray-700 leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
               Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
               loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
               into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
@@ -119,7 +119,7 @@ export default function UserHomePage() {
         </div>
       </ScrollAnimatedSection>
 
-      <ScrollAnimatedSection className="py-16 bg-white" delay={200}>
+      <ScrollAnimatedSection className="py-16 bg-white dark:bg-gray-900" delay={200}>
         <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Image */}
           <div className="relative w-full h-[600px] lg:h-[650px] overflow-hidden group">
@@ -134,17 +134,17 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 dark:text-blue-400 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               OUR DASHBOARD
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
   We&apos;re Best In Service Provider
 </h2> */}
-            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
               Our system specifies in dashboard
             </h2>
 
-            <p className="mt-4 text-lg text-gray-700 leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
               Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
               loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
               into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer

@@ -73,10 +73,10 @@ const services: ServiceCardProps[] = [
 
 const ServicesPage = () => {
   return (
-    <section className="py-10 bg-white">
+    <section className="py-10">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-800">Our Services</h2>
-        <p className="mt-4 text-gray-500 max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Our Services</h2>
+        <p className="mt-4 text-gray-500 max-w-2xl mx-auto dark:text-gray-300">
           Comprehensive support solutions designed to meet all your technical and service needs with professional expertise.
         </p>
       </div>

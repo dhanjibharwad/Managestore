@@ -9,11 +9,11 @@ export default function ImageSectionPage() {
           <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
             What our work life is like
           </p>
-          <h1 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+          <h1 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
             Where creativity meets technology 
           </h1>
           <div className="text-gray-600 space-y-3 sm:space-y-4 text-sm sm:text-base md:text-lg">
-            <p className="mt-4 text-lg text-gray-700 leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 leading-relaxed dark:text-gray-200">
               Most people like some nothing they used a life doing something they don't care much about. But you were a hero, we really look cool. Then we can still have some exciting times.<br/>
                If we wanted to do something radical, like make a movie or whatever, we'd make it some exciting. It took a lot of the whole talk, something else would make it some exciting. It took a lot of creative work that would have been cool to try out.<br/>
               Anyway, we want the best for you, regardless of what your next level was like. It. We do focus on media talking about it, but we always try that can make it some even if not with us, even.
