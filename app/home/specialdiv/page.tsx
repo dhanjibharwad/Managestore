@@ -14,7 +14,7 @@ export default function ServiceManager() {
           </h1>
           <p className="text-xl text-gray-800">
             See how our service management helps you track repairs with these in-depth{' '}
-            <span className="font-semibold" style={{ color: '#4A70A9' }}>features</span>.
+            <span className="font-semibold" style={{ color: '#2196F3' }}>features</span>.
           </p>
         </div>
 
@@ -22,7 +22,7 @@ export default function ServiceManager() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 scale-105">
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-zinc-200">
             <div className="flex gap-3 mb-4">
-              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#4A70A9' }}>
+              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#2196F3' }}>
                 <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="2" y="3" width="20" height="14" rx="2" stroke="white" strokeWidth="2" fill="none"/>
                   <path d="M2 7h20" stroke="white" strokeWidth="2"/>
@@ -38,14 +38,14 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Expert laptop repair services for all brands. Fast diagnostics and quality parts replacement.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#4A70A9' }}>
+            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
             </button>
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-zinc-200">
             <div className="flex gap-3 mb-4">
-              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#4A70A9' }}>
+              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#2196F3' }}>
                 <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="6" y="2" width="12" height="20" rx="2" stroke="white" strokeWidth="2" fill="none"/>
                   <path d="M6 5h12M6 19h12" stroke="white" strokeWidth="2"/>
@@ -57,14 +57,14 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Professional mobile repair with genuine parts. Screen replacement, battery issues, and more.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#4A70A9' }}>
+            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
             </button>
           </div>
 
           <div className="bg-white rounded-3xl p-8 shadow-lg border border-zinc-200">
             <div className="flex gap-3 mb-4">
-              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#4A70A9' }}>
+              <div className="rounded-full p-3 shadow-md" style={{ backgroundColor: '#2196F3' }}>
                 <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect x="2" y="3" width="20" height="13" rx="2" stroke="white" strokeWidth="2" fill="none"/>
                   <path d="M2 6h20" stroke="white" strokeWidth="2"/>
@@ -77,7 +77,7 @@ export default function ServiceManager() {
             <p className="text-gray-800 mb-8 leading-relaxed">
               Complete desktop solutions including hardware upgrades, virus removal, & system optimization.
             </p>
-            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#4A70A9' }}>
+            <button className="text-white px-6 py-3 rounded-xl font-semibold transition shadow-md hover:opacity-90" style={{ backgroundColor: '#2196F3' }}>
               See repair details
             </button>
           </div>

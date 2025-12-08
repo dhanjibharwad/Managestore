@@ -41,7 +41,7 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
 
-      <section className="relative bg-[#4A70A9] text-white">
+      <section className="relative bg-blue-500 text-white">
         {/* Decorative shapes */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-22 h-22 bg-gray-400 opacity-20 rounded-full animate-pulse"></div>
@@ -230,7 +230,7 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 bg-[#4A70A9] text-white overflow-hidden">
+      <section className="relative py-20 bg-blue-500 text-white overflow-hidden">
         {/* Decorative floating shapes */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-32 h-32 bg-gray-700 opacity-20 rounded-full"></div>

@@ -32,10 +32,10 @@ export default function Navbar() {
       name: "About",
       href: "/user/about-us",
       dropdown: [
-        { name: "Our Story", href: "/user/about-us/" },
-        { name: "Our Team", href: "/user/team-member/" },
-        { name: "Our Gallery", href: "/user/gallery/" },
-        { name: "FAQs", href: "/user/faqs/" },
+          // { name: "Our Story", href: "/user/about-us/" },
+          // { name: "Our Team", href: "/user/team-member/" },
+          // { name: "Our Gallery", href: "/user/gallery/" },
+          // { name: "FAQs", href: "/user/faqs/" },
         { name: "Blogs", href: "/user/blog/" },
       ]
     },
@@ -43,23 +43,10 @@ export default function Navbar() {
       name: "Services",
       href: "/user/services",
       dropdown: [
-        { name: "HRMS", href: "/user/services/emsservice" },
-        { name: "CRM", href: "/user/services/crm" },
-        { name: "Finance and Accounting", href: "/user/services/accounting" },
-        { name: "Union Enterprise", href: "/user/services/unionservice" },
-        { name: "Projects and tasks", href: "/user/services/taskmanage" },
-        { name: "Sales and Purchase", href: "/user/services/sales" },
-        { name: "Inventory", href: "/user/services/inventory" },
-        { name: "E-commerce", href: "/user/services/ecom-market" },
-        { name: "Communications", href: "/user/services/collab" },
-        { name: "Document Management", href: "/user/services/document" },
-        { name: "Service Operations", href: "/user/services/operations" },
-        { name: "Planning and Resource", href: "/user/services/plan-resource" },
-        { name: "Business Intelligence", href: "/user/services/bi-analytics" },
-        { name: "Administration", href: "/user/services/administration" },
-        { name: "Legal and Compliance", href: "/user/services/legal" },
-        { name: "Asset Management", href: "/user/services/assets" },
-        { name: "Subscriptions", href: "/user/services/subscription" },
+        { name: "Service 1", href: "/user/services/emsservice" },
+        { name: "Service 2", href: "/user/services/crm" },
+        { name: "Services 3", href: "/user/services/accounting" },
+        
       ]
     },
     { name: "Pricing", href: "/user/pricing" },
@@ -84,7 +71,7 @@ export default function Navbar() {
   className="relative flex items-center z-50"
 >
   <h1
-    className={`${playfair.className} text-[30px] tracking-[0.05em] text-[#4A70A9] font-semibold`}
+    className={`${playfair.className} text-[30px] tracking-[0.05em] text-blue-600 font-semibold`}
   >
     <span className="text-[38px] mr-[1px]">S</span>tore <span className="text-[38px] mr-[1px]">M</span>anager
   </h1>
@@ -102,7 +89,7 @@ export default function Navbar() {
               >
                 <Link
                   href={item.href}
-                  className="relative px-5 py-2 text-gray-700 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group"
+                  className="relative px-5 py-4 text-gray-700 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group"
 
                 >
                   <span className="relative z-10">
@@ -149,15 +136,15 @@ export default function Navbar() {
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
             <Link
-              href="/user/auth/login"
-              className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-gray-900 bg-white border-2 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
+              href="/auth/login"
+              className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-gray-900 bg-white border-1 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Login
             </Link>
 
             <Link
-              href="/user/services"
-              className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-white bg-[#4A70A9] shadow-lg hover:bg-[#3A5F99] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
+              href="/auth/register"
+              className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-white bg-blue-500 shadow-lg hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
             >
               Get Started
             </Link>

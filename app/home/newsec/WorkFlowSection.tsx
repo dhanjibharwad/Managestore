@@ -54,7 +54,7 @@ const WorkFlowSection: React.FC<WorkFlowSectionProps> = ({ className = '' }) => 
               </p>  
             </div>
             {/* CTA Button */}
-            <button className="bg-[#4A70A9] text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none">
+            <button className="bg-blue-500 text-white font-semibold px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none">
               LEARN MORE
             </button>
           </div>

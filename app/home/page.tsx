@@ -47,7 +47,7 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-[#4A70A9] text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               About Us
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
@@ -65,7 +65,7 @@ export default function UserHomePage() {
             </p>
 
             <Link href="/home/about">
-              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-[#4A70A9] shadow-lg hover:opacity-90 transition cursor-pointer">
+              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-blue-500 shadow-lg hover:opacity-90 transition cursor-pointer">
                 See About Us
               </button>
             </Link>
@@ -93,7 +93,7 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-[#4A70A9] text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               OUR MISSION
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
@@ -111,7 +111,7 @@ export default function UserHomePage() {
             </p>
 
             {/* <Link href="/user/about">
-              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-[#4A70A9] shadow-lg hover:opacity-90 transition cursor-pointer">
+              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-blue-500 shadow-lg hover:opacity-90 transition cursor-pointer">
                 Our Vision
               </button>
             </Link> */}
@@ -134,7 +134,7 @@ export default function UserHomePage() {
 
           {/* Right Content */}
           <div className="text-left lg:pl-8">
-            <p className="text-[#4A70A9] text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+            <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
               OUR DASHBOARD
             </p>
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
@@ -152,7 +152,7 @@ export default function UserHomePage() {
             </p>
 
             {/* <Link href="/user/about">
-              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-[#4A70A9] shadow-lg hover:opacity-90 transition cursor-pointer">
+              <button className="mt-6 px-6 py-3 rounded-lg font-semibold text-white bg-blue-500 shadow-lg hover:opacity-90 transition cursor-pointer">
                 Dashboard
               </button>
             </Link> */}

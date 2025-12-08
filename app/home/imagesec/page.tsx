@@ -6,7 +6,7 @@ export default function ImageSectionPage() {
       <div className="grid md:grid-cols-2 gap-15 items-start">
         {/* Left Content */}
         <div className="mt-20">
-          <p className="text-[#4A70A9] text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+          <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
             What our work life is like
           </p>
           <h1 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">

@@ -1,24 +1,25 @@
 import { Users, Clock, Smartphone, Globe, Receipt } from 'lucide-react';
 
 const features = [
-    { icon: Users, title: 'Smart\nManagement' },
-    { icon: Clock, title: 'Real-time' },
-    { icon: Smartphone, title: 'Multi-device' },
-    { icon: Globe, title: 'Access\nAnywhere' },
-    { icon: Receipt, title: 'Easy Billing &\nReports', span: true }
+    { title: 'Smart\nManagement' },
+    { title: 'Real-time' },
+    { title: 'Multi-device' },
+    { title: 'Access\nAnywhere' },
+    { title: 'Easy Billing &\nReports' },
 ];
+
 
 export default function HeroSection() {
     return (
         <section className="bg-gradient-to-b from-gray-50 to-white py-20 px-6">
-            
-            <div className="max-w-7xl mx-auto">
+
+            <div className="max-w-7xl mx-auto mt-10">
                 <div className="grid lg:grid-cols-2 gap-16 items-center">
                     {/* Left Content */}
                     <div className="space-y-6">
 
                         <h1 className="text-5xl sm:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
-                            All-in-one repair shop management <span className='text-[#4A70A9]'>software</span>
+                            All-in-one repair shop management <span className='text-blue-500'>software</span>
                         </h1>
 
 
@@ -28,10 +29,10 @@ export default function HeroSection() {
                         </p>
 
                         <div className="flex flex-wrap gap-4 pt-2">
-                            <button className="cursor-pointer bg-[#4A70A9] text-white px-10 py-3.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl">
+                            <button className="cursor-pointer bg-blue-500 text-white px-10 py-3.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl">
                                 Start Now
                             </button>
-                            {/* <button className="border-2 border-black text-black hover:bg-[#4A70A9] hover:text-white px-10 py-3.5 rounded-full font-semibold transition-all flex items-center gap-2">
+                            {/* <button className="border-2 border-black text-black hover:bg-blue-500 hover:text-white px-10 py-3.5 rounded-full font-semibold transition-all flex items-center gap-2">
                                 <div className="w-5 h-5 border-2 border-current rounded-sm" />
                                 Explore Now
                             </button> */}
@@ -39,7 +40,7 @@ export default function HeroSection() {
                     </div>
 
                     {/* Right Features Grid */}
-                    <div className="grid grid-cols-3 gap-5">
+                    {/* <div className="grid grid-cols-3 gap-5">
                         {features.map(({ icon: Icon, title, span }, i) => (
                             <div
                                 key={i}
@@ -47,15 +48,45 @@ export default function HeroSection() {
                                     }`}
                             >
                                 <div className="w-16 h-16 mb-4 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl flex items-center justify-center">
-                                    <Icon className="w-9 h-9 stroke-[1.5] text-[#4A70A9]" />
+                                    <Icon className="w-9 h-9 stroke-[1.5] text-blue-500" />
                                 </div>
                                 <h3 className="text-lg font-semibold text-gray-900 whitespace-pre-line">
                                     {title}
                                 </h3>
                             </div>
                         ))}
+                    </div> */}
+                    <div className="w-full">
+                        <img
+                            src="/images/repair.svg"
+                            alt="Hero Image"
+                            className="w-full h-auto object-contain hover:scale-105 transition-transform duration-300"
+                        />
                     </div>
+
                 </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mt-16 text-center">
+                    {features.map(({ title }, i) => (
+                        <div key={i} className="flex flex-col items-center">
+
+                            {/* ✅ SVG IMAGE ONLY */}
+                            <img
+                                src={`/images/icons/feature-${i + 1}.svg`}
+                                alt={title}
+                                className="w-42 h-42 mb-3 object-contain"
+                            />
+
+                            {/* ✅ TITLE BELOW IMAGE */}
+                            <h3 className="text-base font-semibold text-gray-800 whitespace-pre-line">
+                                {title}
+                            </h3>
+
+                        </div>
+                    ))}
+                </div>
+
+
+
             </div>
         </section>
     );

@@ -88,13 +88,13 @@ const ServicesPage = () => {
             className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden transform hover:-translate-y-2"
           >
             <div className="absolute top-4 right-4">
-              <span className="bg-[#4A70A9] text-white text-xs px-3 py-1 rounded-full font-medium">
+              <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-medium">
                 {service.category}
               </span>
             </div>
 
             <div className="mb-4">
-              <div className="bg-[#4A70A9] p-4 rounded-2xl text-white w-16 h-16 flex items-center justify-center">
+              <div className="bg-blue-500 p-4 rounded-2xl text-white w-16 h-16 flex items-center justify-center">
                 {service.icon}
               </div>
             </div>
@@ -107,7 +107,7 @@ const ServicesPage = () => {
               {service.description}
             </p>
 
-            {/* <button className="bg-[#4A70A9] hover:bg-[#4A70A9] text-white font-semibold py-2 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer">
+            {/* <button className="bg-blue-500 hover:bg-blue-500 text-white font-semibold py-2 px-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 cursor-pointer">
               Start Learning
             </button> */}
           </div>

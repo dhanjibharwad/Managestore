@@ -14,7 +14,7 @@ const AppFeaturesPage: React.FC = () => {
   const leftFeatures = [
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
         </svg>
       ),
@@ -23,7 +23,7 @@ const AppFeaturesPage: React.FC = () => {
     },
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
       ),
@@ -32,7 +32,7 @@ const AppFeaturesPage: React.FC = () => {
     },
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
         </svg>
       ),
@@ -44,7 +44,7 @@ const AppFeaturesPage: React.FC = () => {
   const rightFeatures = [
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
         </svg>
@@ -54,7 +54,7 @@ const AppFeaturesPage: React.FC = () => {
     },
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
         </svg>
       ),
@@ -63,7 +63,7 @@ const AppFeaturesPage: React.FC = () => {
     },
     {
       icon: (
-        <svg className="w-12 h-12 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
         </svg>
       ),
@@ -125,11 +125,11 @@ const AppFeaturesPage: React.FC = () => {
           <div className="flex justify-center">
             <div className="relative">
               {/* Phone Frame */}
-              <div className="relative w-80 h-[600px] bg-white rounded-[3rem] shadow-2xl p-3 border-6 border-[#4A70A9]">
+              <div className="relative w-80 h-[600px] bg-white rounded-[3rem] shadow-2xl p-3 border-6 border-blue-500">
                 <div className="w-full h-full bg-[#E2EBF6] rounded-[2.5rem] overflow-hidden relative">
                   {/* Logo */}
                   <div className="absolute top-6 left-6 z-20">
-                    <div className="text-2xl font-bold text-[#4A70A9]">Store Manager</div>
+                    <div className="text-2xl font-bold text-blue-500">Store Manager</div>
                     <div className="text-xs text-gray-500 mt-1">sign in | sign up</div>
                   </div>
 
@@ -195,7 +195,7 @@ const AppFeaturesPage: React.FC = () => {
                         key={i}
                         onClick={() => setActiveCard(i)}
                         className={`rounded-full transition-all ${
-                          activeCard === i ? 'bg-[#4A70A9] w-6 h-2' : 'bg-gray-400 w-2 h-2'
+                          activeCard === i ? 'bg-blue-500 w-6 h-2' : 'bg-gray-400 w-2 h-2'
                         }`}
                         aria-label={`View card ${i + 1}`}
                       />

@@ -200,7 +200,7 @@ export default function WallOfLove() {
               key={index}
               onClick={() => setCurrentIndex(index)}
               className={`h-2 rounded-full transition-all duration-300 ${
-                index === (currentIndex % baseTestimonials.length) ? 'w-8 bg-[#4A70A9]' : 'w-2 bg-gray-300'
+                index === (currentIndex % baseTestimonials.length) ? 'w-8 bg-blue-500' : 'w-2 bg-gray-300'
               }`}
               aria-label={`Go to slide ${index + 1}`}
             />

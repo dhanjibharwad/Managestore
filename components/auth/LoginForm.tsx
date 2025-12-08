@@ -1,122 +1,113 @@
 "use client"
 
 import { useState } from "react";
-import { Menu, X, User, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
 
-export default function LoginForm() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [subscribeEmail, setSubscribeEmail] = useState("");
+export default function SignInForm() {
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
 
-  async function handleLogin() {
-    console.log("Login attempt with:", { username, password });
-  }
+  const [showPassword, setShowPassword] = useState(false);
+  const [message, setMessage] = useState("");
 
-  async function handleSubscribe() {
-    console.log("Subscribe with:", subscribeEmail);
-  }
+  const handleChange = (e: any) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSignIn = async (e: any) => {
+    e.preventDefault();
+    console.log("Sign in attempt with:", form);
+    setMessage("Signed in successfully!");
+  };
 
   return (
-    // <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
-      <div className="w-full max-w-6xl h-[600px] bg-white rounded-3xl shadow-2xl flex overflow-hidden relative">
-        
-        {/* Left Side - Purple Subscription Area */}
-        <div 
-          className="w-[55%] p-12 flex flex-col justify-between relative overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, #7C7EF5 0%, #6B6DE8 100%)"
-          }}
-        >
-          {/* Curved Edge Overlay */}
-          <div 
-            className="absolute top-0 right-0 bottom-0 w-[200px] bg-white"
-            style={{
-              borderTopLeftRadius: "50% 50%",
-              borderBottomLeftRadius: "50% 50%",
-              transform: "translateX(50%)"
-            }}
-          />
+    <div className="flex items-center justify-center min-h-screen p-8 bg-white">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
 
-          {/* Menu Icon */}
-          <div className="relative z-10">
-            <button className="text-white p-2 rounded-lg transition-all">
-              <Menu size={24} />
-            </button>
-          </div>
 
-          {/* Decorative Dots */}
-          <div className="absolute left-8 bottom-8 w-20 h-20 opacity-30 z-10">
-            <div className="grid grid-cols-6 gap-1.5">
-              {[...Array(36)].map((_, i) => (
-                <div key={i} className="w-1.5 h-1.5 bg-white rounded-full"></div>
-              ))}
-            </div>
-          </div>
+        {/* Welcome Text */}
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Hey there, Welcome Back!
+          </h1>
+          <p className="text-gray-600 text-sm">
+            Sign in to your account to continue
+          </p>
         </div>
 
-        {/* Right Side - Login Form */}
-        <div className="w-[45%] bg-white p-12 flex flex-col relative z-20">
+        {message && (
+          <div className="mb-4 p-3 rounded-lg bg-green-50 text-green-700 text-sm text-center">
+            {message}
+          </div>
+        )}
 
-          {/* Login Form Content */}
-          <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-semibold mb-2" style={{ color: "#7C7EF5" }}>
-                Hello there!
-              </h1>
-              <p className="text-xl font-medium" style={{ color: "#A5A6F6" }}>
-                Welcome Back
-              </p>
-            </div>
+        <div className="space-y-5">
+          {/* Email Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Email or Phone Number
+            </label>
+            <input
+              type="text"
+              name="email"
+              placeholder="Enter your email or phone number"
+              value={form.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition-colors bg-gray-50 text-gray-900 placeholder-gray-400"
+            />
+          </div>
 
-            {/* Username Input */}
-            <div className="mb-4">
-              <div className="flex items-center border-b border-gray-300 pb-2">
-                <User size={20} className="text-gray-400 mr-3" />
-                <input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="flex-1 text-gray-600 placeholder-gray-400 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Password Input */}
-            <div className="mb-8">
-              <div className="flex items-center border-b border-gray-300 pb-2">
-                <Lock size={20} className="text-gray-400 mr-3" />
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="flex-1 text-gray-600 placeholder-gray-400 focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Sign In Button */}
-            <button
-              onClick={handleLogin}
-              className="w-full text-white font-medium py-3 rounded-full mb-6 transition-all hover:shadow-lg"
-              style={{ background: "linear-gradient(135deg, #7C7EF5 0%, #6B6DE8 100%)" }}
-            >
-              Sign In
-            </button>
-
-            {/* Bottom Links */}
-            <div className="flex justify-between items-center text-xs">
-              <a href="#" className="hover:underline" style={{ color: "#7C7EF5" }}>
-                Don't have an account? <span className="font-medium">Register</span>
-              </a>
-              <a href="#" className="text-gray-400 hover:text-purple-500">
-                Terms & Conditions
-              </a>
+          {/* Password Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                value={form.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-600 focus:ring-1 focus:ring-blue-600 focus:outline-none transition-colors bg-gray-50 text-gray-900 placeholder-gray-400"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
             </div>
           </div>
+
+          {/* Forgot Password */}
+          <div className="text-left">
+            <a href="#" className="text-blue-600 text-sm font-medium hover:underline">
+              Forgot password?
+            </a>
+          </div>
+
+          {/* Sign In Button */}
+          <button
+            onClick={handleSignIn}
+            className="w-full bg-blue-600 text-white font-semibold py-3.5 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Sign in
+          </button>
+
+          {/* Sign Up Link */}
+          <p className="text-center text-sm text-gray-600 mt-6">
+            Don't have an account?{" "}
+            <a href="/auth/register" className="text-blue-600 font-semibold hover:underline">
+              Sign up
+            </a>
+          </p>
         </div>
       </div>
-    // </div>
+    </div>
   );
 }
