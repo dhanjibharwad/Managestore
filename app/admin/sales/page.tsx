@@ -144,7 +144,7 @@ export default function SalesPage() {
               
               <Link href="/admin/sales/add">
               <button
-                className="p-2 border-2 rounded-md text-sm font-medium transition-colors"
+                className="cursor-pointer p-2 border-2 rounded-md text-sm font-medium transition-colors"
                 style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
               >
                 <Plus className="w-5 h-5" />

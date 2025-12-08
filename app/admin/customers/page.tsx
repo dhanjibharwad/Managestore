@@ -65,7 +65,7 @@ export default function CustomersPage() {
             All Filters
           </button>
           <Link href="/admin/customers/add">
-          <button className="px-4 py-2 bg-[#4A70A9] text-white rounded-lg text-sm font-medium hover:bg-[#3d5c8a]">
+          <button className="cursor-pointer px-4 py-2 bg-[#4A70A9] text-white rounded-lg text-sm font-medium hover:bg-[#3d5c8a]">
             + Add
           </button>
           </Link>

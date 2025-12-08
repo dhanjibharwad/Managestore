@@ -77,9 +77,11 @@ export default function AMCContractsPage() {
                   />
                 </svg>
               </div>
+              <Link href="/admin/amcs/add">
               <button className="bg-[#4A70A9] text-white px-6 py-2 rounded-md hover:bg-[#3d5c8a] transition-colors font-medium">
                 + New
               </button>
+              </Link>
             </div>
           </div>
 

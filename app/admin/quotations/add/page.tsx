@@ -260,7 +260,7 @@ export default function QuotationPage() {
               <h2 className="text-lg font-semibold text-gray-800">Repair Service</h2>
               <button
                 onClick={openServiceModal}
-                className="flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
+                className="cursor-pointer flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
                 style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
               >
                 <Plus className="w-4 h-4" />
@@ -344,7 +344,7 @@ export default function QuotationPage() {
                 </button>
                 <button
                   onClick={openPartModal}
-                  className="flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
+                  className="cursor-pointer flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
                   style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
                 >
                   <Plus className="w-4 h-4" />
