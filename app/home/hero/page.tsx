@@ -18,7 +18,7 @@ export default function HeroSection() {
                     {/* Left Content */}
                     <div className="space-y-6">
 
-                        <h1 className="text-5xl sm:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+                        <h1 className="text-5xl sm:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
                             All-in-one repair shop management <span className='text-blue-500 dark:text-blue-400'>software</span>
                         </h1>
 
