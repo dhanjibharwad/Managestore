@@ -48,7 +48,7 @@ export default function SignInForm() {
           {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-gray-900 mb-2">
-              Email or Phone Number
+              Email
             </label>
             <input
               type="text"
