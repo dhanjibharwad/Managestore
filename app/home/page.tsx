@@ -38,7 +38,7 @@ export default function UserHomePage() {
           {/* Left Image */}
           <div className="relative w-full h-[400px] lg:h-[450px] overflow-hidden group">
             <Image
-              src="https://colorlib.com/wp/wp-content/uploads/sites/2/elaadmin-dashboard-template.png" // put your image in public/images/
+              src="/images/dash.svg" // put your image in public/images/
               alt="About Us Illustration"
               fill
               className="object-contain transition-all duration-500 group-hover:scale-110 group-hover:brightness-110 group-hover:-translate-y-2 group-hover:shadow-2xl"
@@ -83,7 +83,7 @@ export default function UserHomePage() {
           {/* Left Image */}
           <div className="relative w-full h-[400px] lg:h-[450px] overflow-hidden group">
             <Image
-              src="https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/html5%20admin%20dashboard%20template%2C%20smarthr.webp?width=650&height=374&name=html5%20admin%20dashboard%20template%2C%20smarthr.webp"
+              src="/images/roc.svg"
               alt="About Us Illustration"
               fill
               className="object-contain transition-all duration-500 group-hover:scale-110 group-hover:brightness-110 group-hover:-translate-y-2 group-hover:shadow-2xl"
@@ -124,7 +124,7 @@ export default function UserHomePage() {
           {/* Left Image */}
           <div className="relative w-full h-[600px] lg:h-[650px] overflow-hidden group">
             <Image
-              src="https://i.pinimg.com/736x/f0/1b/f3/f01bf3a6d7bfd0697aecf1a1cb6295c5.jpg"
+              src="/images/pie.svg"
               alt="About Us Illustration"
               fill
               className="object-contain transition-all duration-500 group-hover:scale-110 group-hover:brightness-110 group-hover:-translate-y-2 group-hover:shadow-2xl"
