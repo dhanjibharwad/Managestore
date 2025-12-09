@@ -41,24 +41,24 @@ export default function AboutPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
 
-      <section className="relative bg-blue-500 text-white">
+      <section className="relative text-white">
         {/* Decorative shapes */}
-        <div className="absolute inset-0 overflow-hidden">
+        {/* <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-0 left-1/4 w-22 h-22 bg-gray-400 opacity-20 rounded-full animate-pulse"></div>
           <div className="absolute bottom-0 right-1/3 w-26 h-26 bg-gray-400 opacity-20 rounded-full animate-pulse"></div>
-        </div>
+        </div> */}
 
-        <div className="relative max-w-7xl mx-auto px-6 py-32 text-center">
+        <div className="relative max-w-7xl mx-auto px-6 py-28 text-center">
           {/* <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in"> */}
-          <h1 className="text-center mt-2 mb-6 text-4xl sm:text-5xl font-bold tracking-wide drop-shadow-md font-serif text-white">
-            About Store Manager        </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in delay-200">
+          <h1 className="text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
+            About Us </h1>
+          <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed animate-fade-in delay-200">
             Your trusted partner in solving technical queries through innovative online solutions,
             on-site visits, and expert technician services.
           </p>
 
           {/* Call-to-action buttons */}
-          <div className="flex justify-center gap-4 mt-4 animate-fade-in delay-400">
+          {/* <div className="flex justify-center gap-4 mt-4 animate-fade-in delay-400">
             <a
               href="/user/herosec"
               className="px-6 py-3 rounded-lg bg-white text-gray-800 font-semibold shadow-lg hover:bg-gray-100 transition"
@@ -66,11 +66,11 @@ export default function AboutPage() {
               Our Services
             </a>
             <Link href="/user/contact">
-              <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-white hover:text-gray-800 transition cursor-pointer">
+              <button className="border-2 border-white text-black px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-white hover:text-gray-800 transition cursor-pointer">
                 Contact Us
               </button>
             </Link>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -230,23 +230,23 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 bg-blue-500 text-white overflow-hidden">
+      <section className="relative py-20 text-white overflow-hidden">
         {/* Decorative floating shapes */}
-        <div className="absolute inset-0 pointer-events-none">
+        {/* <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 left-1/4 w-32 h-32 bg-gray-700 opacity-20 rounded-full"></div>
           <div className="absolute bottom-0 right-1/3 w-36 h-36 bg-gray-900 opacity-15 rounded-full"></div>
-        </div>
+        </div> */}
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-center mt-2 mb-6 text-4xl sm:text-5xl font-bold tracking-wide drop-shadow-md font-serif text-white">
+          <h2 className="text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
             Ready to Get Started?
           </h2>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+          <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
             Join thousands of satisfied customers who trust Store Manager
             for their technical support needs.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-gray-800 px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-100 transition cursor-pointer">
               Submit a Query
             </button>
@@ -255,7 +255,7 @@ export default function AboutPage() {
                 Contact Us
               </button>
             </Link>
-          </div>
+          </div> */}
         </div>
       </section>
 
