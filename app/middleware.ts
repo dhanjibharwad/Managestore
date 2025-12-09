@@ -1,58 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { jwtVerify } from 'jose';
 
-// Route → Allowed Roles
-const roleAccessMap: Record<string, string[]> = {
-  "/superadmin": ["superadmin"],
-  "/admin": ["admin", "superadmin"],
-  "/technician": ["technician"],
-  "/customer": ["customer"],
-};
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
 
-export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+const publicRoutes = ['/auth/login', '/auth/register', '/auth/verify-email', '/auth/forgot-password', '/auth/reset-password'];
+const authRoutes = ['/auth/login', '/auth/register'];
 
-  // ✅ Allow public routes
-  if (
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/register") ||
-    pathname.startsWith("/api/auth")
-  ) {
-    return NextResponse.next();
-  }
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const token = request.cookies.get('session')?.value;
 
-  // ✅ Get token from cookies
-  const token = req.cookies.get("token")?.value;
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
-  }
-
-  try {
-    const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
-
-    const userRole = decoded.role;
-
-    // ✅ Role based protection
-    for (const route in roleAccessMap) {
-      if (pathname.startsWith(route)) {
-        if (!roleAccessMap[route].includes(userRole)) {
-          return NextResponse.redirect(new URL("/unauthorized", req.url));
-        }
-      }
+  // Check if user is authenticated
+  let isAuthenticated = false;
+  if (token) {
+    try {
+      await jwtVerify(token, JWT_SECRET);
+      isAuthenticated = true;
+    } catch {
+      isAuthenticated = false;
     }
-
-    return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL("/login", req.url));
   }
+
+  // Redirect authenticated users away from auth pages
+  if (isAuthenticated && authRoutes.includes(pathname)) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  // Redirect unauthenticated users to login
+  if (!isAuthenticated && !publicRoutes.includes(pathname) && !pathname.startsWith('/api/auth')) {
+    return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/superadmin/:path*",
-    "/admin/:path*",
-    "/technician/:path*",
-    "/customer/:path*",
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

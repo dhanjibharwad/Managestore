@@ -2,8 +2,8 @@ import { Users, Clock, Smartphone, Globe, Receipt } from 'lucide-react';
 
 const features = [
     { title: 'Smart\nManagement' },
-    { title: 'Real-time' },
-    { title: 'Multi-device' },
+    { title: 'Real-time\nUpdates' },
+    { title: 'Multi-device\nAccess' },
     { title: 'Access\nAnywhere' },
     { title: 'Easy Billing &\nReports' },
 ];
