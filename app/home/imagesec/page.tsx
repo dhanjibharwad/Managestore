@@ -2,11 +2,11 @@
 
 export default function ImageSectionPage() {
   return (
-    <div className="max-w-7xl mx-auto px-10 py-16">
-      <div className="grid md:grid-cols-2 gap-15 items-start">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
+      <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-20 xl:gap-24 items-start">
         {/* Left Content */}
-        <div className="mt-20">
-          <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+        <div className="md:mt-20">
+          <p className="text-blue-500 dark:text-blue-400 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
             What our work life is like
           </p>
           <h1 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
@@ -23,7 +23,7 @@ export default function ImageSectionPage() {
         </div>
         
         {/* Right Image Grid - Exact Masonry Layout */}
-        <div className="relative">
+        <div className="relative mt-8 md:mt-0">
           {/* Row 1 - Two images at top */}
           <div className="flex gap-2 sm:gap-3 mb-2 sm:mb-3">
             <img
