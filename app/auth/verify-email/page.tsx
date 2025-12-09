@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef, Suspense } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-function VerifyEmailForm() {
+export default function VerifyEmailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -124,24 +124,31 @@ function VerifyEmailForm() {
     setResendLoading(true);
 
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch('/api/auth/resend-verification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, resend: true }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || 'Failed to resend code');
+        if (data.code === 'TOO_MANY_REQUESTS') {
+          setError('Please wait a minute before requesting another code.');
+        } else {
+          setError(data.error || 'Failed to resend code');
+        }
         return;
       }
 
       setSuccess('Verification code resent! Check your email.');
       setResendCooldown(60); // 60 seconds cooldown
+      // Clear OTP fields
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
     } catch (err) {
       console.error('Resend error:', err);
-      setError('Failed to resend code');
+      setError('Failed to resend code. Please try again.');
     } finally {
       setResendLoading(false);
     }
@@ -219,7 +226,7 @@ function VerifyEmailForm() {
               {otp.map((digit, index) => (
                 <input
                   key={index}
-                  ref={(el) => { inputRefs.current[index] = el; }}
+                   ref={(el) => { inputRefs.current[index] = el; }}
                   type="text"
                   inputMode="numeric"
                   maxLength={1}
@@ -298,13 +305,5 @@ function VerifyEmailForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function VerifyEmailPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center"><div className="text-zinc-800">Loading...</div></div>}>
-      <VerifyEmailForm />
-    </Suspense>
   );
 }
