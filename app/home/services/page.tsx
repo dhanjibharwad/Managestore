@@ -75,7 +75,7 @@ const ServicesPage = () => {
   return (
     <section className="py-10">
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-200">Our Services</h2>
+        <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">Our Services</h2>
         <p className="mt-4 text-gray-500 max-w-2xl mx-auto dark:text-gray-300">
           Comprehensive support solutions designed to meet all your technical and service needs with professional expertise.
         </p>
@@ -85,7 +85,7 @@ const ServicesPage = () => {
         {services.map((service, index) => (
           <div
             key={index}
-            className="bg-white rounded-3xl p-6 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden transform hover:-translate-y-2"
+            className="bg-gray-100 rounded-3xl p-6 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 relative overflow-hidden transform hover:-translate-y-2"
           >
             <div className="absolute top-4 right-4">
               <span className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full font-medium">
