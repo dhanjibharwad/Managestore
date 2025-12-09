@@ -45,12 +45,4 @@
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
   }
-
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
 }
