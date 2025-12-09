@@ -17,7 +17,6 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  allowedDevOrigins: ['jis.mechnet.in'],
   trailingSlash: true
 };
 
