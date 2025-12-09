@@ -42,12 +42,12 @@ const ProfilePage = () => {
             <div className="flex items-start gap-6">
               {/* Profile Avatar */}
               <div className="w-32 h-32 rounded-full bg-green-500 flex items-center justify-center text-white text-5xl font-bold">
-                DB
+                UD
               </div>
 
               {/* Profile Info */}
               <div className="pt-2">
-                <h1 className="text-3xl font-bold text-gray-900 mb-6">Dhanji Bharwad</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-6">Uday Mishra</h1>
                 
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 text-gray-700">

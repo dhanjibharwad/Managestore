@@ -55,8 +55,8 @@ export default function AdminSidebar() {
 
   return (
     <aside 
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${
-        isCollapsed ? 'w-20' : 'w-64'
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col sticky top-0 h-screen ${
+        isCollapsed ? 'w-16 sm:w-20' : 'w-56 sm:w-64'
       }`}
     >
       {/* Toggle Button */}
@@ -73,9 +73,9 @@ export default function AdminSidebar() {
       </button>
 
       {/* Sidebar Content */}
-      <div className="flex-1 p-5">
+      <div className="flex-1 p-3 sm:p-5 overflow-y-auto">
         {/* Logo */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           {!isCollapsed ? (
             <Link 
               href="/home" 
@@ -84,7 +84,7 @@ export default function AdminSidebar() {
               <img 
                 src="/images/lg1.png" 
                 alt="BytePhase Logo" 
-                className="h-16 w-auto"
+                className="h-12 sm:h-16 w-auto"
               />
             </Link>
           ) : (
@@ -95,7 +95,7 @@ export default function AdminSidebar() {
               <img 
                 src="/images/np.png" 
                 alt="Storremanager Logo" 
-                className="h-8 w-8 object-contain"
+                className="h-6 w-6 sm:h-8 sm:w-8 object-contain"
               />
             </Link>
           )}
@@ -103,7 +103,7 @@ export default function AdminSidebar() {
 
         {/* Navigation Items */}
         <nav>
-          <ul className="space-y-1">
+          <ul className="space-y-0.5 sm:space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -112,7 +112,7 @@ export default function AdminSidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${
+                    className={`w-full flex items-center gap-2 sm:gap-3 px-2 sm:px-4 py-2 sm:py-3 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 group relative ${
                       isActive
                         ? 'bg-[#4A70A9] text-white shadow-md'
                         : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
@@ -121,7 +121,7 @@ export default function AdminSidebar() {
                   >
                     
                     <Icon 
-                      className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0 transition-transform duration-200 ${
+                      className={`${isCollapsed ? 'w-4 h-4 sm:w-5 sm:h-5' : 'w-4 h-4 sm:w-5 sm:h-5'} flex-shrink-0 transition-transform duration-200 ${
                         !isActive && 'group-hover:scale-110'
                       }`} 
                     />
@@ -132,7 +132,7 @@ export default function AdminSidebar() {
 
                     {/* Tooltip for collapsed state */}
                     {isCollapsed && (
-                      <span className="absolute left-full ml-2 px-3 py-2 bg-[#4A70A9] text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                      <span className="absolute left-full ml-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-[#4A70A9] text-white text-[10px] sm:text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
                         {item.label}
                       </span>
                     )}

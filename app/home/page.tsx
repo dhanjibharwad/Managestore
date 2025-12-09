@@ -10,24 +10,13 @@ import WallOfLove from './testimonial/page';
 import HeroSection from './hero/page';
 import ScrollAnimatedSection from '@/components/ScrollAnimatedSection';
 import ImageSectionPage from './imagesec/page';
-import ServiceManager from './specialdiv/page'; 
+import ServiceManager from './specialdiv/page';
 
 
 export default function UserHomePage() {
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-
-      {/* <section className="relative h-[650px] flex items-center">
-       
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
-          style={{
-            backgroundImage: "url('/images/id21.png')", 
-            filter: "brightness(0.8)",
-          }}
-        ></div>
-      </section>  */}
+    <div className="min-h-screen bg-white">
 
       <ScrollAnimatedSection>
         <HeroSection />
