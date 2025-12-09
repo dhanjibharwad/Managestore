@@ -155,13 +155,13 @@ function VerifyEmailContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 sm:p-8">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#4A70A9] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#4A70A9] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
             <svg
-              className="w-8 h-8 text-[#4A70A9]"
+              className="w-7 h-7 sm:w-8 sm:h-8 text-[#4A70A9]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -174,16 +174,16 @@ function VerifyEmailContent() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-zinc-800">Verify Your Email</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-zinc-800">Verify Your Email</h1>
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             We sent a 6-digit code to
           </p>
-          <p className="font-medium text-zinc-800 mt-1">{email}</p>
+          <p className="font-medium text-sm sm:text-base text-zinc-800 mt-1 break-all">{email}</p>
         </div>
 
         {/* Messages */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
+          <div className="mb-4 sm:mb-6 bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg flex items-start text-sm">
             <svg
               className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
               fill="currentColor"
@@ -200,7 +200,7 @@ function VerifyEmailContent() {
         )}
 
         {success && (
-          <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg flex items-start">
+          <div className="mb-4 sm:mb-6 bg-green-50 border border-green-200 text-green-700 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg flex items-start text-sm">
             <svg
               className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
               fill="currentColor"
@@ -217,12 +217,12 @@ function VerifyEmailContent() {
         )}
 
         {/* OTP Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
-            <label className="block text-sm font-medium text-zinc-700 mb-3 text-center">
+            <label className="block text-xs sm:text-sm font-medium text-zinc-700 mb-2 sm:mb-3 text-center">
               Enter Verification Code
             </label>
-            <div className="flex justify-center gap-2" onPaste={handlePaste}>
+            <div className="flex justify-center gap-1.5 sm:gap-2" onPaste={handlePaste}>
               {otp.map((digit, index) => (
                 <input
                   key={index}
@@ -233,7 +233,7 @@ function VerifyEmailContent() {
                   value={digit}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
+                  className="w-10 h-12 sm:w-12 sm:h-14 text-center text-xl sm:text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
                   disabled={loading}
                 />
               ))}
@@ -244,7 +244,7 @@ function VerifyEmailContent() {
           <button
             type="submit"
             disabled={loading || otp.some((d) => !d)}
-            className="w-full bg-[#4A70A9] text-white py-3 rounded-lg font-medium hover:bg-[#3d5d8f] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full bg-[#4A70A9] text-white py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-medium hover:bg-[#3d5d8f] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {loading ? (
               <>
@@ -276,7 +276,7 @@ function VerifyEmailContent() {
         </form>
 
         {/* Resend Section */}
-        <div className="mt-6 text-center">
+        <div className="mt-4 sm:mt-6 text-center">
           <p className="text-sm text-gray-600 mb-2">Didn't receive the code?</p>
           <button
             type="button"
@@ -295,7 +295,7 @@ function VerifyEmailContent() {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 pt-6 border-t border-gray-200">
+        <div className="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-gray-200">
           <p className="text-center text-sm text-gray-600">
             Wrong email?{' '}
             <Link href="/auth/register" className="text-[#4A70A9] font-medium hover:underline">
