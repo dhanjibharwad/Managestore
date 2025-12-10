@@ -126,17 +126,17 @@ export default function Navbar() {
             : "bg-transparent backdrop-blur-sm py-2"
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="relative flex items-center z-50">
             <h1
-              className={`${playfair.className} text-[30px] tracking-[0.05em] text-blue-600 font-semibold`}
+              className={`${playfair.className} text-[20px] sm:text-[24px] md:text-[30px] tracking-[0.05em] text-blue-600 font-semibold`}
             >
-              <span className="text-[38px] mr-[1px]">S</span>TORE{" "}
-              <span className="text-[38px] mr-[1px]">M</span>ANAGER
+              <span className="text-[24px] sm:text-[30px] md:text-[38px] mr-[1px]">S</span>TORE{" "}
+              <span className="text-[24px] sm:text-[30px] md:text-[38px] mr-[1px]">M</span>ANAGER
             </h1>
           </Link>
 
-          <div className="hidden lg:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
               <div
                 key={item.name}
@@ -146,7 +146,7 @@ export default function Navbar() {
               >
                 <Link
                   href={item.href}
-                  className="relative px-5 py-4 text-gray-700 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group"
+                  className="relative px-3 lg:px-5 py-4 text-gray-700 font-semibold transition-colors duration-300 ease-in-out flex items-center gap-1 group text-sm lg:text-base"
                 >
                   <span className="relative z-10">{item.name}</span>
                   {item.dropdown && (
@@ -191,23 +191,23 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             {loading ? (
-              <div className="w-32 h-10 bg-gray-200 animate-pulse rounded-xl" />
+              <div className="w-24 lg:w-32 h-8 lg:h-10 bg-gray-200 animate-pulse rounded-xl" />
             ) : user ? (
               <div className="relative profile-menu-container">
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 lg:gap-3 px-3 lg:px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                    <User size={18} className="text-blue-600" />
+                  <div className="w-6 lg:w-8 h-6 lg:h-8 rounded-full bg-white flex items-center justify-center">
+                    <User size={16} className="lg:w-[18px] lg:h-[18px] text-blue-600" />
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-white leading-tight">
+                    <p className="text-xs lg:text-sm font-semibold text-white leading-tight">
                       {user.name}
                     </p>
-                    <p className="text-xs text-blue-100 capitalize">{user.role}</p>
+                    <p className="text-[10px] lg:text-xs text-blue-100 capitalize">{user.role}</p>
                   </div>
                   <ChevronDown
                     size={16}
@@ -218,7 +218,7 @@ export default function Navbar() {
                 </button>
 
                 {showProfileMenu && (
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden animate-slideDown">
+                  <div className="absolute top-full right-0 mt-2 w-56 lg:w-64 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden animate-slideDown">
                     <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200">
                       <p className="font-semibold text-gray-900">
                         {user.name}
@@ -271,14 +271,14 @@ export default function Navbar() {
               <>
                 <Link
                   href="/auth/login"
-                  className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-gray-900 bg-white border-1 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
+                  className="min-w-[100px] lg:min-w-[140px] px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-semibold text-sm lg:text-md text-center text-gray-900 bg-white border-1 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
                 >
                   Login
                 </Link>
 
                 <Link
                   href="/auth/register"
-                  className="min-w-[140px] px-6 py-3 rounded-xl font-semibold text-md text-center text-white bg-blue-500 shadow-lg hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
+                  className="min-w-[100px] lg:min-w-[140px] px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-semibold text-sm lg:text-md text-center text-white bg-blue-500 shadow-lg hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
                 >
                   Get Started
                 </Link>
@@ -287,31 +287,31 @@ export default function Navbar() {
           </div>
 
           <button
-            className="lg:hidden p-2 text-gray-700 hover:text-indigo-600 transition-colors duration-200 relative group z-50"
+            className="md:hidden p-2 text-gray-700 hover:text-indigo-600 transition-colors duration-200 relative group z-50"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-indigo-50 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-200" />
             <span className="relative z-10">
-              {isOpen ? <X size={26} /> : <Menu size={26} />}
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
             </span>
           </button>
         </div>
       </nav>
 
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden transition-all duration-300 ${
+        className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden transition-all duration-300 ${
           isOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setIsOpen(false)}
       />
 
       <div
-        className={`fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white z-40 lg:hidden transform transition-all duration-500 ease-out ${
+        className={`fixed top-0 right-0 h-full w-72 sm:w-80 max-w-[85vw] bg-white z-40 md:hidden transform transition-all duration-500 ease-out ${
           isOpen ? "translate-x-0 shadow-2xl" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col h-full pt-24 px-6 pb-6 overflow-y-auto">
+        <div className="flex flex-col h-full pt-20 sm:pt-24 px-4 sm:px-6 pb-6 overflow-y-auto">
           {user && (
             <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl">
               <div className="flex items-center gap-3">
@@ -397,7 +397,7 @@ export default function Navbar() {
             )}
           </div>
 
-          <div className="mt-8 space-y-3">
+          <div className="mt-6 sm:mt-8 space-y-2 sm:space-y-3">
             {user ? (
               <button
                 onClick={handleLogout}
