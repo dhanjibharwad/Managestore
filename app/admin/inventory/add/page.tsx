@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, X } from 'lucide-react';
 
 export default function AddPartPage() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     partName: '',
     category: '',
@@ -24,6 +27,7 @@ export default function AddPartPage() {
     hsnCode: '',
     partDescription: ''
   });
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showSubCategoryModal, setShowSubCategoryModal] = useState(false);
@@ -57,6 +61,78 @@ export default function AddPartPage() {
     }
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const validTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/webp', 'application/pdf'];
+      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024;
+    });
+    setUploadedFiles(prev => [...prev, ...validFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.partName || !formData.openingStock || !formData.purchasePrice) {
+      alert('Please fill in required fields: Part Name, Opening Stock, and Purchase Price');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      let uploadedFileUrls: string[] = [];
+      
+      // Upload files if any
+      if (uploadedFiles.length > 0) {
+        const fileFormData = new FormData();
+        uploadedFiles.forEach(file => {
+          fileFormData.append('files', file);
+        });
+        
+        const uploadResponse = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: fileFormData,
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadResult = await uploadResponse.json();
+          uploadedFileUrls = uploadResult.files.map((f: any) => f.url);
+        }
+      }
+      
+      // Create inventory part with file URLs
+      const partData = {
+        ...formData,
+        images: uploadedFileUrls
+      };
+      
+      const response = await fetch('/api/admin/inventory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(partData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Inventory part created successfully! Part ID: ${result.part.part_id}`);
+        router.push('/admin/inventory');
+      } else {
+        alert(result.error || 'Failed to create inventory part');
+      }
+    } catch (error) {
+      console.error('Error creating inventory part:', error);
+      alert('An error occurred while creating the inventory part');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-[1600px] mx-auto">
@@ -64,11 +140,18 @@ export default function AddPartPage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-semibold text-gray-900">Add Part</h1>
           <div className="flex gap-3">
-            <button className="px-8 py-2.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+            <button 
+              onClick={() => router.push('/admin/inventory')}
+              className="px-8 py-2.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+            >
               Cancel
             </button>
-            <button className="px-8 py-2.5 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] font-medium transition-colors">
-              Save
+            <button 
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-8 py-2.5 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Saving...' : 'Save'}
             </button>
           </div>
         </div>
@@ -414,7 +497,10 @@ export default function AddPartPage() {
           <div className="p-8">
             <h2 className="text-xl font-semibold text-gray-900 mb-8">Upload Images</h2>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-16 text-center hover:border-[#4A70A9] transition-colors">
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-16 text-center hover:border-[#4A70A9] transition-colors cursor-pointer"
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-[#4A70A9] rounded-full flex items-center justify-center">
                   <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -427,8 +513,46 @@ export default function AddPartPage() {
               <p className="text-[#4A70A9] font-medium mb-2 text-base">
                 Take A Photo With Your Camera Or Choose A File From Your Device
               </p>
-              <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
+              <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES (Max 10MB each)</p>
             </div>
+            
+            <input
+              id="fileInput"
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/bmp,image/webp,application/pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            
+            {/* Display uploaded files */}
+            {uploadedFiles.length > 0 && (
+              <div className="mt-6 space-y-3">
+                <h3 className="text-sm font-medium text-gray-700">Uploaded Files:</h3>
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded border">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-blue-100 rounded flex items-center justify-center">
+                        {file.type.startsWith('image/') ? '🖼️' : '📄'}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(index);
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

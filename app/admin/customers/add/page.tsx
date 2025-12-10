@@ -1,9 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { ChevronDown, Plus } from 'lucide-react';
 
 export default function CustomerForm() {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     customerType: '',
     customerName: '',
@@ -17,10 +20,67 @@ export default function CustomerForm() {
     cityTown: '',
     postalCode: ''
   });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    alert('Customer created successfully!');
+  const validateField = (name: string, value: string) => {
+    const newErrors = { ...errors };
+    
+    switch (name) {
+      case 'mobileNumber':
+        if (value && !/^[6-9][0-9]{9}$/.test(value)) {
+          newErrors.mobileNumber = 'Invalid mobile: 10 digits starting with 6-9';
+        } else {
+          delete newErrors.mobileNumber;
+        }
+        break;
+      case 'emailId':
+        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          newErrors.emailId = 'Invalid email format';
+        } else {
+          delete newErrors.emailId;
+        }
+        break;
+    }
+    
+    setErrors(newErrors);
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.customerType || !formData.customerName) {
+      alert('Please fill in required fields: Customer Type and Customer Name');
+      return;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      alert('Please fix validation errors before submitting');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/admin/customers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Customer created successfully! Customer ID: ${result.customer.customer_id}`);
+        router.push('/admin/customers');
+      } else {
+        alert(result.error || 'Failed to create customer');
+      }
+    } catch (error) {
+      console.error('Error creating customer:', error);
+      alert('An error occurred while creating the customer');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -56,9 +116,10 @@ export default function CustomerForm() {
             <button
               type="button"
               onClick={handleSubmit}
-              className="px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors font-medium"
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create
+              {isSubmitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -118,11 +179,21 @@ export default function CustomerForm() {
                   <input
                     type="tel"
                     value={formData.mobileNumber}
-                    onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-                    placeholder="Eg: 99XXXXXXXX"
-                    className="flex-1 px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({ ...formData, mobileNumber: value });
+                      validateField('mobileNumber', value);
+                    }}
+                    placeholder="10 digits starting with 6-9"
+                    maxLength={10}
+                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                      errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
+                {errors.mobileNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.mobileNumber}</p>
+                )}
               </div>
 
               {/* Email ID */}
@@ -133,10 +204,19 @@ export default function CustomerForm() {
                 <input
                   type="email"
                   value={formData.emailId}
-                  onChange={(e) => setFormData({ ...formData, emailId: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, emailId: value });
+                    validateField('emailId', value);
+                  }}
                   placeholder="Eg: example@example.com"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.emailId ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.emailId && (
+                  <p className="text-red-500 text-xs mt-1">{errors.emailId}</p>
+                )}
               </div>
 
               {/* Phone Number */}

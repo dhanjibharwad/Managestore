@@ -1,30 +1,50 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronUp, Search, Plus, Info } from 'lucide-react';
 
 interface Part {
-  id: string;
-  name: string;
-  purchasePrice: number;
-  sellingPrice: number;
-  tax: number;
+  part_id: string;
+  part_name: string;
+  purchase_price: number;
+  selling_price: number;
+  tax: string;
   warranty: string;
-  stock: number;
-  rateIncludesTax: boolean;
-  qty: number;
+  opening_stock: number;
+  current_stock: number;
+  rate_including_tax: boolean;
+  category: string;
+  sub_category: string;
+  low_stock_units: number;
 }
 
 const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
-  
-  // Sample data - empty for "No data" state
-  const parts: Part[] = [];
+  const [parts, setParts] = useState<Part[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const totalPurchasePrice = parts.reduce((sum, part) => sum + part.purchasePrice, 0);
-  const totalSellingPrice = parts.reduce((sum, part) => sum + part.sellingPrice, 0);
-  const lowStockCount = parts.filter(part => part.stock < 10).length;
+  useEffect(() => {
+    fetchParts();
+  }, []);
+
+  const fetchParts = async () => {
+    try {
+      const response = await fetch('/api/admin/inventory');
+      const data = await response.json();
+      if (response.ok) {
+        setParts(data.parts || []);
+      }
+    } catch (error) {
+      console.error('Error fetching parts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPurchasePrice = parts.reduce((sum, part) => sum + Number(part.purchase_price || 0), 0);
+  const totalSellingPrice = parts.reduce((sum, part) => sum + Number(part.selling_price || 0), 0);
+  const lowStockCount = parts.filter(part => part.current_stock <= (part.low_stock_units || 0)).length;
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -158,29 +178,54 @@ const InventoryPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {parts.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-16 text-center text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : parts.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-4 py-16 text-center text-gray-500">
                     No data
                   </td>
                 </tr>
               ) : (
-                parts.map((part) => (
-                  <tr key={part.id} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-800">{part.name}</td>
+                parts
+                  .filter(part => 
+                    part.part_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    part.part_id.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .map((part) => (
+                  <tr key={part.part_id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm text-gray-800">
-                      {part.purchasePrice.toFixed(2)}
+                      <div className="font-medium">{part.part_name}</div>
+                      <div className="text-xs text-gray-500">{part.part_id}</div>
+                      {part.category && (
+                        <div className="text-xs text-blue-600">{part.category}{part.sub_category && ` > ${part.sub_category}`}</div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-800">
-                      {part.sellingPrice.toFixed(2)}
+                      ₹{Number(part.purchase_price || 0).toFixed(2)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-800">{part.tax}%</td>
-                    <td className="px-4 py-3 text-sm text-gray-800">{part.warranty}</td>
-                    <td className="px-4 py-3 text-sm text-gray-800">{part.stock}</td>
                     <td className="px-4 py-3 text-sm text-gray-800">
-                      {part.rateIncludesTax ? 'Yes' : 'No'}
+                      {part.selling_price ? `₹${Number(part.selling_price).toFixed(2)}` : '-'}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-800">{part.qty}</td>
+                    <td className="px-4 py-3 text-sm text-gray-800">{part.tax || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-800">{part.warranty || '-'}</td>
+                    <td className="px-4 py-3 text-sm text-gray-800">
+                      <span className={`px-2 py-1 rounded-full text-xs ${
+                        part.current_stock <= (part.low_stock_units || 0) 
+                          ? 'bg-red-100 text-red-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {part.current_stock || part.opening_stock || 0}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-800">
+                      {part.rate_including_tax ? 'Yes' : 'No'}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-800">{part.current_stock || part.opening_stock || 0}</td>
                   </tr>
                 ))
               )}
