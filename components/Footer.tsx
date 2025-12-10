@@ -32,8 +32,8 @@ const Footer = () => {
   ];
 
   const legalLinks = [
-    { name: "Privacy Policy", href: "/user/privacy" },
-    { name: "Terms of Service", href: "/user/tandc" },
+    { name: "Privacy Policy", href: "/extra/privacy" },
+    { name: "Terms of Service", href: "/extra/terms" },
     // { name: "Cookie Policy", href: "/user/colie" },
     // { name: "Refund Policy", href: "/refund" },
   ];
