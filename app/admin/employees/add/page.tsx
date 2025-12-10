@@ -1,8 +1,11 @@
 "use client"
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Calendar, Plus } from 'lucide-react';
 
 const EmployeeForm = () => {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     employeeRole: '',
     employeeName: '',
@@ -24,15 +27,80 @@ const EmployeeForm = () => {
     accountNumber: '',
     ifscCode: ''
   });
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const validateField = (name: string, value: string) => {
+    const newErrors = { ...errors };
+    
+    switch (name) {
+      case 'aadhaarNumber':
+        if (value && !/^[2-9]{1}[0-9]{11}$/.test(value)) {
+          newErrors.aadhaarNumber = 'Invalid Aadhaar: 12 digits starting with 2-9';
+        } else {
+          delete newErrors.aadhaarNumber;
+        }
+        break;
+      case 'panCard':
+        if (value && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(value.toUpperCase())) {
+          newErrors.panCard = 'Invalid PAN: Format ABCDE1234F';
+        } else {
+          delete newErrors.panCard;
+        }
+        break;
+      case 'mobileNumber':
+        if (value && !/^[6-9][0-9]{9}$/.test(value)) {
+          newErrors.mobileNumber = 'Invalid mobile: 10 digits starting with 6-9';
+        } else {
+          delete newErrors.mobileNumber;
+        }
+        break;
+    }
+    
+    setErrors(newErrors);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    validateField(name, value);
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    // Add your submission logic here
+  const handleSubmit = async () => {
+    if (!formData.employeeRole || !formData.employeeName || !formData.emailId || !formData.mobileNumber) {
+      alert('Please fill in all required fields: Employee Role, Name, Email, and Mobile Number');
+      return;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      alert('Please fix validation errors before submitting');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/admin/employees', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Employee created successfully! Employee ID: ${result.employee.employee_id}`);
+        router.push('/admin/employees');
+      } else {
+        alert(result.error || 'Failed to create employee');
+      }
+    } catch (error) {
+      console.error('Error creating employee:', error);
+      alert('An error occurred while creating the employee');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -55,9 +123,10 @@ const EmployeeForm = () => {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors"
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create
+              {isSubmitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -142,20 +211,24 @@ const EmployeeForm = () => {
                   Mobile Number <span className="text-red-500">*</span>
                 </label>
                 <div className="flex">
-                  <select className="px-3 py-2 border border-r-0 border-gray-300 rounded-l-md bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#4A70A9]">
-                    <option>+91</option>
-                    <option>+1</option>
-                    <option>+44</option>
-                  </select>
+                  <div className="px-3 py-2 border border-r-0 border-gray-300 rounded-l-md bg-gray-50 text-gray-700 flex items-center">
+                    +91
+                  </div>
                   <input
                     type="tel"
                     name="mobileNumber"
                     value={formData.mobileNumber}
                     onChange={handleChange}
-                    placeholder="Eg: 99XXXXXXXX"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    placeholder="10 digits starting with 6-9"
+                    maxLength={10}
+                    className={`flex-1 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                      errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
+                {errors.mobileNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.mobileNumber}</p>
+                )}
               </div>
 
               {/* Phone Number */}
@@ -185,9 +258,15 @@ const EmployeeForm = () => {
                   name="aadhaarNumber"
                   value={formData.aadhaarNumber}
                   onChange={handleChange}
-                  placeholder="Type aadhaar number"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  placeholder="12 digits starting with 2-9"
+                  maxLength={12}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.aadhaarNumber ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.aadhaarNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.aadhaarNumber}</p>
+                )}
               </div>
 
               {/* Gender */}
@@ -218,9 +297,16 @@ const EmployeeForm = () => {
                   name="panCard"
                   value={formData.panCard}
                   onChange={handleChange}
-                  placeholder="Eg: ABCD1234A"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  placeholder="Format: ABCDE1234F"
+                  maxLength={10}
+                  style={{textTransform: 'uppercase'}}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.panCard ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.panCard && (
+                  <p className="text-red-500 text-xs mt-1">{errors.panCard}</p>
+                )}
               </div>
             </div>
 

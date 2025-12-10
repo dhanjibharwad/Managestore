@@ -1,54 +1,49 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Settings, X, Check, Download, List, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 interface Employee {
-  id: string;
-  name: string;
-  displayName: string;
-  role: string;
-  mobile: string;
-  email: string;
+  id: number;
+  employee_id: string;
+  employee_name: string;
+  display_name: string;
+  employee_role: string;
+  mobile_number: string;
+  email_id: string;
   gender: string;
-  active: boolean;
-  onRide: boolean;
-  lastLogin: string;
-  avatar: string;
+  status: string;
+  created_at: string;
 }
 
 const EmployeeTable = () => {
-  const [employees] = useState<Employee[]>([
-    {
-      id: '1',
-      name: 'Dhanji Bharwad',
-      displayName: 'DB',
-      role: 'Admin',
-      mobile: '7600234249',
-      email: 'hr.jashviro@gmail.com',
-      gender: 'Male',
-      active: true,
-      onRide: false,
-      lastLogin: '25-Nov-2025 03:19 PM',
-      avatar: '#4A70A9'
-    },
-    {
-      id: '2',
-      name: 'Shreya Mehta',
-      displayName: 'SM',
-      role: 'Technician',
-      mobile: '8857889898',
-      email: 'newuser@gmail.com',
-      gender: 'Female',
-      active: true,
-      onRide: false,
-      lastLogin: '',
-      avatar: '#4A70A9'
-    }
-  ]);
-
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`/api/admin/employees?${params}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setEmployees(data.employees || []);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [searchQuery]);
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -113,83 +108,108 @@ const EmployeeTable = () => {
                 </tr>
               </thead>
               <tbody>
-                {employees.map((employee, index) => (
-                  <tr 
-                    key={employee.id} 
-                    className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
-                      index === employees.length - 1 ? 'border-b-0' : ''
-                    }`}
-                  >
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div 
-                          className="w-9 h-9 rounded-full flex items-center justify-center text-white font-medium text-sm"
-                          style={{ backgroundColor: employee.avatar }}
-                        >
-                          {employee.displayName}
-                        </div>
-                        <span className="text-[#4A70A9] font-medium hover:underline cursor-pointer">
-                          {employee.name}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700"></td>
-                    <td className="px-6 py-4 text-gray-700">{employee.role}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#4A70A9] hover:underline cursor-pointer">
-                          {employee.mobile}
-                        </span>
-                        <button 
-                          onClick={() => copyToClipboard(employee.mobile)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[#4A70A9] hover:underline cursor-pointer">
-                          {employee.email}
-                        </span>
-                        <button 
-                          onClick={() => copyToClipboard(employee.email)}
-                          className="text-gray-400 hover:text-gray-600"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700">{employee.gender}</td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center">
-                        {employee.active ? (
-                          <Check className="w-5 h-5 text-gray-400" />
-                        ) : (
-                          <span className="text-gray-300">-</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex justify-center">
-                        <X className="w-5 h-5 text-red-500" />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-gray-700 text-sm">
-                      {employee.lastLogin || '-'}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button className="text-gray-400 hover:text-gray-600">
-                        <Settings className="w-5 h-5" />
-                      </button>
+                {loading ? (
+                  <tr>
+                    <td colSpan={10} className="px-6 py-16 text-center text-gray-500">
+                      Loading...
                     </td>
                   </tr>
-                ))}
+                ) : employees.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} className="px-6 py-16 text-center text-gray-500">
+                      No employees found
+                    </td>
+                  </tr>
+                ) : (
+                  employees.map((employee, index) => (
+                    <tr 
+                      key={employee.id} 
+                      className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${
+                        index === employees.length - 1 ? 'border-b-0' : ''
+                      }`}
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-medium text-sm bg-[#4A70A9]">
+                            {employee.display_name || employee.employee_name.substring(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="text-[#4A70A9] font-medium hover:underline cursor-pointer">
+                              {employee.employee_name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {employee.employee_id}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-gray-700">{employee.display_name || '-'}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          employee.employee_role === 'admin' ? 'bg-purple-100 text-purple-800' :
+                          employee.employee_role === 'technician' ? 'bg-blue-100 text-blue-800' :
+                          employee.employee_role === 'reception' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {employee.employee_role}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[#4A70A9] hover:underline cursor-pointer">
+                            +91 {employee.mobile_number}
+                          </span>
+                          <button 
+                            onClick={() => copyToClipboard(employee.mobile_number)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[#4A70A9] hover:underline cursor-pointer">
+                            {employee.email_id}
+                          </span>
+                          <button 
+                            onClick={() => copyToClipboard(employee.email_id)}
+                            className="text-gray-400 hover:text-gray-600"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-gray-700 capitalize">{employee.gender || '-'}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          {employee.status === 'Active' ? (
+                            <Check className="w-5 h-5 text-green-500" />
+                          ) : (
+                            <X className="w-5 h-5 text-red-500" />
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex justify-center">
+                          <X className="w-5 h-5 text-red-500" />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-gray-700 text-sm">
+                        {new Date(employee.created_at).toLocaleString()}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button className="text-gray-400 hover:text-gray-600">
+                          <Settings className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
