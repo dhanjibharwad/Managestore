@@ -99,7 +99,7 @@ const AppFeaturesPage: React.FC = () => {
   ];
 
   return (
-    <div className="py-26 px-4">
+    <div className="py-26 px-4 mb-10">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
           {/* Left Features */}

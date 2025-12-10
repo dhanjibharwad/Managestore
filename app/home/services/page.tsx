@@ -73,7 +73,7 @@ const services: ServiceCardProps[] = [
 
 const ServicesPage = () => {
   return (
-    <section className="py-10">
+    <section className="py-10 mb-10">
       <div className="text-center mb-12">
         <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">Our Services</h2>
         <p className="mt-4 text-gray-500 max-w-2xl mx-auto dark:text-gray-300">

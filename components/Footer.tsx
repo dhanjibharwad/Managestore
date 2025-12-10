@@ -16,11 +16,11 @@ const Footer = () => {
   ];
 
   const servicesLinks = [
-    { name: "HRMS", href: "/user/services/emsservice" },
-    { name: "Finance and Accounting", href: "/user/services/accounting" },
-    { name: "Ecommerce", href: "/user/services/ecom-market" },
-    { name: "CRM", href: "/user/services/crm" },
-    { name: "Store Manager", href: "/user/services/unionservice" },
+    { name: "Technician support", href: "#" },
+    { name: "Online Supprt", href: "#" },
+    { name: "Job Form", href: "#" },
+    { name: "Dashboard Panels", href: "#" },
+    { name: "Store Manager", href: "#" },
   ];
 
   const supportLinks = [
@@ -39,11 +39,9 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: <FaFacebookF />, href: "https://facebook.com", label: "Facebook" },
-    { icon: <FaTwitter />, href: "https://twitter.com", label: "Twitter" },
+   
     { icon: <FaInstagram />, href: "https://instagram.com", label: "Instagram" },
     { icon: <FaLinkedinIn />, href: "https://linkedin.com", label: "LinkedIn" },
-    { icon: <FaYoutube />, href: "https://youtube.com", label: "YouTube" },
   ];
 
   return (
@@ -56,33 +54,13 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12 mb-12">
           {/* Company Info - Takes 2 columns */}
           <div className="lg:col-span-2">
-            {/* <div className="flex items-center gap-2 mb-4"> */}
-              {/* <div className="w-10 h-10 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-lg flex items-center justify-center">
-                <IoMdRocket className="text-white text-xl" />
-              </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-indigo-600 bg-clip-text text-transparent">
-                Jashviro
-              </h2> */}
-
-              {/* <Image
-                src="/images/logo-2.png"
-                alt="Jashviro Logo"
-                width={90}
-                height={90}
-                className="rounded-xl"
-              />
-            </div> */}
-            {/* <p className="text-gray-400 mb-6 leading-relaxed max-w-sm">
-              Empowering businesses with our solutions.
-            </p> */}
-
             {/* Contact Info */}
             <div className="space-y-3">
               <a href="mailto:info@jashviro.com" className="flex items-center gap-3 text-gray-700 hover:text-black transition-colors group">
                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
                   <MdEmail className="text-gray-600" />
                 </div>
-                <span>info@jashviro.com</span>
+                <span>info@storemanager.com</span>
               </a>
               <a href="tel:+1234567890" className="flex items-center gap-3 text-gray-700 hover:text-black transition-colors group">
                 <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200 transition-colors">
@@ -184,7 +162,7 @@ const Footer = () => {
         <div className="bg-gray-50 rounded-2xl p-8 mb-12 border border-gray-200">
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
-              <h3 className="text-2xl font-bold mb-2 text-black">Subscribe to Our Platform</h3>
+              <h3 className="text-2xl font-bold mb-2 text-blue-500">Subscribe to Our Platform</h3>
               <p className="text-gray-700">Get the latest updates, news, and exclusive offers directly to your inbox.</p>
             </div>
             <div className="flex gap-3">
@@ -193,7 +171,7 @@ const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-3 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-gray-600 text-black placeholder-gray-500 transition-colors"
               />
-              <button className="px-6 py-3 bg-black text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-gray-400/30 transition-all duration-300 hover:scale-105 whitespace-nowrap cursor-pointer">
+              <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-gray-400/30 transition-all duration-300 hover:scale-105 whitespace-nowrap cursor-pointer">
                 Subscribe
               </button>
             </div>
