@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, Eye, EyeOff, Upload, X } from 'lucide-react';
 
 interface CustomerData {
@@ -47,8 +48,11 @@ interface FormData {
 }
 
 export default function JobSheetForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showCustomerModal, setShowCustomerModal] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [customerData, setCustomerData] = useState<CustomerData>({
     customerType: 'End User',
     customerName: '',
@@ -95,6 +99,19 @@ export default function JobSheetForm() {
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const validFiles = files.filter(file => {
+      const validTypes = ['image/jpeg', 'image/png', 'image/bmp', 'image/webp', 'application/pdf'];
+      return validTypes.includes(file.type) && file.size <= 10 * 1024 * 1024; // 10MB limit
+    });
+    setUploadedFiles(prev => [...prev, ...validFiles]);
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleCustomerInputChange = (
@@ -147,13 +164,63 @@ export default function JobSheetForm() {
     setShowCustomerModal(false);
   };
 
-  const handleSubmit = () => {
-    if (!formData.customerName || !formData.deviceType || !formData.deviceBrand) {
-      alert('Please fill in all required fields');
+  const handleSubmit = async () => {
+    if (!formData.customerName || !formData.deviceType || !formData.deviceBrand || !formData.services || !formData.assignee) {
+      alert('Please fill in all required fields: Customer Name, Device Type, Device Brand, Services, and Assignee');
       return;
     }
-    console.log('Form submitted:', formData);
-    alert('Job Sheet Created Successfully!');
+
+    setIsSubmitting(true);
+    
+    try {
+      let uploadedFileUrls: string[] = [];
+      
+      // Upload files if any
+      if (uploadedFiles.length > 0) {
+        const fileFormData = new FormData();
+        uploadedFiles.forEach(file => {
+          fileFormData.append('files', file);
+        });
+        
+        const uploadResponse = await fetch('/api/admin/jobs/upload', {
+          method: 'POST',
+          body: fileFormData,
+        });
+        
+        if (uploadResponse.ok) {
+          const uploadResult = await uploadResponse.json();
+          uploadedFileUrls = uploadResult.files.map((f: any) => f.url);
+        }
+      }
+      
+      // Create job with file URLs
+      const jobData = {
+        ...formData,
+        images: uploadedFileUrls
+      };
+      
+      const response = await fetch('/api/admin/jobs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(jobData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        alert(`Job created successfully! Job Number: ${result.job.job_number}`);
+        router.push('/admin/dashboard');
+      } else {
+        alert(result.error || 'Failed to create job');
+      }
+    } catch (error) {
+      console.error('Error creating job:', error);
+      alert('An error occurred while creating the job');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancel = () => {
@@ -201,9 +268,10 @@ export default function JobSheetForm() {
             </button>
             <button
               onClick={handleSubmit}
-              className="px-5 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded font-medium transition-colors"
+              disabled={isSubmitting}
+              className="px-5 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Create
+              {isSubmitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -573,7 +641,10 @@ export default function JobSheetForm() {
           {/* Upload Images */}
           <section className="mb-6">
             <h2 className="text-base font-semibold text-gray-800 mb-3">Upload Images</h2>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#4A70A9] cursor-pointer transition-colors">
+            <div 
+              className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-[#4A70A9] cursor-pointer transition-colors"
+              onClick={() => document.getElementById('fileInput')?.click()}
+            >
               <div className="flex flex-col items-center">
                 <div className="w-14 h-14 bg-[#E8EEF7] rounded-full flex items-center justify-center mb-3">
                   <Upload className="text-[#4A70A9]" size={28} />
@@ -581,9 +652,46 @@ export default function JobSheetForm() {
                 <p className="text-[#4A70A9] font-medium mb-1">
                   Take A Photo With Your Camera Or Choose A File From Your Device
                 </p>
-                <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
+                <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES (Max 10MB each)</p>
               </div>
             </div>
+            <input
+              id="fileInput"
+              type="file"
+              multiple
+              accept="image/jpeg,image/png,image/bmp,image/webp,application/pdf"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+            
+            {/* Display uploaded files */}
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h3 className="text-sm font-medium text-gray-700">Uploaded Files:</h3>
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="flex items-center justify-between bg-gray-50 p-3 rounded border">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                        {file.type.startsWith('image/') ? '🖼️' : '📄'}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeFile(index);
+                      }}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           {/* Terms and Conditions */}

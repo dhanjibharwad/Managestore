@@ -1,28 +1,53 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 interface Job {
-  id: string;
-  jobSheet: string;
-  customer: string;
-  paymentReceived: number;
-  paymentRemaining: number;
-  paymentStatus: string;
-  deviceBrand: string;
-  deviceModel: string;
+  id: number;
+  job_number: string;
+  customer_name: string;
+  device_brand: string;
+  device_model: string;
   assignee: string;
-  serviceAssignee: string;
   status: string;
+  priority: string;
+  services: string;
+  created_at: string;
 }
 
 const JobPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Open Jobs');
   const [searchQuery, setSearchQuery] = useState('');
   const [jobStatus, setJobStatus] = useState('');
-  const [assignee, setAssignee] = useState('');
-  const [jobs] = useState<Job[]>([]);
+  const [assigneeFilter, setAssigneeFilter] = useState('');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      if (jobStatus) params.append('status', jobStatus);
+      if (assigneeFilter) params.append('assignee', assigneeFilter);
+      
+      const response = await fetch(`/api/admin/jobs?${params}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setJobs(data.jobs || []);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, [searchQuery, jobStatus, assigneeFilter]);
 
   const tabs = [
     'Open Jobs',
@@ -84,19 +109,22 @@ const JobPage: React.FC = () => {
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
           >
             <option value="">Select job status</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Closed">Closed</option>
           </select>
 
           <select
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
+            value={assigneeFilter}
+            onChange={(e) => setAssigneeFilter(e.target.value)}
             className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
           >
             <option value="">Select assignee</option>
-            <option value="john">John Doe</option>
-            <option value="jane">Jane Smith</option>
+            <option value="John Smith">John Smith</option>
+            <option value="Jane Doe">Jane Doe</option>
+            <option value="Mike Johnson">Mike Johnson</option>
+            <option value="Sarah Williams">Sarah Williams</option>
           </select>
 
           <Link href="/admin/jobs/add">
@@ -113,19 +141,10 @@ const JobPage: React.FC = () => {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Job Sheet
+                    Job Number
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Payment Received
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Payment Remaining
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Payment Status
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Device Brand
@@ -134,55 +153,78 @@ const JobPage: React.FC = () => {
                     Device Model
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Services
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Assignee
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Service Assignee
+                    Priority
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Status
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Created
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {jobs.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan={10} className="px-6 py-16 text-center text-gray-500">
-                      No data
+                    <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : jobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
+                      No jobs found
                     </td>
                   </tr>
                 ) : (
                   jobs.map((job) => (
                     <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.jobSheet}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
+                        {job.job_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.customer}
+                        {job.customer_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.paymentReceived}
+                        {job.device_brand}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.paymentRemaining}
+                        {job.device_model || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.paymentStatus}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.deviceBrand}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.deviceModel}
+                      <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">
+                        {job.services}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {job.assignee}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.serviceAssignee}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          job.priority === 'High' ? 'bg-red-100 text-red-800' :
+                          job.priority === 'Urgent' ? 'bg-orange-100 text-orange-800' :
+                          job.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {job.priority}
+                        </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {job.status}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          job.status === 'Open' ? 'bg-green-100 text-green-800' :
+                          job.status === 'In Progress' ? 'bg-yellow-100 text-yellow-800' :
+                          job.status === 'Completed' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {job.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(job.created_at).toLocaleDateString()}
                       </td>
                     </tr>
                   ))
