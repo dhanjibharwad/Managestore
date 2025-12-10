@@ -2,6 +2,7 @@
 "use client"
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Receipt, TrendingUp, Briefcase, AlertCircle, DollarSign, ClipboardList, ListTodo, UserPlus, Calendar, Search, Plus, SlidersHorizontal, Download, Upload, FileText, List } from 'lucide-react';
 
 interface StatCardProps {
@@ -48,6 +49,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Job sheet, customer, serial ...',
           selectPlaceholder: 'Select job status',
           buttonText: 'New Job',
+          buttonLink: '/admin/jobs/add',
           headers: [
             'Job Sheet',
             'Customer',
@@ -67,6 +69,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Task name, description',
           selectPlaceholder: 'Select status',
           buttonText: 'New Task',
+          buttonLink: '/admin/tasks/new',
           headers: [
             'Title',
             'Description',
@@ -82,6 +85,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Lead name, mobile number, email, last follow...',
           selectPlaceholder: 'Select lead status',
           buttonText: 'New Lead',
+          buttonLink: '/admin/leads/add',
           showAllFilters: true,
           showExtraButtons: true,
           headers: [
@@ -100,6 +104,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Job number, customer',
           selectPlaceholder: 'Select status',
           buttonText: 'New Pickup',
+          buttonLink: '/admin/pickups/new',
           headers: [
             'Job Number',
             'Customer',
@@ -166,10 +171,10 @@ const JobsSection: React.FC = () => {
                 </button>
               </>
             )}
-            <button className="px-4 sm:px-5 py-2.5 bg-[#4A70A9] text-white rounded-md text-xs sm:text-sm hover:bg-[#3d5c8c] flex items-center gap-2 font-medium shadow-sm">
+            <Link href={config.buttonLink} className="px-4 sm:px-5 py-2.5 bg-[#4A70A9] text-white rounded-md text-xs sm:text-sm hover:bg-[#3d5c8c] flex items-center gap-2 font-medium shadow-sm">
               <Plus className="w-5 h-5" />
               {config.buttonText}
-            </button>
+            </Link>
           </div>
         </div>
       </div>
