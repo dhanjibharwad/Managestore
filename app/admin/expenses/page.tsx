@@ -1,25 +1,77 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ChevronUp, Search, SlidersHorizontal, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 
 interface Expense {
-  id: string;
-  name: string;
+  id: number;
+  expense_id: string;
+  expense_name: string;
   category: string;
   description: string;
   amount: number;
-  paymentType: string;
-  expenseDate: string;
-  createdOn: string;
+  payment_mode: string;
+  expense_date: string;
+  attachments: string[];
+  created_at: string;
 }
 
 export default function ExpensePage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(true);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const totalPaymentReceived = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+  useEffect(() => {
+    fetchExpenses();
+    
+    // Check for success message from localStorage
+    const message = localStorage.getItem('successMessage');
+    if (message) {
+      setSuccessMessage(message);
+      setShowSuccessPopup(true);
+      localStorage.removeItem('successMessage');
+      
+      // Hide popup after 5 seconds with fade-out
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => {
+            setShowSuccessPopup(false);
+          }, 300);
+        }
+      }, 4700);
+    }
+  }, []);
+
+  const fetchExpenses = async () => {
+    try {
+      const response = await fetch('/api/admin/expenses');
+      const data = await response.json();
+      if (response.ok) {
+        setExpenses(data.expenses || []);
+      }
+    } catch (error) {
+      console.error('Error fetching expenses:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  const totalPaymentReceived = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
   const totalExpensesCount = expenses.length;
 
   return (
@@ -96,6 +148,7 @@ export default function ExpensePage() {
             </button>
 
             {/* Add Button */}
+            <Link href="/admin/expenses/add" >
             <button 
               className="flex items-center justify-center w-10 h-10 rounded-md text-white transition-colors"
               style={{ backgroundColor: '#4A70A9' }}
@@ -104,6 +157,7 @@ export default function ExpensePage() {
             >
               <Plus className="w-5 h-5" />
             </button>
+            </Link>
           </div>
         </div>
 
@@ -136,35 +190,54 @@ export default function ExpensePage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {expenses.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center">
+                    <div className="text-gray-400 text-sm">Loading...</div>
+                  </td>
+                </tr>
+              ) : expenses.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center">
                     <div className="text-gray-400 text-sm">No data</div>
                   </td>
                 </tr>
               ) : (
-                expenses.map((expense) => (
+                expenses
+                  .filter(expense => 
+                    expense.expense_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (expense.description && expense.description.toLowerCase().includes(searchQuery.toLowerCase()))
+                  )
+                  .map((expense) => (
                   <tr key={expense.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.name}
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      <div className="font-medium">{expense.expense_name}</div>
+                      <div className="text-xs text-gray-500">{expense.expense_id}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    <td className="px-6 py-4 text-sm text-gray-800 capitalize">
                       {expense.category}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.description}
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      <div className="max-w-xs truncate">
+                        {expense.description || '-'}
+                      </div>
+                      {expense.attachments && expense.attachments.length > 0 && (
+                        <div className="text-xs text-blue-600 mt-1">
+                          {expense.attachments.length} attachment(s)
+                        </div>
+                      )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.amount.toFixed(2)}
+                    <td className="px-6 py-4 text-sm text-gray-800 font-medium">
+                      ₹{Number(expense.amount || 0).toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.paymentType}
+                    <td className="px-6 py-4 text-sm text-gray-800 capitalize">
+                      {expense.payment_mode}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.expenseDate}
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      {formatDate(expense.expense_date)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {expense.createdOn}
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      {formatDate(expense.created_at)}
                     </td>
                   </tr>
                 ))
@@ -172,6 +245,46 @@ export default function ExpensePage() {
             </tbody>
           </table>
         </div>
+        
+        {/* Success Popup */}
+        {showSuccessPopup && (
+          <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
+            <CheckCircle size={24} className="text-green-600" />
+            <div>
+              <div className="font-semibold text-green-900">Success!</div>
+              <div className="text-sm text-green-700">{successMessage}</div>
+            </div>
+          </div>
+        )}
+        
+        <style jsx>{`
+          .success-popup {
+            animation: slideInRight 0.5s ease-out;
+          }
+          .animate-fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+          }
+          @keyframes slideInRight {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+          @keyframes fadeOut {
+            from {
+              transform: translateX(0);
+              opacity: 1;
+            }
+            to {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+          }
+        `}</style>
       </div>
     </div>
   );
