@@ -69,7 +69,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Task name, description',
           selectPlaceholder: 'Select status',
           buttonText: 'New Task',
-          buttonLink: '/admin/tasks/new',
+          buttonLink: '/admin/tasks/add',
           headers: [
             'Title',
             'Description',

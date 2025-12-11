@@ -1,22 +1,88 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, CheckCircle } from 'lucide-react';
+import Link from 'next/link';
 
 interface PickupDrop {
-  jobNumber: string;
-  customer: string;
-  deviceType: string;
+  id: number;
+  pickup_drop_id: string;
+  service_type: string;
+  customer_search: string;
+  mobile: string;
+  device_type: string;
   address: string;
-  assignee: string;
+  assignee_id: number;
+  schedule_date: string;
   status: string;
-  pickUpTime: string;
+  created_at: string;
 }
 
 export default function PickupDropsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [data, setData] = useState<PickupDrop[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    fetchPickupDrops();
+    
+    // Check for success message from localStorage
+    const message = localStorage.getItem('successMessage');
+    if (message) {
+      setSuccessMessage(message);
+      setShowSuccessPopup(true);
+      localStorage.removeItem('successMessage');
+      
+      // Hide popup after 5 seconds with fade-out
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => {
+            setShowSuccessPopup(false);
+          }, 300);
+        }
+      }, 4700);
+    }
+  }, []);
+
+  const fetchPickupDrops = async () => {
+    try {
+      const response = await fetch('/api/admin/pickupdrop');
+      const result = await response.json();
+      if (response.ok) {
+        setData(result.pickupDrops || []);
+      }
+    } catch (error) {
+      console.error('Error fetching pickup/drops:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-100 text-green-800';
+      case 'in_progress': return 'bg-blue-100 text-blue-800';
+      case 'scheduled': return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -47,16 +113,19 @@ export default function PickupDropsPage() {
               className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-600 bg-white min-w-[150px]"
             >
               <option value="">Select status</option>
-              <option value="pending">Pending</option>
-              <option value="in-progress">In Progress</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="in_progress">In Progress</option>
               <option value="completed">Completed</option>
               <option value="cancelled">Cancelled</option>
             </select>
 
             {/* Add Button */}
+             
+             <Link href="/admin/pickupdrop/add">    
             <button className="bg-[#4A70A9] hover:bg-[#3d5c8a] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors">
               <Plus className="w-5 h-5" />
             </button>
+            </Link>
 
            
           </div>
@@ -68,10 +137,10 @@ export default function PickupDropsPage() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
-                  Job Number
+                  ID & Type
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
-                  Customer
+                  Customer & Mobile
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
                   Device Type
@@ -86,45 +155,60 @@ export default function PickupDropsPage() {
                   Status
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
-                  Pick Up Time
+                  Schedule Time
                 </th>
               </tr>
             </thead>
             <tbody>
-              {data.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="text-center py-16 text-gray-400">
+                    Loading...
+                  </td>
+                </tr>
+              ) : data.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-16 text-gray-400">
                     No data
                   </td>
                 </tr>
               ) : (
-                data.map((item, index) => (
+                data
+                  .filter(item => 
+                    item.pickup_drop_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.customer_search.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    item.mobile.includes(searchTerm)
+                  )
+                  .filter(item => !statusFilter || item.status === statusFilter)
+                  .map((item) => (
                   <tr
-                    key={index}
+                    key={item.id}
                     className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                   >
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.jobNumber}
+                      <div className="font-medium">{item.pickup_drop_id}</div>
+                      <div className="text-xs text-blue-600 capitalize">{item.service_type}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.customer}
+                      <div className="font-medium">{item.customer_search}</div>
+                      <div className="text-xs text-gray-500">+91 {item.mobile}</div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-800 capitalize">
+                      {item.device_type}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.deviceType}
+                      <div className="max-w-xs truncate">{item.address}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.address}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.assignee}
+                      {item.assignee_id ? `User ${item.assignee_id}` : '-'}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-700">
-                        {item.status}
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
+                        {item.status.replace('_', ' ').toUpperCase()}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.pickUpTime}
+                      {formatDate(item.schedule_date)}
                     </td>
                   </tr>
                 ))
@@ -132,6 +216,46 @@ export default function PickupDropsPage() {
             </tbody>
           </table>
         </div>
+        
+        {/* Success Popup */}
+        {showSuccessPopup && (
+          <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
+            <CheckCircle size={24} className="text-green-600" />
+            <div>
+              <div className="font-semibold text-green-900">Success!</div>
+              <div className="text-sm text-green-700">{successMessage}</div>
+            </div>
+          </div>
+        )}
+        
+        <style jsx>{`
+          .success-popup {
+            animation: slideInRight 0.5s ease-out;
+          }
+          .animate-fade-out {
+            animation: fadeOut 0.3s ease-in forwards;
+          }
+          @keyframes slideInRight {
+            from {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+          @keyframes fadeOut {
+            from {
+              transform: translateX(0);
+              opacity: 1;
+            }
+            to {
+              transform: translateX(100%);
+              opacity: 0;
+            }
+          }
+        `}</style>
       </div>
     </div>
   );
