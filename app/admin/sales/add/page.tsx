@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Plus, Calendar, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+
 
 interface SaleItem {
   id: string;
@@ -28,6 +30,104 @@ export default function SalesForm() {
   const [sendInApp, setSendInApp] = useState(false);
   const [items, setItems] = useState<SaleItem[]>([]);
   const [showAddPartModal, setShowAddPartModal] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  const getDaysInMonth = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDayOfWeek = firstDay.getDay();
+    
+    const days = [];
+    
+    const prevMonth = new Date(year, month - 1, 0);
+    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
+      days.push({
+        day: prevMonth.getDate() - i,
+        isCurrentMonth: false,
+        date: new Date(year, month - 1, prevMonth.getDate() - i)
+      });
+    }
+    
+    for (let day = 1; day <= daysInMonth; day++) {
+      days.push({
+        day,
+        isCurrentMonth: true,
+        date: new Date(year, month, day)
+      });
+    }
+    
+    const remainingDays = 42 - days.length;
+    for (let day = 1; day <= remainingDays; day++) {
+      days.push({
+        day,
+        isCurrentMonth: false,
+        date: new Date(year, month + 1, day)
+      });
+    }
+    
+    return days;
+  };
+
+  const navigateMonth = (direction: 'prev' | 'next') => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      if (direction === 'prev') {
+        newDate.setMonth(prev.getMonth() - 1);
+      } else {
+        newDate.setMonth(prev.getMonth() + 1);
+      }
+      return newDate;
+    });
+  };
+
+  const selectDate = (date: Date) => {
+      if (isFutureDate(date)) return;
+    const formattedDate = date.toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+    setSaleDate(formattedDate);
+    setShowDatePicker(false);
+  };
+
+  const isToday = (date: Date) => {
+    const today = new Date();
+    return date.toDateString() === today.toDateString();
+  };
+
+  const isSelectedDate = (date: Date) => {
+    if (!saleDate) return false;
+    try {
+      const selectedDate = new Date(saleDate.replace(/-/g, ' '));
+      return date.toDateString() === selectedDate.toDateString();
+    } catch {
+      return false;
+    }
+  };
+
+  const isFutureDate = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date > today;
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showDatePicker && !(event.target as Element).closest('.date-picker-container')) {
+        setShowDatePicker(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showDatePicker]);
   
   // Add Part Form States
   const [partSearch, setPartSearch] = useState('');
@@ -143,9 +243,11 @@ export default function SalesForm() {
                     onChange={(e) => setCustomerName(e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   />
+                  <Link href="/admin/customers/add/">
                   <button className="p-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
                     <Plus size={20} />
                   </button>
+                  </Link>
                 </div>
               </div>
 
@@ -154,14 +256,79 @@ export default function SalesForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sale Date
                 </label>
-                <div className="relative">
+                <div className="relative date-picker-container">
                   <input
                     type="text"
                     value={saleDate}
                     onChange={(e) => setSaleDate(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10"
                   />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Calendar 
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-[#4A70A9] transition-colors" 
+                    size={18} 
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                  />
+                  {showDatePicker && (
+                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 w-80">
+                      <div className="flex items-center justify-between mb-4">
+                        <button 
+                          onClick={() => navigateMonth('prev')}
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                        >
+                          <ChevronLeft size={16} />
+                        </button>
+                        <h3 className="font-medium text-gray-800">
+                          {months[currentDate.getMonth()]} {currentDate.getFullYear()}
+                        </h3>
+                        <button 
+                          onClick={() => navigateMonth('next')}
+                          className="p-1 hover:bg-gray-100 rounded transition-colors"
+                        >
+                          <ChevronRight size={16} />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {daysOfWeek.map(day => (
+                          <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-7 gap-1">
+                        {getDaysInMonth(currentDate).map((dayObj, index) => {
+                          const dayIsToday = isToday(dayObj.date);
+                          const dayIsSelected = isSelectedDate(dayObj.date);
+                          const dayIsFuture = isFutureDate(dayObj.date);
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => !dayIsFuture && selectDate(dayObj.date)}
+                              disabled={dayIsFuture}
+                              className={`
+                                w-8 h-8 text-sm rounded flex items-center justify-center transition-colors
+                                ${!dayObj.isCurrentMonth 
+                                  ? 'text-gray-300 hover:bg-gray-50' 
+                                  : dayIsFuture
+                                  ? 'text-gray-300 cursor-not-allowed opacity-50'
+                                  : 'text-gray-700 hover:bg-gray-100'
+                                }
+                                ${dayIsToday && dayObj.isCurrentMonth 
+                                  ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                                  : ''
+                                }
+                                ${dayIsSelected && !dayIsToday && !dayIsFuture
+                                  ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
+                                  : ''
+                                }
+                              `}
+                            >
+                              {dayObj.day}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 

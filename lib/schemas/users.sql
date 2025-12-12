@@ -38,3 +38,32 @@ CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_verification_tokens_token ON verification_tokens(token);
 CREATE INDEX idx_verification_tokens_user_id ON verification_tokens(user_id);
 CREATE INDEX idx_users_email ON users(email);
+
+-- ADD: company_id column
+ALTER TABLE verification_tokens ADD COLUMN company_id INTEGER 
+    REFERENCES companies(id) ON DELETE CASCADE;
+
+-- UPDATE: Populate existing tokens
+UPDATE verification_tokens vt
+SET company_id = (SELECT company_id FROM users WHERE id = vt.user_id);
+
+-- ADD: Index for performance
+CREATE INDEX idx_verification_tokens_company_id ON verification_tokens(company_id);
+
+-- UPDATE: Add 'company_invite' to type check
+ALTER TABLE verification_tokens DROP CONSTRAINT verification_tokens_type_check;
+ALTER TABLE verification_tokens ADD CONSTRAINT verification_tokens_type_check 
+    CHECK (type IN ('email_verification', 'password_reset', 'company_invite'));
+
+
+
+-- ADD: company_id column seesions
+ALTER TABLE sessions ADD COLUMN company_id INTEGER 
+    REFERENCES companies(id) ON DELETE CASCADE;
+
+-- UPDATE: Populate existing sessions
+UPDATE sessions s
+SET company_id = (SELECT company_id FROM users WHERE id = s.user_id);
+
+-- ADD: Index for performance
+CREATE INDEX idx_sessions_company_id ON sessions(company_id);
