@@ -72,7 +72,7 @@ export default function DemoPage() {
                 ALREADY HELPED BUSINESS PROFESSIONALS AT:
               </p>
               <div className="flex flex-wrap items-center gap-6">
-                <div className="text-2xl font-bold text-blue-600"><img src=""/></div>
+                {/* <div className="text-2xl font-bold text-blue-600"></div> */}
                 <div className="flex items-center text-lg font-semibold text-gray-800">
                   <div className="w-6 h-6 bg-blue-600 rounded-full mr-1"></div>
                   Meta

@@ -30,7 +30,7 @@ export default function HeroSection() {
                         </p>
 
                         <div className="flex flex-wrap gap-4 pt-2">
-                            <Link href="/demopage">
+                            <Link href="/extra/demopage">
                             <button className="cursor-pointer bg-blue-500 text-white px-6 sm:px-10 py-3 sm:py-3.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl text-sm sm:text-base">
                                 Start Now
                             </button>
