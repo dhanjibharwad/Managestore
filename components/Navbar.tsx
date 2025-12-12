@@ -280,7 +280,7 @@ export default function Navbar() {
                   href="/auth/register"
                   className="min-w-[100px] lg:min-w-[140px] px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-semibold text-sm lg:text-md text-center text-white bg-blue-500 shadow-lg hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
                 >
-                  Get Started
+                 Start Free Trial
                 </Link>
               </>
             )}

@@ -1,4 +1,5 @@
 import { Users, Clock, Smartphone, Globe, Receipt } from 'lucide-react';
+import Link from 'next/link';
 
 const features = [
     { title: 'Smart\nManagement' },
@@ -29,9 +30,11 @@ export default function HeroSection() {
                         </p>
 
                         <div className="flex flex-wrap gap-4 pt-2">
+                            <Link href="/demopage">
                             <button className="cursor-pointer bg-blue-500 text-white px-6 sm:px-10 py-3 sm:py-3.5 rounded-full font-semibold transition-all shadow-lg hover:shadow-xl text-sm sm:text-base">
                                 Start Now
                             </button>
+                            </Link>
                             {/* <button className="border-2 border-black text-black hover:bg-blue-500 hover:text-white px-10 py-3.5 rounded-full font-semibold transition-all flex items-center gap-2">
                                 <div className="w-5 h-5 border-2 border-current rounded-sm" />
                                 Explore Now
