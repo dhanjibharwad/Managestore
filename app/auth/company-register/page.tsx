@@ -201,19 +201,6 @@ export default function CompanyRegisterPage() {
               )}
             </button>
           </form>
-
-          {/* Footer */}
-          {/* <div className="mt-6 text-center">
-            <p className="text-sm text-zinc-600">
-              Already have an account?{' '}
-              <button 
-                onClick={() => router.push('/login')}
-                className="text-blue-500 hover:text-blue-600 font-medium"
-              >
-                Sign in here
-              </button>
-            </p>
-          </div> */}
         </div>
       </div>
     </div>
