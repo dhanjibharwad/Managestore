@@ -114,43 +114,48 @@ import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, name, phone, companyId } = await req.json();
+    const { email, password, name, phone, token } = await req.json();
 
-    if (!email || !password || !name || !companyId) {
+    if (!email || !password || !name) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: 'Name, email and password are required' },
         { status: 400 }
       );
     }
 
-    // Check if company exists and is active
-    const companyCheck = await pool.query(
-      'SELECT * FROM companies WHERE id = $1',
-      [companyId]
-    );
+    let companyId;
 
-    if (companyCheck.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Company not found' },
-        { status: 404 }
+    // If token provided, validate invite token
+    if (token) {
+      const inviteResult = await pool.query(
+        `SELECT company_id, expires_at FROM invite_tokens 
+         WHERE token = $1 AND used = false`,
+        [token]
       );
-    }
 
-    const company = companyCheck.rows[0];
+      if (inviteResult.rows.length === 0) {
+        return NextResponse.json(
+          { error: 'Invalid or expired invitation' },
+          { status: 400 }
+        );
+      }
 
-    if (company.status !== 'active') {
+      const invite = inviteResult.rows[0];
+      
+      if (new Date() > new Date(invite.expires_at)) {
+        return NextResponse.json(
+          { error: 'Invitation has expired' },
+          { status: 400 }
+        );
+      }
+
+      companyId = invite.company_id;
+    } else {
+      // For now, allow registration without invite (you can change this)
+      // Or find company by email domain, etc.
       return NextResponse.json(
-        { error: 'Company is not active' },
-        { status: 403 }
-      );
-    }
-
-    // Check subscription limits
-    const subscription = await checkCompanySubscription(companyId);
-    if (!subscription?.canAddUser) {
-      return NextResponse.json(
-        { error: 'Company has reached user limit. Please upgrade subscription.' },
-        { status: 403 }
+        { error: 'Registration requires an invitation' },
+        { status: 400 }
       );
     }
 
@@ -175,10 +180,18 @@ export async function POST(req: NextRequest) {
       `INSERT INTO users (email, password, name, phone, company_id, role) 
        VALUES ($1, $2, $3, $4, $5, $6) 
        RETURNING id, email, name, role, company_id`,
-      [email.toLowerCase().trim(), hashedPassword, name, phone, companyId, 'customer']
+      [email.toLowerCase().trim(), hashedPassword, name, phone || null, companyId, 'customer']
     );
 
     const user = userResult.rows[0];
+
+    // Mark invite as used if token was provided
+    if (token) {
+      await pool.query(
+        'UPDATE invite_tokens SET used = true, used_at = NOW() WHERE token = $1',
+        [token]
+      );
+    }
 
     // Generate OTP
     const otp = await createVerificationToken(user.id, companyId, 'email_verification');

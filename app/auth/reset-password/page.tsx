@@ -285,7 +285,7 @@ export default function ResetPasswordPage() {
       }
 
       setSuccess(true);
-      setTimeout(() => router.push(`/auth/login?companyId=${companyId}`), 2000);
+      setTimeout(() => router.push('/auth/login'), 2000);
     } catch (err) {
       console.error('Reset password error:', err);
       setError('An error occurred. Please try again.');
@@ -459,7 +459,7 @@ export default function ResetPasswordPage() {
         {/* Footer */}
         <div className="mt-8 pt-6 border-t border-gray-200">
           <p className="text-center text-sm text-gray-600">
-            <Link href={`/auth/login${companyId ? `?companyId=${companyId}` : ''}`} className="text-[#4A70A9] font-medium hover:underline">
+            <Link href="/auth/login" className="text-[#4A70A9] font-medium hover:underline">
               Back to login
             </Link>
           </p>

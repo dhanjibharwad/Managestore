@@ -1,31 +1,52 @@
-// app/api/super-admin/subscriptions/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import pool from '@/lib/db';
 
 export async function GET() {
-  const plans = [
-    { name: "Basic", price: 499, companies: 12 },
-    { name: "Pro", price: 999, companies: 25 },
-    { name: "Enterprise", price: 1999, companies: 5 },
-  ];
+  try {
+    // Get subscription statistics
+    const statsResult = await pool.query(`
+      SELECT 
+        subscription_plan as plan,
+        COUNT(*) as companies,
+        ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER(), 2) as percentage,
+        CASE 
+          WHEN subscription_plan = 'free' THEN 0
+          WHEN subscription_plan = 'basic' THEN COUNT(*) * 29
+          WHEN subscription_plan = 'pro' THEN COUNT(*) * 79
+          WHEN subscription_plan = 'enterprise' THEN COUNT(*) * 199
+          ELSE 0
+        END as revenue
+      FROM companies 
+      WHERE status = 'active'
+      GROUP BY subscription_plan
+      ORDER BY companies DESC
+    `);
 
-  return NextResponse.json(plans);
-}
+    // Get detailed company subscription data
+    const companiesResult = await pool.query(`
+      SELECT 
+        id,
+        company_name,
+        subscription_plan,
+        status,
+        subscription_start_date,
+        subscription_end_date,
+        created_at
+      FROM companies 
+      ORDER BY created_at DESC
+      LIMIT 50
+    `);
 
-export async function POST(req: Request) {
-  const body = await req.json();
-  const { name, price } = body;
-
-  if (!name || !price) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    return NextResponse.json({
+      stats: statsResult.rows,
+      companies: companiesResult.rows,
+      totalCompanies: companiesResult.rows.length
+    });
+  } catch (error) {
+    console.error('Failed to fetch subscription data:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch subscription data' },
+      { status: 500 }
+    );
   }
-
-  // Save subscription to DB
-
-  return NextResponse.json(
-    {
-      message: "Subscription plan created",
-      plan: { id: Date.now(), name, price },
-    },
-    { status: 201 }
-  );
 }

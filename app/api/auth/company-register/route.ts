@@ -46,13 +46,13 @@ export async function POST(req: NextRequest) {
     const result = await pool.query(
       `INSERT INTO companies (
         company_name, company_owner_name, email, phone, country,
-        subscription_plan, subscription_end_date
+        subscription_plan, subscription_end_date, status
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7
+        $1, $2, $3, $4, $5, $6, $7, $8
       ) RETURNING *`,
       [
         companyName, companyOwnerName, email, phone, country,
-        subscriptionPlan, subscriptionEndDate
+        subscriptionPlan, subscriptionEndDate, 'inactive'
       ]
     );
 

@@ -295,56 +295,16 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-
-interface Company {
-  id: number;
-  company_name: string;
-  email: string;
-}
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const preSelectedCompanyId = searchParams.get('companyId');
-
-  const [companies, setCompanies] = useState<Company[]>([]);
-  const [loadingCompanies, setLoadingCompanies] = useState(true);
-  const [selectedCompanyId, setSelectedCompanyId] = useState<number | null>(
-    preSelectedCompanyId ? parseInt(preSelectedCompanyId) : null
-  );
-
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showCompanySearch, setShowCompanySearch] = useState(false);
-  const [companySearchQuery, setCompanySearchQuery] = useState('');
-
-  // Fetch available companies on mount
-  useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const res = await fetch('/api/companies/list-active');
-        if (res.ok) {
-          const data = await res.json();
-          setCompanies(data.companies || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch companies:', error);
-      } finally {
-        setLoadingCompanies(false);
-      }
-    };
-
-    fetchCompanies();
-  }, []);
-
-  const filteredCompanies = companies.filter(company =>
-    company.company_name.toLowerCase().includes(companySearchQuery.toLowerCase())
-  );
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -354,11 +314,6 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-
-    if (!selectedCompanyId) {
-      setError('Please select a company');
-      return;
-    }
 
     if (!email.trim()) {
       setError('Email address is required');
@@ -373,12 +328,28 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
+      // First find user's company
+      const userRes = await fetch('/api/auth/find-user-company', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      if (!userRes.ok) {
+        const userData = await userRes.json();
+        setError(userData.error || 'User not found');
+        return;
+      }
+
+      const { companyId } = await userRes.json();
+
+      // Then send reset request
       const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           email: email.trim(),
-          companyId: selectedCompanyId
+          companyId
         }),
       });
 
@@ -391,7 +362,7 @@ export default function ForgotPasswordPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&companyId=${selectedCompanyId}`);
+        router.push(`/auth/reset-password?email=${encodeURIComponent(email)}&companyId=${companyId}`);
       }, 2000);
     } catch (err) {
       console.error('Forgot password error:', err);
@@ -401,7 +372,7 @@ export default function ForgotPasswordPage() {
     }
   };
 
-  const selectedCompany = companies.find(c => c.id === selectedCompanyId);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
@@ -467,78 +438,7 @@ export default function ForgotPasswordPage() {
               </div>
             )}
 
-            {/* Company Selection */}
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-2">
-                Select Company <span className="text-red-500">*</span>
-              </label>
-              
-              {loadingCompanies ? (
-                <div className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50">
-                  <div className="flex items-center">
-                    <svg className="animate-spin h-5 w-5 text-[#4A70A9] mr-3" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span className="text-gray-600">Loading companies...</span>
-                  </div>
-                </div>
-              ) : selectedCompany ? (
-                <div className="w-full px-4 py-3 border-2 border-[#4A70A9] bg-blue-50 rounded-lg flex items-center justify-between">
-                  <span className="font-medium text-zinc-800">{selectedCompany.company_name}</span>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedCompanyId(null)}
-                    className="text-gray-400 hover:text-red-500"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-              ) : (
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setShowCompanySearch(!showCompanySearch)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg text-left hover:border-[#4A70A9] focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
-                  >
-                    <span className="text-gray-500">Choose your company...</span>
-                  </button>
 
-                  {showCompanySearch && (
-                    <div className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
-                      <div className="p-3 border-b">
-                        <input
-                          type="text"
-                          placeholder="Search companies..."
-                          value={companySearchQuery}
-                          onChange={(e) => setCompanySearchQuery(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none"
-                          autoFocus
-                        />
-                      </div>
-                      <div className="overflow-y-auto max-h-48">
-                        {filteredCompanies.map((company) => (
-                          <button
-                            key={company.id}
-                            type="button"
-                            onClick={() => {
-                              setSelectedCompanyId(company.id);
-                              setShowCompanySearch(false);
-                              setCompanySearchQuery('');
-                            }}
-                            className="w-full px-4 py-3 text-left hover:bg-gray-50 transition border-b last:border-b-0"
-                          >
-                            <p className="font-medium text-zinc-800">{company.company_name}</p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
 
             {/* Email Input */}
             <div>
@@ -569,7 +469,7 @@ export default function ForgotPasswordPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading || !selectedCompanyId}
+              disabled={loading}
               className="w-full bg-[#4A70A9] text-white py-3 rounded-lg font-medium hover:bg-[#3d5d8f] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {loading ? (
@@ -598,7 +498,7 @@ export default function ForgotPasswordPage() {
             <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
-            <Link href={`/auth/login${selectedCompanyId ? `?companyId=${selectedCompanyId}` : ''}`} className="text-[#4A70A9] font-medium hover:underline">
+            <Link href="/auth/login" className="text-[#4A70A9] font-medium hover:underline">
               Back to login
             </Link>
           </div>

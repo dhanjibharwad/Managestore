@@ -1,43 +1,33 @@
-// app/api/super-admin/companies/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import pool from '@/lib/db';
 
 export async function GET() {
-  // Fetch all companies (dummy data)
-  const companies = [
-    {
-      id: "1",
-      name: "TechFix Solutions",
-      owner: "Rahul Mehta",
-      users: 28,
-      plan: "Pro",
-    },
-    {
-      id: "2",
-      name: "HomeCare Plus",
-      owner: "Ananya Sharma",
-      users: 14,
-      plan: "Basic",
-    },
-  ];
+  try {
+    const result = await pool.query(`
+      SELECT 
+        id,
+        company_name,
+        company_owner_name as owner_name,
+        email,
+        phone,
+        country,
+        subscription_plan,
+        status,
+        created_at,
+        updated_at
+      FROM companies 
+      ORDER BY created_at DESC
+    `);
 
-  return NextResponse.json(companies);
-}
-
-export async function POST(req: Request) {
-  const body = await req.json();
-  const { name, owner, plan } = body;
-
-  if (!name || !owner || !plan) {
-    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    return NextResponse.json({
+      companies: result.rows,
+      total: result.rows.length
+    });
+  } catch (error) {
+    console.error('Failed to fetch companies:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch companies' },
+      { status: 500 }
+    );
   }
-
-  // Insert into DB here…
-
-  return NextResponse.json(
-    {
-      message: "Company created successfully",
-      company: { id: Date.now(), name, owner, plan },
-    },
-    { status: 201 }
-  );
 }

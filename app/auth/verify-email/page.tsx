@@ -425,7 +425,7 @@ export default function VerifyEmailPage() {
       }
 
       setSuccess('Email verified successfully! Redirecting to login...');
-      setTimeout(() => router.push(`/auth/login?companyId=${companyId}`), 2000);
+      setTimeout(() => router.push('/auth/login'), 2000);
     } catch (err) {
       console.error('Verification error:', err);
       setError('An error occurred. Please try again.');

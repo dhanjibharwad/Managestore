@@ -7,6 +7,7 @@ import { Building2, User, Mail, Phone, Globe, CreditCard } from 'lucide-react';
 export default function CompanyRegisterPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
     companyName: '',
     companyOwnerName: '',
@@ -43,8 +44,7 @@ export default function CompanyRegisterPage() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Company registered successfully! Company ID: ${result.company.id}`);
-        router.push('/home');
+        setShowSuccess(true);
       } else {
         alert(result.error || 'Failed to register company');
       }
@@ -55,6 +55,35 @@ export default function CompanyRegisterPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (showSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-6">
+        <div className="w-full max-w-lg">
+          <div className="bg-white rounded-2xl shadow-xl border border-green-200 p-8 text-center">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h1 className="text-3xl font-bold text-green-800 mb-4">Thank You!</h1>
+            <p className="text-lg text-gray-700 mb-6">
+              Your company registration has been submitted successfully.
+            </p>
+            <p className="text-gray-600 mb-8">
+              Our team will contact you soon for onboarding and to help you get started with your new account.
+            </p>
+            <button
+              onClick={() => router.push('/')}
+              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors"
+            >
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-6">
