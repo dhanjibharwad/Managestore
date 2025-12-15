@@ -28,7 +28,7 @@ const Footer = () => {
     // { name: "Documentation", href: "/docs" }, 
     { name: "Contact Us", href: "/user/contact-us" },
     { name: "Our Gallery", href: "/user/gallery" },
-    { name: "FAQs", href: "/user/faqs" },
+    { name: "FAQs", href: "/home/FAQ" },
   ];
 
   const legalLinks = [
