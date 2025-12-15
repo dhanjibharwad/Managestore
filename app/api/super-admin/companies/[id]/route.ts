@@ -3,11 +3,12 @@ import pool from '@/lib/db';
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { status } = await req.json();
-    const companyId = parseInt(params.id);
+    const resolvedParams = await params;
+    const companyId = parseInt(resolvedParams.id);
 
     if (!['active', 'inactive', 'suspended'].includes(status)) {
       return NextResponse.json(
@@ -18,7 +19,7 @@ export async function PATCH(
 
     const result = await pool.query(
       `UPDATE companies 
-       SET status = $1, updated_at = NOW() 
+       SET status = $1, updated_at = NOW()
        WHERE id = $2 
        RETURNING *`,
       [status, companyId]
