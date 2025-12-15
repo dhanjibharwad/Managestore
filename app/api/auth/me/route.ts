@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import pool from '@/lib/db';
 
-export async function GET(req: NextRequest) {
+// GET - Get current user with company information
+export async function GET() {
   try {
-    // Get current session
+    // Get current session with company data
     const session = await getSession();
 
     if (!session) {
@@ -14,16 +15,31 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Return user data from session
+    // Return user and company data from session
     return NextResponse.json(
       {
         user: {
           id: session.user.id,
           email: session.user.email,
           name: session.user.name,
+          phone: session.user.phone,
           role: session.user.role,
           isVerified: session.user.isVerified,
+          isActive: session.user.isActive,
+          lastLoginAt: session.user.lastLoginAt,
           createdAt: session.user.createdAt,
+        },
+        company: {
+          id: session.company.id,
+          name: session.company.name,
+          ownerName: session.company.ownerName,
+          email: session.company.email,
+          phone: session.company.phone,
+          country: session.company.country,
+          subscriptionPlan: session.company.subscriptionPlan,
+          status: session.company.status,
+          subscriptionStartDate: session.company.subscriptionStartDate,
+          subscriptionEndDate: session.company.subscriptionEndDate,
         },
         session: {
           expiresAt: session.expiresAt,
@@ -50,7 +66,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// Update user profile
+// PUT - Update user profile
 export async function PUT(req: NextRequest) {
   try {
     // Get current session
@@ -64,17 +80,18 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, email } = body;
+    const { name, email, phone } = body;
 
     // Validation
-    if (!name && !email) {
+    if (!name && !email && !phone) {
       return NextResponse.json(
-        { error: 'At least one field (name or email) must be provided' },
+        { error: 'At least one field (name, email, or phone) must be provided' },
         { status: 400 }
       );
     }
 
     const userId = session.user.id;
+    const companyId = session.company.id;
     const updates: string[] = [];
     const values: any[] = [];
     let paramCounter = 1;
@@ -83,6 +100,12 @@ export async function PUT(req: NextRequest) {
     if (name && name.trim()) {
       updates.push(`name = $${paramCounter}`);
       values.push(name.trim());
+      paramCounter++;
+    }
+
+    if (phone && phone.trim()) {
+      updates.push(`phone = $${paramCounter}`);
+      values.push(phone.trim());
       paramCounter++;
     }
 
@@ -98,15 +121,15 @@ export async function PUT(req: NextRequest) {
         );
       }
 
-      // Check if email is already taken by another user
+      // Check if email is already taken by another user IN THE SAME COMPANY
       const existingUser = await pool.query(
-        'SELECT id FROM users WHERE email = $1 AND id != $2',
-        [trimmedEmail, userId]
+        'SELECT id FROM users WHERE email = $1 AND company_id = $2 AND id != $3',
+        [trimmedEmail, companyId, userId]
       );
 
       if (existingUser.rows.length > 0) {
         return NextResponse.json(
-          { error: 'Email is already taken' },
+          { error: 'Email is already taken by another user in your company' },
           { status: 400 }
         );
       }
@@ -128,7 +151,7 @@ export async function PUT(req: NextRequest) {
       UPDATE users 
       SET ${updates.join(', ')}
       WHERE id = $${paramCounter}
-      RETURNING id, email, name, role, is_verified, created_at, updated_at
+      RETURNING id, email, name, phone, role, is_verified, is_active, last_login_at, created_at, updated_at
     `;
 
     const result = await pool.query(query, values);
@@ -144,29 +167,56 @@ export async function PUT(req: NextRequest) {
 
     // If email was changed, send verification email
     if (email && email.trim()) {
-      // Import and send verification email
-      const { createVerificationToken } = await import('@/lib/auth');
-      const { sendVerificationEmail } = await import('@/lib/email');
+      try {
+        const { createVerificationToken } = await import('@/lib/auth');
+        const { sendVerificationEmail } = await import('@/lib/email');
 
-      const otp = await createVerificationToken(userId, 'email_verification');
-      await sendVerificationEmail(updatedUser.email, otp);
+        const otp = await createVerificationToken(userId, companyId, 'email_verification');
+        await sendVerificationEmail(updatedUser.email, otp);
 
-      return NextResponse.json(
-        {
-          message: 'Profile updated. Please verify your new email address.',
-          user: {
-            id: updatedUser.id,
-            email: updatedUser.email,
-            name: updatedUser.name,
-            role: updatedUser.role,
-            isVerified: updatedUser.is_verified,
-            createdAt: updatedUser.created_at,
-            updatedAt: updatedUser.updated_at,
+        return NextResponse.json(
+          {
+            message: 'Profile updated. Please verify your new email address.',
+            user: {
+              id: updatedUser.id,
+              email: updatedUser.email,
+              name: updatedUser.name,
+              phone: updatedUser.phone,
+              role: updatedUser.role,
+              isVerified: updatedUser.is_verified,
+              isActive: updatedUser.is_active,
+              lastLoginAt: updatedUser.last_login_at,
+              createdAt: updatedUser.created_at,
+              updatedAt: updatedUser.updated_at,
+            },
+            emailChanged: true,
           },
-          emailChanged: true,
-        },
-        { status: 200 }
-      );
+          { status: 200 }
+        );
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        // Still return success, but note email sending failed
+        return NextResponse.json(
+          {
+            message: 'Profile updated, but failed to send verification email. Please contact support.',
+            user: {
+              id: updatedUser.id,
+              email: updatedUser.email,
+              name: updatedUser.name,
+              phone: updatedUser.phone,
+              role: updatedUser.role,
+              isVerified: updatedUser.is_verified,
+              isActive: updatedUser.is_active,
+              lastLoginAt: updatedUser.last_login_at,
+              createdAt: updatedUser.created_at,
+              updatedAt: updatedUser.updated_at,
+            },
+            emailChanged: true,
+            emailSendFailed: true,
+          },
+          { status: 200 }
+        );
+      }
     }
 
     return NextResponse.json(
@@ -176,8 +226,11 @@ export async function PUT(req: NextRequest) {
           id: updatedUser.id,
           email: updatedUser.email,
           name: updatedUser.name,
+          phone: updatedUser.phone,
           role: updatedUser.role,
           isVerified: updatedUser.is_verified,
+          isActive: updatedUser.is_active,
+          lastLoginAt: updatedUser.last_login_at,
           createdAt: updatedUser.created_at,
           updatedAt: updatedUser.updated_at,
         },
@@ -203,7 +256,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-// Delete user account
+// DELETE - Delete user account
 export async function DELETE(req: NextRequest) {
   try {
     // Get current session
@@ -217,6 +270,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const userId = session.user.id;
+    const companyId = session.company.id;
 
     // Verify password before deletion (get from request body)
     const body = await req.json();
@@ -231,8 +285,8 @@ export async function DELETE(req: NextRequest) {
 
     // Get user with password
     const userResult = await pool.query(
-      'SELECT password FROM users WHERE id = $1',
-      [userId]
+      'SELECT password FROM users WHERE id = $1 AND company_id = $2',
+      [userId, companyId]
     );
 
     if (userResult.rows.length === 0) {
@@ -253,6 +307,23 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
+    // Check if user is the last admin in the company
+    if (session.user.role === 'admin') {
+      const adminCountResult = await pool.query(
+        'SELECT COUNT(*) as admin_count FROM users WHERE company_id = $1 AND role = $2 AND is_active = true',
+        [companyId, 'admin']
+      );
+
+      const adminCount = parseInt(adminCountResult.rows[0].admin_count);
+
+      if (adminCount <= 1) {
+        return NextResponse.json(
+          { error: 'Cannot delete account. You are the last admin in your company. Please assign another admin first.' },
+          { status: 400 }
+        );
+      }
+    }
+
     // Begin transaction
     const client = await pool.connect();
 
@@ -260,13 +331,13 @@ export async function DELETE(req: NextRequest) {
       await client.query('BEGIN');
 
       // Delete user sessions
-      await client.query('DELETE FROM sessions WHERE user_id = $1', [userId]);
+      await client.query('DELETE FROM sessions WHERE user_id = $1 AND company_id = $2', [userId, companyId]);
 
       // Delete user verification tokens
-      await client.query('DELETE FROM verification_tokens WHERE user_id = $1', [userId]);
+      await client.query('DELETE FROM verification_tokens WHERE user_id = $1 AND company_id = $2', [userId, companyId]);
 
       // Delete user account
-      await client.query('DELETE FROM users WHERE id = $1', [userId]);
+      await client.query('DELETE FROM users WHERE id = $1 AND company_id = $2', [userId, companyId]);
 
       await client.query('COMMIT');
     } catch (error) {

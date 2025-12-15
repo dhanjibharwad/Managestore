@@ -20,7 +20,7 @@ export default function HeroSection() {
                     <div className="space-y-6">
 
                         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
-                            All-in-one repair shop management <span className='text-blue-500 dark:text-blue-400'>software</span>
+                            End-to-End repair shop management <span className='text-blue-500 dark:text-blue-400'>software</span>
                         </h1>
 
 

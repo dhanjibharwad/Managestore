@@ -4,6 +4,7 @@
 
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp, HelpCircle, MessageCircle, Phone } from 'lucide-react'
+import Link from 'next/link'
 
 interface FAQItem {
   id: number
@@ -94,8 +95,8 @@ export default function FAQPage() {
       {/* Hero Section */}
       <section className="relative bg-white text-black">
 
-         <div className="relative max-w-7xl mx-auto px-6 py-32 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in">
+         <div className="relative mx-auto px-6 py-32 text-center">
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in text-gray-700">
             Frequently Asked Questions
           </h1>
           <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in delay-200">
@@ -103,7 +104,7 @@ export default function FAQPage() {
           </p>
 
           {/* Call-to-action buttons */}
-          <div className="flex justify-center gap-4 mt-4 animate-fade-in delay-400">
+          <div className="flex justify-center gap-4 mt-4 animate-fade-in delay-200">
             <a
               href="/home/contact"
               className="px-6 py-3 rounded-lg bg-white text-gray-800 font-semibold shadow-lg hover:bg-gray-100 transition"
@@ -136,61 +137,10 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
-
-      {/* Support Options */}
-      {/* <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">Still Need Help?</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
-              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
-                <MessageCircle className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">Live Chat</h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Get instant help from our support team through our live chat feature.
-              </p>
-              <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                Start Chat
-              </button>
-            </div>
-            
-            <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
-              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
-                <Phone className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">Phone Support</h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Call our support hotline for immediate assistance with your technical issues.
-              </p>
-              <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                Call Now
-              </button>
-            </div>
-            
-            <div className="group bg-white p-8 rounded-xl shadow-lg text-center hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-transparent hover:border-gray-200">
-              <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
-                <HelpCircle className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
-              </div>
-              <h3 className="text-2xl font-semibold mb-4 group-hover:text-gray-800 transition-colors duration-300">Submit Ticket</h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                Create a support ticket for detailed assistance with complex technical issues.
-              </p>
-              <button className="bg-gray-800 text-white px-6 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-gray-700">
-                Create Ticket
-              </button>
-            </div>
-          </div>
-        </div>
-      </section> */}
+    
 
       {/* CTA Section */}
-      <section className="relative py-20 bg-gradient-to-r from-gray-800 to-gray-600 text-white overflow-hidden">
-        {/* Decorative floating shapes */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-72 h-72 bg-gray-700 opacity-20 rounded-full"></div>
-          <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-gray-900 opacity-15 rounded-full"></div>
-        </div>
+      <section className="relative py-20 bg-gradient-to-r from-gray-600 to-gray-600 text-white overflow-hidden">
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
@@ -202,12 +152,11 @@ export default function FAQPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-gray-800 px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-100 transition cursor-pointer">
-              Submit a Query
-            </button>
+             <Link href="/home/contact">
             <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-white hover:text-gray-800 transition cursor-pointer">
               Contact Us
             </button>
+            </Link> 
           </div>
         </div>
       </section>

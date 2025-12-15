@@ -76,7 +76,7 @@ export default function ContactPage() {
       />
 
       {/* Main */}
-      <main className="flex-grow pt-15 px-4 sm:px-6 lg:px-8 relative z-10 mb-16">
+      <main className="flex-grow pt-16 px-4 sm:px-6 lg:px-8 relative z-10 mb-16">
         <div className="max-w-7xl mx-auto pt-16">
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-900 inline-block text-transparent bg-clip-text mb-6">Get in Touch</h1>
@@ -160,10 +160,10 @@ export default function ContactPage() {
                     </>
                   ) : (
                     <>
-                      <CheckCircle className="w-12 h-12 text-gray-500 mr-4 flex-shrink-0" />
+                      <CheckCircle className="w-12 h-12 text-green-500 mr-4 flex-shrink-0" />
                       <div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-1">Message Sent Successfully!</h3>
-                        <p className="text-gray-700">Thank you for reaching out. We'll get back to you shortly.</p>
+                        <h3 className="text-xl font-semibold text-green-800 mb-1">Message Sent Successfully!</h3>
+                        <p className="text-green-700">Thank you for reaching out. We'll get back to you shortly.</p>
                       </div>
                     </>
                   )}
@@ -217,7 +217,7 @@ export default function ContactPage() {
                   </div>
 
                   <button type="submit" disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-gray-900 to-gray-900 text-white py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 relative overflow-hidden group">
+                    className="w-full bg-gradient-to-r from-gray-900 to-gray-900 text-white py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 relative overflow-hidden group">
                     <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></span>
                     <span className="relative flex items-center justify-center">
                       {isSubmitting ? (

@@ -98,23 +98,19 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Home", href: "/" },
-    {
-      name: "About",
-      href: "/user/about-us",
-      dropdown: [
-        { name: "Blogs", href: "/user/blog/" },
-      ]
-    },
+    // { name: "Contact", href: "/user/contact-us" },
     {
       name: "Services",
       href: "/user/services",
       dropdown: [
-        { name: "Service 1", href: "/user/services/emsservice" },
-        { name: "Service 2", href: "/user/services/crm" },
-        { name: "Services 3", href: "/user/services/accounting" },
+        { name: "Ticket Managment System", href: "/user/services/emsservice" },
+        { name: "Lead Managment", href: "/user/services/crm" },
+        { name: "Task Managment", href: "/user/services/accounting" },
       ]
     },
-    { name: "Contact", href: "/user/contact-us" },
+     { name: "Pricing", href: "/home/pricing" },
+    { name: "Contact", href: "/home/contact" },
+    { name: "Blog", href: "/home/blog" },
   ];
 
   return (
