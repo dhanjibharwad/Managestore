@@ -3,6 +3,29 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, Sparkles, User, LogOut, Settings, Shield } from "lucide-react";
+import { 
+  MdConfirmationNumber, 
+  MdLeaderboard, 
+  MdTask, 
+  MdBuild,
+  MdAssignment,
+  MdCheckCircle,
+  MdHistory,
+  MdSchedule,
+  MdPeople,
+  MdVisibility,
+  MdLocalShipping,
+  MdBusinessCenter,
+  MdInventory,
+  MdShoppingCart,
+  MdAccountBalanceWallet,
+  MdPointOfSale,
+  MdSecurity,
+  MdPhotoLibrary,
+  MdStorage,
+  MdPalette,
+  MdFeaturedPlayList
+} from "react-icons/md";
 import { Playfair_Display } from "next/font/google";
 import { useRouter } from "next/navigation";
 
@@ -103,14 +126,38 @@ export default function Navbar() {
       name: "Services",
       href: "/user/services",
       dropdown: [
-        { name: "Ticket Managment System", href: "/user/services/emsservice" },
-        { name: "Lead Managment", href: "/user/services/crm" },
-        { name: "Task Managment", href: "/user/services/accounting" },
+        // Ticket & Service
+        { name: "Repair Tickets Management", href: "/user/services/repair-tickets", icon: MdConfirmationNumber },
+        { name: "Annual Maintenance Contract", href: "/user/services/amc", icon: MdAssignment },
+        { name: "Self Check-In", href: "/user/services/self-checkin", icon: MdCheckCircle },
+        // { name: "Activity Logs", href: "/user/services/activity-logs", icon: MdHistory },
+        // Operations & Tasks
+        { name: "Task Management", href: "/user/services/task-management", icon: MdTask },
+        { name: "Work Scheduler", href: "/user/services/work-scheduler", icon: MdSchedule },
+        { name: "Employee Permissions", href: "/user/services/employee-permissions", icon: MdPeople },
+        { name: "Show / Hide Modules", href: "/user/services/module-control", icon: MdVisibility },
+        // CRM & Leads
+        { name: "Lead Management", href: "/user/services/lead-management", icon: MdLeaderboard },
+        { name: "Pickup Drop Management", href: "/user/services/pickup-drop", icon: MdLocalShipping },
+        { name: "Outsource Management", href: "/user/services/outsource-management", icon: MdBusinessCenter },
+        // Inventory & Finance
+        { name: "Inventory Management", href: "/user/services/inventory-management", icon: MdInventory },
+        { name: "Purchase Management", href: "/user/services/purchase-management", icon: MdShoppingCart },
+        { name: "Expense Management", href: "/user/services/expense-management", icon: MdAccountBalanceWallet },
+        { name: "Point of Sale (POS)", href: "/user/services/pos", icon: MdPointOfSale },
+        // Security & Verification
+        { name: "OTP for Delivery", href: "/user/services/otp-delivery", icon: MdSecurity },
+        // { name: "Device Image Gallery", href: "/user/services/device-gallery", icon: MdPhotoLibrary },
+        // { name: "Data Recovery Management", href: "/user/services/data-recovery", icon: MdStorage },
+        // UI & System
+        // { name: "Theme Change (Light / Dark)", href: "/user/services/theme", icon: MdPalette },
+        // CTA
+        { name: "All Features", href: "/features", icon: MdFeaturedPlayList }
       ]
     },
      { name: "Pricing", href: "/home/pricing" },
     { name: "Contact", href: "/home/contact" },
-    { name: "Blog", href: "/home/blog" },
+    { name: "Blog", href: "/home/blog" }, 
   ];
 
   return (
@@ -167,19 +214,23 @@ export default function Navbar() {
                         item.dropdown.length > 8 ? "grid grid-cols-2 gap-x-4" : ""
                       }`}
                     >
-                      {item.dropdown.map((dropItem, index) => (
-                        <Link
-                          key={dropItem.name}
-                          href={dropItem.href}
-                          className="block px-4 py-2.5 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 text-sm font-medium"
-                          onClick={() => setActiveDropdown(null)}
-                          style={{
-                            animation: `fadeIn 0.3s ease-out ${index * 0.05}s both`,
-                          }}
-                        >
-                          {dropItem.name}
-                        </Link>
-                      ))}
+                      {item.dropdown.map((dropItem, index) => {
+                        const IconComponent = dropItem.icon;
+                        return (
+                          <Link
+                            key={dropItem.name}
+                            href={dropItem.href}
+                            className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-all duration-200 text-sm font-medium"
+                            onClick={() => setActiveDropdown(null)}
+                            style={{
+                              animation: `fadeIn 0.3s ease-out ${index * 0.05}s both`,
+                            }}
+                          >
+                            <IconComponent className="w-4 h-4 text-gray-500" />
+                            {dropItem.name}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -351,16 +402,20 @@ export default function Navbar() {
 
                 {item.dropdown && (
                   <div className="ml-4 mt-1 space-y-1">
-                    {item.dropdown.map((dropItem) => (
-                      <Link
-                        key={dropItem.name}
-                        href={dropItem.href}
-                        className="block py-2 px-4 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200"
-                        onClick={() => setIsOpen(false)}
-                      >
-                        • {dropItem.name}
-                      </Link>
-                    ))}
+                    {item.dropdown.map((dropItem) => {
+                      const IconComponent = dropItem.icon;
+                      return (
+                        <Link
+                          key={dropItem.name}
+                          href={dropItem.href}
+                          className="flex items-center gap-2 py-2 px-4 text-sm text-gray-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-600 transition-all duration-200"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <IconComponent className="w-4 h-4" />
+                          {dropItem.name}
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
