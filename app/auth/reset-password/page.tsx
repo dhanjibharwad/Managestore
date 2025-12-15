@@ -159,11 +159,11 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get('email');
@@ -466,5 +466,28 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+          <div className="animate-pulse">
+            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div className="h-8 bg-gray-200 rounded mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded mb-8"></div>
+            <div className="space-y-4">
+              <div className="h-12 bg-gray-200 rounded"></div>
+              <div className="h-12 bg-gray-200 rounded"></div>
+              <div className="h-12 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
