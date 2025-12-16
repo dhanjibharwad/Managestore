@@ -1,6 +1,8 @@
 
 "use client"
 import React from 'react';
+import Link from 'next/link';
+
 
 // Helper component for Trust Badges (to keep main component cleaner)
 const Badge = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
@@ -76,7 +78,7 @@ export default function App() {
             {/* Shine Effect */}
             <span className="absolute top-0 left-0 w-full h-full block bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 group-hover:translate-x-full"></span>
             
-            <span className="relative z-10">Book a Demo</span>
+            <Link href="/auth/company-register"><span className="relative z-10">Book a Demo</span></Link>
             <svg className="relative z-10 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
@@ -137,7 +139,7 @@ export default function App() {
             </div>
 
             {/* Client Logos */}
-            <div className="space-y-4 pt-4">
+            {/* <div className="space-y-4 pt-4">
               <p className="text-xs uppercase tracking-widest font-bold text-blue-600">
                 ALREADY TRUSTED BY INDUSTRY LEADERS:
               </p>
@@ -148,7 +150,7 @@ export default function App() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Features & Trust Section (Right Column) */}

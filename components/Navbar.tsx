@@ -124,7 +124,7 @@ export default function Navbar() {
     // { name: "Contact", href: "/user/contact-us" },
     {
       name: "Services",
-      href: "/user/services",
+      href: "/home/allservice",
       dropdown: [
         // Ticket & Service
         { name: "Repair Tickets Management", href: "/user/services/repair-tickets", icon: MdConfirmationNumber },
@@ -320,11 +320,11 @@ export default function Navbar() {
                   href="/auth/login"
                   className="min-w-[100px] lg:min-w-[140px] px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-semibold text-sm lg:text-md text-center text-gray-900 bg-white border-1 border-gray-900 shadow-md hover:bg-gray-700 hover:text-white hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-in-out"
                 >
-                  Login
+                  Workspace login
                 </Link>
 
                 <Link
-                  href="/auth/company-register"
+                  href="/extra/demopage"
                   className="min-w-[100px] lg:min-w-[140px] px-4 lg:px-6 py-2 lg:py-3 rounded-xl font-semibold text-sm lg:text-md text-center text-white bg-blue-500 shadow-lg hover:bg-blue-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ease-in-out"
                 >
                  Start Free Trial
@@ -464,7 +464,7 @@ export default function Navbar() {
                   className="block w-full text-center py-3 px-6 border-2 border-indigo-600 text-indigo-600 rounded-full font-semibold hover:bg-indigo-50 transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
-                  Login
+                  Workspace login
                 </Link>
                 <Link
                   href="/auth/register"
