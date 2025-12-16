@@ -2,6 +2,8 @@
 
 "use client";
 import React, { useState } from 'react';
+import Link from 'next/link';
+
 
 const PlansPage = () => {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
@@ -220,9 +222,12 @@ const PlansPage = () => {
                   </div>
 
                   {/* CTA Button */}
+                  <Link href="/extra/demopage">
+
                   <button className={`w-full py-4 px-6 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${plan.buttonStyle}`}>
                     {plan.buttonText}
                   </button>
+                  </Link>
                 </div>
               </div>
             ))}

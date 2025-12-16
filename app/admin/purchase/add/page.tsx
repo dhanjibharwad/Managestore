@@ -137,7 +137,7 @@ export default function PurchasePage() {
                   <Plus size={20} />
                 </button>
               </div>
-              <p className="text-xs text-red-500 mt-1">Part suppliers a required field</p>
+              {/* <p className="text-xs text-red-500 mt-1">Part suppliers a required field</p> */}
             </div>
 
             {/* Party Invoice Number */}

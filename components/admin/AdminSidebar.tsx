@@ -73,7 +73,7 @@ export default function AdminSidebar() {
       </button>
 
       {/* Sidebar Content */}
-      <div className="flex-1 p-3 sm:p-5 overflow-y-auto">
+      <div className="flex-1 p-3 sm:p-5">
         {/* Logo */}
         <div className="mb-6 sm:mb-8">
           {!isCollapsed ? (
@@ -103,7 +103,7 @@ export default function AdminSidebar() {
 
         {/* Navigation Items */}
         <nav>
-          <ul className="space-y-0.5 sm:space-y-1">
+          <ul className="space-y-0 sm:space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
@@ -127,7 +127,7 @@ export default function AdminSidebar() {
                     />
                     
                     {!isCollapsed && (
-                      <span className="truncate">{item.label}</span>
+                      <span className="truncate z-index-100">{item.label}</span>
                     )}
 
                     {/* Tooltip for collapsed state */}
