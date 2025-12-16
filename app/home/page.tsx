@@ -88,11 +88,11 @@ export default function UserHomePage() {
             {/* <h2 className="mt-2 text-3xl lg:text-4xl font-semibold text-gray-800 tracking-tight">
   We&apos;re Best In Service Provider
 </h2> */}
-            <h2 className="mt-2 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+            <h2 className="text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
               What our mission stands for
             </h2>
 
-            <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="mt-4 text-lg text-gray-700 leading-relaxed">
               Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
               loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
               into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
@@ -108,7 +108,7 @@ export default function UserHomePage() {
         </div>
       </ScrollAnimatedSection>
 
-      <ScrollAnimatedSection className="py-16 bg-white dark:bg-gray-900" delay={200}>
+      <ScrollAnimatedSection className="bg-white" delay={200}>
         <div className="container mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Left Image */}
           <div className="relative w-full h-[600px] lg:h-[650px] overflow-hidden group">
