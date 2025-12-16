@@ -22,6 +22,7 @@ export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'inactive' | 'active' | 'suspended'>('all');
+  const [approving, setApproving] = useState<number | null>(null);
 
   useEffect(() => {
     fetchCompanies();
@@ -43,17 +44,23 @@ export default function CompaniesPage() {
 
   const handleStatusUpdate = async (companyId: number, status: 'active' | 'suspended') => {
     try {
+      if (status === 'active') {
+        setApproving(companyId);
+      }
+      
       const res = await fetch(`/api/super-admin/companies/${companyId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify({ status, sendInvite: status === 'active' })
       });
       
       if (res.ok) {
-        fetchCompanies(); // Refresh the list
+        fetchCompanies();
       }
     } catch (error) {
       console.error('Failed to update company status:', error);
+    } finally {
+      setApproving(null);
     }
   };
 
@@ -187,10 +194,15 @@ export default function CompaniesPage() {
                       <Button
                         size="sm"
                         onClick={() => handleStatusUpdate(company.id, 'active')}
+                        disabled={approving === company.id}
                         className="bg-green-600 hover:bg-green-700"
                       >
-                        <CheckCircle className="w-4 h-4 mr-1" />
-                        Approve
+                        {approving === company.id ? (
+                          <div className="w-4 h-4 mr-1 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        ) : (
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                        )}
+                        {approving === company.id ? 'Sending...' : 'Approve'}
                       </Button>
                     </div>
                   )}

@@ -7,7 +7,7 @@ import Link from 'next/link';
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get('token'); // For invite-based registration
+  const token = searchParams.get('token');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -19,34 +19,7 @@ function RegisterForm() {
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
 
-  const calculatePasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[^a-zA-Z\d]/.test(password)) strength++;
-    return strength;
-  };
-
-  const handlePasswordChange = (password: string) => {
-    setFormData({ ...formData, password });
-    setPasswordStrength(calculatePasswordStrength(password));
-  };
-
-  const getPasswordStrengthColor = () => {
-    if (passwordStrength <= 1) return 'bg-red-500';
-    if (passwordStrength <= 3) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
-
-  const getPasswordStrengthText = () => {
-    if (passwordStrength <= 1) return 'Weak';
-    if (passwordStrength <= 3) return 'Medium';
-    return 'Strong';
-  };
 
   const validateForm = () => {
     if (!formData.name.trim()) {
@@ -64,8 +37,6 @@ function RegisterForm() {
       setError('Please enter a valid email address');
       return false;
     }
-
-
 
     if (formData.password.length < 8) {
       setError('Password must be at least 8 characters long');
@@ -91,6 +62,8 @@ function RegisterForm() {
     setLoading(true);
 
     try {
+      console.log('Submitting registration with token:', token);
+      
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -99,21 +72,26 @@ function RegisterForm() {
           email: formData.email,
           phone: formData.phone,
           password: formData.password,
-          token, // Include invite token if present
+          token,
         }),
       });
 
       const data = await res.json();
+      console.log('Registration response:', data);
 
       if (!res.ok) {
+        console.error('Registration failed:', data);
         setError(data.error || 'Registration failed');
         return;
       }
 
-      // Redirect to email verification
-      router.push(
-        `/auth/verify-email?email=${encodeURIComponent(formData.email)}`
-      );
+      console.log('Registration successful, redirecting...', data);
+      // Always redirect to email verification for new registrations
+      const redirectUrl = data.redirect || `/auth/verify-email?email=${encodeURIComponent(formData.email)}&companyId=${data.companyId}`;
+      console.log('Redirecting to:', redirectUrl);
+      
+      // Immediate redirect
+      window.location.href = redirectUrl;
     } catch (err) {
       console.error('Registration error:', err);
       setError('An error occurred. Please try again.');
@@ -122,24 +100,19 @@ function RegisterForm() {
     }
   };
 
-
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-[#4A70A9] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6 h-[85vh] overflow-hidden flex flex-col">
+        <div className="text-center mb-4">
+          <div className="w-12 h-12 bg-[#4A70A9] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-2">
+            <svg className="w-6 h-6 text-[#4A70A9]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-zinc-800">Create Account</h1>
-          <p className="text-gray-600 mt-2">Join us today</p>
+          <h1 className="text-2xl font-bold text-zinc-800">Create Account</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Error Message */}
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start">
               <svg className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
@@ -149,9 +122,6 @@ function RegisterForm() {
             </div>
           )}
 
-
-
-          {/* Full Name Input */}
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-zinc-700 mb-2">
               Full Name <span className="text-red-500">*</span>
@@ -162,12 +132,11 @@ function RegisterForm() {
               required
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
-              placeholder="John Doe"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
+              placeholder="User Name"
             />
           </div>
 
-          {/* Email Input */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-zinc-700 mb-2">
               Email Address <span className="text-red-500">*</span>
@@ -178,12 +147,11 @@ function RegisterForm() {
               required
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
               placeholder="you@example.com"
             />
           </div>
 
-          {/* Phone Input */}
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-zinc-700 mb-2">
               Phone Number <span className="text-gray-500">(Optional)</span>
@@ -193,12 +161,11 @@ function RegisterForm() {
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
               placeholder="+1234567890"
             />
           </div>
 
-          {/* Password Input */}
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-zinc-700 mb-2">
               Password <span className="text-red-500">*</span>
@@ -208,30 +175,13 @@ function RegisterForm() {
               type="password"
               required
               value={formData.password}
-              onChange={(e) => handlePasswordChange(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
               placeholder="••••••••"
             />
-            {/* Password Strength Indicator */}
-            {formData.password && (
-              <div className="mt-2">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs text-gray-600">Password strength:</span>
-                  <span className={`text-xs font-medium ${passwordStrength <= 1 ? 'text-red-600' : passwordStrength <= 3 ? 'text-yellow-600' : 'text-green-600'}`}>
-                    {getPasswordStrengthText()}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-1.5">
-                  <div
-                    className={`h-1.5 rounded-full transition-all ${getPasswordStrengthColor()}`}
-                    style={{ width: `${(passwordStrength / 5) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
+
           </div>
 
-          {/* Confirm Password Input */}
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-zinc-700 mb-2">
               Confirm Password <span className="text-red-500">*</span>
@@ -242,12 +192,11 @@ function RegisterForm() {
               required
               value={formData.confirmPassword}
               onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition"
               placeholder="••••••••"
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -267,8 +216,7 @@ function RegisterForm() {
           </button>
         </form>
 
-        {/* Footer */}
-        <div className="mt-6">
+        <div className="mt-4">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
@@ -285,12 +233,11 @@ function RegisterForm() {
           </div>
         </div>
 
-        {/* Terms */}
-        <p className="mt-2 text-xs text-center text-gray-500">
-          By creating an account, you agree to our{' '}
-          <a href="#" className="text-[#4A70A9] hover:underline">Terms of Service</a>
+        <p className="mt-2 mb-4 text-xs text-center text-gray-500">
+          By creating an account, you agree to{' '}
+          <a href="/extra/terms" className="text-[#4A70A9] hover:underline">Terms of Service</a>
           {' '}and{' '}
-          <a href="#" className="text-[#4A70A9] hover:underline">Privacy Policy</a>
+          <a href="/extra/privacy" className="text-[#4A70A9] hover:underline">Privacy Policy</a>
         </p>
       </div>
     </div>
@@ -300,16 +247,16 @@ function RegisterForm() {
 export default function RegisterPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
-        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-8">
+      <div className="h-screen bg-gradient-to-br from-zinc-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
           <div className="animate-pulse">
-            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded mb-2"></div>
-            <div className="h-4 bg-gray-200 rounded mb-8"></div>
+            <div className="w-12 h-12 bg-gray-200 rounded-full mx-auto mb-4"></div>
+            <div className="h-6 bg-gray-200 rounded mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded mb-6"></div>
             <div className="space-y-4">
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
+              <div className="h-10 bg-gray-200 rounded"></div>
             </div>
           </div>
         </div>

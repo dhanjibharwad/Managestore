@@ -109,12 +109,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { hashPassword, createVerificationToken, checkCompanySubscription } from '@/lib/auth';
+import { hashPassword, createVerificationToken, checkCompanySubscription, createSession } from '@/lib/auth';
 import { sendVerificationEmail } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
     const { email, password, name, phone, token } = await req.json();
+    console.log('Registration request received:', { email, name, phone, token: token ? 'present' : 'missing' });
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -125,22 +126,30 @@ export async function POST(req: NextRequest) {
 
     let companyId;
 
-    // If token provided, validate invite token
+    // If token provided, validate company invite token
     if (token) {
+      console.log('Validating invite token:', token);
       const inviteResult = await pool.query(
-        `SELECT company_id, expires_at FROM invite_tokens 
-         WHERE token = $1 AND used = false`,
+        `SELECT company_id, expires_at, used_at FROM company_invites 
+         WHERE token = $1`,
         [token]
       );
 
       if (inviteResult.rows.length === 0) {
         return NextResponse.json(
-          { error: 'Invalid or expired invitation' },
+          { error: 'Invalid invitation token' },
           { status: 400 }
         );
       }
 
       const invite = inviteResult.rows[0];
+      
+      if (invite.used_at) {
+        return NextResponse.json(
+          { error: 'Invitation has already been used' },
+          { status: 400 }
+        );
+      }
       
       if (new Date() > new Date(invite.expires_at)) {
         return NextResponse.json(
@@ -151,8 +160,6 @@ export async function POST(req: NextRequest) {
 
       companyId = invite.company_id;
     } else {
-      // For now, allow registration without invite (you can change this)
-      // Or find company by email domain, etc.
       return NextResponse.json(
         { error: 'Registration requires an invitation' },
         { status: 400 }
@@ -175,38 +182,45 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user (default role: customer)
+    // Create user as admin for company (unverified, needs OTP)
     const userResult = await pool.query(
-      `INSERT INTO users (email, password, name, phone, company_id, role) 
-       VALUES ($1, $2, $3, $4, $5, $6) 
+      `INSERT INTO users (email, password, name, phone, company_id, role, is_verified, is_active) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
        RETURNING id, email, name, role, company_id`,
-      [email.toLowerCase().trim(), hashedPassword, name, phone || null, companyId, 'customer']
+      [email.toLowerCase().trim(), hashedPassword, name, phone || null, companyId, 'admin', false, true]
     );
 
     const user = userResult.rows[0];
+    console.log('Created user:', user);
 
-    // Mark invite as used if token was provided
+    // Mark invite as used
     if (token) {
       await pool.query(
-        'UPDATE invite_tokens SET used = true, used_at = NOW() WHERE token = $1',
+        'UPDATE company_invites SET used_at = NOW() WHERE token = $1',
         [token]
       );
+      console.log('Marked invite as used');
     }
 
-    // Generate OTP
+    // Generate OTP for email verification
     const otp = await createVerificationToken(user.id, companyId, 'email_verification');
+    console.log('Generated OTP for user:', user.id);
 
     // Send verification email
     try {
       await sendVerificationEmail(email, otp);
+      console.log('Verification email sent to:', email);
     } catch (emailError) {
       console.error('Failed to send verification email:', emailError);
     }
 
+    console.log('Registration completed, OTP sent for user:', user.id);
     return NextResponse.json({
       message: 'Registration successful. Please check your email for verification code.',
       userId: user.id,
       companyId: companyId,
+      role: user.role,
+      redirect: `/auth/verify-email?email=${encodeURIComponent(email)}&companyId=${companyId}`
     }, { status: 201 });
   } catch (error) {
     console.error('Registration error:', error);

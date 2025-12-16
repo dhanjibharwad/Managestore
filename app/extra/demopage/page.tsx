@@ -73,7 +73,7 @@ export default function App() {
           <button
             onClick={handleBookDemo}
             // Added stronger hover effects (shadow/scale) and overflow-hidden for shine
-            className="group relative px-6 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:shadow-2xl transform hover:scale-[1.03] transition-all duration-300 font-semibold text-sm flex items-center space-x-2 overflow-hidden border border-blue-600"
+            className="group relative px-6 py-2 bg-blue-600 text-white rounded-lg hover:scale-[1.03] transition-all duration-300 font-semibold text-sm flex items-center space-x-2 overflow-hidden border border-blue-600"
           >
             {/* Shine Effect */}
             <span className="absolute top-0 left-0 w-full h-full block bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 group-hover:translate-x-full"></span>
@@ -82,8 +82,6 @@ export default function App() {
             <svg className="relative z-10 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
-            {/* Darker background color transition */}
-            <span className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
           </button>
         </div>
       </header>

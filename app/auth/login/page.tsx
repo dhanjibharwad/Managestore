@@ -171,7 +171,12 @@ export default function LoginPage() {
         return;
       }
 
-      router.push('/dashboard');
+      // Redirect based on user role
+      if (data.user.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/dashboard');
+      }
       router.refresh();
     } catch (err) {
       console.error('Login error:', err);
