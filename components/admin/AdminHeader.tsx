@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export default function AdminHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState({ name: '', email: '' });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,6 +18,21 @@ export default function AdminHeader() {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData.user);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
   }, []);
 
   return (
@@ -45,9 +61,9 @@ export default function AdminHeader() {
             className="flex items-center gap-2 pl-2 pr-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              U
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <span className="text-sm font-medium text-gray-700">Uday</span>
+            <span className="text-sm font-medium text-gray-700">{user.name || 'User'}</span>
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
