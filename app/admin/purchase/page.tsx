@@ -30,7 +30,7 @@ export default function PurchasePage() {
   const totalDueAmount = purchases.reduce((sum, p) => sum + p.remainingAmount, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
       <div className="mb-6">
         <button

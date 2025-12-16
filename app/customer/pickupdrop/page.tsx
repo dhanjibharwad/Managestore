@@ -61,7 +61,7 @@ export default function PickupDropsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-[1600px] mx-auto p-6">
+      <div className="max-w-[1600px] mx-auto">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-zinc-800">Pickup/Drops</h1>

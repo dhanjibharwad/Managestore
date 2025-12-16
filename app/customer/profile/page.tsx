@@ -20,7 +20,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-gray-50">
       <div className="mx-auto">
         {/* Header Card */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">

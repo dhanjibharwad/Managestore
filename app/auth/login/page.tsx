@@ -172,11 +172,15 @@ export default function LoginPage() {
       }
 
       // Redirect based on user role
-      if (data.user.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/dashboard');
-      }
+      const roleRoutes = {
+        'super-admin': '/super-admin/dashboard',
+        'admin': '/admin/dashboard',
+        'technician': '/technician/dashboard',
+        'customer': '/customer/dashboard'
+      };
+      
+      const redirectPath = roleRoutes[data.user.role as keyof typeof roleRoutes] || '/dashboard';
+      router.push(redirectPath);
       router.refresh();
     } catch (err) {
       console.error('Login error:', err);

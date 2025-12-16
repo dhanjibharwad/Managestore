@@ -75,7 +75,7 @@ export default function ExpensePage() {
   const totalExpensesCount = expenses.length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
       <div className="mb-6">
         <div 

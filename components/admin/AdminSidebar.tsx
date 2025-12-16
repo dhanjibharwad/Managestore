@@ -77,27 +77,27 @@ export default function AdminSidebar() {
         {/* Logo */}
         <div className="mb-6 sm:mb-8">
           {!isCollapsed ? (
-            <Link 
-              href="/home" 
-              className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-            >
+            // <Link 
+            //   href="/home" 
+            //   className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+            // >
               <img 
                 src="/images/lg1.png" 
                 alt="BytePhase Logo" 
                 className="h-12 sm:h-16 w-auto"
               />
-            </Link>
+            // </Link>
           ) : (
-            <Link 
-              href="/home" 
-              className="flex justify-center transition-transform duration-200 hover:scale-110"
-            >
+            // <Link 
+            //   href="/home" 
+            //   className="flex justify-center transition-transform duration-200 hover:scale-110"
+            // >
               <img 
                 src="/images/np.png" 
                 alt="Storremanager Logo" 
                 className="h-6 w-6 sm:h-8 sm:w-8 object-contain"
               />
-            </Link>
+            // </Link>
           )}
         </div>
 

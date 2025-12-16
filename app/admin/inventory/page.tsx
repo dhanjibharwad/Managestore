@@ -47,7 +47,7 @@ const InventoryPage: React.FC = () => {
   const lowStockCount = parts.filter(part => part.current_stock <= (part.low_stock_units || 0)).length;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header Section */}
       <div className="mb-6">
         <button

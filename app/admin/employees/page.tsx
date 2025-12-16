@@ -50,7 +50,7 @@ const EmployeeTable = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="max-w-[1600px] mx-auto">
         {/* Header Section */}
         <div className="mb-6 flex items-center justify-between">

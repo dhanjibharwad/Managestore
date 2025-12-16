@@ -26,7 +26,7 @@ export default function SalesPage() {
   const totalDueAmount = sales.reduce((sum, sale) => sum + sale.paymentRemaining, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="mb-6">
         <button
