@@ -104,7 +104,7 @@ const JobsSection: React.FC = () => {
           searchPlaceholder: 'Job number, customer',
           selectPlaceholder: 'Select status',
           buttonText: 'New Pickup',
-          buttonLink: '/admin/pickups/new',
+          buttonLink: '/admin/pickupdrop/add',
           headers: [
             'Job Number',
             'Customer',

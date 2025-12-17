@@ -180,7 +180,7 @@ export default function PickupDropPage() {
   };
 
   return (
-    <div className="bg-gray-50 flex items-center justify-center p-4">
+    <div className="bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
