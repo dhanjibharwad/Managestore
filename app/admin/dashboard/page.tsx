@@ -15,18 +15,18 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, percentage, icon, dateRange }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
-      <div className="flex items-start justify-between mb-3 sm:mb-4">
-        <div className="flex items-center gap-2 text-zinc-600">
-          {icon}
-          <span className="text-xs sm:text-sm font-medium">{title}</span>
+    <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-6 hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-zinc-600 min-w-0 flex-1">
+          <div className="flex-shrink-0">{icon}</div>
+          <span className="text-xs sm:text-sm font-medium truncate">{title}</span>
         </div>
-        <span className="text-xs font-medium text-cyan-500 bg-cyan-50 px-2.5 py-1 rounded">
+        <span className="text-xs font-medium text-cyan-500 bg-cyan-50 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded flex-shrink-0 ml-2">
           {percentage}
         </span>
       </div>
-      <div className="text-2xl sm:text-3xl font-bold text-zinc-900 mb-1 sm:mb-2">{value}</div>
-      <div className="text-[10px] sm:text-xs text-zinc-400">{dateRange}</div>
+      <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-zinc-900 mb-1 sm:mb-2">{value}</div>
+      <div className="text-[10px] sm:text-xs text-zinc-400 leading-tight">{dateRange}</div>
     </div>
   );
 };
@@ -123,71 +123,80 @@ const JobsSection: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-zinc-200">
       {/* Tabs Header */}
-      <div className="border-b border-zinc-200 overflow-x-auto">
-        <div className="flex items-center gap-1 sm:gap-2 p-2 min-w-max">
+      <div className="border-b border-zinc-200 overflow-x-auto scrollbar-hide">
+        <div className="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 min-w-max">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-1 sm:gap-1.5 lg:gap-2 px-2 sm:px-3 lg:px-5 py-2 sm:py-2.5 lg:py-3.5 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap min-w-0 ${
                 activeTab === tab.id
                   ? 'bg-zinc-100 text-zinc-900'
                   : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
               }`}
             >
-              {tab.icon}
-              {tab.label}
+              <div className="flex-shrink-0">{tab.icon}</div>
+              <span className="hidden sm:inline lg:inline">{tab.label}</span>
+              <span className="sm:hidden">{tab.label.split(' ')[1] || tab.label}</span>
             </button>
           ))}
         </div>
       </div>
 
       {/* Header */}
-      <div className="p-4 sm:p-6 border-b border-zinc-200">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-xl sm:text-2xl font-bold text-zinc-900">{config.title}</h2>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+      <div className="p-3 sm:p-4 lg:p-6 border-b border-zinc-200">
+        <div className="flex flex-col gap-3 sm:gap-4">
+          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-zinc-900">{config.title}</h2>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            {/* Search Input - Full width on mobile */}
+            <div className="relative flex-1 sm:flex-initial">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 sm:w-5 h-4 sm:h-5 text-zinc-400" />
               <input
                 type="text"
                 placeholder={config.searchPlaceholder}
-                className="pl-11 pr-4 py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64 lg:w-80"
+                className="pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64 lg:w-80"
               />
             </div>
-            <select className="px-3 sm:px-4 py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-auto sm:min-w-[180px]">
-              <option>{config.selectPlaceholder}</option>
-            </select>
-            {config.showAllFilters && (
-              <button className="px-3 sm:px-4 py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 font-medium">
-                <SlidersHorizontal className="w-4 h-4" />
-                All Filters
-              </button>
-            )}
-            {config.showExtraButtons && (
-              <>
-                <button className="p-2.5 border border-zinc-300 rounded-md text-zinc-700 hover:bg-zinc-50">
-                  <Download className="w-5 h-5" />
+            
+            {/* Controls Row */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <select className="px-3 sm:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent flex-1 sm:flex-initial sm:min-w-[140px] lg:min-w-[180px]">
+                <option>{config.selectPlaceholder}</option>
+              </select>
+              
+              {config.showAllFilters && (
+                <button className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-1 sm:gap-2 font-medium">
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span className="hidden sm:inline">All Filters</span>
+                  <span className="sm:hidden">Filters</span>
                 </button>
-              </>
-            )}
-            <Link href={config.buttonLink} className="px-4 sm:px-5 py-2.5 bg-[#4A70A9] text-white rounded-md text-xs sm:text-sm hover:bg-[#3d5c8c] flex items-center gap-2 font-medium shadow-sm">
-              <Plus className="w-5 h-5" />
-              {config.buttonText}
-            </Link>
+              )}
+              
+              {config.showExtraButtons && (
+                <button className="p-2 sm:p-2.5 border border-zinc-300 rounded-md text-zinc-700 hover:bg-zinc-50 flex-shrink-0">
+                  <Download className="w-4 sm:w-5 h-4 sm:h-5" />
+                </button>
+              )}
+              
+              <Link href={config.buttonLink} className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-[#4A70A9] text-white rounded-md text-xs sm:text-sm hover:bg-[#3d5c8c] flex items-center gap-1 sm:gap-2 font-medium shadow-sm flex-shrink-0">
+                <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
+                <span className="hidden xs:inline">{config.buttonText}</span>
+                <span className="xs:hidden">New</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      <div className="overflow-x-auto scrollbar-hide">
+        <table className="w-full min-w-[800px]">
           <thead className="bg-zinc-50 border-b border-zinc-200">
             <tr>
               {config.headers.map((header, index) => (
                 <th
                   key={index}
-                  className="px-6 py-4 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider whitespace-nowrap"
+                  className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-left text-xs font-semibold text-zinc-600 uppercase tracking-wider whitespace-nowrap"
                 >
                   {header}
                 </th>
@@ -196,7 +205,7 @@ const JobsSection: React.FC = () => {
           </thead>
           <tbody>
             <tr>
-              <td colSpan={config.headers.length} className="px-6 py-20 text-center text-zinc-400 text-base">
+              <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
                 No data
               </td>
             </tr>
@@ -247,11 +256,10 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-zinc-50 p-3 sm:p-4 lg:p-6 xl:p-8">
       <div className="max-w-[1600px] mx-auto">
-
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-10">
+        {/* Stats Grid - Responsive layout */}
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-10">
           {stats.map((stat, index) => (
             <StatCard
               key={index}
