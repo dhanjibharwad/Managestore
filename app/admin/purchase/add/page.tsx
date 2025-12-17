@@ -101,7 +101,7 @@ export default function PurchasePage() {
   const totals = calculateTotals();
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">

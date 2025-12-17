@@ -11,7 +11,7 @@ const Footer = () => {
     { name: "About Us", href: "/user/about-us" },
     { name: "Our Team", href: "/user/team-member" },
     { name: "Careers", href: "/user/careers" },
-    { name: "Pricing", href: "/user/pricing" },
+    { name: "Pricing", href: "/home/pricing" },
     { name: "Blog", href: "/user/blog" },
   ];
 
@@ -26,7 +26,7 @@ const Footer = () => {
   const supportLinks = [
     // { name: "Help Center", href: "/support" },
     // { name: "Documentation", href: "/docs" }, 
-    { name: "Contact Us", href: "/user/contact-us" },
+    { name: "Contact Us", href: "/home/contact  " },
     { name: "Our Gallery", href: "/user/gallery" },
     { name: "FAQs", href: "/home/FAQ" },
   ];

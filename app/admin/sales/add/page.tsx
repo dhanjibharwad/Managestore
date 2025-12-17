@@ -208,8 +208,8 @@ export default function SalesForm() {
   const totals = calculateTotals();
 
   return (
-    <div className="min-h-screen bg-white p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-white p-2">
+      <div className="mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -574,7 +574,7 @@ export default function SalesForm() {
                   />
                   <span className="text-sm text-gray-700">SMS</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                {/* <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendInApp}
@@ -582,7 +582,7 @@ export default function SalesForm() {
                     className="w-4 h-4 text-[#4A70A9] focus:ring-[#4A70A9] rounded"
                   />
                   <span className="text-sm text-gray-700">In App</span>
-                </label>
+                </label> */}
               </div>
             </div>
           </div>

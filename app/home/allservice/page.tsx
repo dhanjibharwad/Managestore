@@ -84,12 +84,12 @@ const ServiceCard: React.FC<{ service: Service }> = ({ service }) => (
   // Using an anchor tag for Next.js-style navigation links
   <a
     href={service.href}
-    className="flex items-center justify-between p-4 transition-all duration-200 bg-white rounded-xl shadow-sm hover:shadow-md hover:ring-2 hover:ring-indigo-200 group"
+    className="flex items-center justify-between p-4 transition-all duration-200 bg-white rounded-xl shadow-sm hover:shadow-md hover:ring-2 hover:ring-blue-200 group"
   >
-    <span className="font-medium text-gray-700 group-hover:text-indigo-600 transition-colors">
+    <span className="font-medium text-gray-700 group-hover:text-blue-600 transition-colors">
       {service.name}
     </span>
-    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-transform group-hover:translate-x-1" />
+    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-transform group-hover:translate-x-1" />
   </a>
 );
 
@@ -151,10 +151,10 @@ const ServiceDiscoveryPage: React.FC = () => {
           ))}
         </div>
       </main>
-
+{/* 
       <footer className="py-8 text-center text-gray-500 border-t mt-12">
         &copy; {new Date().getFullYear()} Service Portal. All rights reserved.
-      </footer>
+      </footer> */}
     </div>
   );
 };

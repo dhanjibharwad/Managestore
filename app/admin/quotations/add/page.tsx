@@ -196,7 +196,7 @@ export default function QuotationPage() {
   const grandTotal = serviceTotals.total + partTotals.total;
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
