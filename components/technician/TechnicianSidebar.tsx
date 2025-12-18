@@ -12,7 +12,8 @@ import {
   Truck,
   IdCard,
   Warehouse,
-  LineChart 
+  LineChart,
+  Users 
 } from 'lucide-react';
 
 const navItems = [
@@ -23,6 +24,7 @@ const navItems = [
   { label: "Employees", href: "/technician/employees", icon: IdCard },
    { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
     { label: "Sales", href: "/technician/sales", icon: LineChart }, 
+     { label: "Customers", href: "/technician/customers", icon: Users },
 ];
 
 export default function TechnicianSidebar() {
@@ -57,27 +59,27 @@ export default function TechnicianSidebar() {
         {/* Logo */}
         <div className="mb-8">
           {!isCollapsed ? (
-            <Link 
-              href="/home" 
-              className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-            >
+            // <Link 
+            //   href="/home" 
+            //   className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+            // >
               <img 
                 src="/images/lg1.png" 
                 alt="Storremanager Logo" 
                 className="h-16 w-auto"
               />
-            </Link>
+            // </Link>
           ) : (
-            <Link 
-              href="/home" 
-              className="flex justify-center transition-transform duration-200 hover:scale-110"
-            >
+            // <Link 
+            //   href="/home" 
+            //   className="flex justify-center transition-transform duration-200 hover:scale-110"
+            // >
               <img 
                 src="/images/np.png" 
                 alt="Storremanager Logo" 
                 className="h-8 w-8 object-contain"
               />
-            </Link>
+            // </Link>
           )}
         </div>
 
