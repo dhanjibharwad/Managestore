@@ -38,7 +38,7 @@ export default function LeadInformationPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
-        <div className="flex justify-between items-center p-6 border-b border-gray-200">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
           <h1 className="text-2xl font-semibold text-gray-900">Lead Information</h1>
           <div className="flex gap-3">
             <button
@@ -72,9 +72,9 @@ export default function LeadInformationPage() {
                     onChange={(e) => setFormData({ ...formData, leadType: e.target.value })}
                   >
                     <option value="">Select lead type</option>
-                    <option value="hot">Hot Lead</option>
-                    <option value="warm">Warm Lead</option>
-                    <option value="cold">Cold Lead</option>
+                    <option value="deal">Dealer</option>
+                    <option value="enduser">End User</option>
+                    <option value="corporate">Corporate User</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
@@ -106,6 +106,7 @@ export default function LeadInformationPage() {
                     onChange={(e) => setFormData({ ...formData, leadSource: e.target.value })}
                   >
                     <option value="">Select lead source type</option>
+                    <option value="Personal">Personal Meeting</option>
                     <option value="website">Website</option>
                     <option value="referral">Referral</option>
                     <option value="social">Social Media</option>
@@ -258,10 +259,15 @@ export default function LeadInformationPage() {
                     onChange={(e) => setFormData({ ...formData, deviceType: e.target.value })}
                   >
                     <option value="">Device type</option>
+                    <option value="all">All in one</option>
                     <option value="mobile">Mobile</option>
                     <option value="laptop">Laptop</option>
                     <option value="tablet">Tablet</option>
                     <option value="desktop">Desktop</option>
+                    <option value="camera">Camera</option>
+                    <option value="motherboard">Motherboard</option>
+                    <option value="harddrive">Hard Drives</option>
+                    <option value="camera">television</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
@@ -361,28 +367,8 @@ export default function LeadInformationPage() {
                         <div className="w-3 h-0.5 bg-gray-600"></div>
                         <div className="w-3 h-0.5 bg-gray-600"></div>
                       </div>
-                    </button>
-                    <button type="button" className="p-1.5 hover:bg-gray-200 rounded" title="Align Center">
-                      <div className="flex flex-col gap-0.5 items-center">
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                      </div>
-                    </button>
-                    <button type="button" className="p-1.5 hover:bg-gray-200 rounded" title="Align Right">
-                      <div className="flex flex-col gap-0.5 items-end">
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                        <div className="w-3 h-0.5 bg-gray-600"></div>
-                      </div>
-                    </button>
-                    <button type="button" className="p-1.5 hover:bg-gray-200 rounded" title="Justify">
-                      <div className="flex flex-col gap-0.5">
-                        <div className="w-3.5 h-0.5 bg-gray-600"></div>
-                        <div className="w-3.5 h-0.5 bg-gray-600"></div>
-                        <div className="w-3.5 h-0.5 bg-gray-600"></div>
-                      </div>
-                    </button>
+                    </button> 
+              
                   </div>
                 </div>
                 <textarea

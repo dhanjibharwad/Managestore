@@ -112,7 +112,7 @@ const EmployeeForm = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h1 className="text-2xl font-semibold text-gray-900">Create</h1>
           <div className="flex gap-3">
             <button
@@ -324,7 +324,6 @@ const EmployeeForm = () => {
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   />
-                  <Calendar className="absolute right-3 top-2.5 h-5 w-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>
             </div>

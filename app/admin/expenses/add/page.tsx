@@ -377,9 +377,6 @@ export default function ExpensePage() {
                 </div>
                 <div className="flex gap-1 ml-2">
                   <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">≡</button>
-                  <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">≡</button>
-                  <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">≡</button>
-                  <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">≡</button>
                 </div>
               </div>
 

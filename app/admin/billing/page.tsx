@@ -138,12 +138,12 @@ export default function BillingPage() {
             Payments
           </button>
           
-          <button
+          {/* <button
             onClick={() => handleTabClick('collect')}
             className="pb-3 px-1 font-medium text-gray-600 hover:text-gray-900 transition-colors"
           >
             Collect Payments
-          </button>
+          </button> */}
         </div>
 
         {/* Title */}

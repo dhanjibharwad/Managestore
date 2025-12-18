@@ -183,7 +183,7 @@ export default function PickupDropPage() {
     <div className="bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-lg shadow-lg w-full">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-800">
             Schedule A Pickup/Drop
           </h2>
@@ -192,7 +192,7 @@ export default function PickupDropPage() {
         {/* Form Content */}
         <div className="p-6">
           {/* Pickup/Drop Toggle */}
-          <div className="flex items-center justify-center gap-8 mb-8">
+          <div className="flex items-center justify-center gap-8 mb-4">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
