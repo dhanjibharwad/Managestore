@@ -18,10 +18,10 @@ import {
 
 export default function SuperAdminDashboard() {
   const stats = [
-    { title: "Total Companies", value: 32, color: "from-[#4A70A9] to-zinc-700" },
-    { title: "Total Admins", value: 87, color: "from-[#4A70A9] to-zinc-700" },
-    { title: "Monthly Revenue", value: "₹1,24,500", color: "from-[#4A70A9] to-zinc-700" },
-    { title: "Active Subscriptions", value: 29, color: "from-[#4A70A9] to-zinc-700" },
+    { title: "Total Companies", value: 32, color: "from-[#4A70A9] to-zinc-500" },
+    { title: "Total Admins", value: 87, color: "from-[#4A70A9] to-zinc-500" },
+    { title: "Monthly Revenue", value: "₹1,24,500", color: "from-[#4A70A9] to-zinc-500" },
+    { title: "Active Subscriptions", value: 29, color: "from-[#4A70A9] to-zinc-500" },
   ];
 
   const revenueData = [
@@ -51,10 +51,10 @@ export default function SuperAdminDashboard() {
   const COLORS = ["#4A70A9", "#6A85B6", "#2E3A47"];
 
   return (
-    <div className="min-h-screen p-8">
+    <div className="min-h-screen p-4">
       
       {/* Main Heading */}
-      <h1 className="mt-2 mb-4 text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+      <h1 className="mt-2 mb-4 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
         Super Admin Dashboard
       </h1>
 
