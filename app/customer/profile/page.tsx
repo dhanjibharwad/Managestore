@@ -151,8 +151,8 @@ export default function ProfilePage() {
                 />
                 <input
                   type="text"
-                  value="8857859209"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  value="91XXXXXXXXX"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-400"
                   readOnly
                 />
               </div>

@@ -21,8 +21,9 @@ const navItems = [
   { label: "Jobs", href: "/customer/jobs", icon: Briefcase },
   { label: "AMCS", href: "/customer/amcs", icon: FileCheck },
   { label: "Sales", href: "/customer/sales", icon: LineChart },
-  { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
   { label: "Quotations", href: "/customer/quotations", icon: FileText },
+  { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
+  
   { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck },
   { label: "Profile", href: "/customer/profile", icon: User }
 
@@ -59,27 +60,27 @@ export default function CustomerSidebar() {
         {/* Logo */}
         <div className="mb-8">
           {!isCollapsed ? (
-            <Link
-              href="/home"
-              className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-            >
+            // <Link
+            //   href="/home"
+            //   className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
+            // >
               <img
                 src="/images/lg1.png"
                 alt="Storremanager Logo"
                 className="h-16 w-auto"
               />
-            </Link>
+            // </Link>
           ) : (
-            <Link
-              href="/home"
-              className="flex justify-center transition-transform duration-200 hover:scale-110"
-            >
+            // <Link
+            //   href="/home"
+            //   className="flex justify-center transition-transform duration-200 hover:scale-110"
+            // >
               <img
                 src="/images/np.png"
                 alt="Storremanager Logo"
                 className="h-8 w-8 object-contain"
               />
-            </Link>
+            // </Link>
           )}
         </div>
 
