@@ -11,7 +11,8 @@ import {
   ChevronRight,
   Truck,
   IdCard,
-  Warehouse 
+  Warehouse,
+  LineChart 
 } from 'lucide-react';
 
 const navItems = [
@@ -21,6 +22,7 @@ const navItems = [
   { label: "Profile", href: "/technician/profile", icon: User },
   { label: "Employees", href: "/technician/employees", icon: IdCard },
    { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
+    { label: "Sales", href: "/technician/sales", icon: LineChart }, 
 ];
 
 export default function TechnicianSidebar() {
