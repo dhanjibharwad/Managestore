@@ -6,18 +6,21 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Briefcase, 
-  FileText, 
   User, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Truck,
+  IdCard,
+  Warehouse 
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/technician/dashboard", icon: LayoutDashboard },
   { label: "Assigned Jobs", href: "/technician/assigned-jobs", icon: Briefcase },
-  { label: "Job Report", href: "/technician/job-report", icon: FileText },
+   { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck },
   { label: "Profile", href: "/technician/profile", icon: User },
-  
+  { label: "Employees", href: "/technician/employees", icon: IdCard },
+   { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
 ];
 
 export default function TechnicianSidebar() {
