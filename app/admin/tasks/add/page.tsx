@@ -237,7 +237,7 @@ export default function AddNewTaskPage() {
   };
 
   return (
-    <div className="bg-gray-50 p-4 md:p-8">
+    <div className="bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">

@@ -138,7 +138,7 @@ export default function AddPartPage() {
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-semibold text-gray-900">Add Part</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Add Part</h1>
           <div className="flex gap-3">
             <button 
               onClick={() => router.push('/admin/inventory')}
@@ -429,7 +429,7 @@ export default function AddPartPage() {
                     className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                   >
                     <option value="GST 18%">GST 18%</option>
-                    <option value="GST 12%">GST 12%</option>
+                    <option value="GST 12%">IGST 18%</option>
                     <option value="GST 5%">GST 5%</option>
                   </select>
                   <button className="px-3.5 py-3 border border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors">
@@ -475,9 +475,6 @@ export default function AddPartPage() {
                   <button className="p-1.5 hover:bg-gray-200 rounded italic transition-colors">I</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">S</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded underline transition-colors">U</button>
-                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button>
-                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button>
-                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button>
                 </div>
                 <textarea

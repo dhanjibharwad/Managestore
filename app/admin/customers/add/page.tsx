@@ -15,6 +15,7 @@ export default function CustomerForm() {
     phoneNumber: '',
     source: '',
     referredBy: '',
+    taxNumber: '',
     addressLine: '',
     regionState: '',
     cityTown: '',
@@ -92,6 +93,7 @@ export default function CustomerForm() {
       phoneNumber: '',
       source: '',
       referredBy: '',
+      taxNumber: '',
       addressLine: '',
       regionState: '',
       cityTown: '',
@@ -100,10 +102,10 @@ export default function CustomerForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-semibold text-gray-900">Create</h1>
           <div className="flex gap-3">
             <button
@@ -142,9 +144,9 @@ export default function CustomerForm() {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none bg-white text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select customer type</option>
-                    <option value="individual">Individual</option>
-                    <option value="business">Business</option>
-                    <option value="corporate">Corporate</option>
+                    <option value="dealer">Dealer</option>
+                    <option value="enduser">End User</option>
+                    <option value="corporate">Corporate User</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
@@ -255,7 +257,7 @@ export default function CustomerForm() {
               </div>
 
               {/* Referred By */}
-              <div className="md:col-span-3">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Referred By
                 </label>
@@ -269,6 +271,20 @@ export default function CustomerForm() {
                   />
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
+              </div>
+
+              {/* Tax Number */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tax Number
+                </label>
+                <input
+                  type="text"
+                  value={formData.taxNumber}
+                  onChange={(e) => setFormData({ ...formData, taxNumber: e.target.value })}
+                  placeholder="Type Tax number"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                />
               </div>
             </div>
           </div>

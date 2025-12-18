@@ -35,7 +35,7 @@ export default function LeadInformationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="flex justify-between items-center p-6 border-b border-gray-200">

@@ -2,6 +2,9 @@
 
 import React, { useState } from 'react';
 import { Calendar, Upload, Info, Plus } from 'lucide-react';
+import Link from 'next/link';
+
+
 
 const ContractFormPage = () => {
   const [contractStartDate, setContractStartDate] = useState('08-Dec-2025');
@@ -9,14 +12,24 @@ const ContractFormPage = () => {
   const [autoRenew, setAutoRenew] = useState(false);
 
   return (
-    <div className="bg-gray-50 p-6">
+    <div className="bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
-        <div className="p-8">
+        <div className="p-6">
           {/* Contract Information Section */}
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6 pb-4 border-b border-gray-200">
-              Contract Information
-            </h2>
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+              <h2 className="text-2xl font-semibold text-gray-900">
+                Contract Information
+              </h2>
+              <div className="flex gap-3">
+                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                  Cancel
+                </button>
+                <button className="px-4 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] transition-colors">
+                  Create
+                </button>
+              </div>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               {/* Customer Name */}
@@ -30,9 +43,11 @@ const ContractFormPage = () => {
                     placeholder="Search by name, mobile, email"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   />
+                  <Link href="/admin/customers/add/">
                   <button className="bg-[#4A70A9] text-white p-2 rounded-md hover:bg-[#3d5c8c] transition-colors">
                     <Plus size={20} />
                   </button>
+                  </Link>
                 </div>
               </div>
 
@@ -54,6 +69,8 @@ const ContractFormPage = () => {
                 </label>
                 <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                   <option>Select AMC type</option>
+                  <option>AMC</option>
+                  <option>CMC</option>
                 </select>
               </div>
             </div>
