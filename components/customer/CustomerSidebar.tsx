@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
   Briefcase,
-  History,
   User,
   ChevronLeft,
   ChevronRight,
@@ -21,7 +20,6 @@ const navItems = [
   { label: "Dashboard", href: "/customer/dashboard", icon: LayoutDashboard },
   { label: "Jobs", href: "/customer/jobs", icon: Briefcase },
   { label: "AMCS", href: "/customer/amcs", icon: FileCheck },
-  // { label: "Service History", href: "/customer/service-history", icon: History },
   { label: "Sales", href: "/customer/sales", icon: LineChart },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
   { label: "Quotations", href: "/customer/quotations", icon: FileText },

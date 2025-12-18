@@ -159,10 +159,10 @@ export default function SelfCheckIn() {
       {/* Header Progress Bar */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-6">
+          <div className="flex items-center justify-between py-2">
             {/* Step 1 */}
             <div className="flex flex-col items-center flex-1">
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 currentStep >= 1 ? 'bg-[#4A70A9]' : 'bg-gray-300'
               }`}>
                 {currentStep > 1 ? (
@@ -184,7 +184,7 @@ export default function SelfCheckIn() {
 
             {/* Step 2 */}
             <div className="flex flex-col items-center flex-1">
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 currentStep >= 2 ? 'bg-[#4A70A9]' : 'bg-gray-300'
               }`}>
                 {currentStep > 2 ? (
@@ -206,7 +206,7 @@ export default function SelfCheckIn() {
 
             {/* Step 3 */}
             <div className="flex flex-col items-center flex-1">
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 currentStep >= 3 ? 'bg-[#4A70A9]' : 'bg-gray-300'
               }`}>
                 <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
