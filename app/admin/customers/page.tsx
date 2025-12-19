@@ -20,7 +20,6 @@ export default function CustomersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-  const [sendingInvite, setSendingInvite] = useState<number | null>(null);
 
   const fetchCustomers = async () => {
     try {
@@ -52,34 +51,6 @@ export default function CustomersPage() {
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [openDropdown]);
-
-  const handleSendInvitation = async (customerId: number) => {
-    try {
-      setSendingInvite(customerId);
-      setOpenDropdown(null);
-      
-      const response = await fetch('/api/admin/customers/send-invitation', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ customerId }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert('Invitation sent successfully!');
-      } else {
-        alert(result.error || 'Failed to send invitation');
-      }
-    } catch (error) {
-      console.error('Error sending invitation:', error);
-      alert('An error occurred while sending invitation');
-    } finally {
-      setSendingInvite(null);
-    }
-  };
 
   return (
     <div>
@@ -208,19 +179,11 @@ export default function CustomersPage() {
                       {openDropdown === index && (
                         <div className="absolute right-0 top-8 w-56 bg-white border border-zinc-200 rounded-lg shadow-lg z-50">
                           <div className="py-1">
-                            <button 
-                              onClick={() => handleSendInvitation(customer.id)}
-                              disabled={sendingInvite === customer.id}
-                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {sendingInvite === customer.id ? (
-                                <div className="w-4 h-4 animate-spin rounded-full border-2 border-zinc-400 border-t-transparent" />
-                              ) : (
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                </svg>
-                              )}
-                              {sendingInvite === customer.id ? 'Sending...' : 'Send Invitation'}
+                            <button className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                              </svg>
+                              Send Invitation
                             </button>
                             <button className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2">
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

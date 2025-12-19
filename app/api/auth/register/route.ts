@@ -115,9 +115,7 @@ import { sendVerificationEmail } from '@/lib/email';
 export async function POST(req: NextRequest) {
   try {
     const { email, password, name, phone, token } = await req.json();
-    const searchParams = new URL(req.url).searchParams;
-    const userType = searchParams.get('type') || 'admin';
-    console.log('Registration request received:', { email, name, phone, token: token ? 'present' : 'missing', userType });
+    console.log('Registration request received:', { email, name, phone, token: token ? 'present' : 'missing' });
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -128,12 +126,11 @@ export async function POST(req: NextRequest) {
 
     let companyId;
 
-    // If token provided, validate invite token
+    // If token provided, validate company invite token
     if (token) {
       console.log('Validating invite token:', token);
-      const tableName = userType === 'customer' ? 'customer_invites' : 'company_invites';
       const inviteResult = await pool.query(
-        `SELECT company_id, expires_at, used_at FROM ${tableName} 
+        `SELECT company_id, expires_at, used_at FROM company_invites 
          WHERE token = $1`,
         [token]
       );
@@ -185,13 +182,12 @@ export async function POST(req: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user with appropriate role
-    const role = userType === 'customer' ? 'customer' : 'admin';
+    // Create user as admin for company (unverified, needs OTP)
     const userResult = await pool.query(
       `INSERT INTO users (email, password, name, phone, company_id, role, is_verified, is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
        RETURNING id, email, name, role, company_id`,
-      [email.toLowerCase().trim(), hashedPassword, name, phone || null, companyId, role, false, true]
+      [email.toLowerCase().trim(), hashedPassword, name, phone || null, companyId, 'admin', false, true]
     );
 
     const user = userResult.rows[0];
@@ -199,9 +195,8 @@ export async function POST(req: NextRequest) {
 
     // Mark invite as used
     if (token) {
-      const tableName = userType === 'customer' ? 'customer_invites' : 'company_invites';
       await pool.query(
-        `UPDATE ${tableName} SET used_at = NOW() WHERE token = $1`,
+        'UPDATE company_invites SET used_at = NOW() WHERE token = $1',
         [token]
       );
       console.log('Marked invite as used');

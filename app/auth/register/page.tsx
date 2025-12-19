@@ -8,8 +8,6 @@ function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const userType = searchParams.get('type') || 'admin';
-  const companyId = searchParams.get('company');
   
   const [formData, setFormData] = useState({
     name: '',
@@ -66,10 +64,7 @@ function RegisterForm() {
     try {
       console.log('Submitting registration with token:', token);
       
-      const url = new URL('/api/auth/register', window.location.origin);
-      if (userType) url.searchParams.set('type', userType);
-      
-      const res = await fetch(url.toString(), {
+      const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -114,9 +109,7 @@ function RegisterForm() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-zinc-800">
-            {userType === 'customer' ? 'Customer Registration' : 'Create Account'}
-          </h1>
+          <h1 className="text-2xl font-bold text-zinc-800">Create Account</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
