@@ -62,6 +62,19 @@ export default function CustomerForm() {
       return;
     }
 
+    // Check for duplicate email
+    try {
+      const checkResponse = await fetch(`/api/admin/customers/check-email?email=${encodeURIComponent(formData.emailId)}`);
+      const checkResult = await checkResponse.json();
+      
+      if (checkResult.exists) {
+        alert('A customer with this email address already exists');
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
+    }
+
     setIsSubmitting(true);
     
     try {
