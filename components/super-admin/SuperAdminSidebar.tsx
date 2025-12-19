@@ -7,7 +7,6 @@ import {
   LayoutDashboard, 
   Building2, 
   CreditCard, 
-  BarChart3, 
   UserCog, 
   Settings, 
   ChevronLeft, 
@@ -18,7 +17,7 @@ const navItems = [
   { label: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
   { label: "Companies", href: "/super-admin/companies", icon: Building2 },
   { label: "Subscriptions", href: "/super-admin/subscriptions", icon: CreditCard },
-  { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
+  // { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
   { label: "Admins", href: "/super-admin/admins", icon: UserCog },
   { label: "Settings", href: "/super-admin/settings", icon: Settings },
 ];
