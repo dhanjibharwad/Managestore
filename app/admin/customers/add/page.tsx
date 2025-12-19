@@ -35,7 +35,9 @@ export default function CustomerForm() {
         }
         break;
       case 'emailId':
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (!value) {
+          newErrors.emailId = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           newErrors.emailId = 'Invalid email format';
         } else {
           delete newErrors.emailId;
@@ -47,10 +49,13 @@ export default function CustomerForm() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.customerType || !formData.customerName) {
-      alert('Please fill in required fields: Customer Type and Customer Name');
+    if (!formData.customerType || !formData.customerName || !formData.emailId) {
+      alert('Please fill in required fields: Customer Type, Customer Name, and Email ID');
       return;
     }
+
+    // Validate email on submit
+    validateField('emailId', formData.emailId);
 
     if (Object.keys(errors).length > 0) {
       alert('Please fix validation errors before submitting');
@@ -201,7 +206,7 @@ export default function CustomerForm() {
               {/* Email ID */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email ID
+                  Email ID <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"

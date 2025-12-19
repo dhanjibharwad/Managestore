@@ -2,6 +2,7 @@
 CREATE TABLE customers (
   id SERIAL PRIMARY KEY,
   customer_id VARCHAR(50) UNIQUE NOT NULL,
+  company_id INTEGER NOT NULL REFERENCES companies(id),
   
   -- Customer Information
   customer_type VARCHAR(50) NOT NULL,
@@ -27,6 +28,7 @@ CREATE TABLE customers (
 
 -- Create indexes for better performance
 CREATE INDEX idx_customers_customer_id ON customers(customer_id);
+CREATE INDEX idx_customers_company_id ON customers(company_id);
 CREATE INDEX idx_customers_mobile ON customers(mobile_number);
 CREATE INDEX idx_customers_email ON customers(email_id);
 CREATE INDEX idx_customers_name ON customers(customer_name);

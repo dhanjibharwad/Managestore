@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     
     const {
@@ -29,14 +35,14 @@ export async function POST(req: NextRequest) {
 
     const result = await pool.query(
       `INSERT INTO customers (
-        customer_type, customer_name, mobile_number, email_id, phone_number,
-        source, referred_by, address_line, region_state, city_town, postal_code
+        company_id, customer_type, customer_name, mobile_number, email_id, phone_number,
+        source, referred_by, address_line, region_state, city_town, postal_code, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
       ) RETURNING *`,
       [
-        customerType, customerName, mobileNumber, emailId, phoneNumber,
-        source, referredBy, addressLine, regionState, cityTown, postalCode
+        session.company.id, customerType, customerName, mobileNumber, emailId, phoneNumber,
+        source, referredBy, addressLine, regionState, cityTown, postalCode, session.user.id
       ]
     );
 
@@ -56,15 +62,20 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const type = searchParams.get('type');
     const search = searchParams.get('search');
 
-    let query = 'SELECT * FROM customers WHERE 1=1';
-    const params: any[] = [];
-    let paramCount = 0;
+    let query = 'SELECT * FROM customers WHERE company_id = $1';
+    const params: any[] = [session.company.id];
+    let paramCount = 1;
 
     if (type) {
       paramCount++;
@@ -92,9 +103,9 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM customers WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = 'SELECT COUNT(*) FROM customers WHERE company_id = $1';
+    const countParams: any[] = [session.company.id];
+    let countParamCount = 1;
 
     if (type) {
       countParamCount++;
