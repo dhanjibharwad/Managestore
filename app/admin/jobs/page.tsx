@@ -110,11 +110,13 @@ const JobPage: React.FC = () => {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              {tab === 'Self Check-In' && (
+              {/* {tab === 'Self Check-In' && 
+              (
                 <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  1
+                  2
                 </span>
-              )}
+              )
+              } */}
               {tab}
               
             </button>
