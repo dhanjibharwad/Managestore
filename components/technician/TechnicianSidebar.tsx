@@ -18,7 +18,7 @@ import {
 
 const navItems = [
   { label: "Dashboard", href: "/technician/dashboard", icon: LayoutDashboard },
-  { label: "Assigned Jobs", href: "/technician/assigned-jobs", icon: Briefcase },
+   { label: "Jobs", href: "/technician/jobs", icon: Briefcase },
    { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck },
   { label: "Profile", href: "/technician/profile", icon: User },
   { label: "Employees", href: "/technician/employees", icon: IdCard },

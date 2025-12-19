@@ -86,13 +86,7 @@ const JobPage: React.FC = () => {
     'Open Jobs',
     'All Jobs',
     'Outsourced Jobs',
-    'Self Check-In',
-    'Basic/Workflow Settings',
-    'Job Settings',
-    'Technician Print Options',
-    'Print Option Settings',
-    'Job Service Option',
-    'Overview'
+    'Self Check-In'
   ];
 
   return (
@@ -101,30 +95,23 @@ const JobPage: React.FC = () => {
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto">
           {tabs.map((tab) => (
-            tab === 'Outsourced Jobs' ? (
-              <Link key={tab} href="/admin/jobs/outsourced">
-                <button className="px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors text-gray-500 hover:text-gray-700">
-                  {tab}
-                </button>
-              </Link>
-            ) : (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
-                  activeTab === tab
-                    ? 'text-gray-900 border-b-2 border-[#4A70A9]'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab === 'Self Check-In' && (
-                  <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    1
-                  </span>
-                )}
-                {tab}
-              </button>
-            )
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
+                activeTab === tab
+                  ? 'text-gray-900 border-b-2 border-[#4A70A9]'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab === 'Self Check-In' && (
+                <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  1
+                </span>
+              )}
+              {tab}
+              
+            </button>
           ))}
         </div>
       </div>
@@ -347,14 +334,7 @@ const JobPage: React.FC = () => {
               </div>
             </div>
           </>
-        ) : (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{activeTab}</h3>
-              <p className="text-gray-500">Content for this tab is coming soon...</p>
-            </div>
-          </div>
-        )}
+        ) : null}
       </div>
     </div>
   );
