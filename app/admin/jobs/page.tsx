@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Grid, List, Settings } from 'lucide-react';
+import { Search, Plus, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 interface Job {
@@ -38,7 +38,7 @@ const JobPage: React.FC = () => {
   const [assigneeFilter, setAssigneeFilter] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+
 
   const leads: CheckInLead[] = [
     {
@@ -101,30 +101,23 @@ const JobPage: React.FC = () => {
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto">
           {tabs.map((tab) => (
-            tab === 'Outsourced Jobs' ? (
-              <Link key={tab} href="/admin/jobs/outsourced">
-                <button className="px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors text-gray-500 hover:text-gray-700">
-                  {tab}
-                </button>
-              </Link>
-            ) : (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
-                  activeTab === tab
-                    ? 'text-gray-900 border-b-2 border-[#4A70A9]'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                {tab === 'Self Check-In' && (
-                  <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    1
-                  </span>
-                )}
-                {tab}
-              </button>
-            )
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
+                activeTab === tab
+                  ? 'text-gray-900 border-b-2 border-[#4A70A9]'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              {tab === 'Self Check-In' && (
+                <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  1
+                </span>
+              )}
+              {tab}
+              
+            </button>
           ))}
         </div>
       </div>
@@ -159,21 +152,6 @@ const JobPage: React.FC = () => {
                   <option value="Closed">Closed</option>
                   <option value="Pending">Pending</option>
                 </select>
-
-                <div className="flex items-center gap-1 border border-gray-300 rounded-md p-1">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded ${viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-                  >
-                    <Grid className="w-5 h-5 text-gray-600" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 rounded ${viewMode === 'list' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
-                  >
-                    <List className="w-5 h-5 text-gray-600" />
-                  </button>
-                </div>
               </div>
             </div>
 
@@ -237,7 +215,61 @@ const JobPage: React.FC = () => {
               </div>
             </div>
           </>
-        ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs' || activeTab === 'Outsourced Jobs') ? (
+        ) : activeTab === 'Outsourced Jobs' ? (
+          <>
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-semibold text-gray-900">Outsourced Jobs</h1>
+              
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Outsource vendor name"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent w-80"
+                  />
+                </div>
+
+                <select
+                  value={jobStatus}
+                  onChange={(e) => setJobStatus(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
+                >
+                  <option value="">Select status</option>
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Closed">Closed</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Job Sheet</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Vendor</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Customer</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Price</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Comment</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Job Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white">
+                    <tr>
+                      <td colSpan={7} className="px-6 py-16 text-center text-gray-500">No data</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs') ? (
           <>
             <div className="flex gap-4 mb-6 justify-end">
               <div className="relative w-64">
