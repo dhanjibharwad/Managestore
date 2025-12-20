@@ -60,6 +60,9 @@ export default function BillingPage() {
           >
             <option>Select status</option>
             <option>Paid</option>
+            <option>UnPaid</option>
+            <option>Free</option>
+            <option>Refund</option>
             <option>Pending</option>
             <option>Overdue</option>
           </select>
