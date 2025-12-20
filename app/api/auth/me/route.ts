@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
         email: session.user.email,
         role: session.user.role,
         companyId: session.company.id,
+        company: session.company.name,
       }
     });
   } catch (error) {

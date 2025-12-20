@@ -13,6 +13,12 @@ CREATE TABLE customers (
   source VARCHAR(100),
   referred_by VARCHAR(255),
   
+  -- User Account Linking
+  user_id INTEGER REFERENCES users(id),
+  invitation_status VARCHAR(20) DEFAULT 'pending' CHECK (invitation_status IN ('pending', 'sent', 'accepted', 'expired')),
+  invited_at TIMESTAMP,
+  invitation_token VARCHAR(255),
+  
   -- Address Details
   address_line TEXT,
   region_state VARCHAR(100),
@@ -33,6 +39,8 @@ CREATE INDEX idx_customers_mobile ON customers(mobile_number);
 CREATE INDEX idx_customers_email ON customers(email_id);
 CREATE INDEX idx_customers_name ON customers(customer_name);
 CREATE INDEX idx_customers_type ON customers(customer_type);
+CREATE INDEX idx_customers_user_id ON customers(user_id);
+CREATE INDEX idx_customers_invitation_status ON customers(invitation_status);
 
 -- Function to auto-generate customer ID
 CREATE OR REPLACE FUNCTION generate_customer_id()

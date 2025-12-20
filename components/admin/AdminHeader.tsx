@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 export default function AdminHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [user, setUser] = useState({ name: '', email: '' });
+  const [user, setUser] = useState({ name: '', email: '', company: '', role: '' });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,6 +54,11 @@ export default function AdminHeader() {
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
 
+        {/* Company name */}
+        <div className="text-sm font-semibold text-gray-800 mr-4 px-3 py-1 bg-gray-50 rounded-md">
+          {user.company || 'Your Company Name'}
+        </div>
+
         {/* User profile with dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button 
@@ -63,7 +68,10 @@ export default function AdminHeader() {
             <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white font-semibold text-sm">
               {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <span className="text-sm font-medium text-gray-700">{user.name || 'User'}</span>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-700">{user.name || 'User'}</span>
+              <span className="text-xs text-gray-500">{user.role || 'Role'}</span>
+            </div>
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
@@ -102,7 +110,7 @@ export default function AdminHeader() {
               
               <div className="border-t border-gray-200 my-1"></div>
               
-              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/auth/login'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <LogOut className="w-4 h-4 text-gray-500" />
                 <span>Logout</span>
               </button>
