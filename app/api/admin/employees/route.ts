@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    // Get session for authentication
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { user, company } = session;
+
     const body = await req.json();
     
     const {
@@ -35,10 +45,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check if email already exists
+    // Check if email already exists in this company
     const existingEmployee = await pool.query(
-      'SELECT id FROM employees WHERE email_id = $1',
-      [emailId]
+      'SELECT id FROM employees WHERE email_id = $1 AND company_id = $2',
+      [emailId, company.id]
     );
 
     if (existingEmployee.rows.length > 0) {
@@ -53,16 +63,18 @@ export async function POST(req: NextRequest) {
         employee_role, employee_name, display_name, email_id, mobile_number,
         phone_number, aadhaar_number, gender, pan_card, date_of_birth,
         address_line, region_state, city_town, postal_code,
-        account_name, bank_name, branch, account_number, ifsc_code
+        account_name, bank_name, branch, account_number, ifsc_code,
+        company_id, created_by
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11, $12, $13, $14, $15, $16, $17, $18, $19
+        $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21
       ) RETURNING *`,
       [
         employeeRole, employeeName, displayName, emailId, mobileNumber,
         phoneNumber, aadhaarNumber, gender, panCard, dateOfBirth || null,
         addressLine, regionState, cityTown, postalCode,
-        accountName, bankName, branch, accountNumber, ifscCode
+        accountName, bankName, branch, accountNumber, ifscCode,
+        company.id, user.id
       ]
     );
 
@@ -82,6 +94,15 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Get session for authentication
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { company } = session;
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -89,9 +110,9 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get('status');
     const search = searchParams.get('search');
 
-    let query = 'SELECT * FROM employees WHERE 1=1';
-    const params: any[] = [];
-    let paramCount = 0;
+    let query = 'SELECT * FROM employees WHERE company_id = $1';
+    const params: any[] = [company.id];
+    let paramCount = 1;
 
     if (role) {
       paramCount++;
@@ -125,9 +146,9 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM employees WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = 'SELECT COUNT(*) FROM employees WHERE company_id = $1';
+    const countParams: any[] = [company.id];
+    let countParamCount = 1;
 
     if (role) {
       countParamCount++;
