@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export default function SuperAdminHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState({ name: '', email: '', role: '' });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,6 +18,21 @@ export default function SuperAdminHeader() {
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData.user);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
   }, []);
 
   return (
@@ -45,9 +61,12 @@ export default function SuperAdminHeader() {
             className="flex items-center gap-2 pl-2 pr-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              UD
+              {user.name ? user.name.charAt(0).toUpperCase() : 'S'}
             </div>
-            <span className="text-sm font-medium text-gray-700">Uday</span>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-700">{user.name || 'Super Admin'}</span>
+              <span className="text-xs text-gray-500">{user.role || 'super-admin'}</span>
+            </div>
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
@@ -86,7 +105,7 @@ export default function SuperAdminHeader() {
               
               <div className="border-t border-gray-200 my-1"></div>
               
-              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/auth/login'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <LogOut className="w-4 h-4 text-gray-500" />
                 <span>Logout</span>
               </button>

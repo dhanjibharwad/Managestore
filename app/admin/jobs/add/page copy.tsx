@@ -3,16 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { Plus, Eye, EyeOff, Upload, X, Search, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
-
-
-
-interface Toast {
-  id: number;
-  message: string;
-  type: 'success' | 'error' | 'warning';
-}
+import { Plus, Eye, EyeOff, Upload, X, Search } from 'lucide-react';
 
 interface Customer {
   id: number;
@@ -23,7 +14,21 @@ interface Customer {
   customer_type: string;
 }
 
-
+interface CustomerData {
+  customerType: string;
+  customerName: string;
+  mobileNumber: string;
+  emailId: string;
+  phoneNumber: string;
+  source: string;
+  referredBy: string;
+  addressLine: string;
+  regionState: string;
+  cityTown: string;
+  postalCode: string;
+  sendMail: boolean;
+  sendSMS: boolean;
+}
 
 interface FormData {
   customerName: string;
@@ -54,12 +59,24 @@ interface FormData {
 export default function JobSheetForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
+  const [showCustomerModal, setShowCustomerModal] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-
-  const [toasts, setToasts] = useState<Toast[]>([]);
-
+  const [customerData, setCustomerData] = useState<CustomerData>({
+    customerType: 'End User',
+    customerName: '',
+    mobileNumber: '',
+    emailId: '',
+    phoneNumber: '',
+    source: '',
+    referredBy: '',
+    addressLine: '',
+    regionState: '',
+    cityTown: '',
+    postalCode: '',
+    sendMail: false,
+    sendSMS: false
+  });
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
     source: 'Google',
@@ -102,31 +119,63 @@ export default function JobSheetForm() {
     setUploadedFiles(prev => [...prev, ...validFiles]);
   };
 
-  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
-    setTimeout(() => {
-      setToasts(prev => prev.filter(toast => toast.id !== id));
-    }, 5000);
-  };
-
-  const removeToast = (id: number) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
-
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleCustomerInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value, type } = e.target;
+    if (type === 'checkbox') {
+      const checked = (e.target as HTMLInputElement).checked;
+      setCustomerData(prev => ({ ...prev, [name]: checked }));
+    } else {
+      setCustomerData(prev => ({ ...prev, [name]: value }));
+    }
+  };
 
+  // Prevent background scroll when modal is open
+  React.useEffect(() => {
+    if (showCustomerModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showCustomerModal]);
 
+  const handleAddCustomer = () => {
+    console.log('Customer added:', customerData);
+    setFormData(prev => ({ ...prev, customerName: customerData.customerName }));
+    setShowCustomerModal(false);
+    // Reset customer form
+    setCustomerData({
+      customerType: 'End User',
+      customerName: '',
+      mobileNumber: '',
+      emailId: '',
+      phoneNumber: '',
+      source: '',
+      referredBy: '',
+      addressLine: '',
+      regionState: '',
+      cityTown: '',
+      postalCode: '',
+      sendMail: false,
+      sendSMS: false
+    });
+  };
 
-
-
+  const handleCancelCustomer = () => {
+    setShowCustomerModal(false);
+  };
 
   const handleSubmit = async () => {
     if (!formData.customerName || !formData.deviceType || !formData.deviceBrand || !formData.services || !formData.assignee) {
-      showToast('Please fill in all required fields: Customer Name, Device Type, Device Brand, Services, and Assignee', 'error');
+      alert('Please fill in all required fields: Customer Name, Device Type, Device Brand, Services, and Assignee');
       return;
     }
 
@@ -170,14 +219,14 @@ export default function JobSheetForm() {
       const result = await response.json();
 
       if (response.ok) {
-        showToast(`Job created successfully! Job Number: ${result.job.job_number}`, 'success');
-        setTimeout(() => router.push('/admin/dashboard'), 2000);
+        alert(`Job created successfully! Job Number: ${result.job.job_number}`);
+        router.push('/admin/dashboard');
       } else {
-        showToast(result.error || 'Failed to create job', 'error');
+        alert(result.error || 'Failed to create job');
       }
     } catch (error) {
       console.error('Error creating job:', error);
-      showToast('An error occurred while creating the job', 'error');
+      alert('An error occurred while creating the job');
     } finally {
       setIsSubmitting(false);
     }
@@ -254,16 +303,13 @@ export default function JobSheetForm() {
                     placeholder="Search by name, mobile, email"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   />
-                
-                  <Link href="/admin/customers/add">
-                    <button 
-                      type="button"
-                      className="px-3 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] border-2 border-[#4A70A9] text-white rounded transition-colors"
-                    >
-                      <Plus size={20} />
-                    </button>
-                  </Link>
-                 
+                  <button 
+                    type="button"
+                    onClick={() => setShowCustomerModal(true)}
+                    className="px-3 bg-[#4A70A9] hover:bg-[#3a5a89] border-2 border-[#4A70A9] text-white rounded transition-colors"
+                  >
+                    <Plus size={20} />
+                  </button>
                 </div>
               </div>
 
@@ -682,41 +728,249 @@ export default function JobSheetForm() {
         </div>
       </div>
 
-      {/* Toast Notifications */}
-      <div className="fixed top-4 right-4 z-50 space-y-2">
-        {toasts.map((toast) => (
-          <div
-            key={toast.id}
-            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
-              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
-              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
-              'bg-yellow-50 border border-yellow-200'
-            }`}
-          >
-            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
-            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
-            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
-            <span className={`flex-1 text-sm font-medium ${
-              toast.type === 'success' ? 'text-green-800' :
-              toast.type === 'error' ? 'text-red-800' :
-              'text-yellow-800'
-            }`}>
-              {toast.message}
-            </span>
-            <button
-              onClick={() => removeToast(toast.id)}
-              className={`hover:opacity-70 ${
-                toast.type === 'success' ? 'text-green-600' :
-                toast.type === 'error' ? 'text-red-600' :
-                'text-yellow-600'
-              }`}
-            >
-              <X size={16} />
-            </button>
-          </div>
-        ))}
-      </div>
+      {/* Add Customer Modal */}
+      {showCustomerModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-white border-b px-6 py-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-800">Add New Customer</h2>
+              <button
+                onClick={handleCancelCustomer}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
 
+            {/* Modal Content */}
+            <div className="p-6">
+              {/* Customer Details */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Customer Type <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <select
+                      name="customerType"
+                      value={customerData.customerType}
+                      onChange={handleCustomerInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] appearance-none"
+                    >
+                      <option>End User</option>
+                      <option>Business</option>
+                      <option>Corporate</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Customer Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="customerName"
+                    value={customerData.customerName}
+                    onChange={handleCustomerInputChange}
+                    placeholder="Eg: John Smith"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value="+91"
+                      readOnly
+                      className="w-16 px-3 py-2 border border-gray-300 rounded bg-gray-50 text-center"
+                    />
+                    <input
+                      type="text"
+                      name="mobileNumber"
+                      value={customerData.mobileNumber}
+                      onChange={handleCustomerInputChange}
+                      placeholder="Eg: 99XXXXXXXX"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email ID</label>
+                  <input
+                    type="email"
+                    name="emailId"
+                    value={customerData.emailId}
+                    onChange={handleCustomerInputChange}
+                    placeholder="Eg: example@example.com"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <input
+                    type="text"
+                    name="phoneNumber"
+                    value={customerData.phoneNumber}
+                    onChange={handleCustomerInputChange}
+                    placeholder="Eg: 91XXXXXXXX"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Source</label>
+                  <select
+                    name="source"
+                    value={customerData.source}
+                    onChange={handleCustomerInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  >
+                    <option value="">Select Source</option>
+                    <option>Google</option>
+                    <option>Facebook</option>
+                    <option>Instagram</option>
+                    <option>Referral</option>
+                    <option>Walk-in</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Referred By</label>
+                  <input
+                    type="text"
+                    name="referredBy"
+                    value={customerData.referredBy}
+                    onChange={handleCustomerInputChange}
+                    placeholder="Search by name, mobile, email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  />
+                </div>
+              </div>
+
+              {/* Address Details */}
+              <div className="mb-6">
+                <h3 className="text-base font-semibold text-gray-800 mb-3">
+                  Address Details <span className="text-gray-500 font-normal">(Optional)</span>
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="md:col-span-3">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Address Line</label>
+                    <input
+                      type="text"
+                      name="addressLine"
+                      value={customerData.addressLine}
+                      onChange={handleCustomerInputChange}
+                      placeholder="House / building name/no, street name, landmark"
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Region/State</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="regionState"
+                        value={customerData.regionState}
+                        onChange={handleCustomerInputChange}
+                        placeholder="Select region / state"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                      />
+                      <button
+                        type="button"
+                        className="px-3 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded transition-colors"
+                      >
+                        <Plus size={20} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">City/Town</label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        name="cityTown"
+                        value={customerData.cityTown}
+                        onChange={handleCustomerInputChange}
+                        placeholder="Select city / town"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                      />
+                      <button
+                        type="button"
+                        className="px-3 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded transition-colors"
+                      >
+                        <Plus size={20} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code/ Zip Code</label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      value={customerData.postalCode}
+                      onChange={handleCustomerInputChange}
+                      placeholder="Type postal code / zip code"
+                      className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Send Alert */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Send Alert</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="sendMail"
+                      checked={customerData.sendMail}
+                      onChange={handleCustomerInputChange}
+                      className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
+                    />
+                    <span className="text-sm text-gray-700">Mail</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      name="sendSMS"
+                      checked={customerData.sendSMS}
+                      onChange={handleCustomerInputChange}
+                      className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
+                    />
+                    <span className="text-sm text-gray-700">SMS</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex gap-3 pt-4 border-t">
+                <button
+                  onClick={handleCancelCustomer}
+                  className="flex-1 px-5 py-2.5 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddCustomer}
+                  className="flex-1 px-5 py-2.5 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded font-medium transition-colors"
+                >
+                  Add Customer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

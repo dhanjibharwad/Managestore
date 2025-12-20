@@ -2,11 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 export default function CustomerForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
   const [formData, setFormData] = useState({
     customerType: '',
     customerName: '',
@@ -22,6 +30,25 @@ export default function CustomerForm() {
     postalCode: ''
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = {
+      id: nextToastId,
+      message,
+      type
+    };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      removeToast(toast.id);
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
@@ -50,7 +77,7 @@ export default function CustomerForm() {
 
   const handleSubmit = async () => {
     if (!formData.customerType || !formData.customerName || !formData.emailId) {
-      alert('Please fill in required fields: Customer Type, Customer Name, and Email ID');
+      showToast('Please fill in required fields: Customer Type, Customer Name, and Email ID', 'warning');
       return;
     }
 
@@ -58,7 +85,7 @@ export default function CustomerForm() {
     validateField('emailId', formData.emailId);
 
     if (Object.keys(errors).length > 0) {
-      alert('Please fix validation errors before submitting');
+      showToast('Please fix validation errors before submitting', 'error');
       return;
     }
 
@@ -68,7 +95,7 @@ export default function CustomerForm() {
       const checkResult = await checkResponse.json();
       
       if (checkResult.exists) {
-        alert('A customer with this email address already exists');
+        showToast('A customer with this email address already exists', 'error');
         return;
       }
     } catch (error) {
@@ -89,14 +116,16 @@ export default function CustomerForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Customer created successfully! Customer ID: ${result.customer.customer_id}`);
-        router.push('/admin/customers');
+        showToast(`Customer created successfully! Customer ID: ${result.customer.customer_id}`, 'success');
+        setTimeout(() => {
+          router.push('/admin/customers');
+        }, 2000);
       } else {
-        alert(result.error || 'Failed to create customer');
+        showToast(result.error || 'Failed to create customer', 'error');
       }
     } catch (error) {
       console.error('Error creating customer:', error);
-      alert('An error occurred while creating the customer');
+      showToast('An error occurred while creating the customer', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -121,6 +150,31 @@ export default function CustomerForm() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
