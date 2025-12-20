@@ -86,11 +86,9 @@ function RegisterForm() {
       }
 
       console.log('Registration successful, redirecting...', data);
-      // Always redirect to email verification for new registrations
-      const redirectUrl = data.redirect || `/auth/verify-email?email=${encodeURIComponent(formData.email)}&companyId=${data.companyId}`;
-      console.log('Redirecting to:', redirectUrl);
       
-      // Immediate redirect
+      // All users need email verification
+      const redirectUrl = data.redirect || `/auth/verify-email?email=${encodeURIComponent(formData.email)}&companyId=${data.companyId}`;
       window.location.href = redirectUrl;
     } catch (err) {
       console.error('Registration error:', err);

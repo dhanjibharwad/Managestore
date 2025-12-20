@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export default function CustomerHeader() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [user, setUser] = useState({ name: '', email: '', company: '', role: '' });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -19,24 +20,44 @@ export default function CustomerHeader() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me');
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData.user);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3 flex justify-end items-center">
       {/* Right side - Search, Notification and user profile */}
       <div className="flex items-center gap-3">
         {/* Search bar */}
-        <div className="relative">
+        {/* <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
             placeholder="Search jobs, leads, tasks, customer..."
             className="w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
           />
-        </div>
+        </div> */}
         {/* Notification bell with badge */}
         <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
           <Bell className="w-5 h-5 text-gray-600" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
         </button>
+
+        {/* Company name */}
+        <div className="text-sm font-semibold text-gray-800 mr-4 px-3 py-1 bg-gray-50 rounded-md">
+          {user.company || 'Your Company Name'}
+        </div>
 
         {/* User profile with dropdown */}
         <div className="relative" ref={dropdownRef}>
@@ -45,9 +66,12 @@ export default function CustomerHeader() {
             className="flex items-center gap-2 pl-2 pr-3 py-1.5 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white font-semibold text-sm">
-              U
+              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
-            <span className="text-sm font-medium text-gray-700">Uday</span>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-gray-700">{user.name || 'User'}</span>
+              <span className="text-xs text-gray-500">{user.role || 'Role'}</span>
+            </div>
             <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
@@ -86,7 +110,7 @@ export default function CustomerHeader() {
               
               <div className="border-t border-gray-200 my-1"></div>
               
-              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/auth/login'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <LogOut className="w-4 h-4 text-gray-500" />
                 <span>Logout</span>
               </button>
