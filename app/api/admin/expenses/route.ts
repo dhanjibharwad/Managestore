@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    // Get session using the same method as /api/auth/me
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { user, company } = session;
+
     const body = await req.json();
     
     const {
@@ -47,13 +57,14 @@ export async function POST(req: NextRequest) {
     const result = await pool.query(
       `INSERT INTO expenses (
         expense_name, category, expense_date, description,
-        payment_mode, amount, attachments
+        payment_mode, amount, attachments, company_id, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7
+        $1, $2, $3, $4, $5, $6, $7, $8, $9
       ) RETURNING *`,
       [
         expenseName, category, parsedExpenseDate, description,
-        paymentMode, numericAmount, JSON.stringify(attachments)
+        paymentMode, numericAmount, JSON.stringify(attachments),
+        company.id, user.name
       ]
     );
 
@@ -73,6 +84,15 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Get session using the same method as /api/auth/me
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
+    }
+
+    const { company } = session;
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -82,9 +102,9 @@ export async function GET(req: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
-    let query = 'SELECT * FROM expenses WHERE 1=1';
-    const params: any[] = [];
-    let paramCount = 0;
+    let query = 'SELECT * FROM expenses WHERE company_id = $1';
+    const params: any[] = [company.id];
+    let paramCount = 1;
 
     if (category) {
       paramCount++;
@@ -130,9 +150,9 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM expenses WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = 'SELECT COUNT(*) FROM expenses WHERE company_id = $1';
+    const countParams: any[] = [company.id];
+    let countParamCount = 1;
 
     if (category) {
       countParamCount++;

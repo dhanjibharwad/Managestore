@@ -2,7 +2,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Upload, Undo2, Redo2, ChevronDown, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Calendar, Upload, Undo2, Redo2, ChevronDown, ChevronLeft, ChevronRight, X, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 export default function ExpensePage() {
   const [expenseName, setExpenseName] = useState('');
@@ -16,9 +22,22 @@ export default function ExpensePage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const router = useRouter();
   
   const calendarRef = useRef<HTMLDivElement>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const maxCharacters = 50000;
 
@@ -158,12 +177,12 @@ export default function ExpensePage() {
   const handleSubmit = async () => {
     // Validation
     if (!expenseName || !category || !expenseDate || !paymentMode || !amount) {
-      alert('Please fill in all required fields');
+      showToast('Please fill in all required fields', 'error');
       return;
     }
 
     if (parseFloat(amount) <= 0) {
-      alert('Amount must be greater than 0');
+      showToast('Amount must be greater than 0', 'error');
       return;
     }
 
@@ -212,18 +231,14 @@ export default function ExpensePage() {
       const result = await response.json();
 
       if (response.ok) {
-        // Store success message in localStorage for the next page
-        const message = `Expense created successfully! Expense ID: ${result.expense.expense_id}`;
-        localStorage.setItem('successMessage', message);
-        
-        // Redirect to listing page
-        router.push('/admin/expenses');
+        showToast(`Expense created successfully! Expense ID: ${result.expense.expense_id}`, 'success');
+        setTimeout(() => router.push('/admin/expenses'), 2000);
       } else {
-        alert(result.error || 'Failed to create expense');
+        showToast(result.error || 'Failed to create expense', 'error');
       }
     } catch (error) {
       console.error('Error creating expense:', error);
-      alert('An error occurred while creating the expense');
+      showToast('An error occurred while creating the expense', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -281,10 +296,11 @@ export default function ExpensePage() {
                     className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white cursor-pointer"
                   >
                     <option value="">Select category</option>
-                    <option value="travel">Travel</option>
-                    <option value="meals">Meals</option>
-                    <option value="accommodation">Accommodation</option>
-                    <option value="supplies">Supplies</option>
+                    <option value="food">Food</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="salaries">Salaries</option>
+                    <option value="rent">Rent</option>
                     <option value="other">Other</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
@@ -485,6 +501,42 @@ export default function ExpensePage() {
           </div>
         </div>
       </div>
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }
