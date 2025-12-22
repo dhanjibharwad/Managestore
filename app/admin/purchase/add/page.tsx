@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Plus, X, Calendar, Upload, Info } from 'lucide-react';
+import Link from 'next/link';
 
 interface Part {
   id: string;
@@ -133,9 +134,11 @@ export default function PurchasePage() {
                   placeholder="Select or create supplier"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                 />
+                <Link href="/admin/inventory/partSuppliers/add">
                 <button className="px-3 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
                   <Plus size={20} />
                 </button>
+                </Link>
               </div>
               {/* <p className="text-xs text-red-500 mt-1">Part suppliers a required field</p> */}
             </div>
