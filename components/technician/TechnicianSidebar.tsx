@@ -19,12 +19,12 @@ import {
 const navItems = [
   { label: "Dashboard", href: "/technician/dashboard", icon: LayoutDashboard },
    { label: "Jobs", href: "/technician/jobs", icon: Briefcase },
-   { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck },
-  { label: "Profile", href: "/technician/profile", icon: User },
+   { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck }, 
   { label: "Employees", href: "/technician/employees", icon: IdCard },
    { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
     { label: "Sales", href: "/technician/sales", icon: LineChart }, 
      { label: "Customers", href: "/technician/customers", icon: Users },
+      { label: "Profile", href: "/technician/profile", icon: User }
 ];
 
 export default function TechnicianSidebar() {

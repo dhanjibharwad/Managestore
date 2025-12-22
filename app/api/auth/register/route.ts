@@ -165,35 +165,65 @@ export async function POST(req: NextRequest) {
           [token, email.toLowerCase().trim()]
         );
 
-        if (customerInviteResult.rows.length === 0) {
-          return NextResponse.json(
-            { error: 'Invalid invitation token' },
-            { status: 400 }
-          );
-        }
+        if (customerInviteResult.rows.length > 0) {
+          const customerInvite = customerInviteResult.rows[0];
+          
+          if (customerInvite.invitation_status === 'accepted') {
+            return NextResponse.json(
+              { error: 'Invitation has already been used' },
+              { status: 400 }
+            );
+          }
+          
+          const inviteDate = new Date(customerInvite.invited_at);
+          const expiryDate = new Date(inviteDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+          if (new Date() > expiryDate) {
+            return NextResponse.json(
+              { error: 'Invitation has expired' },
+              { status: 400 }
+            );
+          }
 
-        const customerInvite = customerInviteResult.rows[0];
-        
-        if (customerInvite.invitation_status === 'accepted') {
-          return NextResponse.json(
-            { error: 'Invitation has already been used' },
-            { status: 400 }
+          companyId = customerInvite.company_id;
+          customerId = customerInvite.id;
+          userRole = 'customer';
+        } else {
+          // Check employee invites
+          const employeeInviteResult = await pool.query(
+            `SELECT id, company_id, invitation_status, invited_at, employee_role FROM employees 
+             WHERE invitation_token = $1 AND email_id = $2`,
+            [token, email.toLowerCase().trim()]
           );
-        }
-        
-        // Check if invitation is older than 7 days
-        const inviteDate = new Date(customerInvite.invited_at);
-        const expiryDate = new Date(inviteDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-        if (new Date() > expiryDate) {
-          return NextResponse.json(
-            { error: 'Invitation has expired' },
-            { status: 400 }
-          );
-        }
 
-        companyId = customerInvite.company_id;
-        customerId = customerInvite.id;
-        userRole = 'customer';
+          if (employeeInviteResult.rows.length === 0) {
+            return NextResponse.json(
+              { error: 'Invalid invitation token' },
+              { status: 400 }
+            );
+          }
+
+          const employeeInvite = employeeInviteResult.rows[0];
+          
+          if (employeeInvite.invitation_status === 'accepted') {
+            return NextResponse.json(
+              { error: 'Invitation has already been used' },
+              { status: 400 }
+            );
+          }
+          
+          const inviteDate = new Date(employeeInvite.invited_at);
+          const expiryDate = new Date(inviteDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+          if (new Date() > expiryDate) {
+            return NextResponse.json(
+              { error: 'Invitation has expired' },
+              { status: 400 }
+            );
+          }
+
+          companyId = employeeInvite.company_id;
+          customerId = employeeInvite.id;
+          userRole = employeeInvite.employee_role;
+        }
       }
     } else {
       return NextResponse.json(
@@ -232,14 +262,20 @@ export async function POST(req: NextRequest) {
     // Mark invite as used and link user to customer if it's a customer invite
     if (token) {
       if (customerId) {
-        // Customer invitation - update customer record
-        await pool.query(
-          'UPDATE customers SET invitation_status = $1, user_id = $2 WHERE id = $3',
-          ['accepted', user.id, customerId]
-        );
-        console.log('Marked customer invite as accepted and linked user');
+        if (userRole === 'customer') {
+          await pool.query(
+            'UPDATE customers SET invitation_status = $1, user_id = $2 WHERE id = $3',
+            ['accepted', user.id, customerId]
+          );
+          console.log('Marked customer invite as accepted and linked user');
+        } else {
+          await pool.query(
+            'UPDATE employees SET invitation_status = $1, user_id = $2 WHERE id = $3',
+            ['accepted', user.id, customerId]
+          );
+          console.log('Marked employee invite as accepted and linked user');
+        }
       } else {
-        // Company invitation
         await pool.query(
           'UPDATE company_invites SET used_at = NOW() WHERE token = $1',
           [token]

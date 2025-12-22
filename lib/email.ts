@@ -203,3 +203,83 @@ export async function sendCustomerInviteEmail(
 
   await transporter.sendMail(mailOptions);
 }
+
+export async function sendEmployeeInviteEmail(
+  email: string,
+  employeeName: string,
+  companyName: string,
+  role: string,
+  inviteLink: string
+) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: `Join ${companyName} Team - Complete Your Registration`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Join ${companyName} Team</title>
+      </head>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #4A70A9 0%, #3d5d8f 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">Welcome to the Team!</h1>
+        </div>
+        
+        <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
+          <p style="font-size: 18px; margin-bottom: 20px;">Dear ${employeeName},</p>
+          
+          <p style="margin-bottom: 20px;">🎉 You have been invited to join <strong>${companyName}</strong> as a <strong>${role}</strong>!</p>
+          
+          <p style="margin-bottom: 25px;">Click the button below to complete your registration and start working with the team:</p>
+          
+          <div style="text-align: center; margin: 35px 0;">
+            <a href="${inviteLink}" 
+               style="background-color: #4A70A9; 
+                      color: white; 
+                      padding: 15px 30px; 
+                      text-decoration: none; 
+                      border-radius: 8px; 
+                      display: inline-block; 
+                      font-weight: bold; 
+                      font-size: 16px;
+                      box-shadow: 0 4px 6px rgba(74, 112, 169, 0.3);">
+              Complete Registration
+            </a>
+          </div>
+          
+          <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin: 25px 0;">
+            <p style="margin: 0; font-size: 14px; color: #666;">
+              <strong>⏰ Important:</strong> This invitation link will expire in 7 days for security reasons.
+            </p>
+          </div>
+          
+          <p style="margin-bottom: 15px;">Once registered, you'll be able to:</p>
+          <ul style="margin-bottom: 25px; padding-left: 20px;">
+            <li>Access your employee dashboard</li>
+            <li>Manage tasks and assignments</li>
+            <li>Collaborate with team members</li>
+            <li>Track your work activities</li>
+          </ul>
+          
+          <p style="margin-bottom: 20px;">If you have any questions or need assistance, please contact your manager or HR department.</p>
+          
+          <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
+          
+          <p style="margin-bottom: 5px; color: #666; font-size: 14px;">Best regards,</p>
+          <p style="margin: 0; color: #4A70A9; font-weight: bold;">The StoreManager Team</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 20px; color: #999; font-size: 12px;">
+          <p>If you're unable to click the button above, copy and paste this link into your browser:</p>
+          <p style="word-break: break-all;">${inviteLink}</p>
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}

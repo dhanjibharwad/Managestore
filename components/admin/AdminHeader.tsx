@@ -37,7 +37,7 @@ export default function AdminHeader() {
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3 flex justify-end items-center">
-      {/* Right side - Search, Notification and user profile */}
+      {/* Right side - Search, Notification sticky top-0 z-50 and user profile */}
       <div className="flex items-center gap-3">
         {/* Search bar */}
         {/* <div className="relative">

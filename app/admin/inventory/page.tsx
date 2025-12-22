@@ -132,9 +132,11 @@ const InventoryPage: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
+            <Link href="/admin/inventory/partSuppliers">
             <button className="px-4 py-2 text-sm font-medium text-[#4A70A9] border border-[#4A70A9] rounded-md hover:bg-[#4A70A9] hover:text-white transition-colors">
               Part Suppliers
             </button>
+            </Link>
             
             <button className="px-4 py-2 text-sm font-medium text-[#4A70A9] border border-[#4A70A9] rounded-md hover:bg-[#4A70A9] hover:text-white transition-colors">
               All Filters
