@@ -18,8 +18,8 @@ const navItems = [
   { label: "Companies", href: "/super-admin/companies", icon: Building2 },
   { label: "Subscriptions", href: "/super-admin/subscriptions", icon: CreditCard },
   // { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
-  { label: "Admins", href: "/super-admin/admins", icon: UserCog },
-  { label: "Settings", href: "/super-admin/settings", icon: Settings },
+  // { label: "Admins", href: "/super-admin/admins", icon: UserCog },
+  // { label: "Settings", href: "/super-admin/settings", icon: Settings },
 ];
 
 export default function SuperAdminSidebar() {

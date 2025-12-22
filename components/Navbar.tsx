@@ -292,15 +292,6 @@ export default function Navbar() {
                         <span className="font-medium">Dashboard</span>
                       </Link>
 
-                      <Link
-                        href="/auth/profile"
-                        className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
-                        onClick={() => setShowProfileMenu(false)}
-                      >
-                        <Settings size={18} />
-                        <span className="font-medium">Settings</span>
-                      </Link>
-
                       <hr className="my-2 border-gray-200" />
 
                       <button
@@ -424,7 +415,7 @@ export default function Navbar() {
             {user && (
               <>
                 <Link
-                  href="/customer/dashboard"
+                  href="/admin/dashboard"
                   className="block py-3 px-4 text-gray-700 font-medium rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-50 hover:text-indigo-600 transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
@@ -434,16 +425,7 @@ export default function Navbar() {
                   </span>
                 </Link>
 
-                <Link
-                  href="/auth/profile"
-                  className="block py-3 px-4 text-gray-700 font-medium rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-50 hover:text-indigo-600 transition-all duration-200"
-                  onClick={() => setIsOpen(false)}
-                >
-                  <span className="flex items-center gap-2">
-                    <Settings size={18} />
-                    Settings
-                  </span>
-                </Link>
+
               </>
             )}
           </div>
