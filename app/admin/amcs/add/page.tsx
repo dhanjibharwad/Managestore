@@ -144,6 +144,9 @@ const ContractFormPage = () => {
                   />
                   <select className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                     <option>Select...</option>
+                    <option>HOURS</option>
+                    <option>DAYS</option>
+                    <option>WEEk</option>
                   </select>
                 </div>
               </div>
