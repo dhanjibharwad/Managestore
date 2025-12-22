@@ -103,7 +103,7 @@ export default function AdminSidebar() {
 
         {/* Navigation Items */}
         <nav>
-          <ul className="space-y-0 sm:space-y-1">
+          <ul className="space-y-0 sm:space-y-1 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
