@@ -15,7 +15,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, percentage, icon, dateRange }) => {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-2 sm:mb-3 lg:mb-4">
         <div className="flex items-center gap-1.5 sm:gap-2 text-zinc-600 min-w-0 flex-1">
           <div className="flex-shrink-0">{icon}</div>

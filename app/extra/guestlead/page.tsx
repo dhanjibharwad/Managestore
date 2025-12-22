@@ -8,6 +8,7 @@ type Brand = string;
 type Model = string;
 
 interface FormData {
+  companyId: string;
   deviceType: DeviceType;
   brand: Brand;
   model: Model;
@@ -47,6 +48,7 @@ const modelsByBrand: Record<string, string[]> = {
 export default function SelfCheckIn() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
+    companyId: '',
     deviceType: '',
     brand: '',
     model: '',
@@ -77,8 +79,24 @@ export default function SelfCheckIn() {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = () => {
-    setShowSuccess(true);
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('/api/admin/guest-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+      } else {
+        const error = await response.json();
+        alert(error.error || 'Failed to submit request');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      alert('Failed to submit request');
+    }
   };
 
   const updateFormData = (field: keyof FormData, value: any) => {
