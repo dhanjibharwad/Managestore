@@ -14,6 +14,7 @@ interface Toast {
 
 
 const ContractFormPage = () => {
+  const [contractId, setContractId] = useState('');
   const [contractStartDate, setContractStartDate] = useState<Date | null>(null);
   const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
   const [autoRenew, setAutoRenew] = useState(false);
@@ -24,6 +25,7 @@ const ContractFormPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
+  const [companyId, setCompanyId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -42,6 +44,29 @@ const ContractFormPage = () => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  React.useEffect(() => {
+    fetchUserSession();
+    generateContractId();
+  }, []);
+
+  const generateContractId = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 100);
+    setContractId(`AMC-${timestamp}-${random}`);
+  };
+
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
@@ -78,14 +103,19 @@ const ContractFormPage = () => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
+    if (!companyId) {
+      showToast('Session expired. Please login again.', 'error');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const companyId = 1; // TODO: Get from session/auth
       const response = await fetch('/api/admin/amcs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           companyId,
+          contractNumber: contractId,
           customerName: formData.customerName,
           assignee: formData.assignee,
           amcType: formData.amcType,
@@ -110,11 +140,11 @@ const ContractFormPage = () => {
         showToast('Contract created successfully!', 'success');
         setTimeout(() => window.location.href = '/admin/amcs', 2000);
       } else {
-        showToast('Failed to create contract', 'error');
+        showToast(data.error || 'Failed to create contract', 'error');
       }
     } catch (error) {
       console.error('Submit error:', error);
-      showToast('Failed to create contract', 'error');
+      showToast('An error occurred while creating the contract', 'error');
     } finally {
       setSubmitting(false);
     }
@@ -179,7 +209,7 @@ const ContractFormPage = () => {
           <div className="mb-8">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
               <h2 className="text-2xl font-semibold text-gray-900">
-                Contract Information
+                Contract Information : <span className="text-gray-600">{contractId}</span>
               </h2>
               <div className="flex gap-3">
                 <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">

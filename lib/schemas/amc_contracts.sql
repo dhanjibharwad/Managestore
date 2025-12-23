@@ -2,6 +2,7 @@
 CREATE TABLE amc_contracts (
   id SERIAL PRIMARY KEY,
   company_id INTEGER NOT NULL,
+  contract_number VARCHAR(50) NOT NULL UNIQUE,
   customer_name VARCHAR(255) NOT NULL,
   assignee VARCHAR(255) NOT NULL,
   amc_type VARCHAR(50) NOT NULL,

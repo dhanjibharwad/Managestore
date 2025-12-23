@@ -4,6 +4,7 @@ import Link from 'next/link';
 
 interface Contract {
   id: number;
+  contract_number: string;
   customer_name: string;
   assignee: string;
   amount: string;
@@ -156,7 +157,7 @@ export default function AMCContractsPage() {
                   filteredContracts.map((contract) => (
                     <tr key={contract.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        #{contract.id}
+                        {contract.contract_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {contract.customer_name}
