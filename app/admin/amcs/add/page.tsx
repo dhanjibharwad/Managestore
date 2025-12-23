@@ -380,21 +380,20 @@ const ContractFormPage = () => {
             </div>
 
             {uploadedFiles.length > 0 && (
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="mt-4 flex flex-wrap gap-3">
                 {uploadedFiles.map((file, index) => (
                   <div key={index} className="relative group">
                     <img
                       src={file.url}
                       alt={file.filename}
-                      className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                      className="w-20 h-20 object-cover rounded-lg border border-gray-300"
                     />
                     <button
                       onClick={() => removeFile(index)}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                     >
-                      <X size={16} />
+                      <X size={14} />
                     </button>
-                    <p className="text-xs text-gray-600 mt-1 truncate">{file.filename}</p>
                   </div>
                 ))}
               </div>
