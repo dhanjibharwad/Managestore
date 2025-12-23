@@ -1,9 +1,15 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Calendar as CalendarIcon, Upload, Info, Plus, X } from 'lucide-react';
+import { Calendar as CalendarIcon, Upload, Info, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import Calendar from '@/components/Calendar';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 
 
@@ -15,11 +21,103 @@ const ContractFormPage = () => {
   const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{ url: string; filename: string; size: number }>>([]);
   const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [formData, setFormData] = useState({
+    customerName: '',
+    assignee: '',
+    amcType: '',
+    devicesCovered: '',
+    responseTimeValue: '',
+    responseTimeUnit: '',
+    numberOfServices: '',
+    serviceOptions: '',
+    paymentFrequency: '',
+    amount: '',
+    contractRemark: '',
+    termsConditions: ''
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const formatDate = (date: Date | null) => {
     if (!date) return '';
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.customerName) newErrors.customerName = 'Customer name is required';
+    if (!formData.assignee) newErrors.assignee = 'Assignee is required';
+    if (!formData.amcType) newErrors.amcType = 'AMC type is required';
+    if (!contractStartDate) newErrors.contractStartDate = 'Start date is required';
+    if (!contractEndDate) newErrors.contractEndDate = 'End date is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+
+    setSubmitting(true);
+    try {
+      const companyId = 1; // TODO: Get from session/auth
+      const response = await fetch('/api/admin/amcs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyId,
+          customerName: formData.customerName,
+          assignee: formData.assignee,
+          amcType: formData.amcType,
+          contractStartDate: contractStartDate?.toISOString().split('T')[0],
+          contractEndDate: contractEndDate?.toISOString().split('T')[0],
+          devicesCovered: formData.devicesCovered ? parseInt(formData.devicesCovered) : null,
+          responseTimeValue: formData.responseTimeValue ? parseInt(formData.responseTimeValue) : null,
+          responseTimeUnit: formData.responseTimeUnit || null,
+          numberOfServices: formData.numberOfServices ? parseInt(formData.numberOfServices) : null,
+          serviceOptions: formData.serviceOptions || null,
+          autoRenew,
+          paymentFrequency: formData.paymentFrequency || null,
+          amount: formData.amount ? parseFloat(formData.amount) : null,
+          contractRemark: formData.contractRemark || null,
+          termsConditions: formData.termsConditions || null,
+          images: uploadedFiles.map(f => f.url)
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showToast('Contract created successfully!', 'success');
+        setTimeout(() => window.location.href = '/admin/amcs', 2000);
+      } else {
+        showToast('Failed to create contract', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showToast('Failed to create contract', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +151,28 @@ const ContractFormPage = () => {
 
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button onClick={() => removeToast(toast.id)} className="text-gray-400 hover:text-gray-600">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         <div className="p-6">
           {/* Contract Information Section */}
@@ -65,8 +185,12 @@ const ContractFormPage = () => {
                 <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
                   Cancel
                 </button>
-                <button className="px-4 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] transition-colors">
-                  Create
+                <button 
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="px-4 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] transition-colors disabled:opacity-50"
+                >
+                  {submitting ? 'Creating...' : 'Create'}
                 </button>
               </div>
             </div>
@@ -81,6 +205,8 @@ const ContractFormPage = () => {
                   <input
                     type="text"
                     placeholder="Search by name, mobile, email"
+                    value={formData.customerName}
+                    onChange={(e) => handleInputChange('customerName', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                   <Link href="/admin/customers/add/">
@@ -89,6 +215,7 @@ const ContractFormPage = () => {
                   </button>
                   </Link>
                 </div>
+                {errors.customerName && <p className="text-red-500 text-xs mt-1">{errors.customerName}</p>}
               </div>
 
               {/* Assignee */}
@@ -97,9 +224,15 @@ const ContractFormPage = () => {
                   Assignee <span className="text-red-500">*</span>
                   <Info size={14} className="text-gray-400" />
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
-                  <option>Select assignee name</option>
+                <select 
+                  value={formData.assignee}
+                  onChange={(e) => handleInputChange('assignee', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                >
+                  <option value="">Select assignee name</option>
+                  <option value="rakesh">Rakesh</option>
                 </select>
+                {errors.assignee && <p className="text-red-500 text-xs mt-1">{errors.assignee}</p>}
               </div>
 
               {/* AMC Type */}
@@ -107,11 +240,16 @@ const ContractFormPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   AMC Type <span className="text-red-500">*</span>
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
-                  <option>Select AMC type</option>
-                  <option>AMC</option>
-                  <option>CMC</option>
+                <select 
+                  value={formData.amcType}
+                  onChange={(e) => handleInputChange('amcType', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                >
+                  <option value="">Select AMC type</option>
+                  <option value="AMC">AMC</option>
+                  <option value="CMC">CMC</option>
                 </select>
+                {errors.amcType && <p className="text-red-500 text-xs mt-1">{errors.amcType}</p>}
               </div>
             </div>
 
@@ -131,6 +269,7 @@ const ContractFormPage = () => {
                   />
                   <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
+                {errors.contractStartDate && <p className="text-red-500 text-xs mt-1">{errors.contractStartDate}</p>}
                 {showStartCalendar && (
                   <div className="absolute z-10 mt-2">
                     <Calendar
@@ -160,6 +299,7 @@ const ContractFormPage = () => {
                   />
                   <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
+                {errors.contractEndDate && <p className="text-red-500 text-xs mt-1">{errors.contractEndDate}</p>}
                 {showEndCalendar && (
                   <div className="absolute z-10 mt-2">
                     <Calendar
@@ -191,6 +331,8 @@ const ContractFormPage = () => {
                 <input
                   type="text"
                   placeholder="Eg: 5, 10 etc..."
+                  value={formData.devicesCovered}
+                  onChange={(e) => handleInputChange('devicesCovered', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
@@ -205,13 +347,19 @@ const ContractFormPage = () => {
                   <input
                     type="text"
                     placeholder="Eg: 2 hours, 1 day, 2 days"
+                    value={formData.responseTimeValue}
+                    onChange={(e) => handleInputChange('responseTimeValue', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   />
-                  <select className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
-                    <option>Select...</option>
-                    <option>HOURS</option>
-                    <option>DAYS</option>
-                    <option>WEEk</option>
+                  <select 
+                    value={formData.responseTimeUnit}
+                    onChange={(e) => handleInputChange('responseTimeUnit', e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  >
+                    <option value="">Select...</option>
+                    <option value="HOURS">HOURS</option>
+                    <option value="DAYS">DAYS</option>
+                    <option value="WEEK">WEEK</option>
                   </select>
                 </div>
               </div>
@@ -225,6 +373,8 @@ const ContractFormPage = () => {
                 <input
                   type="text"
                   placeholder="Eg: 5, 10 etc..."
+                  value={formData.numberOfServices}
+                  onChange={(e) => handleInputChange('numberOfServices', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
@@ -237,10 +387,14 @@ const ContractFormPage = () => {
                   Service Options
                   <Info size={14} className="text-gray-400" />
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
-                  <option>Select service options</option>
-                  <option>On Site</option>
-                  <option>Carry in</option>
+                <select 
+                  value={formData.serviceOptions}
+                  onChange={(e) => handleInputChange('serviceOptions', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                >
+                  <option value="">Select service options</option>
+                  <option value="On Site">On Site</option>
+                  <option value="Carry in">Carry in</option>
                 </select>
               </div>
 
@@ -279,11 +433,15 @@ const ContractFormPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Payment Frequency
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
-                  <option>Eg: monthly, quarterly, annual, etc.</option>
-                  <option>Monthly</option>
-                  <option>Quarterly</option>
-                  <option>Annual</option>
+                <select 
+                  value={formData.paymentFrequency}
+                  onChange={(e) => handleInputChange('paymentFrequency', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                >
+                  <option value="">Eg: monthly, quarterly, annual, etc.</option>
+                  <option value="Monthly">Monthly</option>
+                  <option value="Quarterly">Quarterly</option>
+                  <option value="Annual">Annual</option>
                 </select>
               </div>
 
@@ -295,6 +453,8 @@ const ContractFormPage = () => {
                 <input
                   type="text"
                   placeholder="Enter contract amount"
+                  value={formData.amount}
+                  onChange={(e) => handleInputChange('amount', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
@@ -342,6 +502,9 @@ const ContractFormPage = () => {
                   className="w-full px-3 py-2 focus:outline-none resize-none"
                   rows={4}
                   placeholder="Type here..."
+                  value={formData.contractRemark}
+                  onChange={(e) => handleInputChange('contractRemark', e.target.value)}
+                  maxLength={50000}
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 50000</p>
@@ -434,6 +597,9 @@ const ContractFormPage = () => {
                 className="w-full px-3 py-2 focus:outline-none resize-none"
                 rows={4}
                 placeholder="Type text here"
+                value={formData.termsConditions}
+                onChange={(e) => handleInputChange('termsConditions', e.target.value)}
+                maxLength={50000}
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 50000</p>
