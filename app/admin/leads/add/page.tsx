@@ -206,16 +206,12 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Next Follow Up
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Select next follow up"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10"
-                    value={formData.nextFollowUp}
-                    onChange={(e) => setFormData({ ...formData, nextFollowUp: e.target.value })}
-                  />
-                  <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
+                <input
+                  type="date"
+                  value={formData.nextFollowUp}
+                  onChange={(e) => setFormData({ ...formData, nextFollowUp: e.target.value })}
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                />
               </div>
             </div>
 

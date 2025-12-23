@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Calendar as CalendarIcon, Upload, Info, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, Info, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import Calendar from '@/components/Calendar';
 
 interface Toast {
   id: number;
@@ -15,11 +14,9 @@ interface Toast {
 
 const ContractFormPage = () => {
   const [contractId, setContractId] = useState('');
-  const [contractStartDate, setContractStartDate] = useState<Date | null>(null);
-  const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
+  const [contractStartDate, setContractStartDate] = useState('');
+  const [contractEndDate, setContractEndDate] = useState('');
   const [autoRenew, setAutoRenew] = useState(false);
-  const [showStartCalendar, setShowStartCalendar] = useState(false);
-  const [showEndCalendar, setShowEndCalendar] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<Array<{ url: string; filename: string; size: number }>>([]);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -79,10 +76,7 @@ const ContractFormPage = () => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  };
+
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -119,8 +113,8 @@ const ContractFormPage = () => {
           customerName: formData.customerName,
           assignee: formData.assignee,
           amcType: formData.amcType,
-          contractStartDate: contractStartDate?.toISOString().split('T')[0],
-          contractEndDate: contractEndDate?.toISOString().split('T')[0],
+          contractStartDate: contractStartDate || null,
+          contractEndDate: contractEndDate || null,
           devicesCovered: formData.devicesCovered ? parseInt(formData.devicesCovered) : null,
           responseTimeValue: formData.responseTimeValue ? parseInt(formData.responseTimeValue) : null,
           responseTimeUnit: formData.responseTimeUnit || null,
@@ -285,63 +279,32 @@ const ContractFormPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Contract Start Date */}
-              <div className="relative">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contract Start Date <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={formatDate(contractStartDate)}
-                    onClick={() => setShowStartCalendar(!showStartCalendar)}
-                    readOnly
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10 cursor-pointer"
-                  />
-                  <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
+                <input
+                  type="date"
+                  value={contractStartDate}
+                  onChange={(e) => setContractStartDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                />
                 {errors.contractStartDate && <p className="text-red-500 text-xs mt-1">{errors.contractStartDate}</p>}
-                {showStartCalendar && (
-                  <div className="absolute z-10 mt-2">
-                    <Calendar
-                      selectedDate={contractStartDate || undefined}
-                      onDateSelect={(date) => {
-                        setContractStartDate(date);
-                        setShowStartCalendar(false);
-                      }}
-                    />
-                  </div>
-                )}
               </div>
 
               {/* Contract End Date */}
-              <div className="relative">
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contract End Date <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Select contract end date"
-                    value={formatDate(contractEndDate)}
-                    onClick={() => setShowEndCalendar(!showEndCalendar)}
-                    readOnly
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10 cursor-pointer"
-                  />
-                  <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
+                <input
+                  type="date"
+                  value={contractEndDate}
+                  onChange={(e) => setContractEndDate(e.target.value)}
+                  min={contractStartDate}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                />
                 {errors.contractEndDate && <p className="text-red-500 text-xs mt-1">{errors.contractEndDate}</p>}
-                {showEndCalendar && (
-                  <div className="absolute z-10 mt-2">
-                    <Calendar
-                      selectedDate={contractEndDate || undefined}
-                      onDateSelect={(date) => {
-                        setContractEndDate(date);
-                        setShowEndCalendar(false);
-                      }}
-                      minDate={contractStartDate || undefined}
-                    />
-                  </div>
-                )}
               </div>
             </div>
           </div>
