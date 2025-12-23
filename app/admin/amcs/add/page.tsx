@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Calendar as CalendarIcon, Upload, Info, Plus } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Calendar as CalendarIcon, Upload, Info, Plus, X } from 'lucide-react';
 import Link from 'next/link';
 import Calendar from '@/components/Calendar';
 
@@ -13,10 +13,42 @@ const ContractFormPage = () => {
   const [autoRenew, setAutoRenew] = useState(false);
   const [showStartCalendar, setShowStartCalendar] = useState(false);
   const [showEndCalendar, setShowEndCalendar] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<Array<{ url: string; filename: string; size: number }>>([]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const formatDate = (date: Date | null) => {
     if (!date) return '';
     return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    Array.from(files).forEach(file => formData.append('files', file));
+
+    try {
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (data.files) {
+        setUploadedFiles(prev => [...prev, ...data.files]);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -322,19 +354,51 @@ const ContractFormPage = () => {
               Upload Images
             </h2>
             
-            <div className="border-2 border-dashed border-[#4A70A9] rounded-lg p-12 text-center bg-blue-50/30">
+            <div 
+              className="border-2 border-dashed border-[#4A70A9] rounded-lg p-12 text-center bg-blue-50/30 cursor-pointer hover:bg-blue-50/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
               <div className="flex flex-col items-center">
                 <div className="bg-[#4A70A9] text-white p-4 rounded-full mb-4">
                   <Upload size={32} />
                 </div>
                 <p className="text-[#4A70A9] font-medium mb-2">
-                  Take A Photo With Your Camera Or Choose A File From Your Device
+                  {uploading ? 'Uploading...' : 'Take A Photo With Your Camera Or Choose A File From Your Device'}
                 </p>
                 <p className="text-sm text-gray-500">
                   JPEG, PNG, BMP, WEBP, AND PDF FILES
                 </p>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/bmp,image/webp,application/pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
             </div>
+
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                {uploadedFiles.map((file, index) => (
+                  <div key={index} className="relative group">
+                    <img
+                      src={file.url}
+                      alt={file.filename}
+                      className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                    />
+                    <button
+                      onClick={() => removeFile(index)}
+                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={16} />
+                    </button>
+                    <p className="text-xs text-gray-600 mt-1 truncate">{file.filename}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Terms and Conditions Section */}
@@ -363,15 +427,6 @@ const ContractFormPage = () => {
                   </button>
                   <div className="w-px h-6 bg-gray-300 mx-1"></div>
                   <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
-                    <span className="text-sm">≡</span>
-                  </button>
-                  <button className="p-1 hover:bg-gray-200 rounded" title="Align Center">
-                    <span className="text-sm">≡</span>
-                  </button>
-                  <button className="p-1 hover:bg-gray-200 rounded" title="Align Right">
-                    <span className="text-sm">≡</span>
-                  </button>
-                  <button className="p-1 hover:bg-gray-200 rounded" title="Justify">
                     <span className="text-sm">≡</span>
                   </button>
                 </div>
