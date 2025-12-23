@@ -1,15 +1,23 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, Upload, Info, Plus } from 'lucide-react';
+import { Calendar as CalendarIcon, Upload, Info, Plus } from 'lucide-react';
 import Link from 'next/link';
+import Calendar from '@/components/Calendar';
 
 
 
 const ContractFormPage = () => {
-  const [contractStartDate, setContractStartDate] = useState('08-Dec-2025');
-  const [contractEndDate, setContractEndDate] = useState('');
+  const [contractStartDate, setContractStartDate] = useState<Date | null>(null);
+  const [contractEndDate, setContractEndDate] = useState<Date | null>(null);
   const [autoRenew, setAutoRenew] = useState(false);
+  const [showStartCalendar, setShowStartCalendar] = useState(false);
+  const [showEndCalendar, setShowEndCalendar] = useState(false);
+
+  const formatDate = (date: Date | null) => {
+    if (!date) return '';
+    return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
 
   return (
     <div className="bg-gray-50">
@@ -77,23 +85,35 @@ const ContractFormPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Contract Start Date */}
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contract Start Date <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
                     type="text"
-                    value={contractStartDate}
-                    onChange={(e) => setContractStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10"
+                    value={formatDate(contractStartDate)}
+                    onClick={() => setShowStartCalendar(!showStartCalendar)}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10 cursor-pointer"
                   />
-                  <Calendar size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
+                {showStartCalendar && (
+                  <div className="absolute z-10 mt-2">
+                    <Calendar
+                      selectedDate={contractStartDate || undefined}
+                      onDateSelect={(date) => {
+                        setContractStartDate(date);
+                        setShowStartCalendar(false);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Contract End Date */}
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Contract End Date <span className="text-red-500">*</span>
                 </label>
@@ -101,12 +121,25 @@ const ContractFormPage = () => {
                   <input
                     type="text"
                     placeholder="Select contract end date"
-                    value={contractEndDate}
-                    onChange={(e) => setContractEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10"
+                    value={formatDate(contractEndDate)}
+                    onClick={() => setShowEndCalendar(!showEndCalendar)}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10 cursor-pointer"
                   />
-                  <Calendar size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <CalendarIcon size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 </div>
+                {showEndCalendar && (
+                  <div className="absolute z-10 mt-2">
+                    <Calendar
+                      selectedDate={contractEndDate || undefined}
+                      onDateSelect={(date) => {
+                        setContractEndDate(date);
+                        setShowEndCalendar(false);
+                      }}
+                      minDate={contractStartDate || undefined}
+                    />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -174,6 +207,8 @@ const ContractFormPage = () => {
                 </label>
                 <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                   <option>Select service options</option>
+                  <option>On Site</option>
+                  <option>Carry in</option>
                 </select>
               </div>
 
@@ -214,6 +249,9 @@ const ContractFormPage = () => {
                 </label>
                 <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                   <option>Eg: monthly, quarterly, annual, etc.</option>
+                  <option>Monthly</option>
+                  <option>Quarterly</option>
+                  <option>Annual</option>
                 </select>
               </div>
 
