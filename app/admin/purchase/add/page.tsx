@@ -135,7 +135,7 @@ export default function PurchasePage() {
                   className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                 />
                 <Link href="/admin/inventory/partSuppliers/add">
-                <button className="px-3 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
+                <button className="px-3 py-3 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
                   <Plus size={20} />
                 </button>
                 </Link>
