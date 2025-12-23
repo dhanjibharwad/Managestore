@@ -284,7 +284,7 @@ export default function Navbar() {
 
                     <div className="py-2">
                       <Link
-                        href="/customer/dashboard"
+                        href="/admin/dashboard"
                         className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setShowProfileMenu(false)}
                       >
