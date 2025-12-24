@@ -21,9 +21,57 @@ interface Purchase {
 export default function PurchasePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [companyId, setCompanyId] = useState<number | null>(null);
 
-  // Sample data - replace with actual data fetching
-  const purchases: Purchase[] = [];
+  React.useEffect(() => {
+    fetchUserSession();
+  }, []);
+
+  React.useEffect(() => {
+    if (companyId) {
+      fetchPurchases();
+    }
+  }, [companyId]);
+
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const fetchPurchases = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/admin/purchases?companyId=${companyId}`);
+      const data = await response.json();
+      if (data.purchases) {
+        const formattedPurchases = data.purchases.map((p: any) => ({
+          id: p.id.toString(),
+          purchase: p.purchase_number,
+          supplier: p.supplier_name,
+          partyInvoiceNumber: p.party_invoice_number || '-',
+          amount: parseFloat(p.total_amount) || 0,
+          remainingAmount: p.payment_status === 'paid' ? 0 : parseFloat(p.total_amount) || 0,
+          status: p.payment_status === 'paid' ? 'Paid' : p.payment_status === 'partially-paid' ? 'Partial' : 'Unpaid',
+          purchasedOn: new Date(p.purchase_date).toLocaleDateString(),
+          dueDate: p.due_date ? new Date(p.due_date).toLocaleDateString() : '-'
+        }));
+        setPurchases(formattedPurchases);
+      }
+    } catch (error) {
+      console.error('Failed to fetch purchases:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const totalPurchasePrice = purchases.reduce((sum, p) => sum + p.amount, 0);
   const totalPaidAmount = purchases.reduce((sum, p) => sum + (p.amount - p.remainingAmount), 0);
@@ -148,7 +196,13 @@ export default function PurchasePage() {
               </tr>
             </thead>
             <tbody>
-              {purchases.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-16 text-center">
+                    <div className="text-gray-400 text-sm">Loading...</div>
+                  </td>
+                </tr>
+              ) : purchases.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-16 text-center">
                     <div className="text-gray-400 text-sm">No data</div>

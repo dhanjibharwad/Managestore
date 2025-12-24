@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, X, Calendar, Upload, Info } from 'lucide-react';
+import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface Part {
@@ -17,6 +17,12 @@ interface Part {
   total: number;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
 export default function PurchasePage() {
   const [supplierName, setSupplierName] = useState('');
   const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('IN-001');
@@ -30,6 +36,45 @@ export default function PurchasePage() {
   const [showModal, setShowModal] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<{url: string; filename: string; size: number}[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [companyId, setCompanyId] = useState<number | null>(null);
+  const [purchaseNumber, setPurchaseNumber] = useState('');
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
+
+  React.useEffect(() => {
+    fetchUserSession();
+    generatePurchaseNumber();
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const generatePurchaseNumber = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 100);
+    setPurchaseNumber(`PUR-${timestamp}-${random}`);
+  };
 
   // Modal form state
   const [modalPart, setModalPart] = useState('');
@@ -57,7 +102,10 @@ export default function PurchasePage() {
     setModalSubTotal(calculatedSubTotal.toFixed(2));
     
     // Calculate tax amount based on selected tax
-    const taxRate = parseFloat(modalTax) || 0;
+    let taxRate = 0;
+    if (modalTax === 'gst' || modalTax === 'igst') taxRate = 18;
+    else if (modalTax === 'gst5') taxRate = 5;
+    
     const calculatedTaxAmount = (calculatedSubTotal * taxRate) / 100;
     setModalTaxAmount(calculatedTaxAmount.toFixed(2));
     
@@ -89,6 +137,10 @@ export default function PurchasePage() {
   };
 
   const handleSavePart = () => {
+    let taxRate = 0;
+    if (modalTax === 'gst' || modalTax === 'igst') taxRate = 18;
+    else if (modalTax === 'gst5') taxRate = 5;
+
     const newPart: Part = {
       id: Date.now().toString(),
       description: modalPartName || modalDescription,
@@ -96,7 +148,7 @@ export default function PurchasePage() {
       qty: parseFloat(modalQuantity) || 0,
       price: parseFloat(modalPrice) || 0,
       disc: parseFloat(modalDiscount) || 0,
-      tax: parseFloat(modalTax) || 0,
+      tax: taxRate,
       taxAmt: parseFloat(modalTaxAmount) || 0,
       subTotal: parseFloat(modalSubTotal) || 0,
       total: parseFloat(modalTotalAmount) || 0,
@@ -151,18 +203,103 @@ export default function PurchasePage() {
     setUploadedFiles(prev => prev.filter(f => f.url !== url));
   };
 
+  const handleSubmitPurchase = async () => {
+    if (!supplierName || !purchaseDate || parts.length === 0) {
+      showToast('Please fill required fields and add at least one part', 'warning');
+      return;
+    }
+
+    if (!companyId) {
+      showToast('Session expired. Please login again.', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyId,
+          purchaseNumber,
+          supplierName,
+          partyInvoiceNumber,
+          purchaseDate,
+          dueDate,
+          paymentStatus,
+          paymentMode,
+          amount: amount || null,
+          termsConditions: terms || null,
+          attachments: uploadedFiles.length > 0 ? uploadedFiles : null,
+          items: parts.map(part => ({
+            description: part.description,
+            warranty: modalWarranty,
+            taxCode: part.taxCode,
+            qty: part.qty,
+            price: part.price,
+            disc: part.disc,
+            tax: part.tax,
+            rateIncludingTax: modalRateIncludingTax
+          }))
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showToast('Purchase created successfully!', 'success');
+        setTimeout(() => window.location.href = '/admin/purchase', 2000);
+      } else {
+        showToast(data.error || 'Failed to create purchase', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showToast('An error occurred while creating the purchase', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-semibold text-gray-900">Purchase : PI25-1</h1>
+          <h1 className="text-2xl font-semibold text-gray-900">Purchase : {purchaseNumber}</h1>
           <div className="flex gap-3">
             <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors">
               Cancel
             </button>
-            <button className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
-              Create
+            <button 
+              onClick={handleSubmitPurchase}
+              disabled={submitting}
+              className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors disabled:opacity-50"
+            >
+              {submitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -625,11 +762,9 @@ export default function PurchasePage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select tax</option>
-                    <option value="0">0%</option>
-                    <option value="5">5%</option>
-                    <option value="12">12%</option>
-                    <option value="18">18%</option>
-                    <option value="28">28%</option>
+                    <option value="gst">GST 18%</option>
+                    <option value="igst">IGST 18%</option>
+                    <option value="gst5">GST 5%</option>
                   </select>
                 </div>
               </div>
