@@ -19,7 +19,7 @@ interface Part {
 
 export default function PurchasePage() {
   const [supplierName, setSupplierName] = useState('');
-  const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('IN-1001');
+  const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('IN-001');
   const [purchaseDate, setPurchaseDate] = useState('06-Dec-2025');
   const [dueDate, setDueDate] = useState('11-Dec-2025 04:21 PM');
   const [paymentStatus, setPaymentStatus] = useState('paid');
@@ -28,6 +28,8 @@ export default function PurchasePage() {
   const [terms, setTerms] = useState('');
   const [parts, setParts] = useState<Part[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<{url: string; filename: string; size: number}[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   // Modal form state
   const [modalPart, setModalPart] = useState('');
@@ -43,6 +45,26 @@ export default function PurchasePage() {
   const [modalTaxAmount, setModalTaxAmount] = useState('');
   const [modalTaxCode, setModalTaxCode] = useState('');
   const [modalTotalAmount, setModalTotalAmount] = useState('');
+
+  // Auto-calculate amounts when price, quantity, discount, or tax changes
+  React.useEffect(() => {
+    const priceNum = parseFloat(modalPrice) || 0;
+    const qtyNum = parseFloat(modalQuantity) || 0;
+    const discNum = parseFloat(modalDiscount) || 0;
+    
+    // Calculate subtotal: (price * quantity) - discount
+    const calculatedSubTotal = (priceNum * qtyNum) - discNum;
+    setModalSubTotal(calculatedSubTotal.toFixed(2));
+    
+    // Calculate tax amount based on selected tax
+    const taxRate = parseFloat(modalTax) || 0;
+    const calculatedTaxAmount = (calculatedSubTotal * taxRate) / 100;
+    setModalTaxAmount(calculatedTaxAmount.toFixed(2));
+    
+    // Calculate total: subtotal + tax amount
+    const calculatedTotal = calculatedSubTotal + calculatedTaxAmount;
+    setModalTotalAmount(calculatedTotal.toFixed(2));
+  }, [modalPrice, modalQuantity, modalDiscount, modalTax]);
 
   const handleAddPart = () => {
     setShowModal(true);
@@ -100,6 +122,34 @@ export default function PurchasePage() {
   };
 
   const totals = calculateTotals();
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    Array.from(files).forEach(file => formData.append('files', file));
+
+    try {
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.files) {
+        setUploadedFiles(prev => [...prev, ...data.files]);
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveFile = (url: string) => {
+    setUploadedFiles(prev => prev.filter(f => f.url !== url));
+  };
 
   return (
     <div className="bg-gray-50">
@@ -338,7 +388,7 @@ export default function PurchasePage() {
             </label>
             <div className="border border-gray-300 rounded">
               <div className="border-b border-gray-300 px-3 py-2 flex items-center gap-2 bg-gray-50">
-                <button className="text-gray-600 hover:text-gray-800 p-1">
+                {/* <button className="text-gray-600 hover:text-gray-800 p-1">
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                     <path d="M3 2h10v2H3z" />
                   </svg>
@@ -347,7 +397,7 @@ export default function PurchasePage() {
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                     <path d="M2 2h12v2H2z" />
                   </svg>
-                </button>
+                </button> */}
                 <select className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
                   <option>Heading 1</option>
@@ -360,9 +410,6 @@ export default function PurchasePage() {
                   <button className="p-1 text-gray-600 hover:text-gray-800 underline">U</button>
                 </div>
                 <div className="flex gap-1 ml-2">
-                  <button className="p-1 text-gray-600 hover:text-gray-800">≡</button>
-                  <button className="p-1 text-gray-600 hover:text-gray-800">≡</button>
-                  <button className="p-1 text-gray-600 hover:text-gray-800">≡</button>
                   <button className="p-1 text-gray-600 hover:text-gray-800">≡</button>
                 </div>
               </div>
@@ -380,17 +427,47 @@ export default function PurchasePage() {
           {/* Upload Images */}
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-3">Upload Images</h3>
-            <div className="border-2 border-dashed border-[#4A70A9] rounded-lg p-12 text-center hover:bg-blue-50 transition-colors cursor-pointer">
+            <label className="border-2 border-dashed border-[#4A70A9] rounded-lg p-12 text-center hover:bg-blue-50 transition-colors cursor-pointer block">
+              <input
+                type="file"
+                multiple
+                accept="image/*,.pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={uploading}
+              />
               <div className="flex flex-col items-center">
                 <div className="w-12 h-12 bg-[#4A70A9] rounded-full flex items-center justify-center mb-4">
                   <Upload className="text-white" size={24} />
                 </div>
                 <p className="text-[#4A70A9] font-medium mb-1">
-                  Take A Photo With Your Camera Or Choose A File From Your Device
+                  {uploading ? 'Uploading...' : 'Take A Photo With Your Camera Or Choose A File From Your Device'}
                 </p>
                 <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
               </div>
-            </div>
+            </label>
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 grid grid-cols-6 gap-3">
+                {uploadedFiles.map((file, idx) => (
+                  <div key={idx} className="relative border rounded p-1.5 group">
+                    {file.url.match(/\.(jpg|jpeg|png|gif|bmp|webp)$/i) ? (
+                      <img src={file.url} alt={file.filename} className="w-full h-16 object-cover rounded" />
+                    ) : (
+                      <div className="w-full h-16 bg-gray-100 rounded flex items-center justify-center">
+                        <span className="text-xs text-gray-500">PDF</span>
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-600 mt-1 truncate">{file.filename}</p>
+                    <button
+                      onClick={() => handleRemoveFile(file.url)}
+                      className="absolute top-0.5 right-0.5 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
