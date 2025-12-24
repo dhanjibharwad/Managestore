@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, Plus, Scan, X } from 'lucide-react';
+import { Calendar, Plus, Scan, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface Service {
@@ -29,10 +29,19 @@ interface Part {
   taxAmt: number;
   subTotal: number;
   total: number;
+  serialNumber?: string;
+  warranty?: string;
+  rateIncludingTax?: boolean;
+}
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
 }
 
 export default function QuotationPage() {
-  const [quotationNumber] = useState('QT25-1');
+  const [quotationNumber, setQuotationNumber] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [expiredOn, setExpiredOn] = useState('');
   const [services, setServices] = useState<Service[]>([]);
@@ -42,6 +51,44 @@ export default function QuotationPage() {
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [showPartModal, setShowPartModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [companyId, setCompanyId] = useState<number | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
+
+  React.useEffect(() => {
+    fetchUserSession();
+    generateQuotationNumber();
+  }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const generateQuotationNumber = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 100);
+    setQuotationNumber(`QT-${timestamp}-${random}`);
+  };
   
   // Service modal form state
   const [serviceForm, setServiceForm] = useState({
@@ -99,11 +146,58 @@ export default function QuotationPage() {
     setServiceForm(prev => ({ ...prev, [field]: value }));
   };
 
+  // Auto-calculate service amounts
+  React.useEffect(() => {
+    const price = parseFloat(serviceForm.price) || 0;
+    const disc = parseFloat(serviceForm.discount) || 0;
+    
+    let taxRate = 0;
+    if (serviceForm.tax === 'gst' || serviceForm.tax === 'igst') taxRate = 18;
+    else if (serviceForm.tax === 'gst5') taxRate = 5;
+
+    const subTotal = price - disc;
+    const taxAmount = (subTotal * taxRate) / 100;
+    const total = subTotal + taxAmount;
+
+    setServiceForm(prev => ({
+      ...prev,
+      subTotal: subTotal.toFixed(2),
+      taxAmount: taxAmount.toFixed(2),
+      totalAmount: total.toFixed(2)
+    }));
+  }, [serviceForm.price, serviceForm.discount, serviceForm.tax]);
+
   const handlePartFormChange = (field: string, value: any) => {
     setPartForm(prev => ({ ...prev, [field]: value }));
   };
 
+  // Auto-calculate part amounts
+  React.useEffect(() => {
+    const price = parseFloat(partForm.price) || 0;
+    const qty = parseFloat(partForm.quantity) || 0;
+    const disc = parseFloat(partForm.discount) || 0;
+    
+    let taxRate = 0;
+    if (partForm.tax === 'gst' || partForm.tax === 'igst') taxRate = 18;
+    else if (partForm.tax === 'gst5') taxRate = 5;
+
+    const subTotal = (price * qty) - disc;
+    const taxAmount = (subTotal * taxRate) / 100;
+    const total = subTotal + taxAmount;
+
+    setPartForm(prev => ({
+      ...prev,
+      subTotal: subTotal.toFixed(2),
+      taxAmount: taxAmount.toFixed(2),
+      totalAmount: total.toFixed(2)
+    }));
+  }, [partForm.price, partForm.quantity, partForm.discount, partForm.tax]);
+
   const saveService = () => {
+    let taxRate = 0;
+    if (serviceForm.tax === 'gst' || serviceForm.tax === 'igst') taxRate = 18;
+    else if (serviceForm.tax === 'gst5') taxRate = 5;
+
     const newService: Service = {
       id: Date.now().toString(),
       serviceName: serviceForm.repairService,
@@ -112,7 +206,7 @@ export default function QuotationPage() {
       disc: parseFloat(serviceForm.discount) || 0,
       subTotal: parseFloat(serviceForm.subTotal) || 0,
       taxCode: serviceForm.taxCode,
-      tax: parseFloat(serviceForm.tax) || 0,
+      tax: taxRate,
       taxAmt: parseFloat(serviceForm.taxAmount) || 0,
       total: parseFloat(serviceForm.totalAmount) || 0,
       rateIncludingTax: serviceForm.rateIncludingTax,
@@ -146,6 +240,10 @@ export default function QuotationPage() {
   };
 
   const savePart = () => {
+    let taxRate = 0;
+    if (partForm.tax === 'gst' || partForm.tax === 'igst') taxRate = 18;
+    else if (partForm.tax === 'gst5') taxRate = 5;
+
     const newPart: Part = {
       id: Date.now().toString(),
       description: partForm.partName || partForm.part,
@@ -153,13 +251,84 @@ export default function QuotationPage() {
       qty: parseFloat(partForm.quantity) || 0,
       price: parseFloat(partForm.price) || 0,
       disc: parseFloat(partForm.discount) || 0,
-      tax: parseFloat(partForm.tax) || 0,
+      tax: taxRate,
       taxAmt: parseFloat(partForm.taxAmount) || 0,
       subTotal: parseFloat(partForm.subTotal) || 0,
       total: parseFloat(partForm.totalAmount) || 0,
+      serialNumber: partForm.serialNumber,
+      warranty: partForm.warranty,
+      rateIncludingTax: partForm.rateIncludingTax
     };
     setParts([...parts, newPart]);
     closePartModal();
+  };
+
+  const handleSubmitQuotation = async () => {
+    if (!customerName) {
+      showToast('Please enter customer name', 'warning');
+      return;
+    }
+
+    if (services.length === 0 && parts.length === 0) {
+      showToast('Please add at least one service or part', 'warning');
+      return;
+    }
+
+    if (!companyId) {
+      showToast('Session expired. Please login again.', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/quotations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyId,
+          quotationNumber,
+          customerName,
+          expiredOn: expiredOn || null,
+          note: note || null,
+          termsConditions: termsConditions || null,
+          services: services.map(s => ({
+            serviceName: s.serviceName,
+            description: s.description,
+            price: s.price,
+            disc: s.disc,
+            taxCode: s.taxCode,
+            tax: s.tax,
+            rateIncludingTax: s.rateIncludingTax,
+            total: s.total
+          })),
+          parts: parts.map(p => ({
+            description: p.description,
+            serialNumber: p.serialNumber,
+            warranty: p.warranty,
+            taxCode: p.taxCode,
+            qty: p.qty,
+            price: p.price,
+            disc: p.disc,
+            tax: p.tax,
+            rateIncludingTax: p.rateIncludingTax,
+            total: p.total
+          }))
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showToast('Quotation created successfully!', 'success');
+        setTimeout(() => window.location.href = '/admin/quotations', 2000);
+      } else {
+        showToast(data.error || 'Failed to create quotation', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showToast('An error occurred while creating the quotation', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
 
@@ -198,6 +367,31 @@ export default function QuotationPage() {
 
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -205,11 +399,19 @@ export default function QuotationPage() {
             Quotation : {quotationNumber}
           </h1>
           <div className="flex gap-3">
-            <button className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50">
+            <button 
+              onClick={() => window.history.back()}
+              className="px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+            >
               Cancel
             </button>
-            <button className="px-4 py-2 text-white rounded" style={{ backgroundColor: '#4A70A9' }}>
-              Create
+            <button 
+              onClick={handleSubmitQuotation}
+              disabled={submitting}
+              className="px-4 py-2 text-white rounded disabled:opacity-50" 
+              style={{ backgroundColor: '#4A70A9' }}
+            >
+              {submitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -602,9 +804,9 @@ export default function QuotationPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select tax</option>
-                    <option value="5">5%</option>
-                    <option value="12">12%</option>
-                    <option value="18">18%</option>
+                    <option value="gst5">GST 5%</option>
+                    <option value="gst">GST 18%</option>
+                    <option value="igst">IGST 18%</option>
                   </select>
                 </div>
               </div>
@@ -858,9 +1060,9 @@ export default function QuotationPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select tax</option>
-                    <option value="5">5%</option>
-                    <option value="12">12%</option>
-                    <option value="18">18%</option>
+                    <option value="gst5">GST 5%</option>
+                    <option value="gst">GST 18%</option>
+                    <option value="igst">IGST 18%</option>
                   </select>
                 </div>
                 <div>

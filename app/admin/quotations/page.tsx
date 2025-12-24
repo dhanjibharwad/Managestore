@@ -6,19 +6,64 @@ import Link from 'next/link';
 
 interface Quotation {
   id: string;
-  quotationFor: string;
+  quotationNumber: string;
   customerName: string;
-  approvedRejectedBy: string;
-  status: string;
-  createdBy: string;
-  taxAmt: number;
-  amount: number;
+  expiredOn: string;
+  totalAmount: number;
+  createdAt: string;
 }
 
 export default function QuotationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [quotations] = useState<Quotation[]>([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [companyId, setCompanyId] = useState<number | null>(null);
+
+  React.useEffect(() => {
+    fetchUserSession();
+  }, []);
+
+  React.useEffect(() => {
+    if (companyId) {
+      fetchQuotations();
+    }
+  }, [companyId]);
+
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const fetchQuotations = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/admin/quotations?companyId=${companyId}`);
+      const data = await response.json();
+      if (data.quotations) {
+        const formattedQuotations = data.quotations.map((q: any) => ({
+          id: q.id.toString(),
+          quotationNumber: q.quotation_number,
+          customerName: q.customer_name,
+          expiredOn: q.expired_on ? new Date(q.expired_on).toLocaleDateString() : '-',
+          totalAmount: parseFloat(q.total_amount) || 0,
+          createdAt: new Date(q.created_at).toLocaleDateString()
+        }));
+        setQuotations(formattedQuotations);
+      }
+    } catch (error) {
+      console.error('Failed to fetch quotations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white">
@@ -72,53 +117,48 @@ export default function QuotationsPage() {
           <thead>
             <tr className="bg-zinc-50 border-b border-gray-200">
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Quotations
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Quotation For
+                Quotation Number
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
                 Customer Name
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Approved/Rejected By
+                Expired On
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Status
+                Total Amount
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Created By
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Tax Amt
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Amount
+                Created On
               </th>
             </tr>
           </thead>
           <tbody>
-            {quotations.length === 0 ? (
+            {loading ? (
               <tr>
-                <td colSpan={8} className="px-6 py-16 text-center">
+                <td colSpan={5} className="px-6 py-16 text-center">
+                  <div className="text-gray-400 text-base">Loading...</div>
+                </td>
+              </tr>
+            ) : quotations.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-6 py-16 text-center">
                   <div className="text-gray-400 text-base">No data</div>
                 </td>
               </tr>
             ) : (
-              quotations.map((quotation) => (
+              quotations
+                .filter(q => 
+                  q.quotationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  q.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+                .map((quotation) => (
                 <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotationFor}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotationNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{quotation.customerName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.approvedRejectedBy}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className="px-2 py-1 rounded-full text-xs font-medium bg-zinc-100 text-gray-700">
-                      {quotation.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.createdBy}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.taxAmt.toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.amount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.expiredOn}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">₹ {quotation.totalAmount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.createdAt}</td>
                 </tr>
               ))
             )}
