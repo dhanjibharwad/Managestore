@@ -1,4 +1,4 @@
--- Drop existing objects if they exist
+-- Drop existing objects if they exist check
 DROP TABLE IF EXISTS tasks CASCADE;
 DROP SEQUENCE IF EXISTS task_id_seq CASCADE;
 
@@ -21,7 +21,7 @@ CREATE TABLE tasks (
     send_alert JSONB DEFAULT '{"mail": false, "whatsApp": false}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+); 
 
 -- Create indexes
 CREATE INDEX idx_tasks_assignee ON tasks(assignee_id);
