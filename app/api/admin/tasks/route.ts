@@ -76,35 +76,38 @@ export async function GET(req: NextRequest) {
     const assignee = searchParams.get('assignee');
     const search = searchParams.get('search');
 
-    let query = 'SELECT * FROM tasks WHERE 1=1';
+    let query = `SELECT t.*, u.name as assignee_name 
+                 FROM tasks t 
+                 LEFT JOIN users u ON t.assignee_id = u.id 
+                 WHERE 1=1`;
     const params: any[] = [];
     let paramCount = 0;
 
     if (status) {
       paramCount++;
-      query += ` AND task_status = $${paramCount}`;
+      query += ` AND t.task_status = $${paramCount}`;
       params.push(status);
     }
 
     if (priority) {
       paramCount++;
-      query += ` AND priority = $${paramCount}`;
+      query += ` AND t.priority = $${paramCount}`;
       params.push(priority);
     }
 
     if (assignee) {
       paramCount++;
-      query += ` AND assignee_id = $${paramCount}`;
+      query += ` AND t.assignee_id = $${paramCount}`;
       params.push(assignee);
     }
 
     if (search) {
       paramCount++;
-      query += ` AND (task_title ILIKE $${paramCount} OR task_id ILIKE $${paramCount})`;
+      query += ` AND (t.task_title ILIKE $${paramCount} OR t.task_id ILIKE $${paramCount})`;
       params.push(`%${search}%`);
     }
 
-    query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY t.created_at DESC';
     
     const offset = (page - 1) * limit;
     paramCount++;

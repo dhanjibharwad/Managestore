@@ -1,25 +1,45 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, SlidersHorizontal, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 interface Lead {
-  id: string;
-  leadName: string;
-  mobileNumber: string;
-  assignee: string;
-  leadSource: string;
-  nextFollowUp: string;
-  lastFollowupComment: string;
-  status: string;
+  id: number;
+  lead_name: string;
+  mobile_number: string;
+  assignee_id: number;
+  assignee_name?: string;
+  lead_source: string;
+  next_follow_up: string;
+  comment: string;
+  created_at: string;
 }
 
 export default function LeadsPage() {
-  const [leads] = useState<Lead[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState('');
+
+  useEffect(() => {
+    fetchLeads();
+  }, []);
+
+  const fetchLeads = async () => {
+    try {
+      const response = await fetch('/api/leads');
+      if (response.ok) {
+        const data = await response.json();
+        setLeads(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white p-6">
@@ -111,7 +131,13 @@ export default function LeadsPage() {
             </tr>
           </thead>
           <tbody>
-            {leads.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-16 text-center">
+                  <p className="text-gray-400 text-sm">Loading...</p>
+                </td>
+              </tr>
+            ) : leads.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-16 text-center">
                   <p className="text-gray-400 text-sm">No data</p>
@@ -120,13 +146,17 @@ export default function LeadsPage() {
             ) : (
               leads.map((lead) => (
                 <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.leadName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.mobileNumber}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.assignee}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.leadSource}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.nextFollowUp}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.lastFollowupComment}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.status}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{lead.mobile_number || '-'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{lead.assignee_name || lead.assignee_id}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_source || '-'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {lead.next_follow_up ? new Date(lead.next_follow_up).toLocaleDateString() : '-'}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">New</span>
+                  </td>
                 </tr>
               ))
             )}

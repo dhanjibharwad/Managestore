@@ -10,6 +10,7 @@
     task_title: string;
     task_description: string;
     assignee_id: number;
+    assignee_name?: string;
     task_status: string;
     priority: string;
     due_date: string;
@@ -202,7 +203,7 @@
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
-                        {task.assignee_id ? `User ${task.assignee_id}` : '-'}
+                        {task.assignee_name || task.assignee_id || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
                         <div className="flex items-center gap-2">

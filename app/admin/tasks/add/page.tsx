@@ -1,7 +1,20 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, MoreVertical, Undo, Redo, Upload, ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
+import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, MoreVertical, Undo, Redo, Upload, ChevronLeft, ChevronRight, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 export default function AddNewTaskPage() {
   // Initialize with current date and time
@@ -33,16 +46,35 @@ export default function AddNewTaskPage() {
   });
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   // Set initial due date on component mount
   useEffect(() => {
     const formattedDate = `${formatDate(now)} ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
     setDueDate(formattedDate);
+    
+    // Fetch users
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => setUsers(data));
   }, []);
 
   const handleSubmit = async () => {
     if (!taskTitle || !assignee) {
-      alert('Please fill in required fields: Task Title and Assignee');
+      showToast('Please fill in required fields: Task Title and Assignee', 'warning');
       return;
     }
 
@@ -93,19 +125,14 @@ export default function AddNewTaskPage() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Task created successfully! Task ID: ${result.task.task_id}`);
-        // Reset form or redirect
-        setTaskTitle('');
-        setTaskDescription('');
-        setAssignee('');
-        setCustomer('');
-        setUploadedFiles([]);
+        showToast('Task created successfully!', 'success');
+        setTimeout(() => window.location.href = '/admin/tasks', 2000);
       } else {
-        alert(result.error || 'Failed to create task');
+        showToast(result.error || 'Failed to create task', 'error');
       }
     } catch (error) {
       console.error('Error creating task:', error);
-      alert('An error occurred while creating the task');
+      showToast('An error occurred while creating the task', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -238,6 +265,31 @@ export default function AddNewTaskPage() {
 
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
@@ -332,8 +384,9 @@ export default function AddNewTaskPage() {
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
               >
                 <option value="">Select assignee</option>
-                <option value="user1">User 1</option>
-                <option value="user2">User 2</option>
+                {users.map(user => (
+                  <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
+                ))}
               </select>
             </div>
             <div>
