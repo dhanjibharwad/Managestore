@@ -13,24 +13,34 @@ export async function POST(req: NextRequest) {
       taskStatus = 'Not Started Yet',
       priority = 'Medium',
       customer,
+      companyId,
       attachments = [],
       sendAlert = { mail: false, whatsApp: false }
     } = body;
 
     // Validation
-    if (!taskTitle || !assignee) {
+    if (!taskTitle || !assignee || !companyId) {
       return NextResponse.json(
-        { error: 'Required fields: taskTitle, assignee' },
+        { error: 'Required fields: taskTitle, assignee, companyId' },
         { status: 400 }
       );
     }
 
-    // Parse due date
+    // Parse due date from format: "25-Jan-2025 02:30 PM"
     let parsedDueDate = null;
     if (dueDate) {
-      parsedDueDate = new Date(dueDate);
-      if (isNaN(parsedDueDate.getTime())) {
-        parsedDueDate = null;
+      const dateRegex = /(\d+)-(\w+)-(\d{4})\s+(\d{1,2}):(\d{2})\s+(AM|PM)/;
+      const match = dueDate.match(dateRegex);
+      if (match) {
+        const [, day, month, year, hour, minute, period] = match;
+        const months: { [key: string]: number } = {
+          Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+          Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+        };
+        let hour24 = parseInt(hour);
+        if (period === 'PM' && hour24 !== 12) hour24 += 12;
+        if (period === 'AM' && hour24 === 12) hour24 = 0;
+        parsedDueDate = new Date(parseInt(year), months[month], parseInt(day), hour24, parseInt(minute));
       }
     }
 
@@ -41,13 +51,13 @@ export async function POST(req: NextRequest) {
     const result = await pool.query(
       `INSERT INTO tasks (
         task_title, task_description, assignee_id, due_date,
-        task_status, priority, customer_id, attachments, send_alert
+        task_status, priority, customer_id, company_id, attachments, send_alert
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
       ) RETURNING *`,
       [
         taskTitle, taskDescription, assigneeId, parsedDueDate,
-        taskStatus, priority, customerId, JSON.stringify(attachments),
+        taskStatus, priority, customerId, companyId, JSON.stringify(attachments),
         JSON.stringify(sendAlert)
       ]
     );

@@ -49,6 +49,7 @@ export default function AddNewTaskPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
+  const [companyId, setCompanyId] = useState<number | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
@@ -66,6 +67,15 @@ export default function AddNewTaskPage() {
     const formattedDate = `${formatDate(now)} ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
     setDueDate(formattedDate);
     
+    // Fetch current user and company
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.user?.companyId) {
+          setCompanyId(data.user.companyId);
+        }
+      });
+    
     // Fetch users
     fetch('/api/users')
       .then(res => res.json())
@@ -75,6 +85,11 @@ export default function AddNewTaskPage() {
   const handleSubmit = async () => {
     if (!taskTitle || !assignee) {
       showToast('Please fill in required fields: Task Title and Assignee', 'warning');
+      return;
+    }
+
+    if (!companyId) {
+      showToast('Company information not found', 'error');
       return;
     }
 
@@ -110,6 +125,7 @@ export default function AddNewTaskPage() {
         taskStatus,
         priority,
         customer,
+        companyId,
         attachments: uploadedFileUrls,
         sendAlert
       };
