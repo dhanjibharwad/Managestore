@@ -1,5 +1,9 @@
--- Create sequence for task_id first
-CREATE SEQUENCE IF NOT EXISTS task_id_seq START 1;
+-- Drop existing objects if they exist
+DROP TABLE IF EXISTS tasks CASCADE;
+DROP SEQUENCE IF EXISTS task_id_seq CASCADE;
+
+-- Create sequence for task_id
+CREATE SEQUENCE task_id_seq START 1;
 
 -- Tasks table
 CREATE TABLE tasks (
