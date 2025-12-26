@@ -127,32 +127,32 @@ export default function Navbar() {
       href: "/home/allservice",
       dropdown: [
         // Ticket & Service
-        { name: "Repair Tickets Management", href: "/user/services/repair-tickets", icon: MdConfirmationNumber },
-        { name: "Annual Maintenance Contract", href: "/user/services/amc", icon: MdAssignment },
-        { name: "Self Check-In", href: "/user/services/self-checkin", icon: MdCheckCircle },
+        { name: "Repair Tickets Management", href: "/home/allservice/repair-ticket", icon: MdConfirmationNumber },
+        { name: "Annual Maintenance Contract", href: "/home/allservice/repair-ticket", icon: MdAssignment },
+        { name: "Self Check-In", href: "/home/allservice/repair-ticket", icon: MdCheckCircle },
         // { name: "Activity Logs", href: "/user/services/activity-logs", icon: MdHistory },
         // Operations & Tasks
-        { name: "Task Management", href: "/user/services/task-management", icon: MdTask },
-        { name: "Work Scheduler", href: "/user/services/work-scheduler", icon: MdSchedule },
-        { name: "Employee Permissions", href: "/user/services/employee-permissions", icon: MdPeople },
-        { name: "Show / Hide Modules", href: "/user/services/module-control", icon: MdVisibility },
+        { name: "Task Management", href: "/home/allservice/repair-ticket", icon: MdTask },
+        { name: "Work Scheduler", href: "/home/allservice/repair-ticket", icon: MdSchedule },
+        { name: "Employee Permissions", href: "/home/allservice/repair-ticket", icon: MdPeople },
+        { name: "Show / Hide Modules", href: "/home/allservice/repair-ticket", icon: MdVisibility },
         // CRM & Leads
-        { name: "Lead Management", href: "/user/services/lead-management", icon: MdLeaderboard },
-        { name: "Pickup Drop Management", href: "/user/services/pickup-drop", icon: MdLocalShipping },
-        { name: "Outsource Management", href: "/user/services/outsource-management", icon: MdBusinessCenter },
+        { name: "Lead Management", href: "/home/allservice/repair-ticket", icon: MdLeaderboard },
+        { name: "Pickup Drop Management", href: "/home/allservice/repair-ticket", icon: MdLocalShipping },
+        { name: "Outsource Management", href: "/home/allservice/repair-ticket", icon: MdBusinessCenter },
         // Inventory & Finance
-        { name: "Inventory Management", href: "/user/services/inventory-management", icon: MdInventory },
-        { name: "Purchase Management", href: "/user/services/purchase-management", icon: MdShoppingCart },
-        { name: "Expense Management", href: "/user/services/expense-management", icon: MdAccountBalanceWallet },
-        { name: "Point of Sale (POS)", href: "/user/services/pos", icon: MdPointOfSale },
+        { name: "Inventory Management", href: "/home/allservice/repair-ticket", icon: MdInventory },
+        { name: "Purchase Management", href: "/home/allservice/repair-ticket", icon: MdShoppingCart },
+        { name: "Expense Management", href: "//home/allservice/repair-ticket", icon: MdAccountBalanceWallet },
+        { name: "Point of Sale (POS)", href: "/home/allservice/repair-ticket", icon: MdPointOfSale },
         // Security & Verification
-        { name: "OTP for Delivery", href: "/user/services/otp-delivery", icon: MdSecurity },
+        { name: "OTP for Delivery", href: "/home/allservice/repair-ticket", icon: MdSecurity },
         // { name: "Device Image Gallery", href: "/user/services/device-gallery", icon: MdPhotoLibrary },
         // { name: "Data Recovery Management", href: "/user/services/data-recovery", icon: MdStorage },
         // UI & System
         // { name: "Theme Change (Light / Dark)", href: "/user/services/theme", icon: MdPalette },
         // CTA
-        { name: "All Features", href: "/features", icon: MdFeaturedPlayList }
+        { name: "All Features", href: "/home/allservice/repair-ticket", icon: MdFeaturedPlayList }
       ]
     },
      { name: "Pricing", href: "/home/pricing" },

@@ -24,10 +24,10 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     description: "Manage customer repair requests, contracts, check-ins, and track activity logs.",
     color: "text-blue-600 bg-blue-50/70",
     services: [
-      { name: "Repair Tickets Management", href: "/user/services/repair-tickets" },
-      { name: "Annual Maintenance Contract", href: "/user/services/amc" },
-      { name: "Self Check-In", href: "/user/services/self-checkin" },
-      { name: "Activity Logs", href: "/user/services/activity-logs" },
+      { name: "Repair Tickets Management", href: "/home/allservice/repair-ticket" },
+      { name: "Annual Maintenance Contract", href: "#" },
+      { name: "Self Check-In", href: "#" },
+      { name: "Activity Logs", href: "#" },
     ],
   },
   {
