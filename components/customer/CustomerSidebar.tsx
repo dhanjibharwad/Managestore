@@ -31,21 +31,50 @@ const navItems = [
 
 export default function CustomerSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const pathname = usePathname();
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const toggleMobileSidebar = () => {
+    setIsMobileOpen(!isMobileOpen);
+  };
+
   return (
-    <aside
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'
-        }`}
-    >
-      {/* Toggle Button */}
+    <>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={toggleMobileSidebar}
+        className="lg:hidden fixed top-4 left-4 z-50 bg-[#4A70A9] text-white p-2 rounded-lg shadow-lg"
+        aria-label="Toggle menu"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={toggleMobileSidebar}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col sticky top-0 h-screen
+          ${isCollapsed ? 'w-20' : 'w-64'}
+          lg:relative lg:translate-x-0
+          ${isMobileOpen ? 'fixed inset-y-0 left-0 z-50 translate-x-0' : 'fixed -translate-x-full lg:translate-x-0'}
+        `}
+      >
+      {/* Toggle Button - Desktop Only */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-6 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50"
+        className="hidden lg:block absolute -right-3 top-6 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50"
         aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {isCollapsed ? (
@@ -55,32 +84,33 @@ export default function CustomerSidebar() {
         )}
       </button>
 
+      {/* Mobile Close Button */}
+      <button
+        onClick={toggleMobileSidebar}
+        className="lg:hidden absolute top-4 right-4 text-gray-600 hover:text-gray-900"
+        aria-label="Close menu"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
       {/* Sidebar Content */}
       <div className="flex-1 p-5">
         {/* Logo */}
-        <div className="mb-8">
+        <div className="mb-8 mt-4 lg:mt-0">
           {!isCollapsed ? (
-            // <Link
-            //   href="/home"
-            //   className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-            // >
-              <img
-                src="/images/lg1.png"
-                alt="Storremanager Logo"
-                className="h-16 w-auto"
-              />
-            // </Link>
+            <img
+              src="/images/lg1.png"
+              alt="Storremanager Logo"
+              className="h-16 w-auto"
+            />
           ) : (
-            // <Link
-            //   href="/home"
-            //   className="flex justify-center transition-transform duration-200 hover:scale-110"
-            // >
-              <img
-                src="/images/np.png"
-                alt="Storremanager Logo"
-                className="h-8 w-8 object-contain"
-              />
-            // </Link>
+            <img
+              src="/images/np.png"
+              alt="Storremanager Logo"
+              className="h-8 w-8 object-contain mx-auto"
+            />
           )}
         </div>
 
@@ -95,6 +125,7 @@ export default function CustomerSidebar() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    onClick={() => setIsMobileOpen(false)}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${isActive
                       ? 'bg-[#4A70A9] text-white shadow-md'
                       : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
@@ -138,5 +169,6 @@ export default function CustomerSidebar() {
         )}
       </div>
     </aside>
+    </>
   );
 }
