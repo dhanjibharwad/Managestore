@@ -33,15 +33,21 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Generate customer ID
+    const customerIdResult = await pool.query(
+      "SELECT COALESCE(MAX(CAST(SUBSTRING(customer_id FROM 5) AS INTEGER)), 0) + 1 as next_number FROM customers WHERE customer_id ~ 'CUST[0-9]+'"
+    );
+    const customerId = `CUST${customerIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+
     const result = await pool.query(
       `INSERT INTO customers (
-        company_id, customer_type, customer_name, mobile_number, email_id, phone_number,
+        customer_id, company_id, customer_type, customer_name, mobile_number, email_id, phone_number,
         source, referred_by, address_line, region_state, city_town, postal_code, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
       ) RETURNING *`,
       [
-        session.company.id, customerType, customerName, mobileNumber, emailId, phoneNumber,
+        customerId, session.company.id, customerType, customerName, mobileNumber, emailId, phoneNumber,
         source, referredBy, addressLine, regionState, cityTown, postalCode, session.user.id
       ]
     );
@@ -54,7 +60,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Create customer error:', error);
     return NextResponse.json(
-      { error: 'Failed to create customer' },
+      { error: 'Failed to create customer', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
