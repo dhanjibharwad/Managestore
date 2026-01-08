@@ -400,7 +400,7 @@ export default function AddNewTaskPage() {
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
               >
                 <option value="">Select assignee</option>
-                {users.map(user => (
+                {Array.isArray(users) && users.map(user => (
                   <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
                 ))}
               </select>

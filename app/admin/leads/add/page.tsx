@@ -376,7 +376,7 @@ export default function LeadInformationPage() {
                     onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
                   >
                     <option value="">Select assignee</option>
-                    {users.map(user => (
+                    {Array.isArray(users) && users.map(user => (
                       <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
                     ))}
                   </select>
