@@ -520,11 +520,11 @@ export default function CompanyRegisterPage() {
                 {/* Terms */}
                 <p className="text-center text-sm text-gray-500 mt-4">
                   By registering, you agree to our{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                  <a href="/extra/terms/" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
                     Terms of Service
                   </a>{' '}
                   and{' '}
-                  <a href="#" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                  <a href="/extra/privacy" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
                     Privacy Policy
                   </a>
                 </p>
