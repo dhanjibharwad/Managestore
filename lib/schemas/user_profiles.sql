@@ -1,4 +1,6 @@
-CREATE TABLE IF NOT EXISTS user_profiles (
+DROP TABLE IF EXISTS user_profiles CASCADE;
+
+CREATE TABLE user_profiles (
   id SERIAL PRIMARY KEY,
   user_id INTEGER NOT NULL,
   company_id INTEGER NOT NULL,
@@ -24,11 +26,9 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   UNIQUE (user_id)
 );
 
--- Create indexes for better performance
-CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON user_profiles(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_profiles_company_id ON user_profiles(company_id);
+CREATE INDEX idx_user_profiles_user_id ON user_profiles(user_id);
+CREATE INDEX idx_user_profiles_company_id ON user_profiles(company_id);
 
--- Create trigger for auto-updating updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -37,7 +37,6 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
-DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON user_profiles;
 CREATE TRIGGER update_user_profiles_updated_at
     BEFORE UPDATE ON user_profiles
     FOR EACH ROW
