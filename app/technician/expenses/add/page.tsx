@@ -118,7 +118,7 @@ export default function ExpensePage() {
 
       if (response.ok) {
         showToast(`Expense created successfully! Expense ID: ${result.expense.expense_id}`, 'success');
-        setTimeout(() => router.push('/admin/expenses'), 2000);
+        setTimeout(() => router.push('/technician/expenses'), 2000);
       } else {
         showToast(result.error || 'Failed to create expense', 'error');
       }

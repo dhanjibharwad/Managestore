@@ -54,15 +54,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Generate expense ID
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 100);
+    const expenseId = `EXP-${timestamp}-${random}`;
+
     const result = await pool.query(
       `INSERT INTO expenses (
-        expense_name, category, expense_date, description,
+        expense_id, expense_name, category, expense_date, description,
         payment_mode, amount, attachments, company_id, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
       ) RETURNING *`,
       [
-        expenseName, category, parsedExpenseDate, description,
+        expenseId, expenseName, category, parsedExpenseDate, description,
         paymentMode, numericAmount, JSON.stringify(attachments),
         company.id, user.name
       ]

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle } from 'lucide-react';
+import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle, Edit, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface Expense {
@@ -68,6 +68,18 @@ export default function ExpensePage() {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
+    });
+  };
+
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
     });
   };
 
@@ -187,18 +199,21 @@ export default function ExpensePage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                   Created On
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="text-gray-400 text-sm">Loading...</div>
                   </td>
                 </tr>
               ) : expenses.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center">
+                  <td colSpan={8} className="px-6 py-12 text-center">
                     <div className="text-gray-400 text-sm">No data</div>
                   </td>
                 </tr>
@@ -222,8 +237,16 @@ export default function ExpensePage() {
                         {expense.description || '-'}
                       </div>
                       {expense.attachments && expense.attachments.length > 0 && (
-                        <div className="text-xs text-blue-600 mt-1">
-                          {expense.attachments.length} attachment(s)
+                        <div className="text-xs mt-1">
+                          {expense.attachments.map((attachment, index) => (
+                            <button
+                              key={index}
+                              onClick={() => window.open(attachment, '_blank')}
+                              className="text-blue-600 hover:text-blue-800 underline mr-2"
+                            >
+                              Attachment {index + 1}
+                            </button>
+                          ))}
                         </div>
                       )}
                     </td>
@@ -237,7 +260,22 @@ export default function ExpensePage() {
                       {formatDate(expense.expense_date)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {formatDate(expense.created_at)}
+                      {formatDateTime(expense.created_at)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      <div className="flex items-center gap-2">
+                        <Link href={`/admin/expenses/edit/${expense.id}`}>
+                          <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </Link>
+                        <button 
+                          onClick={() => console.log('Delete expense:', expense.id)}
+                          className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
