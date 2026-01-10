@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, X } from 'lucide-react';
 
@@ -34,30 +34,79 @@ export default function AddPartPage() {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newSubCategoryName, setNewSubCategoryName] = useState('');
   const [selectedCategoryForSub, setSelectedCategoryForSub] = useState('');
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Load subcategories when category changes
+    if (name === 'category' && value) {
+      loadSubcategories(value);
+    }
   };
 
   const handleToggle = (field: string) => {
     setFormData(prev => ({ ...prev, [field]: !prev[field as keyof typeof prev] }));
   };
 
-  const handleSaveCategory = () => {
-    if (newCategoryName.trim()) {
-      setFormData(prev => ({ ...prev, category: newCategoryName }));
-      setNewCategoryName('');
-      setShowCategoryModal(false);
+  const handleSaveCategory = async () => {
+    if (!newCategoryName.trim()) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ categoryName: newCategoryName })
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        setFormData(prev => ({ ...prev, category: result.category.id }));
+        setNewCategoryName('');
+        setShowCategoryModal(false);
+        loadCategories(); // Refresh categories
+      } else {
+        alert(result.error || 'Failed to create category');
+      }
+    } catch (error) {
+      alert('Error creating category');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSaveSubCategory = () => {
-    if (newSubCategoryName.trim() && selectedCategoryForSub) {
-      setFormData(prev => ({ ...prev, subCategory: newSubCategoryName }));
-      setNewSubCategoryName('');
-      setSelectedCategoryForSub('');
-      setShowSubCategoryModal(false);
+  const handleSaveSubCategory = async () => {
+    if (!newSubCategoryName.trim() || !selectedCategoryForSub) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/subcategories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          categoryId: selectedCategoryForSub, 
+          subcategoryName: newSubCategoryName 
+        })
+      });
+      
+      const result = await response.json();
+      if (response.ok) {
+        setFormData(prev => ({ ...prev, subCategory: result.subcategory.id }));
+        setNewSubCategoryName('');
+        setSelectedCategoryForSub('');
+        setShowSubCategoryModal(false);
+        loadSubcategories(formData.category); // Refresh subcategories
+      } else {
+        alert(result.error || 'Failed to create subcategory');
+      }
+    } catch (error) {
+      alert('Error creating subcategory');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,6 +122,39 @@ export default function AddPartPage() {
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
   };
+
+  const loadCategories = async () => {
+    try {
+      const response = await fetch('/api/admin/categories');
+      const result = await response.json();
+      if (response.ok) {
+        setCategories(result.categories);
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+
+  const loadSubcategories = async (categoryId: string) => {
+    if (!categoryId) {
+      setSubcategories([]);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/subcategories?categoryId=${categoryId}`);
+      const result = await response.json();
+      if (response.ok) {
+        setSubcategories(result.subcategories);
+      }
+    } catch (error) {
+      console.error('Error loading subcategories:', error);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+  }, []);
 
   const handleSubmit = async () => {
     if (!formData.partName || !formData.openingStock || !formData.purchasePrice) {
@@ -187,8 +269,9 @@ export default function AddPartPage() {
                     className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                   >
                     <option value="">Select category</option>
-                    <option value="electronics">Electronics</option>
-                    <option value="hardware">Hardware</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.id}>{cat.category_name}</option>
+                    ))}
                   </select>
                   <button 
                     onClick={() => setShowCategoryModal(true)}
@@ -207,10 +290,12 @@ export default function AddPartPage() {
                     value={formData.subCategory}
                     onChange={handleInputChange}
                     className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                    disabled={!formData.category}
                   >
                     <option value="">Select sub category</option>
-                    <option value="memory">Memory</option>
-                    <option value="storage">Storage</option>
+                    {subcategories.map(sub => (
+                      <option key={sub.id} value={sub.id}>{sub.subcategory_name}</option>
+                    ))}
                   </select>
                   <button 
                     onClick={() => setShowSubCategoryModal(true)}
@@ -596,9 +681,10 @@ export default function AddPartPage() {
               </button>
               <button
                 onClick={handleSaveCategory}
-                className="flex-1 px-6 py-3 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 font-medium transition-colors"
+                disabled={loading || !newCategoryName.trim()}
+                className="flex-1 px-6 py-3 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 font-medium transition-colors disabled:opacity-50"
               >
-                Save
+                {loading ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
@@ -634,8 +720,9 @@ export default function AddPartPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 >
                   <option value="">Select category</option>
-                  <option value="electronics">Electronics</option>
-                  <option value="hardware">Hardware</option>
+                  {categories.map(cat => (
+                    <option key={cat.id} value={cat.id}>{cat.category_name}</option>
+                  ))}
                 </select>
               </div>
 
@@ -666,9 +753,10 @@ export default function AddPartPage() {
               </button>
               <button
                 onClick={handleSaveSubCategory}
-                className="flex-1 px-6 py-3 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 font-medium transition-colors"
+                disabled={loading || !newSubCategoryName.trim() || !selectedCategoryForSub}
+                className="flex-1 px-6 py-3 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 font-medium transition-colors disabled:opacity-50"
               >
-                Save
+                {loading ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
