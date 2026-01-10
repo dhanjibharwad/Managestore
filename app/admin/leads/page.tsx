@@ -16,8 +16,16 @@ interface Lead {
   created_at: string;
 }
 
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
@@ -25,7 +33,20 @@ export default function LeadsPage() {
 
   useEffect(() => {
     fetchLeads();
+    fetchUsers();
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+    }
+  };
 
   const fetchLeads = async () => {
     try {
@@ -40,6 +61,22 @@ export default function LeadsPage() {
       setLoading(false);
     }
   };
+
+  const getAssigneeName = (assigneeId: number) => {
+    const user = users.find(u => u.id === assigneeId);
+    return user ? `${user.name} (${user.role})` : assigneeId.toString();
+  };
+
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = searchQuery === '' || 
+      lead.lead_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (lead.mobile_number && lead.mobile_number.includes(searchQuery)) ||
+      (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()));
+    
+    const matchesAssignee = selectedAssignee === '' || lead.assignee_id.toString() === selectedAssignee;
+    
+    return matchesSearch && matchesAssignee;
+  });
 
   return (
     <div className="bg-white p-6">
@@ -81,16 +118,16 @@ export default function LeadsPage() {
             className="px-4 py-2.5 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
           >
             <option value="">Select assignee name</option>
-            <option value="john">John Doe</option>
-            <option value="jane">Jane Smith</option>
-            <option value="mike">Mike Johnson</option>
+            {users.map(user => (
+              <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
+            ))}
           </select>
 
           {/* All Filters Button */}
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-[#4A70A9] text-white rounded-md text-sm font-medium hover:bg-[#3d5d8f] transition-colors">
+          {/* <button className="flex items-center gap-2 px-4 py-2.5 bg-[#4A70A9] text-white rounded-md text-sm font-medium hover:bg-[#3d5d8f] transition-colors">
             <SlidersHorizontal className="w-4 h-4" />
             All Filters
-          </button>
+          </button> */}
 
           {/* Add Button */}
           <Link href="/admin/leads/add">
@@ -137,18 +174,18 @@ export default function LeadsPage() {
                   <p className="text-gray-400 text-sm">Loading...</p>
                 </td>
               </tr>
-            ) : leads.length === 0 ? (
+            ) : filteredLeads.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-16 text-center">
                   <p className="text-gray-400 text-sm">No data</p>
                 </td>
               </tr>
             ) : (
-              leads.map((lead) => (
+              filteredLeads.map((lead) => (
                 <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_name}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.mobile_number || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{lead.assignee_name || lead.assignee_id}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{getAssigneeName(lead.assignee_id)}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_source || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {lead.next_follow_up ? new Date(lead.next_follow_up).toLocaleDateString() : '-'}

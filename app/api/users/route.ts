@@ -13,10 +13,10 @@ export async function GET() {
     const companyId = session.company.id;
     
     const result = await pool.query(
-      `SELECT id, name, email, role 
-       FROM users 
-       WHERE company_id = $1 AND is_active = true 
-       ORDER BY name`,
+      `SELECT id, employee_name as name, email_id as email, employee_role as role 
+       FROM employees 
+       WHERE company_id = $1 AND status = 'Active' AND employee_role IN ('admin', 'technician')
+       ORDER BY employee_name`,
       [companyId]
     );
 

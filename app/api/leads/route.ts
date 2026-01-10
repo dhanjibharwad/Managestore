@@ -86,9 +86,9 @@ export async function GET(request: NextRequest) {
     const companyId = session.company.id;
     
     const result = await pool.query(
-      `SELECT l.*, u.name as assignee_name 
+      `SELECT l.*, e.employee_name as assignee_name 
        FROM leads l 
-       LEFT JOIN users u ON l.assignee_id = u.id 
+       LEFT JOIN employees e ON l.assignee_id = e.id 
        WHERE l.company_id = $1 
        ORDER BY l.created_at DESC`,
       [companyId]
