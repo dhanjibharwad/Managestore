@@ -15,7 +15,8 @@ import {
   LineChart,
   Users,
   FileCheck,
-  FileText
+  FileText,
+  Wrench
 } from 'lucide-react';
 
 const navItems = [
@@ -27,6 +28,7 @@ const navItems = [
   { label: "Quotations", href: "/technician/quotations", icon: FileText },
   { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
   { label: "Employees", href: "/technician/employees", icon: IdCard },
+   { label: "Expenses", href: "/technician/expenses", icon: Wrench },
   { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck },
   { label: "Profile", href: "/technician/profile", icon: User }
 ];
