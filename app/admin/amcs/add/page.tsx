@@ -480,15 +480,6 @@ const ContractFormPage = () => {
                     <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
                       <span className="text-sm">≡</span>
                     </button>
-                    <button className="p-1 hover:bg-gray-200 rounded" title="Align Center">
-                      <span className="text-sm">≡</span>
-                    </button>
-                    <button className="p-1 hover:bg-gray-200 rounded" title="Align Right">
-                      <span className="text-sm">≡</span>
-                    </button>
-                    <button className="p-1 hover:bg-gray-200 rounded" title="Justify">
-                      <span className="text-sm">≡</span>
-                    </button>
                   </div>
                 </div>
                 <textarea
