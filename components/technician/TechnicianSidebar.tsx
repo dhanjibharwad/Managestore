@@ -13,17 +13,23 @@ import {
   IdCard,
   Warehouse,
   LineChart,
-  Users 
+  Users,
+  FileCheck,
+  FileText 
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/technician/dashboard", icon: LayoutDashboard },
    { label: "Jobs", href: "/technician/jobs", icon: Briefcase },
+    { label: "AMCS", href: "/technician/amcs", icon: FileCheck },
+      { label: "Customers", href: "/technician/customers", icon: Users },
+        { label: "Sales", href: "/technician/sales", icon: LineChart }, 
+         { label: "Quotations", href: "/technician/quotations", icon: FileText  },
    { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck }, 
   { label: "Employees", href: "/technician/employees", icon: IdCard },
    { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
-    { label: "Sales", href: "/technician/sales", icon: LineChart }, 
-     { label: "Customers", href: "/technician/customers", icon: Users },
+  
+   
       { label: "Profile", href: "/technician/profile", icon: User }
 ];
 

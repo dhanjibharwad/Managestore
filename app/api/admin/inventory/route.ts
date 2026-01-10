@@ -35,19 +35,24 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Generate part_id manually if trigger doesn't work
+    const partIdResult = await pool.query('SELECT COALESCE(MAX(CAST(SUBSTRING(part_id FROM 5) AS INTEGER)), 0) + 1 as next_id FROM inventory_parts WHERE part_id ~ \'PART[0-9]+\'');
+    const nextId = partIdResult.rows[0]?.next_id || 1;
+    const generatedPartId = `PART${String(nextId).padStart(4, '0')}`;
+
     const result = await pool.query(
       `INSERT INTO inventory_parts (
-        part_name, category, sub_category, warranty, storage_location,
-        opening_stock, unit_type, sku, low_stock_units, barcode_number,
+        part_id, part_name, category, sub_category, warranty, storage_location,
+        opening_stock, current_stock, unit_type, sku, low_stock_units, barcode_number,
         rate_including_tax, manage_stock, low_stock_alert, purchase_price,
         selling_price, tax, hsn_code, part_description, images
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
-        $11, $12, $13, $14, $15, $16, $17, $18, $19
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16, $17, $18, $19, $20, $21
       ) RETURNING *`,
       [
-        partName, category, subCategory, warranty, storageLocation,
-        parseInt(openingStock), unitType, sku, lowStockUnits ? parseInt(lowStockUnits) : null,
+        generatedPartId, partName, category, subCategory, warranty, storageLocation,
+        parseInt(openingStock), parseInt(openingStock), unitType, sku, lowStockUnits ? parseInt(lowStockUnits) : null,
         barcodeNumber, rateIncludingTax, manageStock, lowStockAlert,
         parseFloat(purchasePrice), sellingPrice ? parseFloat(sellingPrice) : null,
         tax, hsnCode, partDescription, images
