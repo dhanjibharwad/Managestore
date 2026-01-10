@@ -119,40 +119,64 @@ export default function LeadInformationPage() {
   }, [formData.deviceBrand, deviceModels]);
 
   const handleAddBrand = async () => {
-    if (!newBrandName.trim() || !formData.deviceType) return;
+    if (!newBrandName.trim() || !formData.deviceType) {
+      showToast('Please enter a brand name', 'warning');
+      return;
+    }
     
-    const response = await fetch('/api/devices/brands', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newBrandName, device_type_id: formData.deviceType })
-    });
-    
-    if (response.ok) {
-      const newBrand = await response.json();
-      setDeviceBrands([...deviceBrands, newBrand]);
-      setFilteredBrands([...filteredBrands, newBrand]);
-      setFormData({ ...formData, deviceBrand: newBrand.id.toString() });
-      setNewBrandName('');
-      setShowBrandModal(false);
+    try {
+      const response = await fetch('/api/devices/brands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newBrandName, device_type_id: parseInt(formData.deviceType) })
+      });
+      
+      if (response.ok) {
+        const newBrand = await response.json();
+        setDeviceBrands([...deviceBrands, newBrand]);
+        setFilteredBrands([...filteredBrands, newBrand]);
+        setFormData({ ...formData, deviceBrand: newBrand.id.toString() });
+        setNewBrandName('');
+        setShowBrandModal(false);
+        showToast('Brand added successfully!', 'success');
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to add brand', 'error');
+      }
+    } catch (error) {
+      console.error('Error adding brand:', error);
+      showToast('An error occurred while adding brand', 'error');
     }
   };
 
   const handleAddModel = async () => {
-    if (!newModelName.trim() || !formData.deviceBrand) return;
+    if (!newModelName.trim() || !formData.deviceBrand) {
+      showToast('Please enter a model name', 'warning');
+      return;
+    }
     
-    const response = await fetch('/api/devices/models', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: newModelName, device_brand_id: formData.deviceBrand })
-    });
-    
-    if (response.ok) {
-      const newModel = await response.json();
-      setDeviceModels([...deviceModels, newModel]);
-      setFilteredModels([...filteredModels, newModel]);
-      setFormData({ ...formData, deviceModel: newModel.id.toString() });
-      setNewModelName('');
-      setShowModelModal(false);
+    try {
+      const response = await fetch('/api/devices/models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newModelName, device_brand_id: parseInt(formData.deviceBrand) })
+      });
+      
+      if (response.ok) {
+        const newModel = await response.json();
+        setDeviceModels([...deviceModels, newModel]);
+        setFilteredModels([...filteredModels, newModel]);
+        setFormData({ ...formData, deviceModel: newModel.id.toString() });
+        setNewModelName('');
+        setShowModelModal(false);
+        showToast('Model added successfully!', 'success');
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to add model', 'error');
+      }
+    } catch (error) {
+      console.error('Error adding model:', error);
+      showToast('An error occurred while adding model', 'error');
     }
   };
 
@@ -565,7 +589,9 @@ export default function LeadInformationPage() {
                 placeholder="Enter brand name"
                 value={newBrandName}
                 onChange={(e) => setNewBrandName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddBrand()}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+                autoFocus
               />
               <div className="flex gap-3 justify-end">
                 <button
@@ -576,7 +602,8 @@ export default function LeadInformationPage() {
                 </button>
                 <button
                   onClick={handleAddBrand}
-                  className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8f]"
+                  disabled={!newBrandName.trim()}
+                  className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8f] disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   Add
                 </button>
@@ -594,7 +621,9 @@ export default function LeadInformationPage() {
                 placeholder="Enter model name"
                 value={newModelName}
                 onChange={(e) => setNewModelName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddModel()}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+                autoFocus
               />
               <div className="flex gap-3 justify-end">
                 <button
@@ -605,7 +634,8 @@ export default function LeadInformationPage() {
                 </button>
                 <button
                   onClick={handleAddModel}
-                  className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8f]"
+                  disabled={!newModelName.trim()}
+                  className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8f] disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   Add
                 </button>
