@@ -2,11 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 export default function AddPartPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
   const [formData, setFormData] = useState({
     partName: '',
     category: '',
@@ -37,6 +45,25 @@ export default function AddPartPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = {
+      id: nextToastId,
+      message,
+      type
+    };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      removeToast(toast.id);
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -70,10 +97,10 @@ export default function AddPartPage() {
         setShowCategoryModal(false);
         loadCategories(); // Refresh categories
       } else {
-        alert(result.error || 'Failed to create category');
+        showToast(result.error || 'Failed to create category', 'error');
       }
     } catch (error) {
-      alert('Error creating category');
+      showToast('Error creating category', 'error');
     } finally {
       setLoading(false);
     }
@@ -101,10 +128,10 @@ export default function AddPartPage() {
         setShowSubCategoryModal(false);
         loadSubcategories(formData.category); // Refresh subcategories
       } else {
-        alert(result.error || 'Failed to create subcategory');
+        showToast(result.error || 'Failed to create subcategory', 'error');
       }
     } catch (error) {
-      alert('Error creating subcategory');
+      showToast('Error creating subcategory', 'error');
     } finally {
       setLoading(false);
     }
@@ -158,9 +185,18 @@ export default function AddPartPage() {
 
   const handleSubmit = async () => {
     if (!formData.partName || !formData.openingStock || !formData.purchasePrice) {
-      alert('Please fill in required fields: Part Name, Opening Stock, and Purchase Price');
+      showToast('Please fill in required fields: Part Name, Opening Stock, and Purchase Price', 'warning');
       return;
     }
+
+    // Convert numeric fields and validate
+    const numericData = {
+      ...formData,
+      openingStock: parseInt(formData.openingStock) || 0,
+      lowStockUnits: parseInt(formData.lowStockUnits) || 0,
+      purchasePrice: parseFloat(formData.purchasePrice) || 0,
+      sellingPrice: parseFloat(formData.sellingPrice) || 0
+    };
 
     setIsSubmitting(true);
     
@@ -187,7 +223,7 @@ export default function AddPartPage() {
       
       // Create inventory part with file URLs
       const partData = {
-        ...formData,
+        ...numericData,
         images: uploadedFileUrls
       };
       
@@ -202,14 +238,16 @@ export default function AddPartPage() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Inventory part created successfully! Part ID: ${result.part.part_id}`);
-        router.push('/admin/inventory');
+        showToast(`Inventory part created successfully! Part ID: ${result.part.part_id}`, 'success');
+        setTimeout(() => {
+          router.push('/admin/inventory');
+        }, 2000);
       } else {
-        alert(result.error || 'Failed to create inventory part');
+        showToast(result.error || 'Failed to create inventory part', 'error');
       }
     } catch (error) {
       console.error('Error creating inventory part:', error);
-      alert('An error occurred while creating the inventory part');
+      showToast('An error occurred while creating the inventory part', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -217,6 +255,30 @@ export default function AddPartPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-4">
@@ -517,9 +579,9 @@ export default function AddPartPage() {
                     <option value="GST 12%">IGST 18%</option>
                     <option value="GST 5%">GST 5%</option>
                   </select>
-                  <button className="px-3.5 py-3 border border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors">
+                  {/* <button className="px-3.5 py-3 border border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors">
                     <X size={20} />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
