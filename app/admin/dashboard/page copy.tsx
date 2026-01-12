@@ -223,35 +223,35 @@ export default function DashboardPage() {
       value: "0.00",
       percentage: "- 0%",
       icon: <Receipt className="w-4 h-4" />,
-      dateRange: ""
+      dateRange: "From 2025-11-04 - 2025-12-04"
     },
     {
       title: "Total Expense",
       value: "0.00",
       percentage: "- 0%",
       icon: <TrendingUp className="w-4 h-4" />,
-      dateRange: ""
+      dateRange: "From 2025-11-04 - 2025-12-04"
     },
     {
       title: "Total Business",
       value: "0.00",
       percentage: "- 0%",
       icon: <Briefcase className="w-4 h-4" />,
-      dateRange: ""
+      dateRange: "From 2025-11-04 - 2025-12-04"
     },
     {
       title: "Total Due Amount",
       value: "0.00",
       percentage: "- 0%",
       icon: <AlertCircle className="w-4 h-4" />,
-      dateRange: ""
+      dateRange: "From 2025-11-04 - 2025-12-04"
     },
     {
       title: "Net Profit",
       value: "0.00",
       percentage: "- 0%",
       icon: <DollarSign className="w-4 h-4" />,
-      dateRange: ""
+      dateRange: "From 2025-11-04 - 2025-12-04"
     }
   ];
 
