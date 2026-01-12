@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from "next/link";
+import { CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface Customer {
   id: number;
@@ -21,6 +28,21 @@ export default function CustomersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [sendingInvite, setSendingInvite] = useState<number | null>(null);
+  const [deletingCustomer, setDeletingCustomer] = useState<number | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -36,6 +58,7 @@ export default function CustomersPage() {
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
+      showToast('Failed to load customers', 'error');
     } finally {
       setLoading(false);
     }
@@ -65,17 +88,42 @@ export default function CustomersPage() {
       });
       
       if (response.ok) {
-        alert('Invitation sent successfully!');
+        showToast('Invitation sent successfully!', 'success');
         fetchCustomers(); // Refresh to update invitation status
       } else {
         const error = await response.json();
-        alert(error.error || 'Failed to send invitation');
+        showToast(error.error || 'Failed to send invitation', 'error');
       }
     } catch (error) {
       console.error('Error sending invitation:', error);
-      alert('Failed to send invitation');
+      showToast('Failed to send invitation', 'error');
     } finally {
       setSendingInvite(null);
+    }
+  };
+
+  const handleDeleteCustomer = async (customerId: number, customerName: string) => {
+    try {
+      setDeletingCustomer(customerId);
+      setDeleteModal({show: false, customer: null});
+      
+      const response = await fetch(`/api/admin/customers/${customerId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        showToast('Customer deleted successfully!', 'success');
+        fetchCustomers(); // Refresh the customer list
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to delete customer', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      showToast('Failed to delete customer', 'error');
+    } finally {
+      setDeletingCustomer(null);
     }
   };
 
@@ -232,7 +280,13 @@ export default function CustomersPage() {
                               </svg>
                               Deactivate/Activate Account
                             </button>
-                            <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                            <button 
+                              onClick={() => {
+                                setDeleteModal({show: true, customer});
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                               </svg>
@@ -248,6 +302,86 @@ export default function CustomersPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.customer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Customer</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete <strong>{deleteModal.customer.customer_name}</strong>? 
+                All associated data will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModal({show: false, customer: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteCustomer(deleteModal.customer!.id, deleteModal.customer!.customer_name)}
+                  disabled={deletingCustomer === deleteModal.customer.id}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deletingCustomer === deleteModal.customer.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

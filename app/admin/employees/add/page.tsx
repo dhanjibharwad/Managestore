@@ -1,7 +1,8 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Calendar, Plus, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
 interface Toast {
   id: number;
@@ -9,9 +10,20 @@ interface Toast {
   type: 'success' | 'error' | 'warning';
 }
 
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
+}
+
 const EmployeeForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
   const [formData, setFormData] = useState({
     employeeRole: '',
     employeeName: '',
@@ -35,6 +47,24 @@ const EmployeeForm = () => {
   });
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  useEffect(() => {
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
+  }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.regionState) {
+      const stateCities = City.getCitiesOfState('IN', formData.regionState);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes
+    setFormData(prev => ({ ...prev, cityTown: '' }));
+  }, [formData.regionState]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -382,14 +412,15 @@ const EmployeeForm = () => {
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select region / state</option>
-                    <option value="gujarat">Gujarat</option>
-                    <option value="maharashtra">Maharashtra</option>
-                    <option value="delhi">Delhi</option>
-                    <option value="karnataka">Karnataka</option>
+                    {states.map((state) => (
+                      <option key={state.isoCode} value={state.isoCode}>
+                        {state.name}
+                      </option>
+                    ))}
                   </select>
-                  <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
+                  {/* <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
                     <Plus className="h-5 w-5" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -398,23 +429,20 @@ const EmployeeForm = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   City/Town
                 </label>
-                <div className="flex gap-2">
-                  <select
-                    name="cityTown"
-                    value={formData.cityTown}
-                    onChange={handleChange}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  >
-                    <option value="">Select city / town</option>
-                    <option value="vadodara">Vadodara</option>
-                    <option value="ahmedabad">Ahmedabad</option>
-                    <option value="surat">Surat</option>
-                    <option value="mumbai">Mumbai</option>
-                  </select>
-                  <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
-                    <Plus className="h-5 w-5" />
-                  </button>
-                </div>
+                <select
+                  name="cityTown"
+                  value={formData.cityTown}
+                  onChange={handleChange}
+                  disabled={!formData.regionState}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select city / town</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

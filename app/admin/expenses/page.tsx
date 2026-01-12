@@ -1,8 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle, Edit, Trash2 } from 'lucide-react';
+import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle, Edit, Trash2, AlertCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface Expense {
   id: number;
@@ -24,6 +30,21 @@ export default function ExpensePage() {
   const [isOverviewExpanded, setIsOverviewExpanded] = useState(true);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [deletingExpense, setDeletingExpense] = useState<number | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, expense: Expense | null}>({show: false, expense: null});
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   useEffect(() => {
     fetchExpenses();
@@ -81,6 +102,31 @@ export default function ExpensePage() {
       minute: '2-digit',
       hour12: true
     });
+  };
+
+  const handleDeleteExpense = async (expenseId: number, expenseName: string) => {
+    try {
+      setDeletingExpense(expenseId);
+      setDeleteModal({show: false, expense: null});
+      
+      const response = await fetch(`/api/admin/expenses/${expenseId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        showToast('Expense deleted successfully!', 'success');
+        fetchExpenses();
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to delete expense', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting expense:', error);
+      showToast('Failed to delete expense', 'error');
+    } finally {
+      setDeletingExpense(null);
+    }
   };
 
   const totalPaymentReceived = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
@@ -270,7 +316,9 @@ export default function ExpensePage() {
                           </button>
                         </Link>
                         <button 
-                          onClick={() => console.log('Delete expense:', expense.id)}
+                          onClick={() => {
+                            setDeleteModal({show: true, expense});
+                          }}
                           className="p-1 text-red-600 hover:text-red-800 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -282,6 +330,86 @@ export default function ExpensePage() {
               )}
             </tbody>
           </table>
+        </div>
+        
+        {/* Delete Confirmation Modal */}
+        {deleteModal.show && deleteModal.expense && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Delete Expense</h3>
+                    <p className="text-sm text-gray-500">This action cannot be undone</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-6">
+                  Are you sure you want to delete <strong>{deleteModal.expense.expense_name}</strong>? 
+                  All associated data will be permanently removed.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteModal({show: false, expense: null})}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleDeleteExpense(deleteModal.expense!.id, deleteModal.expense!.expense_name)}
+                    disabled={deletingExpense === deleteModal.expense.id}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {deletingExpense === deleteModal.expense.id ? (
+                      <>
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Deleting...
+                      </>
+                    ) : (
+                      'Delete'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Toast Notifications */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+                toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+                toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+                'bg-yellow-50 border border-yellow-200'
+              }`}
+            >
+              {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+              {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+              {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+              <span className={`flex-1 text-sm font-medium ${
+                toast.type === 'success' ? 'text-green-800' :
+                toast.type === 'error' ? 'text-red-800' :
+                'text-yellow-800'
+              }`}>
+                {toast.message}
+              </span>
+              <button
+                onClick={() => removeToast(toast.id)}
+                className={`hover:opacity-70 ${
+                  toast.type === 'success' ? 'text-green-600' :
+                  toast.type === 'error' ? 'text-red-600' :
+                  'text-yellow-600'
+                }`}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ))}
         </div>
         
         {/* Success Popup */}

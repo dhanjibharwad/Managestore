@@ -1,9 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
+import { State, City } from 'country-state-city';
+
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
+}
 
 export default function PartSupplierPage() {
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
   const [formData, setFormData] = useState({
     supplierName: '',
     mobileNumber: '',
@@ -21,7 +33,25 @@ export default function PartSupplierPage() {
   const [newRegion, setNewRegion] = useState('');
   const [newCity, setNewCity] = useState('');
   const [regions, setRegions] = useState(['gujarat', 'maharashtra', 'delhi']);
-  const [cities, setCities] = useState(['vadodara', 'ahmedabad', 'surat']);
+  const [citiesOld, setCitiesOld] = useState(['vadodara', 'ahmedabad', 'surat']);
+
+  useEffect(() => {
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
+  }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.regionState) {
+      const stateCities = City.getCitiesOfState('IN', formData.regionState);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes
+    setFormData(prev => ({ ...prev, cityTown: '' }));
+  }, [formData.regionState]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -61,7 +91,7 @@ export default function PartSupplierPage() {
 
   const handleSaveCity = () => {
     if (newCity.trim()) {
-      setCities([...cities, newCity.toLowerCase().replace(/\s+/g, '-')]);
+      setCitiesOld([...citiesOld, newCity.toLowerCase().replace(/\s+/g, '-')]);
       setFormData(prev => ({ ...prev, cityTown: newCity.toLowerCase().replace(/\s+/g, '-') }));
       setNewCity('');
       setShowCityModal(false);
@@ -209,28 +239,19 @@ export default function PartSupplierPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Region/State
                 </label>
-                <div className="relative">
-                  <select
-                    name="regionState"
-                    value={formData.regionState}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
-                  >
-                    <option value="">Select region / state</option>
-                    {regions.map((region) => (
-                      <option key={region} value={region}>
-                        {region.charAt(0).toUpperCase() + region.slice(1).replace(/-/g, ' ')}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => setShowRegionModal(true)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4A70A9] text-white p-1 rounded hover:bg-[#3d5d8f] transition-colors"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
+                <select
+                  name="regionState"
+                  value={formData.regionState}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                >
+                  <option value="">Select region / state</option>
+                  {states.map((state) => (
+                    <option key={state.isoCode} value={state.isoCode}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* City/Town */}
@@ -238,28 +259,20 @@ export default function PartSupplierPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   City/Town
                 </label>
-                <div className="relative">
-                  <select
-                    name="cityTown"
-                    value={formData.cityTown}
-                    onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
-                  >
-                    <option value="">Select city / town</option>
-                    {cities.map((city) => (
-                      <option key={city} value={city}>
-                        {city.charAt(0).toUpperCase() + city.slice(1).replace(/-/g, ' ')}
-                      </option>
-                    ))}
-                  </select>
-                  <button
-                    type="button"
-                    onClick={() => setShowCityModal(true)}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#4A70A9] text-white p-1 rounded hover:bg-[#3d5d8f] transition-colors"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
+                <select
+                  name="cityTown"
+                  value={formData.cityTown}
+                  onChange={handleInputChange}
+                  disabled={!formData.regionState}
+                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select city / town</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
