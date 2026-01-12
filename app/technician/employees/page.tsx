@@ -76,7 +76,7 @@ const EmployeeTable = () => {
             <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
               <List className="w-5 h-5 text-gray-600" />
             </button>
-             <Link href="/admin/employees/add" className="p-2 text-white bg-[#4A70A9] rounded-md hover:bg-[#3d5c8a] transition-colors inline-flex items-center justify-center">
+             <Link href="/technician/employees/add" className="p-2 text-white bg-[#4A70A9] rounded-md hover:bg-[#3d5c8a] transition-colors inline-flex items-center justify-center">
               <Plus className="w-5 h-5" />
             </Link>
           </div>

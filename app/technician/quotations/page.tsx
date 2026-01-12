@@ -99,7 +99,7 @@ export default function QuotationsPage() {
             </select>
 
             {/* Add Button */}
-            <Link href="/admin/quotations/add">
+            <Link href="/technician/quotations/add">
             <button
               style={{ backgroundColor: '#4A70A9' }}
               className="cursor-pointer px-6 py-2 text-white rounded-md hover:opacity-90 transition-opacity font-medium"

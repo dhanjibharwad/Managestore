@@ -152,8 +152,8 @@ const EmployeeForm = () => {
                   <option value="">Select employee type</option>
                   <option value="admin">Admin</option>
                   <option value="technician">Technician</option>
-                  <option value="reception">Reception</option>
-                  <option value="delivery">Delivery</option>
+                  {/* <option value="reception">Reception</option>
+                  <option value="delivery">Delivery</option> */}
                 </select>
               </div>
 
