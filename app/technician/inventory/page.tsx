@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Plus } from 'lucide-react';
+import { ChevronUp, Search, Plus, Info } from 'lucide-react';
 
 interface Part {
   part_id: string;
@@ -20,7 +20,7 @@ interface Part {
 
 const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,11 +42,75 @@ const InventoryPage: React.FC = () => {
     }
   };
 
-
+  const totalPurchasePrice = parts.reduce((sum, part) => sum + Number(part.purchase_price || 0), 0);
+  const totalSellingPrice = parts.reduce((sum, part) => sum + Number(part.selling_price || 0), 0);
+  const lowStockCount = parts.filter(part => part.current_stock <= (part.low_stock_units || 0)).length;
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header Section */}
+      <div className="mb-6">
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="flex items-center gap-2 text-gray-800 font-semibold text-xl mb-4 hover:text-[#4A70A9] transition-colors"
+        >
+          Part Quick Overview Report
+          <ChevronUp
+            className={`w-5 h-5 transition-transform duration-500 ease-in-out ${
+              isCollapsed ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
 
+        {/* Summary Cards */}
+        <div 
+          className={`grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 overflow-hidden transition-all duration-500 ease-in-out ${
+            isCollapsed ? 'max-h-0 opacity-0 mb-0' : 'max-h-96 opacity-100'
+          }`}
+        >
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-semibold text-gray-800 mb-2">
+                  {totalPurchasePrice.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-600 flex items-center gap-1">
+                  Total Part Purchase Price
+                  <Info className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-semibold text-gray-800 mb-2">
+                  {totalSellingPrice.toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-600 flex items-center gap-1">
+                  Total Part Selling Price
+                  <Info className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-3xl font-semibold text-gray-800 mb-2">
+                  {lowStockCount}
+                </div>
+                <div className="text-sm text-gray-600 flex items-center gap-1">
+                  Part Low Stock Count
+                  <Info className="w-4 h-4 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Parts Section */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
@@ -68,9 +132,11 @@ const InventoryPage: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
+            <Link href="/technician/inventory/partSuppliers">
             <button className="px-4 py-2 text-sm font-medium text-[#4A70A9] border border-[#4A70A9] rounded-md hover:bg-[#4A70A9] hover:text-white transition-colors">
               Part Suppliers
             </button>
+            </Link>
             
             <button className="px-4 py-2 text-sm font-medium text-[#4A70A9] border border-[#4A70A9] rounded-md hover:bg-[#4A70A9] hover:text-white transition-colors">
               All Filters
