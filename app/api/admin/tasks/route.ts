@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSession } from '@/lib/auth';
 import pool from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     
     const {
@@ -13,15 +20,16 @@ export async function POST(req: NextRequest) {
       taskStatus = 'Not Started Yet',
       priority = 'Medium',
       customer,
-      companyId,
       attachments = [],
       sendAlert = { mail: false, whatsApp: false }
     } = body;
 
+    const companyId = session.company.id;
+
     // Validation
-    if (!taskTitle || !assignee || !companyId) {
+    if (!taskTitle || !assignee) {
       return NextResponse.json(
-        { error: 'Required fields: taskTitle, assignee, companyId' },
+        { error: 'Required fields: taskTitle, assignee' },
         { status: 400 }
       );
     }
@@ -78,6 +86,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const companyId = session.company.id;
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -86,12 +101,12 @@ export async function GET(req: NextRequest) {
     const assignee = searchParams.get('assignee');
     const search = searchParams.get('search');
 
-    let query = `SELECT t.*, u.name as assignee_name 
+    let query = `SELECT t.*, e.employee_name as assignee_name 
                  FROM tasks t 
-                 LEFT JOIN users u ON t.assignee_id = u.id 
-                 WHERE 1=1`;
-    const params: any[] = [];
-    let paramCount = 0;
+                 LEFT JOIN employees e ON t.assignee_id = e.id 
+                 WHERE t.company_id = $1`;
+    const params: any[] = [companyId];
+    let paramCount = 1;
 
     if (status) {
       paramCount++;
@@ -131,9 +146,9 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM tasks WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = 'SELECT COUNT(*) FROM tasks WHERE company_id = $1';
+    const countParams: any[] = [companyId];
+    let countParamCount = 1;
 
     if (status) {
       countParamCount++;

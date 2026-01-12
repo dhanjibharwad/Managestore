@@ -10,6 +10,24 @@ interface User {
   role: string;
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+  email_id: string;
+  customer_type: string;
+}
+
+interface CurrentUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  companyId: number;
+  company: string;
+}
+
 interface Toast {
   id: number;
   message: string;
@@ -47,9 +65,10 @@ export default function AddNewTaskPage() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
-  const [companyId, setCompanyId] = useState<number | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
@@ -67,29 +86,36 @@ export default function AddNewTaskPage() {
     const formattedDate = `${formatDate(now)} ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
     setDueDate(formattedDate);
     
-    // Fetch current user and company
+    // Fetch current user and company info
     fetch('/api/auth/me')
       .then(res => res.json())
       .then(data => {
-        if (data.user?.companyId) {
-          setCompanyId(data.user.companyId);
+        if (data.user) {
+          setCurrentUser(data.user);
         }
-      });
+      })
+      .catch(error => console.error('Error fetching current user:', error));
     
     // Fetch users
     fetch('/api/users')
       .then(res => res.json())
-      .then(data => setUsers(data));
+      .then(data => setUsers(data))
+      .catch(error => console.error('Error fetching users:', error));
+    
+    // Fetch customers
+    fetch('/api/admin/customers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.customers) {
+          setCustomers(data.customers);
+        }
+      })
+      .catch(error => console.error('Error fetching customers:', error));
   }, []);
 
   const handleSubmit = async () => {
     if (!taskTitle || !assignee) {
       showToast('Please fill in required fields: Task Title and Assignee', 'warning');
-      return;
-    }
-
-    if (!companyId) {
-      showToast('Company information not found', 'error');
       return;
     }
 
@@ -125,9 +151,10 @@ export default function AddNewTaskPage() {
         taskStatus,
         priority,
         customer,
-        companyId,
         attachments: uploadedFileUrls,
-        sendAlert
+        sendAlert,
+        companyId: currentUser?.companyId,
+        createdBy: currentUser?.id
       };
       
       const response = await fetch('/api/admin/tasks', {
@@ -141,7 +168,7 @@ export default function AddNewTaskPage() {
       const result = await response.json();
 
       if (response.ok) {
-        showToast('Task created successfully!', 'success');
+        showToast(`Task created successfully! Task ID: ${result.task.task_id}`, 'success');
         setTimeout(() => window.location.href = '/admin/tasks', 2000);
       } else {
         showToast(result.error || 'Failed to create task', 'error');
@@ -534,6 +561,7 @@ export default function AddNewTaskPage() {
                 <option value="Not Started Yet">Not Started Yet</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
             </div>
             <div>
@@ -562,9 +590,12 @@ export default function AddNewTaskPage() {
               onChange={(e) => setCustomer(e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
             >
-              <option value="">Search by name, mobile, email</option>
-              <option value="customer1">Customer 1</option>
-              <option value="customer2">Customer 2</option>
+              <option value="">Select customer</option>
+              {Array.isArray(customers) && customers.map(cust => (
+                <option key={cust.id} value={cust.id}>
+                  {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                </option>
+              ))}
             </select>
           </div>
 
