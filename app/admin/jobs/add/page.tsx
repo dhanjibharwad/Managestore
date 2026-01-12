@@ -6,7 +6,22 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Eye, EyeOff, Upload, X, Search, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 
+interface DeviceType {
+  id: number;
+  name: string;
+}
 
+interface DeviceBrand {
+  id: number;
+  name: string;
+  device_type_id: number;
+}
+
+interface DeviceModel {
+  id: number;
+  name: string;
+  device_brand_id: number;
+}
 
 interface Toast {
   id: number;
@@ -59,6 +74,15 @@ export default function JobSheetForm() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
+  const [deviceBrands, setDeviceBrands] = useState<DeviceBrand[]>([]);
+  const [deviceModels, setDeviceModels] = useState<DeviceModel[]>([]);
+  const [filteredBrands, setFilteredBrands] = useState<DeviceBrand[]>([]);
+  const [filteredModels, setFilteredModels] = useState<DeviceModel[]>([]);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [showModelModal, setShowModelModal] = useState(false);
+  const [newBrandName, setNewBrandName] = useState('');
+  const [newModelName, setNewModelName] = useState('');
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
@@ -85,6 +109,41 @@ export default function JobSheetForm() {
     dealerJobId: '',
     termsConditions: ''
   });
+
+  useEffect(() => {
+    fetch('/api/devices/types')
+      .then(res => res.json())
+      .then(data => setDeviceTypes(data));
+    
+    fetch('/api/devices/brands')
+      .then(res => res.json())
+      .then(data => setDeviceBrands(data));
+    
+    fetch('/api/devices/models')
+      .then(res => res.json())
+      .then(data => setDeviceModels(data));
+  }, []);
+
+  useEffect(() => {
+    if (formData.deviceType) {
+      const filtered = deviceBrands.filter(brand => brand.device_type_id === parseInt(formData.deviceType));
+      setFilteredBrands(filtered);
+    } else {
+      setFilteredBrands([]);
+    }
+    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '' }));
+    setFilteredModels([]);
+  }, [formData.deviceType, deviceBrands]);
+
+  useEffect(() => {
+    if (formData.deviceBrand) {
+      const filtered = deviceModels.filter(model => model.device_brand_id === parseInt(formData.deviceBrand));
+      setFilteredModels(filtered);
+    } else {
+      setFilteredModels([]);
+    }
+    setFormData(prev => ({ ...prev, deviceModel: '' }));
+  }, [formData.deviceBrand, deviceModels]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -116,6 +175,68 @@ export default function JobSheetForm() {
 
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleAddBrand = async () => {
+    if (!newBrandName.trim() || !formData.deviceType) {
+      showToast('Please enter a brand name', 'warning');
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/devices/brands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newBrandName, device_type_id: parseInt(formData.deviceType) })
+      });
+      
+      if (response.ok) {
+        const newBrand = await response.json();
+        setDeviceBrands([...deviceBrands, newBrand]);
+        setFilteredBrands([...filteredBrands, newBrand]);
+        setFormData({ ...formData, deviceBrand: newBrand.id.toString() });
+        setNewBrandName('');
+        setShowBrandModal(false);
+        showToast('Brand added successfully!', 'success');
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to add brand', 'error');
+      }
+    } catch (error) {
+      console.error('Error adding brand:', error);
+      showToast('An error occurred while adding brand', 'error');
+    }
+  };
+
+  const handleAddModel = async () => {
+    if (!newModelName.trim() || !formData.deviceBrand) {
+      showToast('Please enter a model name', 'warning');
+      return;
+    }
+    
+    try {
+      const response = await fetch('/api/devices/models', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newModelName, device_brand_id: parseInt(formData.deviceBrand) })
+      });
+      
+      if (response.ok) {
+        const newModel = await response.json();
+        setDeviceModels([...deviceModels, newModel]);
+        setFilteredModels([...filteredModels, newModel]);
+        setFormData({ ...formData, deviceModel: newModel.id.toString() });
+        setNewModelName('');
+        setShowModelModal(false);
+        showToast('Model added successfully!', 'success');
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to add model', 'error');
+      }
+    } catch (error) {
+      console.error('Error adding model:', error);
+      showToast('An error occurred while adding model', 'error');
+    }
   };
 
 
@@ -276,8 +397,7 @@ export default function JobSheetForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 >
                   <option>Google</option>
-                  <option>Facebook</option>
-                  <option>Instagram</option>
+                  <option>Just Dial</option>
                   <option>Referral</option>
                   <option>Walk-in</option>
                 </select>
@@ -308,6 +428,7 @@ export default function JobSheetForm() {
                   <option>Carried By User</option>
                   <option>Pickup</option>
                   <option>On-site</option>
+                  <option>Courier</option>
                 </select>
               </div>
             </div>
@@ -323,8 +444,9 @@ export default function JobSheetForm() {
                 className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
               >
                 <option>No Warranty</option>
+                <option>Free</option>
                 <option>Under Warranty</option>
-                <option>Extended Warranty</option>
+                <option>AMC</option>
               </select>
             </div>
           </section>
@@ -344,11 +466,9 @@ export default function JobSheetForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 >
                   <option value="">Device type</option>
-                  <option>Laptop</option>
-                  <option>Desktop</option>
-                  <option>Mobile</option>
-                  <option>Tablet</option>
-                  <option>Printer</option>
+                  {deviceTypes.map(type => (
+                    <option key={type.id} value={type.id}>{type.name}</option>
+                  ))}
                 </select>
               </div>
 
@@ -356,26 +476,54 @@ export default function JobSheetForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Device Brand <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  name="deviceBrand"
-                  value={formData.deviceBrand}
-                  onChange={handleInputChange}
-                  placeholder="Select device brand"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                />
+                <div className="flex gap-2">
+                  <select
+                    name="deviceBrand"
+                    value={formData.deviceBrand}
+                    onChange={handleInputChange}
+                    disabled={!formData.deviceType}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select device brand</option>
+                    {filteredBrands.map(brand => (
+                      <option key={brand.id} value={brand.id}>{brand.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setShowBrandModal(true)}
+                    disabled={!formData.deviceType}
+                    className="px-3 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    <Plus size={20} />
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Device Model</label>
-                <input
-                  type="text"
-                  name="deviceModel"
-                  value={formData.deviceModel}
-                  onChange={handleInputChange}
-                  placeholder="Select device model"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                />
+                <div className="flex gap-2">
+                  <select
+                    name="deviceModel"
+                    value={formData.deviceModel}
+                    onChange={handleInputChange}
+                    disabled={!formData.deviceBrand}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select device model</option>
+                    {filteredModels.map(model => (
+                      <option key={model.id} value={model.id}>{model.name}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => setShowModelModal(true)}
+                    disabled={!formData.deviceBrand}
+                    className="px-3 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  >
+                    <Plus size={20} />
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -716,6 +864,72 @@ export default function JobSheetForm() {
           </div>
         ))}
       </div>
+
+      {/* Brand Modal */}
+      {showBrandModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4">Add Device Brand</h3>
+            <input
+              type="text"
+              placeholder="Enter brand name"
+              value={newBrandName}
+              onChange={(e) => setNewBrandName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddBrand()}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => { setShowBrandModal(false); setNewBrandName(''); }}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddBrand}
+                disabled={!newBrandName.trim()}
+                className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3a5a89] disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Model Modal */}
+      {showModelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-semibold mb-4">Add Device Model</h3>
+            <input
+              type="text"
+              placeholder="Enter model name"
+              value={newModelName}
+              onChange={(e) => setNewModelName(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddModel()}
+              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+              autoFocus
+            />
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => { setShowModelModal(false); setNewModelName(''); }}
+                className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddModel}
+                disabled={!newModelName.trim()}
+                className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3a5a89] disabled:bg-gray-300 disabled:cursor-not-allowed"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
