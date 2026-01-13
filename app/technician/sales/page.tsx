@@ -1,31 +1,54 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, ChevronDown, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 interface Sale {
-  saleNumber: string;
-  customerName: string;
-  part: string;
-  totalAmount: number;
-  paymentReceived: number;
-  paymentRemaining: number;
-  paymentStatus: string;
+  id: number;
+  sale_number: string;
+  customer_name: string;
+  sale_date: string;
+  payment_status: string;
+  grand_total: number;
+  subtotal: number;
+  total_tax: number;
 }
 
 export default function SalesPage() {
-
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTax, setFilterTax] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
-  const [sales] = useState<Sale[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+    fetchSales();
+  }, []);
 
+  const fetchSales = async () => {
+    try {
+      const response = await fetch('/api/admin/sales');
+      const data = await response.json();
+      if (data.sales) {
+        setSales(data.sales);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sales:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredSales = sales.filter(sale => {
+    const matchesSearch = sale.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         sale.sale_number.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = !filterStatus || sale.payment_status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
-
 
       {/* Sales Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
@@ -128,36 +151,46 @@ export default function SalesPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {sales.length === 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-16 text-center text-gray-500">
+                    Loading...
+                  </td>
+                </tr>
+              ) : filteredSales.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-6 py-16 text-center text-gray-500">
                     No data
                   </td>
                 </tr>
               ) : (
-                sales.map((sale, index) => (
-                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                filteredSales.map((sale) => (
+                  <tr key={sale.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.saleNumber}
+                      {sale.sale_number}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.customerName}
+                      {sale.customer_name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.part}
+                      -
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.totalAmount.toFixed(2)}
+                      ₹{parseFloat(sale.grand_total.toString()).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.paymentReceived.toFixed(2)}
+                      ₹0.00
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      {sale.paymentRemaining.toFixed(2)}
+                      ₹{parseFloat(sale.grand_total.toString()).toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-zinc-100 text-zinc-800">
-                        {sale.paymentStatus}
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        sale.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
+                        sale.payment_status === 'partially-paid' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {sale.payment_status}
                       </span>
                     </td>
                   </tr>

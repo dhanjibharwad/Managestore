@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { Plus, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 
@@ -18,116 +18,60 @@ interface SaleItem {
   total: number;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
 export default function SalesForm() {
-  const [saleId] = useState('001');
+  const [saleId, setSaleId] = useState('');
   const [customerName, setCustomerName] = useState('');
-  const [saleDate, setSaleDate] = useState('06-Dec-2025');
+  const [saleDate, setSaleDate] = useState('');
   const [referredBy, setReferredBy] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('unpaid');
   const [termsConditions, setTermsConditions] = useState('');
   const [sendMail, setSendMail] = useState(false);
-  const [sendSMS, setSendSMS] = useState(false);
-  const [sendInApp, setSendInApp] = useState(false);
   const [items, setItems] = useState<SaleItem[]>([]);
   const [showAddPartModal, setShowAddPartModal] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [submitting, setSubmitting] = useState(false);
+  const [companyId, setCompanyId] = useState<number | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
 
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  React.useEffect(() => {
+    fetchUserSession();
+    generateSaleNumber();
+  }, []);
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
-    
-    const days = [];
-    
-    const prevMonth = new Date(year, month - 1, 0);
-    for (let i = startingDayOfWeek - 1; i >= 0; i--) {
-      days.push({
-        day: prevMonth.getDate() - i,
-        isCurrentMonth: false,
-        date: new Date(year, month - 1, prevMonth.getDate() - i)
-      });
-    }
-    
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push({
-        day,
-        isCurrentMonth: true,
-        date: new Date(year, month, day)
-      });
-    }
-    
-    const remainingDays = 42 - days.length;
-    for (let day = 1; day <= remainingDays; day++) {
-      days.push({
-        day,
-        isCurrentMonth: false,
-        date: new Date(year, month + 1, day)
-      });
-    }
-    
-    return days;
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
   };
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    setCurrentDate(prev => {
-      const newDate = new Date(prev);
-      if (direction === 'prev') {
-        newDate.setMonth(prev.getMonth() - 1);
-      } else {
-        newDate.setMonth(prev.getMonth() + 1);
-      }
-      return newDate;
-    });
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
-  const selectDate = (date: Date) => {
-      if (isFutureDate(date)) return;
-    const formattedDate = date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    });
-    setSaleDate(formattedDate);
-    setShowDatePicker(false);
+  const generateSaleNumber = () => {
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 100);
+    setSaleId(`SALE-${timestamp}-${random}`);
   };
 
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  const isSelectedDate = (date: Date) => {
-    if (!saleDate) return false;
+  const fetchUserSession = async () => {
     try {
-      const selectedDate = new Date(saleDate.replace(/-/g, ' '));
-      return date.toDateString() === selectedDate.toDateString();
-    } catch {
-      return false;
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
     }
   };
-
-  const isFutureDate = (date: Date) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return date > today;
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (showDatePicker && !(event.target as Element).closest('.date-picker-container')) {
-        setShowDatePicker(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showDatePicker]);
   
   // Add Part Form States
   const [partSearch, setPartSearch] = useState('');
@@ -144,6 +88,30 @@ export default function SalesForm() {
   const [taxAmount, setTaxAmount] = useState('');
   const [taxCode, setTaxCode] = useState('');
   const [totalAmount, setTotalAmount] = useState('');
+
+  // Auto-calculate amounts when price, quantity, discount, or tax changes
+  React.useEffect(() => {
+    const priceNum = parseFloat(price) || 0;
+    const qtyNum = parseFloat(quantity) || 0;
+    const discNum = parseFloat(discount) || 0;
+    
+    // Calculate subtotal: (price * quantity) - discount
+    const calculatedSubTotal = (priceNum * qtyNum) - discNum;
+    setSubTotal(calculatedSubTotal.toFixed(2));
+    
+    // Calculate tax amount based on selected tax
+    let taxRate = 0;
+    if (tax === '18') taxRate = 18;
+    else if (tax === '12') taxRate = 12;
+    else if (tax === '5') taxRate = 5;
+    
+    const calculatedTaxAmount = (calculatedSubTotal * taxRate) / 100;
+    setTaxAmount(calculatedTaxAmount.toFixed(2));
+    
+    // Calculate total: subtotal + tax amount
+    const calculatedTotal = calculatedSubTotal + calculatedTaxAmount;
+    setTotalAmount(calculatedTotal.toFixed(2));
+  }, [price, quantity, discount, tax]);
 
   const addItem = () => {
     setShowAddPartModal(true);
@@ -164,6 +132,51 @@ export default function SalesForm() {
     };
     setItems([...items, newItem]);
     handleCloseModal();
+  };
+
+  const handleSubmitSale = async () => {
+    if (!customerName || !saleDate || items.length === 0) {
+      showToast('Please fill required fields and add at least one item', 'warning');
+      return;
+    }
+
+    if (!companyId) {
+      showToast('Session expired. Please login again.', 'error');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/sales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          companyId,
+          saleNumber: saleId,
+          customerName,
+          saleDate,
+          referredBy: referredBy || null,
+          paymentStatus,
+          termsConditions: termsConditions || null,
+          sendMail,
+          sendSms: false,
+          items
+        })
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        showToast('Sale created successfully!', 'success');
+        setTimeout(() => window.location.href = '/technician/sales', 2000);
+      } else {
+        showToast(data.error || 'Failed to create sale', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showToast('An error occurred while creating the sale', 'error');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -209,6 +222,31 @@ export default function SalesForm() {
 
   return (
     <div className="min-h-screen bg-white p-2">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -219,8 +257,12 @@ export default function SalesForm() {
             <button className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors">
               Cancel
             </button>
-            <button className="px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
-              Create
+            <button 
+              onClick={handleSubmitSale}
+              disabled={submitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors disabled:opacity-50"
+            >
+              {submitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -256,80 +298,12 @@ export default function SalesForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Sale Date
                 </label>
-                <div className="relative date-picker-container">
-                  <input
-                    type="text"
-                    value={saleDate}
-                    onChange={(e) => setSaleDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent pr-10"
-                  />
-                  <Calendar 
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-[#4A70A9] transition-colors" 
-                    size={18} 
-                    onClick={() => setShowDatePicker(!showDatePicker)}
-                  />
-                  {showDatePicker && (
-                    <div className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-50 p-4 w-80">
-                      <div className="flex items-center justify-between mb-4">
-                        <button 
-                          onClick={() => navigateMonth('prev')}
-                          className="p-1 hover:bg-gray-100 rounded transition-colors"
-                        >
-                          <ChevronLeft size={16} />
-                        </button>
-                        <h3 className="font-medium text-gray-800">
-                          {months[currentDate.getMonth()]} {currentDate.getFullYear()}
-                        </h3>
-                        <button 
-                          onClick={() => navigateMonth('next')}
-                          className="p-1 hover:bg-gray-100 rounded transition-colors"
-                        >
-                          <ChevronRight size={16} />
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-7 gap-1 mb-2">
-                        {daysOfWeek.map(day => (
-                          <div key={day} className="text-center text-xs font-medium text-gray-500 py-2">
-                            {day}
-                          </div>
-                        ))}
-                      </div>
-                      <div className="grid grid-cols-7 gap-1">
-                        {getDaysInMonth(currentDate).map((dayObj, index) => {
-                          const dayIsToday = isToday(dayObj.date);
-                          const dayIsSelected = isSelectedDate(dayObj.date);
-                          const dayIsFuture = isFutureDate(dayObj.date);
-                          return (
-                            <button
-                              key={index}
-                              onClick={() => !dayIsFuture && selectDate(dayObj.date)}
-                              disabled={dayIsFuture}
-                              className={`
-                                w-8 h-8 text-sm rounded flex items-center justify-center transition-colors
-                                ${!dayObj.isCurrentMonth 
-                                  ? 'text-gray-300 hover:bg-gray-50' 
-                                  : dayIsFuture
-                                  ? 'text-gray-300 cursor-not-allowed opacity-50'
-                                  : 'text-gray-700 hover:bg-gray-100'
-                                }
-                                ${dayIsToday && dayObj.isCurrentMonth 
-                                  ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                                  : ''
-                                }
-                                ${dayIsSelected && !dayIsToday && !dayIsFuture
-                                  ? 'bg-blue-100 text-blue-600 hover:bg-blue-200' 
-                                  : ''
-                                }
-                              `}
-                            >
-                              {dayObj.day}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <input
+                  type="date"
+                  value={saleDate}
+                  onChange={(e) => setSaleDate(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                />
               </div>
 
               {/* Referred By */}
@@ -400,32 +374,32 @@ export default function SalesForm() {
                     ) : (
                       items.map((item) => (
                         <tr key={item.id} className="border-t border-gray-200">
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="text" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.description}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="text" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.taxCode}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="number" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.qty}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="number" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.price.toFixed(2)}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="number" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.disc.toFixed(2)}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <input type="number" className="w-full px-2 py-1 border border-gray-300 rounded text-sm" />
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.tax}%
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <span className="text-sm text-gray-600">0.00</span>
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.taxAmt.toFixed(2)}
                           </td>
-                          <td className="px-4 py-2 border-r border-gray-200">
-                            <span className="text-sm text-gray-600">0.00</span>
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                            {item.subTotal.toFixed(2)}
                           </td>
-                          <td className="px-4 py-2">
-                            <span className="text-sm text-gray-600">0.00</span>
+                          <td className="px-4 py-2 text-sm text-gray-700">
+                            {item.total.toFixed(2)}
                           </td>
                         </tr>
                       ))
@@ -565,24 +539,6 @@ export default function SalesForm() {
                   />
                   <span className="text-sm text-gray-700">Mail</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={sendSMS}
-                    onChange={(e) => setSendSMS(e.target.checked)}
-                    className="w-4 h-4 text-[#4A70A9] focus:ring-[#4A70A9] rounded"
-                  />
-                  <span className="text-sm text-gray-700">SMS</span>
-                </label>
-                {/* <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={sendInApp}
-                    onChange={(e) => setSendInApp(e.target.checked)}
-                    className="w-4 h-4 text-[#4A70A9] focus:ring-[#4A70A9] rounded"
-                  />
-                  <span className="text-sm text-gray-700">In App</span>
-                </label> */}
               </div>
             </div>
           </div>
@@ -772,6 +728,9 @@ export default function SalesForm() {
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select tax</option>
+                    <option value="18">GST 18%</option>
+                    <option value="12">GST 12%</option>
+                    <option value="5">GST 5%</option>
                   </select>
                 </div>
                 <div>
