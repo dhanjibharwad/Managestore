@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    // Get session to ensure user is authenticated and get company_id
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     
     const {
@@ -36,7 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate part_id manually if trigger doesn't work
-    const partIdResult = await pool.query('SELECT COALESCE(MAX(CAST(SUBSTRING(part_id FROM 5) AS INTEGER)), 0) + 1 as next_id FROM inventory_parts WHERE part_id ~ \'PART[0-9]+\'');
+    const partIdResult = await pool.query('SELECT COALESCE(MAX(CAST(SUBSTRING(part_id FROM 5) AS INTEGER)), 0) + 1 as next_id FROM inventory_parts WHERE part_id ~ \'PART[0-9]+\' AND company_id = $1', [session.company.id]);
     const nextId = partIdResult.rows[0]?.next_id || 1;
     const generatedPartId = `PART${String(nextId).padStart(4, '0')}`;
 
@@ -45,17 +55,17 @@ export async function POST(req: NextRequest) {
         part_id, part_name, category, sub_category, warranty, storage_location,
         opening_stock, current_stock, unit_type, sku, low_stock_units, barcode_number,
         rate_including_tax, manage_stock, low_stock_alert, purchase_price,
-        selling_price, tax, hsn_code, part_description, images
+        selling_price, tax, hsn_code, part_description, images, company_id
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
-        $13, $14, $15, $16, $17, $18, $19, $20, $21
+        $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
       ) RETURNING *`,
       [
         generatedPartId, partName, category, subCategory, warranty, storageLocation,
         parseInt(openingStock), parseInt(openingStock), unitType, sku, lowStockUnits ? parseInt(lowStockUnits) : null,
         barcodeNumber, rateIncludingTax, manageStock, lowStockAlert,
         parseFloat(purchasePrice), sellingPrice ? parseFloat(sellingPrice) : null,
-        tax, hsnCode, partDescription, images
+        tax, hsnCode, partDescription, images, session.company.id
       ]
     );
 
@@ -75,6 +85,15 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Get session to ensure user is authenticated and get company_id
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -82,9 +101,9 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search');
     const lowStock = searchParams.get('lowStock');
 
-    let query = 'SELECT * FROM inventory_parts WHERE 1=1';
-    const params: any[] = [];
-    let paramCount = 0;
+    let query = 'SELECT * FROM inventory_parts WHERE company_id = $1';
+    const params: any[] = [session.company.id];
+    let paramCount = 1;
 
     if (category) {
       paramCount++;
@@ -116,9 +135,9 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM inventory_parts WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = 'SELECT COUNT(*) FROM inventory_parts WHERE company_id = $1';
+    const countParams: any[] = [session.company.id];
+    let countParamCount = 1;
 
     if (category) {
       countParamCount++;

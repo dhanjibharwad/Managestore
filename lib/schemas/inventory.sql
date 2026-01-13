@@ -1,7 +1,8 @@
 -- Inventory parts table schema
 CREATE TABLE inventory_parts (
   id SERIAL PRIMARY KEY,
-  part_id VARCHAR(50) UNIQUE NOT NULL,
+  company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+  part_id VARCHAR(50) NOT NULL,
   
   -- Basic Information
   part_name VARCHAR(255) NOT NULL,
@@ -37,15 +38,19 @@ CREATE TABLE inventory_parts (
   status VARCHAR(50) DEFAULT 'Active',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  created_by INTEGER REFERENCES users(id)
+  created_by INTEGER REFERENCES users(id),
+  
+  -- Ensure part_id is unique per company
+  UNIQUE(company_id, part_id)
 );
 
 -- Create indexes for better performance
-CREATE INDEX idx_inventory_parts_part_id ON inventory_parts(part_id);
-CREATE INDEX idx_inventory_parts_name ON inventory_parts(part_name);
-CREATE INDEX idx_inventory_parts_category ON inventory_parts(category);
-CREATE INDEX idx_inventory_parts_sku ON inventory_parts(sku);
-CREATE INDEX idx_inventory_parts_barcode ON inventory_parts(barcode_number);
+CREATE INDEX idx_inventory_parts_company_id ON inventory_parts(company_id);
+CREATE INDEX idx_inventory_parts_part_id ON inventory_parts(company_id, part_id);
+CREATE INDEX idx_inventory_parts_name ON inventory_parts(company_id, part_name);
+CREATE INDEX idx_inventory_parts_category ON inventory_parts(company_id, category);
+CREATE INDEX idx_inventory_parts_sku ON inventory_parts(company_id, sku);
+CREATE INDEX idx_inventory_parts_barcode ON inventory_parts(company_id, barcode_number);
 
 -- Function to auto-generate part ID
 CREATE OR REPLACE FUNCTION generate_part_id()
