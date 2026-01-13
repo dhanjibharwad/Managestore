@@ -69,10 +69,8 @@ interface FormData {
 export default function JobSheetForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState<boolean>(false);
-
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
-
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [deviceBrands, setDeviceBrands] = useState<DeviceBrand[]>([]);
@@ -83,6 +81,8 @@ export default function JobSheetForm() {
   const [showModelModal, setShowModelModal] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newModelName, setNewModelName] = useState('');
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
@@ -122,6 +122,26 @@ export default function JobSheetForm() {
     fetch('/api/devices/models')
       .then(res => res.json())
       .then(data => setDeviceModels(data));
+    
+    // Fetch customers
+    fetch('/api/admin/customers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.customers) {
+          setCustomers(data.customers);
+        }
+      })
+      .catch(error => console.error('Error fetching customers:', error));
+    
+    // Fetch employees
+    fetch('/api/admin/employees')
+      .then(res => res.json())
+      .then(data => {
+        if (data.employees) {
+          setEmployees(data.employees);
+        }
+      })
+      .catch(error => console.error('Error fetching employees:', error));
   }, []);
 
   useEffect(() => {
@@ -367,15 +387,19 @@ export default function JobSheetForm() {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
+                  <select
                     name="customerName"
                     value={formData.customerName}
                     onChange={handleInputChange}
-                    placeholder="Search by name, mobile, email"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                  />
-                
+                  >
+                    <option value="">Select customer</option>
+                    {customers.map(customer => (
+                      <option key={customer.id} value={customer.customer_name}>
+                        {customer.customer_name} - {customer.customer_id} ({customer.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <Link href="/admin/customers/add">
                     <button 
                       type="button"
@@ -384,7 +408,6 @@ export default function JobSheetForm() {
                       <Plus size={20} />
                     </button>
                   </Link>
-                 
                 </div>
               </div>
 
@@ -705,10 +728,11 @@ export default function JobSheetForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select assignee name</option>
-                  <option>John Smith</option>
-                  <option>Jane Doe</option>
-                  <option>Mike Johnson</option>
-                  <option>Sarah Williams</option>
+                  {employees.map(employee => (
+                    <option key={employee.id} value={employee.employee_name}>
+                      {employee.employee_name} ({employee.employee_role})
+                    </option>
+                  ))}
                 </select>
               </div>
 
