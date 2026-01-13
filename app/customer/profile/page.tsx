@@ -1,54 +1,155 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Phone, Mail, User, MessageCircle, Package, FileText, CreditCard, Bell, Edit } from 'lucide-react';
+import { 
+  Phone, 
+  Mail, 
+  User, 
+  MessageCircle, 
+  Package, 
+  FileText, 
+  CreditCard, 
+  Bell, 
+  Edit,
+  Save,
+  X,
+  Calendar
+} from 'lucide-react';
+
+interface ValidationErrors {
+  [key: string]: string;
+}
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('Profile');
+  const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [user, setUser] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    role: '',
-    company: '',
-    created_at: ''
+    name: '', email: '', phone: '', role: '', company: '', created_at: ''
   });
   const [customer, setCustomer] = useState({
-    customer_name: '',
-    mobile_number: '',
-    phone_number: '',
-    address_line: '',
-    region_state: '',
-    city_town: '',
-    postal_code: ''
+    customer_name: '', mobile_number: '', phone_number: '',
+    address_line: '', region_state: '', city_town: '', postal_code: ''
   });
-  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({
+    customer_name: '', mobile_number: '', phone_number: '',
+    address_line: '', region_state: '', city_town: '', postal_code: ''
+  });
+
+  const validateForm = () => {
+    const errors: ValidationErrors = {};
+    
+    if (!formData.customer_name.trim()) errors.customer_name = 'Customer name is required';
+    if (!formData.mobile_number.trim()) errors.mobile_number = 'Mobile number is required';
+    
+    if (formData.mobile_number && !/^[6-9]\d{9}$/.test(formData.mobile_number)) {
+      errors.mobile_number = 'Invalid mobile number';
+    }
+    
+    if (formData.phone_number && !/^[6-9]\d{9}$/.test(formData.phone_number)) {
+      errors.phone_number = 'Invalid phone number';
+    }
+    
+    if (formData.postal_code && !/^\d{6}$/.test(formData.postal_code)) {
+      errors.postal_code = 'Postal code must be 6 digits';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const res = await fetch('/api/auth/me');
+        const res = await fetch('/api/profile');
         if (res.ok) {
-          const userData = await res.json();
-          setUser(userData.user);
+          const data = await res.json();
+          setUser({
+            name: data.user.name,
+            email: data.user.email,
+            phone: data.user.phone || '',
+            role: data.user.role,
+            company: data.user.company || '',
+            created_at: data.user.createdAt
+          });
           
-          // Fetch customer details if user is a customer
-          if (userData.user.role === 'customer') {
-            const customerRes = await fetch('/api/customer/profile');
-            if (customerRes.ok) {
-              const customerData = await customerRes.json();
-              setCustomer(customerData.customer);
-            }
-          }
+          const customerData = {
+            customer_name: data.user.name,
+            mobile_number: data.user.phone || '',
+            phone_number: data.user.profile?.alternatePhone || '',
+            address_line: data.user.profile?.addressLine || '',
+            region_state: data.user.profile?.state || '',
+            city_town: data.user.profile?.city || '',
+            postal_code: data.user.profile?.postalCode || ''
+          };
+          setCustomer(customerData);
+          setFormData(customerData);
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
-      } finally {
-        setLoading(false);
+        setError('Failed to load profile data');
       }
     };
     fetchUserData();
   }, []);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleSave = async () => {
+    if (!validateForm()) {
+      setError('Please fix validation errors');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.customer_name,
+          phone: formData.mobile_number,
+          alternatePhone: formData.phone_number,
+          addressLine: formData.address_line,
+          state: formData.region_state,
+          city: formData.city_town,
+          postalCode: formData.postal_code
+        })
+      });
+      
+      if (res.ok) {
+        setUser(prev => ({
+          ...prev,
+          name: formData.customer_name,
+          phone: formData.mobile_number
+        }));
+        setCustomer(formData);
+        setIsEditing(false);
+        setValidationErrors({});
+      } else {
+        setError('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      setError('Failed to update profile');
+    }
+    setLoading(false);
+  };
+
+  const handleCancel = () => {
+    setFormData(customer);
+    setIsEditing(false);
+    setError('');
+    setValidationErrors({});
+  };
 
   const tabs = [
     { name: 'Profile', icon: User },
@@ -62,17 +163,6 @@ export default function ProfilePage() {
     { name: 'Invoices', icon: FileText },
     { name: 'Notification Preferences', icon: Bell },
   ];
-
-  if (loading) {
-    return (
-      <div className="bg-gray-50 min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#4A70A9] mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading profile...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-gray-50">
@@ -97,7 +187,7 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-2 text-gray-600">
                     <Phone className="w-4 h-4" />
                     <span className="text-sm">Phone:</span>
-                    <span className="text-sm font-medium text-[#4A70A9]">{user.phone || customer.mobile_number || 'Not provided'}</span>
+                    <span className="text-sm font-medium text-[#4A70A9]">{customer.mobile_number || user.phone || 'Not provided'}</span>
                   </div>
                   
                   <div className="flex items-center gap-2 text-gray-600">
@@ -119,10 +209,6 @@ export default function ProfilePage() {
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-sm font-medium">Whatsapp</span>
                   </button>
-                  {/* <button className="flex items-center gap-2 px-4 py-2 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 transition-colors">
-                    <Package className="w-4 h-4" />
-                    <span className="text-sm font-medium">Pickup Drops</span>
-                  </button> */}
                 </div>
               </div>
             </div>
@@ -130,9 +216,10 @@ export default function ProfilePage() {
             {/* Right Side Info */}
             <div className="flex flex-col items-end gap-4">
               <div className="flex items-center gap-2 text-gray-600">
+                <Calendar className="w-4 h-4" />
                 <span className="text-sm">Creation Date:</span>
                 <span className="text-sm font-medium">
-                  {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available'}
+                  {user.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Not available'}
                 </span>
               </div>
               
@@ -171,122 +258,198 @@ export default function ProfilePage() {
 
         {/* Content Area */}
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold text-gray-900">Customer Information</h2>
-            <button className="flex items-center gap-2 px-4 py-2 border border-[#4A70A9] text-[#4A70A9] rounded-md hover:bg-blue-50 transition-colors">
-              <Edit className="w-4 h-4" />
-              <span className="text-sm font-medium">Edit</span>
-            </button>
-          </div>
-
-          {/* Customer Information Form */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Customer Name
-              </label>
-              <input
-                type="text"
-                value={customer.customer_name || user.name || ''}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                readOnly
-              />
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+              {error}
             </div>
+          )}
+          
+          {activeTab === 'Profile' && (
+            <div className="space-y-8">
+              {/* Customer Information Section */}
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-xl font-bold text-gray-900">Customer Information</h2>
+                  <div className="flex gap-2">
+                    {isEditing ? (
+                      <>
+                        <button 
+                          onClick={handleCancel}
+                          className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium flex items-center gap-2"
+                        >
+                          <X className="w-4 h-4" />
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={handleSave}
+                          disabled={loading}
+                          className="px-4 py-2 bg-[#4A70A9] text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 disabled:opacity-50"
+                        >
+                          <Save className="w-4 h-4" />
+                          {loading ? 'Saving...' : 'Save'}
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={() => setIsEditing(true)}
+                        className="px-4 py-2 text-[#4A70A9] border border-[#4A70A9] rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center gap-2"
+                      >
+                        <Edit className="w-4 h-4" />
+                        Edit
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mobile Number
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value="+91"
-                  className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
-                <input
-                  type="text"
-                  value={customer.mobile_number || user.phone || ''}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Customer Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={isEditing ? formData.customer_name : customer.customer_name}
+                      onChange={(e) => handleInputChange('customer_name', e.target.value)}
+                      readOnly={!isEditing}
+                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                        validationErrors.customer_name ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {validationErrors.customer_name && (
+                      <p className="text-red-500 text-sm mt-1">{validationErrors.customer_name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Mobile Number *
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value="+91"
+                        className="w-20 px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        value={isEditing ? formData.mobile_number : customer.mobile_number}
+                        onChange={(e) => handleInputChange('mobile_number', e.target.value)}
+                        readOnly={!isEditing}
+                        className={`flex-1 px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                          validationErrors.mobile_number ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                    </div>
+                    {validationErrors.mobile_number && (
+                      <p className="text-red-500 text-sm mt-1">{validationErrors.mobile_number}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      value={isEditing ? formData.phone_number : customer.phone_number}
+                      onChange={(e) => handleInputChange('phone_number', e.target.value)}
+                      placeholder="Eg: 91XXXXXXXXX"
+                      readOnly={!isEditing}
+                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                        validationErrors.phone_number ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {validationErrors.phone_number && (
+                      <p className="text-red-500 text-sm mt-1">{validationErrors.phone_number}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Address Details Section */}
+                <div className="border-t border-gray-200 pt-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Address Details <span className="text-gray-400 font-normal">(Optional)</span>
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Address Line
+                      </label>
+                      <input
+                        type="text"
+                        value={isEditing ? formData.address_line : customer.address_line}
+                        onChange={(e) => handleInputChange('address_line', e.target.value)}
+                        placeholder="House / building name/no, street name, locality"
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Region/State
+                      </label>
+                      <input
+                        type="text"
+                        value={isEditing ? formData.region_state : customer.region_state}
+                        onChange={(e) => handleInputChange('region_state', e.target.value)}
+                        placeholder="Enter region / state"
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City/Town
+                      </label>
+                      <input
+                        type="text"
+                        value={isEditing ? formData.city_town : customer.city_town}
+                        onChange={(e) => handleInputChange('city_town', e.target.value)}
+                        placeholder="Enter city / town"
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Postal Code/ Zip Code
+                      </label>
+                      <input
+                        type="text"
+                        value={isEditing ? formData.postal_code : customer.postal_code}
+                        onChange={(e) => handleInputChange('postal_code', e.target.value)}
+                        placeholder="Type postal code / zip code"
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                          validationErrors.postal_code ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {validationErrors.postal_code && (
+                        <p className="text-red-500 text-sm mt-1">{validationErrors.postal_code}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                value={customer.phone_number || ''}
-                placeholder="Eg: 91XXXXXXXXX"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                readOnly
-              />
+          {activeTab !== 'Profile' && (
+            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+              <div className="text-gray-400 mb-4">
+                <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Data Available</h3>
+              <p className="text-gray-500">This section is currently empty.</p>
             </div>
-          </div>
-
-          {/* Address Details Section */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Address Details <span className="text-gray-400 font-normal">(Optional)</span>
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Line
-                </label>
-                <input
-                  type="text"
-                  value={customer.address_line || ''}
-                  placeholder="House / building name/no, street name, locality"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Region/State
-                </label>
-                <input
-                  type="text"
-                  value={customer.region_state || ''}
-                  placeholder="Select region / state"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  City/Town
-                </label>
-                <input
-                  type="text"
-                  value={customer.city_town || ''}
-                  placeholder="Select city / town"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Postal Code/ Zip Code
-                </label>
-                <input
-                  type="text"
-                  value={customer.postal_code || ''}
-                  placeholder="Type postal code / zip code"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
