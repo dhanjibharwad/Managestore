@@ -262,7 +262,7 @@ const JobPage: React.FC = () => {
                 <option value="Sarah Williams">Sarah Williams</option>
               </select>
 
-              <Link href="/admin/jobs/add">
+              <Link href="/technician/jobs/add">
                 <button className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors flex items-center gap-2 font-medium">
                   <Plus className="w-5 h-5" />
                 </button>
