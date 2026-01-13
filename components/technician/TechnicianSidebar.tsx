@@ -16,7 +16,9 @@ import {
   Users,
   FileCheck,
   FileText,
-  Wrench
+  Wrench,
+  UserPlus,
+  ListTodo
 } from 'lucide-react';
 
 const navItems = [
@@ -28,6 +30,8 @@ const navItems = [
   { label: "Quotations", href: "/technician/quotations", icon: FileText },
   { label: "Inventory", href: "/technician/inventory", icon: Warehouse },
   { label: "Employees", href: "/technician/employees", icon: IdCard },
+  { label: "Tasks", href: "/technician/tasks", icon: ListTodo },
+   { label: "Leads", href: "/technician/leads", icon: UserPlus },
   { label: "Expenses", href: "/technician/expenses", icon: Wrench },
   { label: "Pickup Drops", href: "/technician/pickupdrop", icon: Truck },
   { label: "Profile", href: "/technician/profile", icon: User }
@@ -43,96 +47,93 @@ export default function TechnicianSidebar() {
 
   return (
     <aside
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen ${isCollapsed ? 'w-20' : 'w-64'
-        }`}
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out hidden lg:flex flex-col sticky top-0 h-screen overflow-hidden ${
+        isCollapsed ? 'w-16' : 'w-64'
+      }`}
     >
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className="absolute -right-3 top-6 bg-white shadow-md rounded-full p-1.5 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50"
+        className={`absolute top-6 bg-white shadow-md rounded-full p-2 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50 ${
+          isCollapsed ? 'left-1/2 transform -translate-x-1/2' : 'right-2'
+        }`}
         aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {isCollapsed ? (
-          <ChevronRight className="w-4 h-4 text-gray-600" />
+          <ChevronRight className="w-5 h-5 text-gray-600" />
         ) : (
-          <ChevronLeft className="w-4 h-4 text-gray-600" />
+          <ChevronLeft className="w-5 h-5 text-gray-600" />
         )}
       </button>
 
-      {/* Sidebar Content */}
-      <div className="flex-1 p-5 overflow-y-auto">
-        {/* Logo */}
-        <div className="mb-8">
-          {!isCollapsed ? (
-            // <Link 
-            //   href="/home" 
-            //   className="flex items-center gap-2 transition-transform duration-200 hover:scale-105"
-            // >
-            <img
-              src="/images/lg1.png"
-              alt="Storremanager Logo"
-              className="h-16 w-auto"
-            />
-            // </Link>
-          ) : (
-            // <Link 
-            //   href="/home" 
-            //   className="flex justify-center transition-transform duration-200 hover:scale-110"
-            // >
-            <img
-              src="/images/np.png"
-              alt="Storremanager Logo"
-              className="h-8 w-8 object-contain"
-            />
-            // </Link>
-          )}
+      {/* Logo Section - Fixed */}
+      {!isCollapsed && (
+        <div className="border-b border-gray-100 flex justify-center items-center p-4">
+          <img
+            src="/images/lg1.png"
+            alt="Storremanager Logo"
+            className="h-10 w-auto"
+          />
         </div>
+      )}
 
-        {/* Navigation Items */}
-        <nav>
-          <ul className="space-y-1">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+      {/* Scrollable Navigation */}
+      <div className={`flex-1 overflow-hidden ${
+        isCollapsed ? 'pt-16' : ''
+      }`}>
+        <nav className="h-full">
+          <div className={`h-full overflow-y-auto overflow-x-hidden py-2 ${
+            isCollapsed ? 'px-0' : 'px-4'
+          }`}>
+            <ul className="space-y-1">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
 
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group relative ${isActive
-                        ? 'bg-[#4A70A9] text-white shadow-md'
-                        : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
-                      } ${isCollapsed ? 'justify-center' : ''}`}
-                    title={isCollapsed ? item.label : ''}
-                  >
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`flex items-center font-medium transition-all duration-200 group relative ${
+                        isActive
+                          ? 'bg-[#4A70A9] text-white shadow-md'
+                          : 'text-gray-700 hover:bg-[#4A70A9]/10 hover:text-[#4A70A9]'
+                      } ${
+                        isCollapsed 
+                          ? 'w-12 h-12 mx-2 justify-center rounded-lg' 
+                          : 'w-full gap-3 px-3 py-2.5 rounded-lg'
+                      }`}
+                      title={isCollapsed ? item.label : ''}
+                    >
+                      <Icon 
+                        className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-hover:scale-110" 
+                      />
+                      
+                      {!isCollapsed && (
+                        <span className="truncate text-sm">{item.label}</span>
+                      )}
 
-                    <Icon
-                      className={`${isCollapsed ? 'w-5 h-5' : 'w-5 h-5'} flex-shrink-0 transition-transform duration-200 ${!isActive && 'group-hover:scale-110'
-                        }`}
-                    />
-
-                    {!isCollapsed && (
-                      <span className="truncate">{item.label}</span>
-                    )}
-
-                    {/* Tooltip for collapsed state */}
-                    {isCollapsed && (
-                      <span className="absolute left-full ml-2 px-3 py-2 bg-[#4A70A9] text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
-                        {item.label}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+                      {/* Tooltip for collapsed state */}
+                      {isCollapsed && (
+                        <span className="absolute left-full ml-2 px-2 py-1.5 bg-[#4A70A9] text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50">
+                          {item.label}
+                        </span>
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
       </div>
 
-      {/* Footer */}
-      <div className={`border-t border-gray-200 p-5 ${isCollapsed ? 'text-center' : ''}`}>
+      {/* Footer - Fixed */}
+      <div className={`border-t border-gray-200 flex justify-center items-center ${
+        isCollapsed ? 'p-2' : 'p-4'
+      }`}>
         {!isCollapsed ? (
-          <div className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-gray-500">
             StoreManager © 2026
           </div>
         ) : (
