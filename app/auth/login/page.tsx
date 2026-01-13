@@ -199,9 +199,22 @@ export default function LoginPage() {
             </button>
 
             {/* Privacy Notice */}
-            <p className="text-xs text-gray-500 text-center mt-4">
-              Protected by reCAPTCHA and subject to the Privacy Policy and Terms of Service.
-            </p>
+           <p className="text-xs text-gray-500 text-center mt-4">
+  By continuing, you agree to our{" "}
+  <Link
+    href="/extra/privacy"
+    className="text-[#4A70A9] hover:underline font-medium"
+  >
+    Privacy Policy
+  </Link>{" "}
+  and{" "}
+  <Link
+    href="/extra/terms"
+    className="text-[#4A70A9] hover:underline font-medium"
+  >
+    Terms of Service
+  </Link>.
+</p>
           </form>
         </div>
       </div>
