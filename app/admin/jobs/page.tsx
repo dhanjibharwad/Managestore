@@ -16,6 +16,13 @@ interface Job {
   created_at: string;
 }
 
+interface Employee {
+  id: number;
+  employee_name: string;
+  employee_role: string;
+  email: string;
+}
+
 interface CheckInLead {
   id: string;
   openLead: string;
@@ -37,6 +44,7 @@ const JobPage: React.FC = () => {
   const [jobStatus, setJobStatus] = useState('');
   const [assigneeFilter, setAssigneeFilter] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
 
 
@@ -78,7 +86,40 @@ const JobPage: React.FC = () => {
     }
   };
 
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('/api/admin/employees');
+      const data = await response.json();
+      if (response.ok && data.employees) {
+        setEmployees(data.employees);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  const getEmployeeByName = (name: string) => {
+    return employees.find(emp => emp.employee_name === name);
+  };
+
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
   useEffect(() => {
+    fetchEmployees();
     fetchJobs();
   }, [searchQuery, jobStatus, assigneeFilter]);
 
@@ -303,10 +344,11 @@ const JobPage: React.FC = () => {
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
               >
                 <option value="">Select assignee</option>
-                <option value="John Smith">John Smith</option>
-                <option value="Jane Doe">Jane Doe</option>
-                <option value="Mike Johnson">Mike Johnson</option>
-                <option value="Sarah Williams">Sarah Williams</option>
+                {employees.map(employee => (
+                  <option key={employee.id} value={employee.employee_name}>
+                    {employee.employee_name} ({employee.employee_role})
+                  </option>
+                ))}
               </select>
 
               <Link href="/admin/jobs/add">
@@ -329,7 +371,7 @@ const JobPage: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Assignee</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Priority</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white">
@@ -349,7 +391,24 @@ const JobPage: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_brand}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_model || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{job.services}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.assignee}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {(() => {
+                              const employee = getEmployeeByName(job.assignee);
+                              return employee ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                    {getInitials(employee.employee_name)}
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-900 font-medium">{employee.employee_name}</div>
+                                    <div className="text-gray-500 text-xs">{employee.employee_role}</div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-900">{job.assignee}</span>
+                              );
+                            })()
+                          }</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               job.priority === 'High' ? 'bg-red-100 text-red-800' :
@@ -371,7 +430,7 @@ const JobPage: React.FC = () => {
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {new Date(job.created_at).toLocaleDateString()}
+                            {formatDateTime(job.created_at)}
                           </td>
                         </tr>
                       ))

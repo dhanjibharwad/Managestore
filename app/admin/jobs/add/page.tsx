@@ -312,7 +312,7 @@ export default function JobSheetForm() {
 
       if (response.ok) {
         showToast(`Job created successfully! Job Number: ${result.job.job_number}`, 'success');
-        setTimeout(() => router.push('/admin/dashboard'), 2000);
+        setTimeout(() => router.push('/admin/jobs'), 2000);
       } else {
         showToast(result.error || 'Failed to create job', 'error');
       }
