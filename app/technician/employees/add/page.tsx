@@ -1,11 +1,29 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Plus } from 'lucide-react';
+import { Calendar, Plus, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+import { State, City } from 'country-state-city';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
+}
 
 const EmployeeForm = () => {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
   const [formData, setFormData] = useState({
     employeeRole: '',
     employeeName: '',
@@ -27,7 +45,38 @@ const EmployeeForm = () => {
     accountNumber: '',
     ifscCode: ''
   });
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
+
+  useEffect(() => {
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
+  }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.regionState) {
+      const stateCities = City.getCitiesOfState('IN', formData.regionState);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes
+    setFormData(prev => ({ ...prev, cityTown: '' }));
+  }, [formData.regionState]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
@@ -67,12 +116,12 @@ const EmployeeForm = () => {
 
   const handleSubmit = async () => {
     if (!formData.employeeRole || !formData.employeeName || !formData.emailId || !formData.mobileNumber) {
-      alert('Please fill in all required fields: Employee Role, Name, Email, and Mobile Number');
+      showToast('Please fill in all required fields: Employee Role, Name, Email, and Mobile Number', 'error');
       return;
     }
 
     if (Object.keys(errors).length > 0) {
-      alert('Please fix validation errors before submitting');
+      showToast('Please fix validation errors before submitting', 'error');
       return;
     }
 
@@ -90,14 +139,14 @@ const EmployeeForm = () => {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Employee created successfully! Employee ID: ${result.employee.employee_id}`);
-        router.push('/admin/employees');
+        showToast(`Employee created successfully! Employee ID: ${result.employee.employee_id}`, 'success');
+        setTimeout(() => router.push('/admin/employees'), 2000);
       } else {
-        alert(result.error || 'Failed to create employee');
+        showToast(result.error || 'Failed to create employee', 'error');
       }
     } catch (error) {
       console.error('Error creating employee:', error);
-      alert('An error occurred while creating the employee');
+      showToast('An error occurred while creating the employee', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -363,14 +412,15 @@ const EmployeeForm = () => {
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select region / state</option>
-                    <option value="gujarat">Gujarat</option>
-                    <option value="maharashtra">Maharashtra</option>
-                    <option value="delhi">Delhi</option>
-                    <option value="karnataka">Karnataka</option>
+                    {states.map((state) => (
+                      <option key={state.isoCode} value={state.isoCode}>
+                        {state.name}
+                      </option>
+                    ))}
                   </select>
-                  <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
+                  {/* <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
                     <Plus className="h-5 w-5" />
-                  </button>
+                  </button> */}
                 </div>
               </div>
 
@@ -379,23 +429,20 @@ const EmployeeForm = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   City/Town
                 </label>
-                <div className="flex gap-2">
-                  <select
-                    name="cityTown"
-                    value={formData.cityTown}
-                    onChange={handleChange}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  >
-                    <option value="">Select city / town</option>
-                    <option value="vadodara">Vadodara</option>
-                    <option value="ahmedabad">Ahmedabad</option>
-                    <option value="surat">Surat</option>
-                    <option value="mumbai">Mumbai</option>
-                  </select>
-                  <button className="px-3 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8a] transition-colors">
-                    <Plus className="h-5 w-5" />
-                  </button>
-                </div>
+                <select
+                  name="cityTown"
+                  value={formData.cityTown}
+                  onChange={handleChange}
+                  disabled={!formData.regionState}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select city / town</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -503,6 +550,42 @@ const EmployeeForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 };

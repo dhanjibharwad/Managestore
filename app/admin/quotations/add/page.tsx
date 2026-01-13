@@ -671,9 +671,6 @@ export default function QuotationPage() {
                 </div>
                 <div className="flex gap-1 border-l border-gray-300 pl-2">
                   <button className="p-1 hover:bg-gray-200 rounded">≡</button>
-                  <button className="p-1 hover:bg-gray-200 rounded">≡</button>
-                  <button className="p-1 hover:bg-gray-200 rounded">≡</button>
-                  <button className="p-1 hover:bg-gray-200 rounded">≡</button>
                 </div>
               </div>
               <textarea
