@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Calendar, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
 interface DeviceType {
   id: number;
@@ -31,6 +32,15 @@ interface User {
   name: string;
   email: string;
   role: string;
+}
+
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
 }
 
 export default function LeadInformationPage() {
@@ -67,6 +77,8 @@ export default function LeadInformationPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [users, setUsers] = useState<User[]>([]);
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
@@ -95,7 +107,23 @@ export default function LeadInformationPage() {
     fetch('/api/users')
       .then(res => res.json())
       .then(data => setUsers(data));
+    
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
   }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.region) {
+      const stateCities = City.getCitiesOfState('IN', formData.region);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes
+    setFormData(prev => ({ ...prev, city: '' }));
+  }, [formData.region]);
 
   useEffect(() => {
     if (formData.deviceType) {
@@ -528,10 +556,11 @@ export default function LeadInformationPage() {
                       onChange={(e) => setFormData({ ...formData, region: e.target.value })}
                     >
                       <option value="">Select region / state</option>
-                      <option value="gujarat">Gujarat</option>
-                      <option value="maharashtra">Maharashtra</option>
-                      <option value="delhi">Delhi</option>
-                      <option value="karnataka">Karnataka</option>
+                      {states.map((state) => (
+                        <option key={state.isoCode} value={state.isoCode}>
+                          {state.name}
+                        </option>
+                      ))}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>
@@ -546,15 +575,17 @@ export default function LeadInformationPage() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <select
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                       value={formData.city}
                       onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                      disabled={!formData.region}
                     >
                       <option value="">Select city / town</option>
-                      <option value="vadodara">Vadodara</option>
-                      <option value="ahmedabad">Ahmedabad</option>
-                      <option value="surat">Surat</option>
-                      <option value="rajkot">Rajkot</option>
+                      {cities.map((city) => (
+                        <option key={city.name} value={city.name}>
+                          {city.name}
+                        </option>
+                      ))}
                     </select>
                     <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                   </div>

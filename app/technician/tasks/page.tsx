@@ -1,7 +1,7 @@
   'use client';
 
   import React, { useState, useEffect } from 'react';
-  import { Search, ChevronDown, Plus, ChevronUp, Edit, Trash2, AlertCircle, X, CheckCircle, XCircle } from 'lucide-react';
+  import { Search, ChevronDown, Plus, ChevronUp, Edit, AlertCircle, X, CheckCircle, XCircle } from 'lucide-react';
   import Link from 'next/link';
 
   interface Task {
@@ -47,8 +47,6 @@
     const [selectedAssignee, setSelectedAssignee] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('');
     const [sortAscending, setSortAscending] = useState(true);
-    const [deleteModal, setDeleteModal] = useState<{show: boolean, task: Task | null}>({show: false, task: null});
-    const [deletingTask, setDeletingTask] = useState<number | null>(null);
     const [toasts, setToasts] = useState<Toast[]>([]);
 
     useEffect(() => {
@@ -110,31 +108,6 @@
 
     const removeToast = (id: number) => {
       setToasts(prev => prev.filter(toast => toast.id !== id));
-    };
-
-    const handleDeleteTask = async (taskId: number, taskTitle: string) => {
-      try {
-        setDeletingTask(taskId);
-        setDeleteModal({show: false, task: null});
-        
-        const response = await fetch(`/api/admin/tasks/${taskId}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        if (response.ok) {
-          showToast('Task deleted successfully!', 'success');
-          fetchTasks();
-        } else {
-          const error = await response.json();
-          showToast(error.error || 'Failed to delete task', 'error');
-        }
-      } catch (error) {
-        console.error('Error deleting task:', error);
-        showToast('Failed to delete task', 'error');
-      } finally {
-        setDeletingTask(null);
-      }
     };
 
     const formatDate = (dateString: string) => {
@@ -336,19 +309,11 @@
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
                         <div className="flex items-center gap-2">
-                          <Link href={`/admin/tasks/edit/${task.id}`}>
+                          <Link href={`/technician/tasks/edit/${task.id}`}>
                             <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                               <Edit className="w-4 h-4" />
                             </button>
                           </Link>
-                          <button 
-                            onClick={() => {
-                              setDeleteModal({show: true, task});
-                            }}
-                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -357,51 +322,6 @@
               </tbody>
             </table>
           </div>
-          
-          {/* Delete Confirmation Modal */}
-          {deleteModal.show && deleteModal.task && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <AlertCircle className="w-6 h-6 text-red-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Delete Task</h3>
-                      <p className="text-sm text-gray-500">This action cannot be undone</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 mb-6">
-                    Are you sure you want to delete <strong>{deleteModal.task.task_title}</strong>? 
-                    All associated data will be permanently removed.
-                  </p>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => setDeleteModal({show: false, task: null})}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTask(deleteModal.task!.id, deleteModal.task!.task_title)}
-                      disabled={deletingTask === deleteModal.task.id}
-                      className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                      {deletingTask === deleteModal.task.id ? (
-                        <>
-                          <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                          Deleting...
-                        </>
-                      ) : (
-                        'Delete'
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
           
           {/* Toast Notifications */}
           <div className="fixed top-4 right-4 z-50 space-y-2">

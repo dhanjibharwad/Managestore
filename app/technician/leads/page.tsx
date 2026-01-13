@@ -130,7 +130,7 @@ export default function LeadsPage() {
           </button> */}
 
           {/* Add Button */}
-          <Link href="/admin/leads/add">
+          <Link href="/technician/leads/add">
             
           <button className="flex items-center justify-center w-10 h-10 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors cursor-pointer">
             <Plus className="w-5 h-5" />

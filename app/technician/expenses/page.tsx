@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle, Edit, Trash2 } from 'lucide-react';
+import { ChevronUp, Search, SlidersHorizontal, Plus, CheckCircle, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Expense {
@@ -219,12 +219,6 @@ export default function ExpensePage() {
                             <Edit className="w-4 h-4" />
                           </button>
                         </Link>
-                        <button 
-                          onClick={() => console.log('Delete expense:', expense.id)}
-                          className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </td>
                   </tr>
