@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Part {
   id: string;
@@ -24,6 +25,7 @@ interface Toast {
 }
 
 export default function PurchasePage() {
+  const router = useRouter();
   const [supplierName, setSupplierName] = useState('');
   const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('IN-001');
   const [purchaseDate, setPurchaseDate] = useState('06-Dec-2025');
@@ -291,7 +293,10 @@ export default function PurchasePage() {
         <div className="border-b border-gray-200 px-6 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-semibold text-gray-900">Purchase : {purchaseNumber}</h1>
           <div className="flex gap-3">
-            <button className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors">
+            <button 
+              onClick={() => router.push('/admin/purchase')}
+              className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 transition-colors"
+            >
               Cancel
             </button>
             <button 

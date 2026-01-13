@@ -124,6 +124,10 @@ export default function PickupDropPage() {
     inApp: false,
   });
 
+  const handleFormCancel = () => {
+    router.push('/technician/pickupdrop');
+  };
+
   const handleSubmit = async () => {
     // Validate mobile number
     if (!mobile || !/^[6-9]\d{9}$/.test(mobile)) {
@@ -187,6 +191,21 @@ export default function PickupDropPage() {
           <h2 className="text-xl font-semibold text-gray-800">
             Schedule A Pickup/Drop
           </h2>
+          <div className="flex gap-3">
+            <button 
+              onClick={handleFormCancel}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8a] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Scheduling...' : 'Schedule'}
+            </button>
+          </div>
         </div>
 
         {/* Form Content */}
@@ -682,20 +701,6 @@ export default function PickupDropPage() {
                   <span className="text-sm text-gray-700">In App</span>
                 </label> */}
               </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-8">
-              <button className="flex-1 px-6 py-3 border border-red-500 text-red-500 rounded-md hover:bg-red-50 font-medium transition-colors">
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Scheduling...' : 'Schedule'}
-              </button>
             </div>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, MoreVertical, Undo, Redo, Upload, ChevronLeft, ChevronRight, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: number;
@@ -35,6 +36,7 @@ interface Toast {
 }
 
 export default function AddNewTaskPage() {
+  const router = useRouter();
   // Initialize with current date and time
   const now = new Date();
   const currentHour = now.getHours();
@@ -337,9 +339,23 @@ export default function AddNewTaskPage() {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h1 className="text-xl font-semibold text-gray-900">Add New Task</h1>
-          {/* <button className="text-gray-400 hover:text-gray-600 transition-colors">
-            <X size={24} />
-          </button> */}
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => router.push('/technician/tasks')}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8f] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Saving...' : 'Save'}
+            </button>
+          </div>
         </div>
 
         {/* Form */}
@@ -689,24 +705,6 @@ export default function AddNewTaskPage() {
                 <span className="text-sm text-gray-700">WhatsApp</span>
               </label>
             </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-4">
-            <button
-              type="button"
-              className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors font-medium"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              className="flex-1 px-6 py-3 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8f] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Saving...' : 'Save'}
-            </button>
           </div>
         </div>
       </div>

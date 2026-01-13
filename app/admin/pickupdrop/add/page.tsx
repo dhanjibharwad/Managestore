@@ -202,6 +202,21 @@ export default function PickupDropPage() {
           <h2 className="text-xl font-semibold text-gray-800">
             Schedule A Pickup/Drop
           </h2>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => router.push('/admin/pickupdrop')}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 font-medium transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Scheduling...' : 'Schedule'}
+            </button>
+          </div>
         </div>
 
         {/* Form Content */}
@@ -700,19 +715,6 @@ export default function PickupDropPage() {
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-8">
-              <button className="flex-1 px-6 py-3 border border-red-500 text-red-500 rounded-md hover:bg-red-50 font-medium transition-colors">
-                Cancel
-              </button>
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                className="flex-1 px-6 py-3 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5c8c] font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Scheduling...' : 'Schedule'}
-              </button>
-            </div>
           </div>
         </div>
       </div>

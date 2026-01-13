@@ -162,20 +162,7 @@ export default function CustomerForm() {
   };
 
   const handleCancel = () => {
-    setFormData({
-      customerType: '',
-      customerName: '',
-      mobileNumber: '',
-      emailId: '',
-      phoneNumber: '',
-      source: '',
-      referredBy: '',
-      taxNumber: '',
-      addressLine: '',
-      regionState: '',
-      cityTown: '',
-      postalCode: ''
-    });
+    router.push('/admin/customers');
   };
 
   return (

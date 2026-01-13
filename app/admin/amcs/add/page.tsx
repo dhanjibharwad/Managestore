@@ -206,7 +206,10 @@ const ContractFormPage = () => {
                 Contract Information : <span className="text-gray-600">{contractId}</span>
               </h2>
               <div className="flex gap-3">
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                <button 
+                  onClick={() => window.location.href = '/admin/amcs'}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+                >
                   Cancel
                 </button>
                 <button 

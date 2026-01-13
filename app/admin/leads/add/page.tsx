@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Plus, Calendar, CheckCircle, AlertCircle, X } from 'lucide-react';
 import { State, City } from 'country-state-city';
+import { useRouter } from 'next/navigation';
 
 interface DeviceType {
   id: number;
@@ -44,6 +45,7 @@ interface CityType {
 }
 
 export default function LeadInformationPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     leadType: '',
     leadName: '',
@@ -238,7 +240,7 @@ export default function LeadInformationPage() {
   };
 
   const handleCancel = () => {
-    console.log('Form cancelled');
+    router.push('/admin/leads');
   };
 
   return (

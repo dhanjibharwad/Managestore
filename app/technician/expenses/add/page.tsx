@@ -130,13 +130,20 @@ export default function ExpensePage() {
     }
   };
 
+  const handleCancel = () => {
+    router.push('/technician/expenses');
+  };
+
   return (
     <div className="bg-gray-50">
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="flex justify-end items-center px-6 py-4 border-b border-gray-200">
           <div className="flex gap-3">
-            <button className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors font-medium">
+            <button 
+              onClick={handleCancel}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors font-medium"
+            >
               Cancel
             </button>
             <button

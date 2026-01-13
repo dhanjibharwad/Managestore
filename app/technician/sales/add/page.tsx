@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 
 interface SaleItem {
@@ -25,6 +26,7 @@ interface Toast {
 }
 
 export default function SalesForm() {
+  const router = useRouter();
   const [saleId, setSaleId] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [saleDate, setSaleDate] = useState('');
@@ -254,7 +256,10 @@ export default function SalesForm() {
             Sale : <span className="text-gray-600">{saleId}</span>
           </h1>
           <div className="flex gap-3">
-            <button className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors">
+            <button 
+              onClick={() => router.push('/technician/sales')}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors"
+            >
               Cancel
             </button>
             <button 

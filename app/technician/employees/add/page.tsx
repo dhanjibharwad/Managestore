@@ -153,8 +153,7 @@ const EmployeeForm = () => {
   };
 
   const handleCancel = () => {
-    console.log('Form cancelled');
-    // Add your cancel logic here
+    router.push('/technician/employees');
   };
 
   return (

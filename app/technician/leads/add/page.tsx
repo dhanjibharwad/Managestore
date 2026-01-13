@@ -238,7 +238,7 @@ export default function LeadInformationPage() {
   };
 
   const handleCancel = () => {
-    console.log('Form cancelled');
+    window.location.href = '/technician/leads';
   };
 
   return (

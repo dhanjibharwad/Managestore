@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, X } from 'lucide-react';
 import { State, City } from 'country-state-city';
+import { useRouter } from 'next/navigation';
 
 interface StateType {
   isoCode: string;
@@ -14,6 +15,7 @@ interface CityType {
 }
 
 export default function PartSupplierPage() {
+  const router = useRouter();
   const [states, setStates] = useState<StateType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
   const [formData, setFormData] = useState({
@@ -62,17 +64,7 @@ export default function PartSupplierPage() {
   };
 
   const handleCancel = () => {
-    setFormData({
-      supplierName: '',
-      mobileNumber: '',
-      phoneNumber: '',
-      taxNumber: '',
-      emailId: '',
-      addressLine: '',
-      regionState: '',
-      cityTown: '',
-      postalCode: ''
-    });
+    router.push('/technician/inventory/partSuppliers');
   };
 
   const handleCreate = () => {

@@ -136,7 +136,10 @@ export default function ExpensePage() {
         {/* Header */}
         <div className="flex justify-end items-center px-6 py-4 border-b border-gray-200">
           <div className="flex gap-3">
-            <button className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors font-medium">
+            <button 
+              onClick={() => router.push('/admin/expenses')}
+              className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors font-medium"
+            >
               Cancel
             </button>
             <button

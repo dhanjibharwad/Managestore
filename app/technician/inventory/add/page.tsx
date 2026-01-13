@@ -285,7 +285,7 @@ export default function AddPartPage() {
           <h1 className="text-2xl font-semibold text-gray-900">Add Part</h1>
           <div className="flex gap-3">
             <button 
-              onClick={() => router.push('/admin/inventory')}
+              onClick={() => router.push('/technician/inventory')}
               className="px-8 py-2.5 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium transition-colors"
             >
               Cancel
