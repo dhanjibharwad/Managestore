@@ -29,7 +29,7 @@ export default function CustomerDashboard() {
                   <span className="text-cyan-500 text-xs font-medium">{item.change}</span>
                 </div>
                 <div className="text-3xl font-bold text-gray-900">{item.value}</div>
-                <div className="text-xs text-gray-400 mt-1">From 2025-11-04 - 2025-12-04</div>
+                {/* <div className="text-xs text-gray-400 mt-1">From 2025-11-04 - 2025-12-04</div> */}
               </div>
             </div>
           );
