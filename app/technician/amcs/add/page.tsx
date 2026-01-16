@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Upload, Info, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,22 @@ interface Toast {
   id: number;
   message: string;
   type: 'success' | 'error' | 'warning';
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+  email_id: string;
+  customer_type: string;
 }
 
 
@@ -25,6 +41,8 @@ const ContractFormPage = () => {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
@@ -47,6 +65,8 @@ const ContractFormPage = () => {
   React.useEffect(() => {
     fetchUserSession();
     generateContractId();
+    fetchUsers();
+    fetchCustomers();
   }, []);
 
   const generateContractId = () => {
@@ -64,6 +84,28 @@ const ContractFormPage = () => {
       }
     } catch (error) {
       console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      const data = await response.json();
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      const data = await response.json();
+      if (data.customers) {
+        setCustomers(data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
     }
   };
 
@@ -231,13 +273,18 @@ const ContractFormPage = () => {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Search by name, mobile, email"
+                  <select
                     value={formData.customerName}
                     onChange={(e) => handleInputChange('customerName', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  />
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  >
+                    <option value="">Select customer</option>
+                    {Array.isArray(customers) && customers.map(cust => (
+                      <option key={cust.id} value={cust.id}>
+                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <Link href="/admin/customers/add/">
                   <button className="bg-[#4A70A9] text-white p-2 rounded-md hover:bg-[#3d5c8c] transition-colors">
                     <Plus size={20} />
@@ -258,8 +305,10 @@ const ContractFormPage = () => {
                   onChange={(e) => handleInputChange('assignee', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
-                  <option value="">Select assignee name</option>
-                  <option value="rakesh">Rakesh</option>
+                  <option value="">Select assignee</option>
+                  {Array.isArray(users) && users.map(user => (
+                    <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
+                  ))}
                 </select>
                 {errors.assignee && <p className="text-red-500 text-xs mt-1">{errors.assignee}</p>}
               </div>

@@ -603,7 +603,7 @@ export default function AddPartPage() {
               <label className="block text-sm font-medium text-gray-700 mb-2.5">Part Description</label>
               <div className="border border-gray-300 rounded-md">
                 <div className="flex items-center gap-2 p-3 border-b border-gray-200 bg-gray-50">
-                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">
+                  {/* <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M3 10h18M3 14h18" />
                     </svg>
@@ -612,7 +612,7 @@ export default function AddPartPage() {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M5 12h14" />
                     </svg>
-                  </button>
+                  </button> */}
                   <select className="px-3 py-1.5 text-sm border border-gray-300 rounded">
                     <option>Normal text</option>
                     <option>Heading 1</option>
@@ -633,7 +633,7 @@ export default function AddPartPage() {
                   className="w-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] resize-none text-sm"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-2">Max Allowed Characters 500</p>
+              <p className="text-xs text-gray-500 mt-2">Max Allowed Characters 5000</p>
             </div>
           </div>
 

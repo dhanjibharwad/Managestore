@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -25,6 +25,15 @@ interface Toast {
   type: 'success' | 'error' | 'warning';
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+  email_id: string;
+  customer_type: string;
+}
+
 export default function SalesForm() {
   const router = useRouter();
   const [saleId, setSaleId] = useState('');
@@ -40,10 +49,12 @@ export default function SalesForm() {
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   React.useEffect(() => {
     fetchUserSession();
     generateSaleNumber();
+    fetchCustomers();
   }, []);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -72,6 +83,18 @@ export default function SalesForm() {
       }
     } catch (error) {
       console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      const data = await response.json();
+      if (data.customers) {
+        setCustomers(data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
     }
   };
   
@@ -283,13 +306,18 @@ export default function SalesForm() {
                   Customer Name <span className="text-red-500">*</span>
                 </label>
                 <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Search by name, mobile, email"
+                  <select
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  />
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  >
+                    <option value="">Select customer</option>
+                    {Array.isArray(customers) && customers.map(cust => (
+                      <option key={cust.id} value={cust.id}>
+                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <Link href="/admin/customers/add/">
                   <button className="p-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
                     <Plus size={20} />
@@ -321,7 +349,12 @@ export default function SalesForm() {
                   onChange={(e) => setReferredBy(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                 >
-                  <option value="">Search by name, mobile, email</option>
+                  <option value="">Select customer</option>
+                  {Array.isArray(customers) && customers.map(cust => (
+                    <option key={cust.id} value={cust.id}>
+                      {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

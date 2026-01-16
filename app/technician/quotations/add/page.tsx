@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Plus, Scan, X, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -40,6 +40,15 @@ interface Toast {
   type: 'success' | 'error' | 'warning';
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+  email_id: string;
+  customer_type: string;
+}
+
 export default function QuotationPage() {
   const [quotationNumber, setQuotationNumber] = useState('');
   const [customerName, setCustomerName] = useState('');
@@ -55,10 +64,12 @@ export default function QuotationPage() {
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
+  const [customers, setCustomers] = useState<Customer[]>([]);
 
   React.useEffect(() => {
     fetchUserSession();
     generateQuotationNumber();
+    fetchCustomers();
   }, []);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -81,6 +92,18 @@ export default function QuotationPage() {
       }
     } catch (error) {
       console.error('Failed to fetch session:', error);
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      const data = await response.json();
+      if (data.customers) {
+        setCustomers(data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
     }
   };
 
@@ -424,14 +447,18 @@ export default function QuotationPage() {
                 Customer Name <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Search by name, mobile, email"
+                <select
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  onFocus={() => setShowCustomerSearch(true)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                  <option value="">Select customer</option>
+                  {Array.isArray(customers) && customers.map(cust => (
+                    <option key={cust.id} value={cust.id}>
+                      {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                    </option>
+                  ))}
+                </select>
                 <Link href="/admin/customers/add">
                   <button 
                     className="p-3 text-white rounded hover:opacity-90"

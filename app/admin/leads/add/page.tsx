@@ -35,6 +35,13 @@ interface User {
   role: string;
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+}
+
 interface StateType {
   isoCode: string;
   name: string;
@@ -79,6 +86,7 @@ export default function LeadInformationPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [users, setUsers] = useState<User[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [states, setStates] = useState<StateType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
 
@@ -91,6 +99,18 @@ export default function LeadInformationPage() {
 
   const removeToast = (id: number) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      const data = await response.json();
+      if (data.customers) {
+        setCustomers(data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
   };
 
   useEffect(() => {
@@ -109,6 +129,8 @@ export default function LeadInformationPage() {
     fetch('/api/users')
       .then(res => res.json())
       .then(data => setUsers(data));
+    
+    fetchCustomers();
     
     // Load Indian states
     const indianStates = State.getStatesOfCountry('IN');
@@ -347,13 +369,18 @@ export default function LeadInformationPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Referred By Customer</label>
                 <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search by name, mobile, email"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  <select
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.referredBy}
                     onChange={(e) => setFormData({ ...formData, referredBy: e.target.value })}
-                  />
+                  >
+                    <option value="">Select customer</option>
+                    {Array.isArray(customers) && customers.map(cust => (
+                      <option key={cust.id} value={cust.id}>
+                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
               </div>

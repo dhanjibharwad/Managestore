@@ -14,11 +14,12 @@ export async function GET(req: NextRequest) {
       `SELECT 
         q.id,
         q.quotation_number,
-        q.customer_name,
+        c.customer_name,
         q.expired_on,
         q.total_amount,
         q.created_at
       FROM quotations q
+      LEFT JOIN customers c ON q.customer_name = c.id::text
       WHERE q.company_id = $1
       ORDER BY q.created_at DESC`,
       [companyId]
