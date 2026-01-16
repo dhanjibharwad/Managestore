@@ -71,9 +71,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -92,9 +92,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>
@@ -117,9 +117,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -138,9 +138,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>
@@ -163,9 +163,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -184,9 +184,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>
@@ -209,9 +209,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -230,9 +230,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>
@@ -255,9 +255,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -276,9 +276,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -297,9 +297,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
 
@@ -318,9 +318,9 @@ const ReportsPage = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-4xl font-semibold text-gray-900">0.00</div>
-                  <div className="text-sm text-gray-500">
+                  {/* <div className="text-sm text-gray-500">
                     From 2025-11-06 - 2025-12-06
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </>
