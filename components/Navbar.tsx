@@ -40,6 +40,8 @@ interface UserData {
   name: string;
   role: string;
   isVerified: boolean;
+  companyId: number;
+  company: string;
 }
 
 export default function Navbar() {
@@ -103,6 +105,22 @@ export default function Navbar() {
       router.refresh();
     } catch (error) {
       console.error('Logout failed:', error);
+    }
+  };
+
+  const getDashboardRoute = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'superadmin':
+      case 'super_admin':
+        return '/super-admin/dashboard';
+      case 'admin':
+        return '/admin/dashboard';
+      case 'technician':
+        return '/technician/dashboard';
+      case 'customer':
+        return '/customer/dashboard';
+      default:
+        return '/admin/dashboard';
     }
   };
 
@@ -284,7 +302,7 @@ export default function Navbar() {
 
                     <div className="py-2">
                       <Link
-                        href="/admin/dashboard"
+                        href={getDashboardRoute(user.role)}
                         className="flex items-center gap-3 px-4 py-2.5 text-gray-700 hover:bg-gray-50 transition-colors"
                         onClick={() => setShowProfileMenu(false)}
                       >
@@ -415,7 +433,7 @@ export default function Navbar() {
             {user && (
               <>
                 <Link
-                  href="/admin/dashboard"
+                  href={getDashboardRoute(user.role)}
                   className="block py-3 px-4 text-gray-700 font-medium rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-indigo-50 hover:text-indigo-600 transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
