@@ -1,8 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const companyId = session.company.id;
     const body = await req.json();
     
     const {
@@ -18,7 +25,6 @@ export async function POST(req: NextRequest) {
       sendAlert = { mail: false, sms: false }
     } = body;
 
-    // Validation
     if (!serviceType || !mobile || !deviceType || !scheduleDate || !address) {
       return NextResponse.json(
         { error: 'Required fields: serviceType, mobile, deviceType, scheduleDate, address' },
@@ -26,7 +32,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Parse schedule date
     let parsedScheduleDate = null;
     if (scheduleDate) {
       parsedScheduleDate = new Date(scheduleDate);
@@ -38,18 +43,17 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Convert assignee to integer or null
     const assigneeId = assignee ? parseInt(assignee) || null : null;
 
     const result = await pool.query(
       `INSERT INTO pickup_drop (
-        service_type, customer_search, mobile, device_type, schedule_date,
+        company_id, service_type, customer_search, mobile, device_type, schedule_date,
         assignee_id, address, saved_response, description, send_alert
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       ) RETURNING *`,
       [
-        serviceType, customerSearch, mobile, deviceType, parsedScheduleDate,
+        companyId, serviceType, customerSearch, mobile, deviceType, parsedScheduleDate,
         assigneeId, address, savedResponse, description, JSON.stringify(sendAlert)
       ]
     );
@@ -70,6 +74,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const companyId = session.company.id;
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
@@ -78,35 +88,46 @@ export async function GET(req: NextRequest) {
     const assignee = searchParams.get('assignee');
     const search = searchParams.get('search');
 
-    let query = 'SELECT * FROM pickup_drop WHERE 1=1';
-    const params: any[] = [];
-    let paramCount = 0;
+    let query = `
+      SELECT 
+        pd.*,
+        c.customer_name,
+        u.name as assignee_name,
+        dt.name as device_type_name
+      FROM pickup_drop pd
+      LEFT JOIN customers c ON pd.customer_search = c.id::text
+      LEFT JOIN users u ON pd.assignee_id = u.id
+      LEFT JOIN device_types dt ON pd.device_type = dt.id::text
+      WHERE pd.company_id = $1
+    `;
+    const params: any[] = [companyId];
+    let paramCount = 1;
 
     if (serviceType) {
       paramCount++;
-      query += ` AND service_type = $${paramCount}`;
+      query += ` AND pd.service_type = $${paramCount}`;
       params.push(serviceType);
     }
 
     if (status) {
       paramCount++;
-      query += ` AND status = $${paramCount}`;
+      query += ` AND pd.status = $${paramCount}`;
       params.push(status);
     }
 
     if (assignee) {
       paramCount++;
-      query += ` AND assignee_id = $${paramCount}`;
+      query += ` AND pd.assignee_id = $${paramCount}`;
       params.push(assignee);
     }
 
     if (search) {
       paramCount++;
-      query += ` AND (customer_search ILIKE $${paramCount} OR mobile ILIKE $${paramCount} OR pickup_drop_id ILIKE $${paramCount})`;
+      query += ` AND (c.customer_name ILIKE $${paramCount} OR pd.mobile ILIKE $${paramCount} OR pd.pickup_drop_id ILIKE $${paramCount})`;
       params.push(`%${search}%`);
     }
 
-    query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY pd.created_at DESC';
     
     const offset = (page - 1) * limit;
     paramCount++;
@@ -119,32 +140,36 @@ export async function GET(req: NextRequest) {
 
     const result = await pool.query(query, params);
 
-    // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM pickup_drop WHERE 1=1';
-    const countParams: any[] = [];
-    let countParamCount = 0;
+    let countQuery = `
+      SELECT COUNT(*) 
+      FROM pickup_drop pd
+      LEFT JOIN customers c ON pd.customer_search = c.id::text
+      WHERE pd.company_id = $1
+    `;
+    const countParams: any[] = [companyId];
+    let countParamCount = 1;
 
     if (serviceType) {
       countParamCount++;
-      countQuery += ` AND service_type = $${countParamCount}`;
+      countQuery += ` AND pd.service_type = $${countParamCount}`;
       countParams.push(serviceType);
     }
 
     if (status) {
       countParamCount++;
-      countQuery += ` AND status = $${countParamCount}`;
+      countQuery += ` AND pd.status = $${countParamCount}`;
       countParams.push(status);
     }
 
     if (assignee) {
       countParamCount++;
-      countQuery += ` AND assignee_id = $${countParamCount}`;
+      countQuery += ` AND pd.assignee_id = $${countParamCount}`;
       countParams.push(assignee);
     }
 
     if (search) {
       countParamCount++;
-      countQuery += ` AND (customer_search ILIKE $${countParamCount} OR mobile ILIKE $${countParamCount} OR pickup_drop_id ILIKE $${countParamCount})`;
+      countQuery += ` AND (c.customer_name ILIKE $${countParamCount} OR pd.mobile ILIKE $${countParamCount} OR pd.pickup_drop_id ILIKE $${countParamCount})`;
       countParams.push(`%${search}%`);
     }
 

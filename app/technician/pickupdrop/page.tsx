@@ -1,18 +1,27 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, CheckCircle } from 'lucide-react';
+import { Search, Plus, CheckCircle, Edit, Trash2, AlertCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface PickupDrop {
   id: number;
   pickup_drop_id: string;
   service_type: string;
   customer_search: string;
+  customer_name: string;
   mobile: string;
   device_type: string;
+  device_type_name: string;
   address: string;
   assignee_id: number;
+  assignee_name: string;
   schedule_date: string;
   status: string;
   created_at: string;
@@ -25,6 +34,21 @@ export default function PickupDropsPage() {
   const [loading, setLoading] = useState(true);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [deletingItem, setDeletingItem] = useState<number | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, item: PickupDrop | null}>({show: false, item: null});
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   useEffect(() => {
     fetchPickupDrops();
@@ -81,6 +105,31 @@ export default function PickupDropsPage() {
       case 'scheduled': return 'bg-yellow-100 text-yellow-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleDeleteItem = async (itemId: number, itemName: string) => {
+    try {
+      setDeletingItem(itemId);
+      setDeleteModal({show: false, item: null});
+      
+      const response = await fetch(`/api/admin/pickupdrop/${itemId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (response.ok) {
+        showToast('Pickup/Drop deleted successfully!', 'success');
+        fetchPickupDrops();
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to delete pickup/drop', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting pickup/drop:', error);
+      showToast('Failed to delete pickup/drop', 'error');
+    } finally {
+      setDeletingItem(null);
     }
   };
 
@@ -157,27 +206,30 @@ export default function PickupDropsPage() {
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
                   Schedule Time
                 </th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-16 text-gray-400">
+                  <td colSpan={8} className="text-center py-16 text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-16 text-gray-400">
+                  <td colSpan={8} className="text-center py-16 text-gray-400">
                     No data
                   </td>
                 </tr>
               ) : (
                 data
                   .filter(item => 
-                    item.pickup_drop_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.customer_search.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.mobile.includes(searchTerm)
+                    (item.pickup_drop_id && item.pickup_drop_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (item.customer_name && item.customer_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                    (item.mobile && item.mobile.includes(searchTerm))
                   )
                   .filter(item => !statusFilter || item.status === statusFilter)
                   .map((item) => (
@@ -190,17 +242,17 @@ export default function PickupDropsPage() {
                       <div className="text-xs text-blue-600 capitalize">{item.service_type}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      <div className="font-medium">{item.customer_search}</div>
+                      <div className="font-medium">{item.customer_name || item.customer_search}</div>
                       <div className="text-xs text-gray-500">+91 {item.mobile}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800 capitalize">
-                      {item.device_type}
+                      {item.device_type_name || item.device_type}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
                       <div className="max-w-xs truncate">{item.address}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      {item.assignee_id ? `User ${item.assignee_id}` : '-'}
+                      {item.assignee_name || (item.assignee_id ? `User ${item.assignee_id}` : '-')}
                     </td>
                     <td className="px-6 py-4 text-sm">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
@@ -210,11 +262,108 @@ export default function PickupDropsPage() {
                     <td className="px-6 py-4 text-sm text-gray-800">
                       {formatDate(item.schedule_date)}
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      <div className="flex items-center gap-2">
+                        <Link href={`/admin/pickupdrop/edit/${item.id}`}>
+                          <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                            <Edit className="w-4 h-4" />
+                          </button>
+                        </Link>
+                        <button 
+                          onClick={() => {
+                            setDeleteModal({show: true, item});
+                          }}
+                          className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
+        </div>
+        
+        {/* Delete Confirmation Modal */}
+        {deleteModal.show && deleteModal.item && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <AlertCircle className="w-6 h-6 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">Delete Pickup/Drop</h3>
+                    <p className="text-sm text-gray-500">This action cannot be undone</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-6">
+                  Are you sure you want to delete <strong>{deleteModal.item.pickup_drop_id}</strong>? 
+                  All associated data will be permanently removed.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setDeleteModal({show: false, item: null})}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => handleDeleteItem(deleteModal.item!.id, deleteModal.item!.pickup_drop_id)}
+                    disabled={deletingItem === deleteModal.item.id}
+                    className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {deletingItem === deleteModal.item.id ? (
+                      <>
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Deleting...
+                      </>
+                    ) : (
+                      'Delete'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Toast Notifications */}
+        <div className="fixed top-4 right-4 z-50 space-y-2">
+          {toasts.map((toast) => (
+            <div
+              key={toast.id}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+                toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+                toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+                'bg-yellow-50 border border-yellow-200'
+              }`}
+            >
+              {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+              {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+              {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+              <span className={`flex-1 text-sm font-medium ${
+                toast.type === 'success' ? 'text-green-800' :
+                toast.type === 'error' ? 'text-red-800' :
+                'text-yellow-800'
+              }`}>
+                {toast.message}
+              </span>
+              <button
+                onClick={() => removeToast(toast.id)}
+                className={`hover:opacity-70 ${
+                  toast.type === 'success' ? 'text-green-600' :
+                  toast.type === 'error' ? 'text-red-600' :
+                  'text-yellow-600'
+                }`}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ))}
         </div>
         
         {/* Success Popup */}

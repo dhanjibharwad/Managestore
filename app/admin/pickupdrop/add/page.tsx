@@ -10,6 +10,24 @@ interface Toast {
   type: 'success' | 'error' | 'warning';
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  role: string;
+}
+
+interface DeviceType {
+  id: number;
+  name: string;
+}
+
 export default function PickupDropPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [serviceType, setServiceType] = useState<"pickup" | "drop">("pickup");
@@ -23,12 +41,18 @@ export default function PickupDropPage() {
   const [deviceType, setDeviceType] = useState("");
   const [scheduleDate, setScheduleDate] = useState("");
   const [assignee, setAssignee] = useState("");
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [showCalendar, setShowCalendar] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [hours, setHours] = useState("04");
-  const [minutes, setMinutes] = useState("20");
-  const [period, setPeriod] = useState("PM");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedHour, setSelectedHour] = useState(
+    (new Date().getHours() % 12 || 12).toString().padStart(2, '0')
+  );
+  const [selectedMinute, setSelectedMinute] = useState(
+    new Date().getMinutes().toString().padStart(2, '0')
+  );
+  const [selectedPeriod, setSelectedPeriod] = useState(new Date().getHours() >= 12 ? 'PM' : 'AM');
   const calendarRef = useRef<HTMLDivElement>(null);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -54,85 +78,137 @@ export default function PickupDropPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
-    const daysInMonth = lastDay.getDate();
-    const startingDayOfWeek = firstDay.getDay();
+  useEffect(() => {
+    fetch('/api/admin/customers')
+      .then(res => res.json())
+      .then(data => {
+        if (data.customers) setCustomers(data.customers);
+      })
+      .catch(err => console.error('Error fetching customers:', err));
 
-    return { daysInMonth, startingDayOfWeek, year, month };
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setUsers(data);
+      })
+      .catch(err => console.error('Error fetching users:', err));
+
+    fetch('/api/devices/types')
+      .then(res => res.json())
+      .then(data => setDeviceTypes(data))
+      .catch(err => console.error('Error fetching device types:', err));
+  }, []);
+
+  const getDaysInMonth = (year: number, month: number) => {
+    return new Date(year, month + 1, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (year: number, month: number) => {
+    return new Date(year, month, 1).getDay();
   };
 
   const formatDate = (date: Date) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-    return date.toLocaleDateString("en-US", options);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${date.getDate()}-${months[date.getMonth()]}-${date.getFullYear()}`;
   };
 
-  const handleDateClick = (day: number) => {
-    const newDate = new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth(),
-      day
-    );
+  const handleDateSelect = (day: number) => {
+    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day);
     setSelectedDate(newDate);
   };
 
-  const handlePreviousMonth = () => {
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1)
-    );
-  };
-
-  const handleNextMonth = () => {
-    setCurrentMonth(
-      new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1)
-    );
-  };
-
-  const handleToday = () => {
-    const today = new Date();
-    setCurrentMonth(today);
-    setSelectedDate(today);
-  };
-
-  const handleOk = () => {
-    if (selectedDate) {
-      const formattedDate = `${formatDate(selectedDate)} ${hours}:${minutes} ${period}`;
-      setScheduleDate(formattedDate);
-      setShowCalendar(false);
-    }
-  };
-
-  const handleCancel = () => {
+  const handleConfirmDate = () => {
+    const formattedDate = `${formatDate(selectedDate)} ${selectedHour}:${selectedMinute} ${selectedPeriod}`;
+    setScheduleDate(formattedDate);
     setShowCalendar(false);
   };
 
-  const { daysInMonth, startingDayOfWeek, year, month } =
-    getDaysInMonth(currentMonth);
-
-  const monthName = currentMonth.toLocaleDateString("en-US", { month: "long" });
-  const today = new Date();
-  const isToday = (day: number) => {
-    return (
-      day === today.getDate() &&
-      month === today.getMonth() &&
-      year === today.getFullYear()
-    );
+  const handleTodayClick = () => {
+    const today = new Date();
+    const currentHour = today.getHours();
+    const currentMinute = today.getMinutes();
+    
+    setSelectedDate(today);
+    setSelectedHour((currentHour % 12 || 12).toString().padStart(2, '0'));
+    setSelectedMinute(currentMinute.toString().padStart(2, '0'));
+    setSelectedPeriod(currentHour >= 12 ? 'PM' : 'AM');
   };
 
-  const isSelected = (day: number) => {
-    if (!selectedDate) return false;
-    return (
-      day === selectedDate.getDate() &&
-      month === selectedDate.getMonth() &&
-      year === selectedDate.getFullYear()
-    );
+  const changeMonth = (direction: number) => {
+    const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth() + direction, 1);
+    setSelectedDate(newDate);
+  };
+
+  const renderCalendar = () => {
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
+    const daysInMonth = getDaysInMonth(year, month);
+    const firstDay = getFirstDayOfMonth(year, month);
+    const today = new Date();
+    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+
+    const days = [];
+    const prevMonthDays = getDaysInMonth(year, month - 1);
+
+    // Previous month days
+    for (let i = firstDay - 1; i >= 0; i--) {
+      days.push(
+        <button
+          key={`prev-${i}`}
+          type="button"
+          className="p-1.5 text-gray-400 text-xs hover:bg-gray-100 rounded"
+          onClick={() => {
+            changeMonth(-1);
+            handleDateSelect(prevMonthDays - i);
+          }}
+        >
+          {prevMonthDays - i}
+        </button>
+      );
+    }
+
+    // Current month days
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isSelected = selectedDate.getDate() === day;
+      const isToday = isCurrentMonth && today.getDate() === day;
+
+      days.push(
+        <button
+          key={day}
+          type="button"
+          onClick={() => handleDateSelect(day)}
+          className={`p-1.5 text-xs rounded transition-colors ${
+            isSelected
+              ? 'bg-[#4A70A9] text-white'
+              : isToday
+              ? 'border-2 border-[#4A70A9] text-gray-900'
+              : 'text-gray-700 hover:bg-gray-100'
+          }`}
+        >
+          {day}
+        </button>
+      );
+    }
+
+    // Next month days
+    const remainingDays = 42 - days.length;
+    for (let day = 1; day <= remainingDays; day++) {
+      days.push(
+        <button
+          key={`next-${day}`}
+          type="button"
+          className="p-1.5 text-gray-400 text-xs hover:bg-gray-100 rounded"
+          onClick={() => {
+            changeMonth(1);
+            handleDateSelect(day);
+          }}
+        >
+          {day}
+        </button>
+      );
+    }
+
+    return days;
   };
   const [address, setAddress] = useState("");
   const [savedResponse, setSavedResponse] = useState("");
@@ -254,15 +330,20 @@ export default function PickupDropPage() {
                   Customer <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Search by name, mobile, e..."
+                  <select
                     value={customerSearch}
                     onChange={(e) => setCustomerSearch(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
-                  />
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                  >
+                    <option value="">Select customer</option>
+                    {Array.isArray(customers) && customers.map(cust => (
+                      <option key={cust.id} value={cust.id}>
+                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <ChevronDown
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
                     size={20}
                   />
                 </div>
@@ -317,12 +398,12 @@ export default function PickupDropPage() {
                   <select
                     value={deviceType}
                     onChange={(e) => setDeviceType(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-500"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
-                    <option value="">Select device type you want...</option>
-                    <option value="mobile">Mobile</option>
-                    <option value="laptop">Laptop</option>
-                    <option value="tablet">Tablet</option>
+                    <option value="">Select device type</option>
+                    {deviceTypes.map(type => (
+                      <option key={type.id} value={type.id}>{type.name}</option>
+                    ))}
                   </select>
                   <ChevronDown
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -352,191 +433,98 @@ export default function PickupDropPage() {
 
                   {/* Calendar Dropdown */}
                   {showCalendar && (
-                    <div className="absolute z-50 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 p-4 w-[400px]">
+                    <div className="absolute top-full left-0 mt-2 bg-white border border-gray-300 rounded-lg shadow-xl z-50 p-3 w-[280px]">
                       {/* Calendar Header */}
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center justify-between mb-3">
                         <button
-                          onClick={handlePreviousMonth}
-                          className="p-2 hover:bg-gray-100 rounded"
+                          type="button"
+                          onClick={() => changeMonth(-1)}
+                          className="p-1 hover:bg-gray-100 rounded"
                         >
-                          <ChevronLeft size={20} className="text-gray-600" />
+                          <ChevronLeft size={16} className="text-gray-600" />
                         </button>
-                        <span className="font-semibold text-gray-800">
-                          {monthName} {year}
+                        <span className="font-medium text-gray-900 text-sm">
+                          {selectedDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                         </span>
                         <button
-                          onClick={handleNextMonth}
-                          className="p-2 hover:bg-gray-100 rounded"
+                          type="button"
+                          onClick={() => changeMonth(1)}
+                          className="p-1 hover:bg-gray-100 rounded"
                         >
-                          <ChevronRight size={20} className="text-gray-600" />
+                          <ChevronRight size={16} className="text-gray-600" />
                         </button>
                       </div>
 
-                      {/* Calendar Grid */}
-                      <div className="mb-4">
-                        <div className="grid grid-cols-7 gap-1 mb-2">
-                          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-                            (day) => (
-                              <div
-                                key={day}
-                                className="text-center text-xs font-medium text-gray-600 py-2"
-                              >
-                                {day}
-                              </div>
-                            )
-                          )}
-                        </div>
-                        <div className="grid grid-cols-7 gap-1">
-                          {/* Empty cells for days before month starts */}
-                          {Array.from({ length: startingDayOfWeek }).map(
-                            (_, index) => (
-                              <div key={`empty-${index}`} className="py-2" />
-                            )
-                          )}
-                          {/* Days of the month */}
-                          {Array.from({ length: daysInMonth }).map((_, index) => {
-                            const day = index + 1;
-                            return (
-                              <button
-                                key={day}
-                                onClick={() => handleDateClick(day)}
-                                className={`py-2 text-sm rounded hover:bg-gray-100 transition-colors ${
-                                  isToday(day)
-                                    ? "bg-[#4A70A9] text-white hover:bg-[#3d5c8c]"
-                                    : isSelected(day)
-                                    ? "bg-blue-100 text-[#4A70A9] font-semibold"
-                                    : "text-gray-700"
-                                }`}
-                              >
-                                {day}
-                              </button>
-                            );
-                          })}
-                        </div>
+                      {/* Day Headers */}
+                      <div className="grid grid-cols-7 gap-1 mb-2">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                          <div key={day} className="text-center text-xs font-medium text-gray-600 p-1">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Calendar Days */}
+                      <div className="grid grid-cols-7 gap-1 mb-3">
+                        {renderCalendar()}
                       </div>
 
                       {/* Time Picker */}
-                      <div className="flex items-center gap-2 mb-4 pb-4 border-b border-gray-200">
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="number"
-                            min="01"
-                            max="12"
-                            value={hours}
-                            onChange={(e) => {
-                              const val = e.target.value.padStart(2, "0");
-                              if (
-                                parseInt(val) >= 1 &&
-                                parseInt(val) <= 12
-                              ) {
-                                setHours(val);
-                              }
-                            }}
-                            className="w-16 px-2 py-1.5 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                          />
-                          <div className="flex flex-col">
-                            <button
-                              onClick={() => {
-                                const newHours = (parseInt(hours) % 12) + 1;
-                                setHours(newHours.toString().padStart(2, "0"));
-                              }}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ▲
-                            </button>
-                            <button
-                              onClick={() => {
-                                const newHours =
-                                  parseInt(hours) - 1 || 12;
-                                setHours(newHours.toString().padStart(2, "0"));
-                              }}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ▼
-                            </button>
-                          </div>
-                        </div>
-
-                        <span className="text-gray-600 font-semibold">:</span>
-
-                        <div className="flex items-center gap-1">
-                          <input
-                            type="number"
-                            min="00"
-                            max="59"
-                            value={minutes}
-                            onChange={(e) => {
-                              const val = e.target.value.padStart(2, "0");
-                              if (
-                                parseInt(val) >= 0 &&
-                                parseInt(val) <= 59
-                              ) {
-                                setMinutes(val);
-                              }
-                            }}
-                            className="w-16 px-2 py-1.5 border border-gray-300 rounded text-center focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                          />
-                          <div className="flex flex-col">
-                            <button
-                              onClick={() => {
-                                const newMinutes = (parseInt(minutes) + 1) % 60;
-                                setMinutes(newMinutes.toString().padStart(2, "0"));
-                              }}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ▲
-                            </button>
-                            <button
-                              onClick={() => {
-                                const newMinutes =
-                                  (parseInt(minutes) - 1 + 60) % 60;
-                                setMinutes(newMinutes.toString().padStart(2, "0"));
-                              }}
-                              className="text-gray-500 hover:text-gray-700"
-                            >
-                              ▼
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="relative">
-                          <select
-                            value={period}
-                            onChange={(e) => setPeriod(e.target.value)}
-                            className="px-3 py-1.5 border border-gray-300 rounded appearance-none pr-8 focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
-                          >
-                            <option value="AM">AM</option>
-                            <option value="PM">PM</option>
-                          </select>
-                          <ChevronDown
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-                            size={16}
-                          />
-                        </div>
+                      <div className="flex items-center justify-center gap-2 mb-3 pb-3 border-b border-gray-200">
+                        <select
+                          value={selectedHour}
+                          onChange={(e) => setSelectedHour(e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none"
+                        >
+                          {Array.from({ length: 12 }, (_, i) => {
+                            const hour = (i + 1).toString().padStart(2, '0');
+                            return <option key={hour} value={hour}>{hour}</option>;
+                          })}
+                        </select>
+                        <span className="text-gray-600 text-xs">:</span>
+                        <select
+                          value={selectedMinute}
+                          onChange={(e) => setSelectedMinute(e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none"
+                        >
+                          {Array.from({ length: 60 }, (_, i) => {
+                            const minute = i.toString().padStart(2, '0');
+                            return <option key={minute} value={minute}>{minute}</option>;
+                          })}
+                        </select>
+                        <select
+                          value={selectedPeriod}
+                          onChange={(e) => setSelectedPeriod(e.target.value)}
+                          className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none"
+                        >
+                          <option value="AM">AM</option>
+                          <option value="PM">PM</option>
+                        </select>
                       </div>
 
-                      {/* Footer Buttons */}
-                      <div className="flex items-center justify-between">
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
                         <button
-                          onClick={handleToday}
-                          className="text-sm text-gray-600 hover:text-gray-800 font-medium"
+                          type="button"
+                          onClick={handleTodayClick}
+                          className="flex-1 px-3 py-1.5 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
                         >
                           Today
                         </button>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={handleCancel}
-                            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded transition-colors"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={handleOk}
-                            className="px-4 py-2 text-sm bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8c] transition-colors"
-                          >
-                            OK
-                          </button>
-                        </div>
+                        <button
+                          type="button"
+                          onClick={handleConfirmDate}
+                          className="flex-1 px-3 py-1.5 text-xs bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8f] transition-colors"
+                        >
+                          OK
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowCalendar(false)}
+                          className="flex-1 px-3 py-1.5 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     </div>
                   )}
@@ -555,11 +543,14 @@ export default function PickupDropPage() {
                 <select
                   value={assignee}
                   onChange={(e) => setAssignee(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
-                  <option value="">Select assignee name</option>
-                  <option value="john">John Doe</option>
-                  <option value="jane">Jane Smith</option>
+                  <option value="">Select assignee</option>
+                  {Array.isArray(users) && users.map(user => (
+                    <option key={user.id} value={user.id}>
+                      {user.name} ({user.role})
+                    </option>
+                  ))}
                 </select>
                 <ChevronDown
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -690,7 +681,7 @@ export default function PickupDropPage() {
                   />
                   <span className="text-sm text-gray-700">Mail</span>
                 </label>
-                <label className="flex items-center gap-2 cursor-pointer">
+                {/* <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendAlert.sms}
@@ -700,7 +691,7 @@ export default function PickupDropPage() {
                     className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
                   />
                   <span className="text-sm text-gray-700">SMS</span>
-                </label>
+                </label> */}
                 {/* <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
