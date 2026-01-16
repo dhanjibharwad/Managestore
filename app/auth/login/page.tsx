@@ -125,8 +125,8 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">Please enter your details to sign in.</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Welcome Back</h2>
+            <p className="text-gray-600 text-center">Please enter your details to sign in.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

@@ -180,8 +180,8 @@ function ResetPasswordForm() {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
-            <p className="text-gray-600">Enter the code sent to your email</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Reset Password</h2>
+            <p className="text-gray-600 text-center">Enter the code sent to your email</p>
           </div>
 
           {success ? (

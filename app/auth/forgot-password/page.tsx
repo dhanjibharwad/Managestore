@@ -122,8 +122,8 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md">
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h2>
-            <p className="text-gray-600">No worries, we'll send you reset instructions</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Forgot Password?</h2>
+            <p className="text-gray-600 text-center">No worries, we'll send you reset instructions</p>
           </div>
 
           {success ? (
