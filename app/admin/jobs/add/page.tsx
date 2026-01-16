@@ -362,7 +362,7 @@ export default function JobSheetForm() {
           <section className="mb-6">
             <h2 className="text-base font-semibold text-gray-800 mb-3">Basic Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              <div className="relative">
+              <div className="lg:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Customer Name <span className="text-red-500">*</span>
                 </label>
@@ -371,7 +371,7 @@ export default function JobSheetForm() {
                     name="customerName"
                     value={formData.customerName}
                     onChange={handleInputChange}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   >
                     <option value="">Select customer</option>
                     {customers.map(customer => (
@@ -383,7 +383,7 @@ export default function JobSheetForm() {
                   <Link href="/admin/customers/add">
                     <button 
                       type="button"
-                      className="px-3 py-2 bg-[#4A70A9] hover:bg-[#3a5a89] border-2 border-[#4A70A9] text-white rounded transition-colors"
+                      className="w-10 h-10 flex items-center justify-center bg-[#4A70A9] hover:bg-[#3a5a89] text-white rounded transition-colors flex-shrink-0"
                     >
                       <Plus size={20} />
                     </button>
