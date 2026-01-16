@@ -53,8 +53,7 @@ export default function AboutPage() {
           <h1 className="text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
             About Us </h1>
           <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed animate-fade-in delay-200">
-            Your trusted partner in solving technical queries through innovative online solutions,
-            on-site visits, and expert technician services.
+            A comprehensive multi-tenant service management platform designed for repair shops and service businesses to streamline operations and maximize efficiency.
           </p>
 
           {/* Call-to-action buttons */}
@@ -81,17 +80,13 @@ export default function AboutPage() {
             <div>
               <h2 className="mt-2 mb-4 text-3xl sm:text-3xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Our Story</h2>
               <p className="text-gray-600 mb-4">
-                Founded with a vision to bridge the gap between technology and customer satisfaction,
-                Store Manager has been at the forefront of providing comprehensive technical support solutions.
+                Store Manager was born from a simple observation: repair shops and service centers were struggling with fragmented systems, manual processes, and data security concerns. We set out to create a unified platform that would transform service management.
               </p>
               <p className="text-gray-600 mb-4">
-                We understand that in today's digital world, technical issues can disrupt your daily life
-                and business operations. That's why we've created a seamless platform that connects you
-                with expert solutions through multiple channels.
+                Built on a multi-tenant architecture, Store Manager ensures complete data isolation for each business while providing powerful tools for job tracking, customer management, technician coordination, and real-time analytics. Every company operates in its own secure subdomain.
               </p>
               <p className="text-gray-600">
-                From simple online consultations to complex on-site repairs, our team of certified
-                technicians is committed to delivering excellence in every interaction.
+                From guest check-ins to final invoicing, from inventory management to AMC tracking, our modular platform scales with your business. We're committed to reducing administrative overhead so you can focus on what matters most—delivering exceptional service.
               </p>
             </div>
             <div className="bg-white p-8">
@@ -110,10 +105,9 @@ export default function AboutPage() {
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaLaptop className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Online Support</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Job Management</h3>
               <p className="text-gray-600 leading-relaxed">
-                Get instant help through our online platform. Submit your queries and receive
-                expert guidance from our technical team remotely.
+                Complete job lifecycle tracking from creation to completion. Assign technicians, update status in real-time, and monitor progress with comprehensive dashboards.
               </p>
       
             </div>
@@ -121,10 +115,9 @@ export default function AboutPage() {
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaHome className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">On-Site Visits</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Multi-Tenant Security</h3>
               <p className="text-gray-600 leading-relaxed">
-                Schedule convenient on-site visits for complex issues that require physical
-                inspection and hands-on technical expertise.
+                Company-isolated architecture with subdomain access. Each business operates in its own secure environment with complete data separation and role-based access control.
               </p>
             
             </div>
@@ -132,10 +125,9 @@ export default function AboutPage() {
               <div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-gray-800 transition-colors duration-300">
                 <FaWrench className="text-3xl text-gray-800 group-hover:text-white transition-colors duration-300" />
               </div>
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Technician Services</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Modular Platform</h3>
               <p className="text-gray-600 leading-relaxed">
-                Connect with certified technicians who can handle repairs, installations,
-                and maintenance through our easy form-based booking system.
+                Use only what you need: Dashboard, Jobs, Customers, Inventory, Billing, AMC, Reports, and Tasks. Scalable modules that grow with your business requirements.
               </p>
               
             </div>
@@ -183,26 +175,23 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <FaUsers className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Customer First</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Efficiency First</h3>
               <p className="text-gray-600">
-                Every decision we make is centered around providing the best possible
-                experience for our customers.
+                Every feature is designed to reduce administrative burden and streamline operations, helping you serve more customers with less effort.
               </p>
             </div>
             <div className="text-center">
               <FaTools className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Technical Excellence</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Data Security</h3>
               <p className="text-gray-600">
-                We maintain the highest standards of technical expertise and continuously
-                update our skills with latest technologies.
+                Multi-tenant architecture with strict company isolation ensures your business data remains private, secure, and accessible only to authorized users.
               </p>
             </div>
             <div className="text-center">
               <FaHeadset className="text-5xl text-gray-800 mx-auto mb-4" />
-              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">24/7 Support</h3>
+              <h3 className="text-center mt-2 mb-6 text-2xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">Continuous Innovation</h3>
               <p className="text-gray-600">
-                Our commitment to availability means you can count on us whenever
-                technical issues arise.
+                Regular updates and new features based on real-world feedback from repair shops and service centers ensure the platform evolves with your needs.
               </p>
             </div>
           </div>
@@ -242,8 +231,8 @@ export default function AboutPage() {
             Ready to Get Started?
           </h2>
           <p className="mt-6 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-            Join thousands of satisfied customers who trust Store Manager
-            for their technical support needs.
+            Join hundreds of repair shops and service centers who trust Store Manager
+            to streamline their operations and grow their business.
           </p>
 
           {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">

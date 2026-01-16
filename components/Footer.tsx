@@ -45,9 +45,9 @@ const Footer: React.FC = () => {
             <ul className="space-y-2 text-sm">
               <li><a href="#" className={linkClasses}>Online Support</a></li>
               <li><a href="#" className={linkClasses}>Track Order</a></li>
-              <li><a href="#" className={linkClasses}>Return Policy</a></li>
+              <li><a href="/extra/privacy/" className={linkClasses}>Privacy Policy</a></li>
               <li><a href="#" className={linkClasses}>FAQs</a></li>
-              <li><a href="#" className={linkClasses}>Live Chat</a></li>
+              <li><a href="/extra/terms/" className={linkClasses}>Terms</a></li>
             </ul>
           </div>
 
@@ -73,9 +73,9 @@ const Footer: React.FC = () => {
             <h4 className="text-sm font-semibold mb-2">24X7 SUPPORT ( ALL DAYS )</h4>
             <div className="text-sm space-y-1 mb-6">
               <p>Sales : <a href="mailto:sales@storemanager.com" className={contactLinkClasses}>sales@storemanager.com</a></p>
-              <p>Support : <a href="mailto:support@storemanager.com" className={contactLinkClasses}>support@storemanager.com</a></p>
-              <p>Corporate : <a href="mailto:corporate@storemanager.com" className={contactLinkClasses}>corporate@storemanager.com</a></p>
-              <p>Careers : <a href="mailto:careers@storemanager.com" className={contactLinkClasses}>careers@storemanager.com</a></p>
+              {/* <p>Support : <a href="mailto:support@storemanager.com" className={contactLinkClasses}>support@storemanager.com</a></p> */}
+              {/* <p>Corporate : <a href="mailto:corporate@storemanager.com" className={contactLinkClasses}>corporate@storemanager.com</a></p> */}
+              {/* <p>Careers : <a href="mailto:careers@storemanager.com" className={contactLinkClasses}>careers@storemanager.com</a></p> */}
             </div>
             
             {/* Contact Icons */}

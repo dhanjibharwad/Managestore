@@ -47,10 +47,7 @@ export default function UserHomePage() {
             </h2>
 
             <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-              Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
-              loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
-              into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
-              interaction adds value and strengthens long-term partnerships.
+              Store Manager is a comprehensive multi-tenant service management platform designed specifically for repair shops and service businesses. We empower businesses with secure company-isolated environments, role-based access control, and complete job lifecycle management—from customer check-in to final billing and reporting.
             </p>
 
             <Link href="/home/about">
@@ -93,10 +90,7 @@ export default function UserHomePage() {
             </h2>
 
             <p className="mt-4 text-lg text-gray-700 leading-relaxed">
-              Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
-              loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
-              into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
-              interaction adds value and strengthens long-term partnerships.
+              Our mission is to simplify service management for repair shops and service centers worldwide. We provide a modular, scalable platform that grows with your business—enabling seamless job tracking, customer management, technician coordination, inventory control, and automated billing. Every feature is designed to reduce administrative burden and maximize operational efficiency.
             </p>
 
             {/* <Link href="/user/about">
@@ -134,10 +128,7 @@ export default function UserHomePage() {
             </h2>
 
             <p className="mt-4 text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-              Their expertise lies in integrating technology, data, and strategy to improve customer satisfaction and
-              loyalty while driving business growth. With the right CRM service provider, companies can gain deeper insights
-              into customer behavior, automate workflows, and enhance collaboration across teams, ensuring that every customer
-              interaction adds value and strengthens long-term partnerships.
+              Our centralized dashboard provides real-time visibility into your entire operation. Monitor active jobs, track technician workload, view payment status, analyze customer history, and generate comprehensive reports—all filtered by company for complete data security. Make informed decisions with live metrics on job completion rates, revenue trends, inventory levels, and AMC renewals at your fingertips.
             </p>
 
             {/* <Link href="/user/about">

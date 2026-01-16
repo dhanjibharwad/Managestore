@@ -36,59 +36,59 @@ export default function WallOfLove() {
 
   const baseTestimonials = [
     {
-      name: "Ranuka Ranjhan",
-      role: "Payroll Admin",
+      name: "Roshni Patel",
+      role: "Mobile Repair Shop Owner",
       image: "/images/test/p-1.jpg",
-      text: "Store Manager is an absolute game-changer for streamlining HR processes! The platform makes managing employees a breeze with its design.",
-      rating: 4.5
+      text: "Store Manager transformed our repair shop operations. Job tracking is seamless, and our customers love the self check-in feature. Revenue increased by 35% in 3 months!",
+      rating: 5
     },
     {
-      name: "Shantanu Gupta",
-      role: "Chief Executive",
+      name: "Sarah Mitchell",
+      role: "Service Center Manager",
       image: "/images/test/p-2.jpg",
-      text: "Super intuitive and efficient! Store Manager has simplified every aspect of HR management for our team, saving us so much time.",
+      text: "Finally, a platform built for service businesses! The multi-tenant setup keeps our data secure, and technicians can update job status on the go. Game changer!",
       rating: 4.5
     },
     {
-      name: "Anita Desai",
-      role: "Product Manager",
+      name: "Payal Sharma",
+      role: "Electronics Repair Business",
       image: "/images/test/p-3.jpg",
-      text: "Say goodbye to mundane spreadsheets and rigid systems. Store Manager makes managing HR tasks simple and enjoyable for everyone.",
-      rating: 4
+      text: "Managing 3 locations was a nightmare before Store Manager. Now I monitor everything from one dashboard. AMC tracking and inventory management are brilliant!",
+      rating: 5
     },
     {
-      name: "David Lee",
-      role: "HR Manager",
+      name: "Vishnu Das",
+      role: "Computer Service Center",
       image: "/images/test/p-4.jpg",
-      text: "Store Manager provides smarter and more efficient software with features designed to free you from administrative work completely.",
+      text: "The role-based access is perfect for our team. Technicians see their tasks, customers track their devices, and I get real-time reports. Worth every penny!",
       rating: 4.5
     },
     {
-      name: "Shubham Patel",
-      role: "Operations Director",
+      name: "Vikram Patel",
+      role: "Appliance Repair Shop",
       image: "/images/test/p-5.jpg",
-      text: "Store Manager has transformed how we handle employee onboarding. What used to take days now takes hours. Absolutely phenomenal!",
+      text: "Billing and invoicing used to take hours. Now it's automated! The guest check-in feature reduced front desk workload by 60%. Highly recommend!",
       rating: 5
     },
     {
-      name: "Michael Chen",
-      role: "Talent Acquisition Lead",
+      name: "Shankar Rodriguez",
+      role: "Multi-Brand Service Center",
       image: "/images/test/p-6.jpg",
-      text: "The best HR software I've used in my 15-year career. Store Manager's clean interface, powerful features, and exceptional support.",
+      text: "We handle 200+ jobs monthly. Store Manager's job lifecycle tracking ensures nothing falls through the cracks. Customer satisfaction improved dramatically!",
       rating: 4.5
     },
     {
-      name: "Sophia Patel",
-      role: "People Operations Manager",
+      name: "Anegha Reddy",
+      role: "Laptop & Mobile Repairs",
       image: "/images/test/p-7.jpg",
-      text: "Finally, an HR platform that actually understands what we need! Store Manager's automation features have saved us countless hours.",
+      text: "The modular approach is genius! We started with basic job management and added inventory and AMC modules as we grew. Scales perfectly with our business.",
       rating: 5
     },
     {
-      name: "James Wilson",
-      role: "HR Business Partner",
+      name: "Mark Anderson",
+      role: "Tech Repair Franchise Owner",
       image: "/images/test/p-8.jpg",
-      text: "Store Manager seamlessly integrates with our existing tools. The reporting features give us insights we never had before today.",
+      text: "Managing 5 franchise locations is effortless now. Each location has its own subdomain, and I oversee everything from the super-admin panel. Brilliant solution!",
       rating: 4.5
     }
   ];
