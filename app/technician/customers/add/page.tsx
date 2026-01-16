@@ -155,7 +155,7 @@ export default function CustomerForm() {
                   <select
                     value={formData.customerType}
                     onChange={(e) => setFormData({ ...formData, customerType: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none bg-white text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   >
                     <option value="">Select customer type</option>
                     <option value="dealer">Dealer</option>
@@ -176,7 +176,7 @@ export default function CustomerForm() {
                   value={formData.customerName}
                   onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
                   placeholder="Eg: John Smith"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -190,7 +190,7 @@ export default function CustomerForm() {
                     type="text"
                     value="+91"
                     disabled
-                    className="w-16 px-3 py-2.5 border border-gray-300 rounded-md bg-gray-100 text-gray-700 text-center"
+                    className="w-16 px-3 py-2 border border-gray-300 rounded bg-gray-100 text-gray-700 text-center"
                   />
                   <input
                     type="tel"
@@ -202,7 +202,7 @@ export default function CustomerForm() {
                     }}
                     placeholder="10 digits starting with 6-9"
                     maxLength={10}
-                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    className={`flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] ${
                       errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -226,7 +226,7 @@ export default function CustomerForm() {
                     validateField('emailId', value);
                   }}
                   placeholder="Eg: example@example.com"
-                  className={`w-full px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] ${
                     errors.emailId ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -245,7 +245,7 @@ export default function CustomerForm() {
                   value={formData.phoneNumber}
                   onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                   placeholder="Eg: 91XXXXXXXX"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -258,7 +258,7 @@ export default function CustomerForm() {
                   <select
                     value={formData.source}
                     onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none bg-white text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   >
                     <option value="">Select source</option>
                     <option value="website">Website</option>
@@ -281,7 +281,7 @@ export default function CustomerForm() {
                     value={formData.referredBy}
                     onChange={(e) => setFormData({ ...formData, referredBy: e.target.value })}
                     placeholder="Search by name, mobile, email"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   />
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
@@ -297,7 +297,7 @@ export default function CustomerForm() {
                   value={formData.taxNumber}
                   onChange={(e) => setFormData({ ...formData, taxNumber: e.target.value })}
                   placeholder="Type Tax number"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 />
               </div>
             </div>
@@ -321,7 +321,7 @@ export default function CustomerForm() {
                   value={formData.addressLine}
                   onChange={(e) => setFormData({ ...formData, addressLine: e.target.value })}
                   placeholder="House / building name/no, street name, locality"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -334,7 +334,7 @@ export default function CustomerForm() {
                   <select
                     value={formData.regionState}
                     onChange={(e) => setFormData({ ...formData, regionState: e.target.value })}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none bg-white text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                   >
                     <option value="">Select region / state</option>
                     {states.map((state) => (
@@ -357,7 +357,7 @@ export default function CustomerForm() {
                     value={formData.cityTown}
                     onChange={(e) => setFormData({ ...formData, cityTown: e.target.value })}
                     disabled={!formData.regionState}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none bg-white text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select city / town</option>
                     {cities.map((city) => (
@@ -380,7 +380,7 @@ export default function CustomerForm() {
                   value={formData.postalCode}
                   onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                   placeholder="Type postal code / zip code"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
                 />
               </div>
             </div>
