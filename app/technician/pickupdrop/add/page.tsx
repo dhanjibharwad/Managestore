@@ -262,6 +262,7 @@ export default function PickupDropPage() {
       } else {
         showToast(result.error || 'Failed to schedule pickup/drop', 'error');
       }
+
     } catch (error) {
       console.error('Error scheduling pickup/drop:', error);
       showToast('An error occurred while scheduling', 'error');
@@ -280,7 +281,7 @@ export default function PickupDropPage() {
           </h2>
           <div className="flex gap-3">
             <button 
-              onClick={() => router.push('/admin/pickupdrop')}
+              onClick={() => router.push('/technician/pickupdrop')}
               className="px-6 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 font-medium transition-colors"
             >
               Cancel
