@@ -118,9 +118,9 @@ export default function CustomersPage() {
             </svg>
           </div>
           
-          <button className="px-4 py-2 border border-zinc-300 rounded-lg text-sm font-medium hover:bg-gray-50">
+          {/* <button className="px-4 py-2 border border-zinc-300 rounded-lg text-sm font-medium hover:bg-gray-50">
             All Filters
-          </button>
+          </button> */}
           <Link href="/technician/customers/add">
           <button className="cursor-pointer px-4 py-2 bg-[#4A70A9] text-white rounded-lg text-sm font-medium hover:bg-[#3d5c8a]">
             + Add

@@ -104,10 +104,10 @@ export default function ExpensePage() {
             </div>
 
             {/* All Filters Button */}
-            <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            {/* <button className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
               <SlidersHorizontal className="w-4 h-4" />
               All Filters
-            </button>
+            </button> */}
 
             {/* Add Button */}
             <Link href="/technician/expenses/add" >

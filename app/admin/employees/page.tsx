@@ -146,9 +146,9 @@ const EmployeeTable = () => {
             </svg>
           </div>
           
-          <button className="p-2 border border-zinc-300 rounded-lg hover:bg-gray-100 transition-colors">
+          {/* <button className="p-2 border border-zinc-300 rounded-lg hover:bg-gray-100 transition-colors">
             <Download className="w-5 h-5 text-gray-600" />
-          </button>
+          </button> */}
           {/* <button className="p-2 border border-zinc-300 rounded-lg hover:bg-gray-100 transition-colors">
             <List className="w-5 h-5 text-gray-600" />
           </button> */}

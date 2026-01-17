@@ -101,14 +101,14 @@ export default function SalesPage() {
               </div>
 
               {/* Action Buttons */}
-              <button
+              {/* <button
                 className="px-4 py-2 text-white rounded-md text-sm font-medium transition-colors"
                 style={{ backgroundColor: '#4A70A9' }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a5a89'}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4A70A9'}
               >
                 Export
-              </button>
+              </button> */}
               
               <Link href="/technician/sales/add">
               <button
