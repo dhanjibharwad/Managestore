@@ -467,13 +467,13 @@ export default function Navbar() {
                   Workspace login
                 </Link>
                 <Link
-                  href="/auth/register"
-                  className="block w-full text-center py-3 px-6 bg-gradient-to-r from-indigo-600 to-indigo-400 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
+                  href="/extra/demopage"
+                  className="block w-full text-center py-3 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-200"
                   onClick={() => setIsOpen(false)}
                 >
                   <span className="flex items-center justify-center gap-2">
                     <Sparkles size={16} />
-                    Get Started
+                    Start Free Trial
                   </span>
                 </Link>
               </>
