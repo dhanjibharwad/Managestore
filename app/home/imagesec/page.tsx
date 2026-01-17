@@ -6,14 +6,14 @@ export default function ImageSectionPage() {
       <div className="grid md:grid-cols-2 gap-10 md:gap-16 lg:gap-20 xl:gap-24 items-start">
         {/* Left Content */}
         <div className="md:mt-20">
-          <p className="text-blue-500 dark:text-blue-400 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
+          <p className="text-blue-500 text-xs sm:text-sm md:text-base font-semibold mb-3 sm:mb-4 uppercase tracking-wide">
             What our work life is like
           </p>
-          <h1 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+          <h1 className="mt-2 text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
             Where service excellence meets innovation
           </h1>
           <div className="space-y-3 sm:space-y-4">
-            <p className="mt-4 text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed dark:text-gray-200">
+            <p className="mt-4 text-sm sm:text-base lg:text-lg text-gray-700 leading-relaxed">
               Store Manager transforms how repair shops and service centers operate. Our platform brings together job management, customer tracking, technician coordination, and real-time analytics in one seamless system.<br/>
               Built for businesses that value efficiency, we provide multi-tenant architecture ensuring complete data isolation, role-based access for teams, and guest check-in flows that delight customers. From the moment a device arrives to final billing, every step is tracked and optimized.<br/>
               Whether you're managing a single location or multiple franchises, Store Manager scales with your business. Our modular approach means you use only what you need—jobs, inventory, AMC contracts, billing, and comprehensive reporting—all designed to reduce administrative overhead and maximize your operational success.

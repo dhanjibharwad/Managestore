@@ -9,10 +9,10 @@ export default function ServiceManager() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="mt-2 mb-4 text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+          <h1 className="mt-2 mb-4 text-4xl sm:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
             Managing services with ease, performance, and excellence
           </h1>
-          <p className="text-xl text-gray-800 dark:text-gray-300">
+          <p className="text-xl text-gray-800">
             See how our service management helps you track repairs with these in-depth{' '}
             <span className="font-semibold" style={{ color: '#2196F3' }}>features</span>.
           </p>

@@ -111,10 +111,10 @@ const AppFeaturesPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
                     {feature.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed dark:text-gray-300 mt-1">
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed mt-1">
                     {feature.description}
                   </p>
                 </div>
@@ -217,10 +217,10 @@ const AppFeaturesPage: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
                     {feature.title}
                   </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed dark:text-gray-300 mt-1">
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed mt-1">
                     {feature.description}
                   </p>
                 </div>

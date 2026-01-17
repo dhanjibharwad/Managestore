@@ -12,19 +12,19 @@ const features = [
 
 export default function HeroSection() {
     return (
-        <section className="bg-gradient-to-b from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 py-20 px-6">
+        <section className="bg-gradient-to-b from-gray-50 to-white py-20 px-6">
 
             <div className="max-w-7xl mx-auto mt-10">
                 <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                     {/* Left Content */}
                     <div className="space-y-6">
 
-                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
-                            End-to-End repair shop management <span className='text-blue-500 dark:text-blue-400'>software</span>
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+                            End-to-End repair shop management <span className='text-blue-500'>software</span>
                         </h1>
 
 
-                        <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
                             Run your business smoothly with an all-in-one platform. Simple to use,
                             highly efficient, and designed to save you time and money.
                         </p>
@@ -70,7 +70,7 @@ export default function HeroSection() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-8 lg:gap-10 mt-16 text-center">
                     {features.map(({ title }, i) => (
-                        <div key={i} className="flex flex-col items-center p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+                        <div key={i} className="flex flex-col items-center p-4 sm:p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100">
 
                             {/* ✅ SVG IMAGE ONLY */}
                             <img
@@ -80,7 +80,7 @@ export default function HeroSection() {
                             />
 
                             {/* ✅ TITLE BELOW IMAGE */}
-                            <h3 className="text-base font-semibold text-gray-800 dark:text-gray-200 whitespace-pre-line mt-2">
+                            <h3 className="text-base font-semibold text-gray-800 whitespace-pre-line mt-2">
                                 {title}
                             </h3>
 

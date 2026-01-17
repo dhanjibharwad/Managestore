@@ -49,10 +49,10 @@ export default function AboutPage() {
         </div> */}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-28 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
             About Us
           </h1>
-          <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed animate-fade-in delay-200 max-w-4xl mx-auto">
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-700 leading-relaxed animate-fade-in delay-200 max-w-4xl mx-auto">
             A comprehensive multi-tenant service management platform designed for repair shops and service businesses to streamline operations and maximize efficiency.
           </p>
 
@@ -221,10 +221,10 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="relative py-12 sm:py-16 lg:py-20 text-white overflow-hidden">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-100">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
             Ready to Get Started?
           </h2>
-          <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-700 dark:text-gray-300 leading-relaxed max-w-3xl mx-auto">
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
             Join hundreds of repair shops and service centers who trust Store Manager
             to streamline their operations and grow their business.
           </p>
