@@ -31,16 +31,15 @@ import {
 } from "lucide-react";
 
 interface Company {
-  id: string;
-  name: string;
-  owner: string;
+  id: number;
+  company_name: string;
+  owner_name: string;
   email: string;
-  plan: string;
-  status: 'active' | 'inactive' | 'trial';
-  joinedDate: string;
-  lastPayment: string;
-  revenue: number;
-  employees: number;
+  subscription_plan: string;
+  status: string;
+  created_at: string;
+  subscription_start_date: string;
+  subscription_end_date: string;
 }
 
 interface Payment {
@@ -60,19 +59,19 @@ export default function SuperAdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Replace with actual API calls
-        // const companiesRes = await fetch('/api/super-admin/companies');
-        // const paymentsRes = await fetch('/api/super-admin/payments');
-        // const companiesData = await companiesRes.json();
-        // const paymentsData = await paymentsRes.json();
-        // setCompanies(companiesData);
-        // setPayments(paymentsData);
+        const companiesRes = await fetch('/api/super-admin/companies');
+        if (companiesRes.ok) {
+          const companiesData = await companiesRes.json();
+          setCompanies(companiesData.companies || []);
+        }
         
-        setCompanies([]);
+        // For now, keep payments empty until API is ready
         setPayments([]);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
+        setCompanies([]);
+        setPayments([]);
         setLoading(false);
       }
     };
@@ -84,6 +83,7 @@ export default function SuperAdminDashboard() {
   const totalCompanies = companies.length;
   const activeCompanies = companies.filter(c => c.status === 'active').length;
   const trialCompanies = companies.filter(c => c.status === 'trial').length;
+  const inactiveCompanies = companies.filter(c => c.status === 'inactive').length;
   const totalRevenue = payments.filter(p => p.status === 'completed').reduce((sum, p) => sum + p.amount, 0);
   const monthlyRevenue = payments
     .filter(p => p.status === 'completed' && new Date(p.date).getMonth() === new Date().getMonth())
@@ -122,12 +122,12 @@ export default function SuperAdminDashboard() {
       changeType: "positive"
     },
     { 
-      title: "Trial Users", 
-      value: trialCompanies, 
-      color: "from-orange-500 to-orange-600",
-      icon: Clock,
-      change: "+3",
-      changeType: "neutral"
+      title: "Inactive Companies", 
+      value: inactiveCompanies, 
+      color: "from-red-500 to-red-600",
+      icon: AlertCircle,
+      change: "-2%",
+      changeType: "negative"
     },
   ];
 
@@ -141,9 +141,10 @@ export default function SuperAdminDashboard() {
   ];
 
   const planDistribution = [
-    { name: "Basic", value: companies.filter(c => c.plan === 'Basic').length, color: "#3B82F6" },
-    { name: "Pro", value: companies.filter(c => c.plan === 'Pro').length, color: "#8B5CF6" },
-    { name: "Enterprise", value: companies.filter(c => c.plan === 'Enterprise').length, color: "#10B981" },
+    { name: "Free", value: companies.filter(c => c.subscription_plan?.toLowerCase() === 'free').length, color: "#6B7280" },
+    { name: "Basic", value: companies.filter(c => c.subscription_plan?.toLowerCase() === 'basic').length, color: "#3B82F6" },
+    { name: "Pro", value: companies.filter(c => c.subscription_plan?.toLowerCase() === 'pro').length, color: "#8B5CF6" },
+    { name: "Enterprise", value: companies.filter(c => c.subscription_plan?.toLowerCase() === 'enterprise').length, color: "#10B981" },
   ];
 
   if (loading) {
@@ -297,18 +298,19 @@ export default function SuperAdminDashboard() {
                     <tr key={company.id} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-3 px-2">
                         <div>
-                          <p className="font-medium text-gray-800">{company.name}</p>
+                          <p className="font-medium text-gray-800">{company.company_name}</p>
                           <p className="text-xs text-gray-500">{company.email}</p>
                         </div>
                       </td>
-                      <td className="py-3 px-2 text-gray-700">{company.owner}</td>
+                      <td className="py-3 px-2 text-gray-700">{company.owner_name}</td>
                       <td className="py-3 px-2">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          company.plan === 'Enterprise' ? 'bg-green-100 text-green-800' :
-                          company.plan === 'Pro' ? 'bg-purple-100 text-purple-800' :
-                          'bg-blue-100 text-blue-800'
+                          company.subscription_plan?.toLowerCase() === 'enterprise' ? 'bg-green-100 text-green-800' :
+                          company.subscription_plan?.toLowerCase() === 'pro' ? 'bg-purple-100 text-purple-800' :
+                          company.subscription_plan?.toLowerCase() === 'basic' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
-                          {company.plan}
+                          {company.subscription_plan || 'Free'}
                         </span>
                       </td>
                       <td className="py-3 px-2">
@@ -317,7 +319,7 @@ export default function SuperAdminDashboard() {
                           company.status === 'trial' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-red-100 text-red-800'
                         }`}>
-                          {company.status}
+                          {company.status || 'inactive'}
                         </span>
                       </td>
                     </tr>
@@ -368,7 +370,8 @@ export default function SuperAdminDashboard() {
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           payment.plan === 'Enterprise' ? 'bg-green-100 text-green-800' :
                           payment.plan === 'Pro' ? 'bg-purple-100 text-purple-800' :
-                          'bg-blue-100 text-blue-800'
+                          payment.plan === 'Basic' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
                         }`}>
                           {payment.plan}
                         </span>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users, DollarSign, Calendar } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, Calendar, Search, Filter, MoreVertical, Eye, Edit, Trash2, Download } from 'lucide-react';
 
 interface SubscriptionStats {
   plan: string;
@@ -25,11 +25,39 @@ interface CompanySubscription {
 export default function SubscriptionsPage() {
   const [stats, setStats] = useState<SubscriptionStats[]>([]);
   const [companies, setCompanies] = useState<CompanySubscription[]>([]);
+  const [filteredCompanies, setFilteredCompanies] = useState<CompanySubscription[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [planFilter, setPlanFilter] = useState('all');
 
   useEffect(() => {
     fetchSubscriptionData();
   }, []);
+
+  useEffect(() => {
+    filterCompanies();
+  }, [companies, searchTerm, statusFilter, planFilter]);
+
+  const filterCompanies = () => {
+    let filtered = companies;
+
+    if (searchTerm) {
+      filtered = filtered.filter(company => 
+        company.company_name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(company => company.status === statusFilter);
+    }
+
+    if (planFilter !== 'all') {
+      filtered = filtered.filter(company => company.subscription_plan.toLowerCase() === planFilter);
+    }
+
+    setFilteredCompanies(filtered);
+  };
 
   const fetchSubscriptionData = async () => {
     try {
@@ -38,6 +66,7 @@ export default function SubscriptionsPage() {
         const data = await res.json();
         setStats(data.stats);
         setCompanies(data.companies);
+        setFilteredCompanies(data.companies);
       }
     } catch (error) {
       console.error('Failed to fetch subscription data:', error);
@@ -48,12 +77,31 @@ export default function SubscriptionsPage() {
 
   const getPlanColor = (plan: string) => {
     switch (plan.toLowerCase()) {
-      case 'free': return 'bg-gray-100 text-gray-800';
-      case 'basic': return 'bg-blue-100 text-blue-800';
-      case 'pro': return 'bg-purple-100 text-purple-800';
-      case 'enterprise': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'free': return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'basic': return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'pro': return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'enterprise': return 'bg-green-100 text-green-800 border-green-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active': return 'bg-green-100 text-green-800 border-green-200';
+      case 'expired': return 'bg-red-100 text-red-800 border-red-200';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'cancelled': return 'bg-gray-100 text-gray-800 border-gray-200';
+      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const getDaysUntilExpiry = (endDate: string) => {
+    if (!endDate) return null;
+    const today = new Date();
+    const expiry = new Date(endDate);
+    const diffTime = expiry.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
   if (loading) {
