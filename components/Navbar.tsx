@@ -472,7 +472,7 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                 >
                   <span className="flex items-center justify-center gap-2">
-                    <Sparkles size={16} />
+                    {/* <Sparkles size={16} /> */}
                     Start Free Trial
                   </span>
                 </Link>
