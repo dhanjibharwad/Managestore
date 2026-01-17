@@ -40,14 +40,14 @@ export default function TechnicianHeader() {
       {/* Right side - Search, Notification and user profile */}
       <div className="flex items-center gap-3">
         {/* Search bar */}
-        <div className="relative">
+        {/* <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
             placeholder="Search jobs, leads, tasks, customer..."
             className="w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-transparent text-sm"
           />
-        </div>
+        </div> */}
         {/* Notification bell with badge */}
         <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
           <Bell className="w-5 h-5 text-gray-600" />
@@ -83,16 +83,16 @@ export default function TechnicianHeader() {
                 <span>Profile Account Actions</span>
               </Link>
               
-              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              {/* <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Settings className="w-4 h-4 text-gray-500" />
                 <span>Business Settings</span>
               </button>
               
-              {/* <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Download className="w-4 h-4 text-gray-500" />
                 <span>Install App</span>
               </button>
-               */}
+              
               <button className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <Key className="w-4 h-4 text-gray-500" />
                 <span>Change Password</span>
@@ -103,7 +103,7 @@ export default function TechnicianHeader() {
                 <span>Clear Cache</span>
               </button>
               
-              {/* <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
+              <div className="px-4 py-2 flex items-center gap-3 text-sm text-gray-500">
                 <Layers className="w-4 h-4" />
                 <span>App Version 3.1.0</span>
               </div> */}

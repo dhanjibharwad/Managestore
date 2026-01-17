@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Check, Upload, User, Mail, Phone, MapPin, Package, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Check, Upload, User, Mail, Phone, MapPin, Package, ShieldCheck, Eye, EyeOff, X } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
 type DeviceType = string;
 type Brand = string;
@@ -15,7 +16,7 @@ interface FormData {
   serialNumber: string;
   password: string;
   accessories: string[];
-  deviceImage: File | null;
+  deviceImages: File[];
   deviceIssue: string;
   name: string;
   mobile: string;
@@ -55,7 +56,7 @@ export default function SelfCheckIn() {
     serialNumber: '',
     password: '',
     accessories: [],
-    deviceImage: null,
+    deviceImages: [],
     deviceIssue: '',
     name: '',
     mobile: '',
@@ -70,13 +71,28 @@ export default function SelfCheckIn() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
 
   const handleNext = () => {
     if (step < 4) setStep(step + 1);
   };
 
   const handlePrevious = () => {
-    if (step > 1) setStep(step - 1);
+    if (step === 1) {
+      // Handle navigation within Step 1 device selection
+      if (formData.model) {
+        updateFormData('model', '');
+      } else if (formData.brand) {
+        updateFormData('brand', '');
+      } else if (formData.deviceType) {
+        updateFormData('deviceType', '');
+      }
+    } else if (step > 1) {
+      setStep(step - 1);
+    }
   };
 
   const handleSubmit = async () => {
@@ -102,6 +118,71 @@ export default function SelfCheckIn() {
   const updateFormData = (field: keyof FormData, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploadFormData = new FormData();
+      files.forEach(file => uploadFormData.append('files', file));
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: uploadFormData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        updateFormData('deviceImages', [...formData.deviceImages, ...files]);
+      } else {
+        alert('Upload failed');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = formData.deviceImages.filter((_, i) => i !== index);
+    updateFormData('deviceImages', newImages);
+  };
+
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      updateFormData('mobile', value);
+    }
+  };
+
+  const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 6) {
+      updateFormData('postalCode', value);
+    }
+  };
+
+  useEffect(() => {
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
+  }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.region) {
+      const stateCities = City.getCitiesOfState('IN', formData.region);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes
+    setFormData(prev => ({ ...prev, city: '' }));
+  }, [formData.region]);
 
   const filteredDeviceTypes = deviceTypes.filter(type =>
     type.toLowerCase().includes(searchTerm.toLowerCase())
@@ -374,10 +455,6 @@ export default function SelfCheckIn() {
                       />
                     </div>
 
-                    <p className="text-center text-gray-500 text-sm py-8">
-                      We couldn't find any services for this model.
-                    </p>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Device Detailed Issue
@@ -393,9 +470,6 @@ export default function SelfCheckIn() {
                           <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
                           <button className="p-1 hover:bg-gray-100 rounded line-through">S</button>
                           <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
-                          <button className="p-1 hover:bg-gray-100 rounded">≡</button>
-                          <button className="p-1 hover:bg-gray-100 rounded">≡</button>
-                          <button className="p-1 hover:bg-gray-100 rounded">≡</button>
                           <button className="p-1 hover:bg-gray-100 rounded">≡</button>
                         </div>
                         <textarea
@@ -421,9 +495,6 @@ export default function SelfCheckIn() {
                             placeholder="Type device serial number"
                             className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                           />
-                          <button className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-[#4A70A9] text-white rounded">
-                            📱
-                          </button>
                         </div>
                       </div>
                       <div>
@@ -432,12 +503,19 @@ export default function SelfCheckIn() {
                         </label>
                         <div className="relative">
                           <input
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             value={formData.password}
                             onChange={(e) => updateFormData('password', e.target.value)}
                             placeholder="Device password"
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                           />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -455,15 +533,61 @@ export default function SelfCheckIn() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Upload Device Type Image
+                        Upload Device Images
                       </label>
-                      <div className="border-2 border-dashed border-[#4A70A9] rounded-lg p-12 text-center bg-blue-50">
-                        <Upload className="w-12 h-12 text-[#4A70A9] mx-auto mb-3" />
-                        <p className="text-[#4A70A9] font-medium mb-1">
-                          Take A Photo With Your Camera Or Choose A File From Your Device
-                        </p>
-                        <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
+                      <div className="border-2 border-dashed border-[#4A70A9] rounded-lg p-8 text-center bg-blue-50 relative">
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/bmp,image/webp,application/pdf"
+                          onChange={handleFileUpload}
+                          multiple
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          disabled={uploading}
+                        />
+                        {uploading ? (
+                          <div className="text-[#4A70A9]">
+                            <div className="animate-spin w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full mx-auto mb-2"></div>
+                            <p className="font-medium">Uploading...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8 text-[#4A70A9] mx-auto mb-2" />
+                            <p className="text-[#4A70A9] font-medium mb-1">
+                              Choose Multiple Files or Take Photos
+                            </p>
+                            <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
+                          </>
+                        )}
                       </div>
+                      {formData.deviceImages.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            Uploaded Images ({formData.deviceImages.length})
+                          </p>
+                          <div className="grid grid-cols-3 gap-3">
+                            {formData.deviceImages.map((file, index) => (
+                              <div key={index} className="relative bg-gray-100 rounded-lg p-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                      {file.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => removeImage(index)}
+                                    className="ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </>
                 )}
@@ -506,8 +630,9 @@ export default function SelfCheckIn() {
                       <input
                         type="tel"
                         value={formData.mobile}
-                        onChange={(e) => updateFormData('mobile', e.target.value)}
+                        onChange={handleMobileChange}
                         placeholder="Eg: 99XXXXXXXX"
+                        maxLength={10}
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
@@ -584,8 +709,11 @@ export default function SelfCheckIn() {
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                         >
                           <option value="">Select region / state</option>
-                          <option value="Gujarat">Gujarat</option>
-                          <option value="Maharashtra">Maharashtra</option>
+                          {states.map((state) => (
+                            <option key={state.isoCode} value={state.isoCode}>
+                              {state.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div>
@@ -596,10 +724,14 @@ export default function SelfCheckIn() {
                           value={formData.city}
                           onChange={(e) => updateFormData('city', e.target.value)}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          disabled={!formData.region}
                         >
                           <option value="">Select city / town</option>
-                          <option value="Vadodara">Vadodara</option>
-                          <option value="Ahmedabad">Ahmedabad</option>
+                          {cities.map((city) => (
+                            <option key={city.name} value={city.name}>
+                              {city.name}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
@@ -611,8 +743,9 @@ export default function SelfCheckIn() {
                         <input
                           type="text"
                           value={formData.postalCode}
-                          onChange={(e) => updateFormData('postalCode', e.target.value)}
+                          onChange={handlePostalCodeChange}
                           placeholder="Type postal code / zip code"
+                          maxLength={6}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
@@ -685,7 +818,7 @@ export default function SelfCheckIn() {
             <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
               <button
                 onClick={handlePrevious}
-                disabled={step === 1}
+                disabled={step === 1 && !formData.deviceType && !formData.brand && !formData.model}
                 className="flex items-center gap-2 px-6 py-2 border-2 border-[#4A70A9] text-[#4A70A9] rounded-lg font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-5 h-5" />
