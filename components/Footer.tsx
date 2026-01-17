@@ -95,9 +95,9 @@ const Footer: React.FC = () => {
     </div>
 
             {/* Find a Store Button */}
-            <button className="w-full md:w-auto px-6 py-2 border-2 border-amber-800 text-amber-800 font-medium text-sm hover:bg-amber-800 hover:text-white transition-colors duration-200">
+            {/* <button className="w-full md:w-auto px-6 py-2 border-2 border-amber-800 text-amber-800 font-medium text-sm hover:bg-amber-800 hover:text-white transition-colors duration-200">
                 Find Service Center
-            </button>
+            </button> */}
           </div>
         </div>
 

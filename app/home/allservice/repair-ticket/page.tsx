@@ -306,7 +306,7 @@ export default function RepairTicketManagement() {
       {/* 3. LOGO SLIDER (MARQUEE) */}
       <section className="py-12 bg-gray-50 border-y border-gray-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 mb-8 text-center">
-          <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest">Trusted by 500+ Repair Shops</p>
+          <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest">Trusted by 100+ Repair Shops</p>
         </div>
         <div className="relative flex overflow-x-hidden group">
           <div className="animate-marquee whitespace-nowrap flex space-x-16">
