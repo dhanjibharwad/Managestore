@@ -39,13 +39,13 @@ export default function PartSuppliersPage() {
             </div>
 
             {/* Action Buttons */}
-            <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            {/* <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
               <Filter className="w-5 h-5" style={{ color: '#4A70A9' }} />
             </button>
             
             <button className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
               <List className="w-5 h-5" style={{ color: '#4A70A9' }} />
-            </button>
+            </button> */}
             
             <Link href="/admin/inventory/partSuppliers/add">
             <button 
