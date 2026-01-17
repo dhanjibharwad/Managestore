@@ -152,7 +152,7 @@ export default function BlogPage() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar size={16} />
-                    {new Date(featuredPost.date).toLocaleDateString()}
+                    {featuredPost.date}
                   </div>
                   <span>{featuredPost.readTime}</span>
                 </div>
@@ -242,7 +242,7 @@ export default function BlogPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar size={14} />
-                        {new Date(post.date).toLocaleDateString()}
+                        {post.date}
                       </div>
                     </div>
                     <div className="flex items-center justify-between">

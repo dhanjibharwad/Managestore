@@ -65,13 +65,15 @@ const Calendar: React.FC<CalendarProps> = ({
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
   };
 
-  const monthNames = Array.from({ length: 12 }, (_, i) =>
-    new Date(2000, i, 1).toLocaleDateString(locale, { month: 'long' })
-  );
+  const monthNames = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(2000, i, 1);
+    return date.toLocaleDateString('en-US', { month: 'long' });
+  });
 
   const dayNames = Array.from({ length: 7 }, (_, i) => {
     const day = firstDayOfWeek === 1 ? (i + 1) % 7 : i;
-    return new Date(2000, 0, 2 + day).toLocaleDateString(locale, { weekday: 'short' });
+    const date = new Date(2000, 0, 2 + day);
+    return date.toLocaleDateString('en-US', { weekday: 'short' });
   });
 
   const generateCalendarDays = () => {
