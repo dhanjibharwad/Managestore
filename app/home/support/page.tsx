@@ -98,21 +98,23 @@ const AppFeaturesPage: React.FC = () => {
   ];
 
   return (
-    <div className="py-26 px-4 mb-10">
+    <div className="mt-16 sm:mt-20 py-8 sm:py-16 lg:py-26 px-4 mb-10">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-12 items-center">
           {/* Left Features */}
-          <div className="space-y-12">
+          <div className="space-y-8 sm:space-y-12 order-2 lg:order-1">
             {leftFeatures.map((feature, index) => (
-              <div key={index} className="flex items-start gap-6 group">
+              <div key={index} className="flex items-start gap-4 sm:gap-6 group">
                 <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                  {feature.icon}
+                  <div className="w-10 h-10 sm:w-12 sm:h-12">
+                    {React.cloneElement(feature.icon, { className: "w-full h-full text-blue-500" })}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+                <div className="flex-1 min-w-0">
+                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed dark:text-gray-300 mt-1">
                     {feature.description}
                   </p>
                 </div>
@@ -121,14 +123,14 @@ const AppFeaturesPage: React.FC = () => {
           </div>
 
           {/* Center Phone Mockup */}
-          <div className="flex justify-center">
+          <div className="flex justify-center order-1 lg:order-2 mb-8 lg:mb-0">
             <div className="relative">
               {/* Phone Frame */}
-              <div className="relative w-80 h-[600px] bg-white rounded-[3rem] shadow-2xl p-3 border-6 border-blue-500">
-                <div className="w-full h-full bg-[#E2EBF6] rounded-[2.5rem] overflow-hidden relative">
+              <div className="relative w-64 h-[480px] sm:w-72 sm:h-[540px] lg:w-80 lg:h-[600px] bg-white rounded-[2.5rem] sm:rounded-[3rem] shadow-2xl p-2 sm:p-3 border-4 sm:border-6 border-blue-500">
+                <div className="w-full h-full bg-[#E2EBF6] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden relative">
                   {/* Logo */}
-                  <div className="absolute top-6 left-6 z-20">
-                    <div className="text-2xl font-bold text-blue-500">Store Manager</div>
+                  <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-20">
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-blue-500">Store Manager</div>
                     <div className="text-xs text-gray-500 mt-1">sign in | sign up</div>
                   </div>
 
@@ -137,38 +139,38 @@ const AppFeaturesPage: React.FC = () => {
                     {cardContent.map((card, index) => (
                       <div
                         key={index}
-                        className={`absolute w-40 h-56 bg-gradient-to-br ${card.gradient} rounded-3xl shadow-xl p-6 transition-all duration-700 ${
+                        className={`absolute w-32 h-44 sm:w-36 sm:h-52 lg:w-40 lg:h-56 bg-gradient-to-br ${card.gradient} rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-5 lg:p-6 transition-all duration-700 ${
                           activeCard === index 
                             ? 'translate-x-0 translate-y-0 rotate-0 z-30 scale-110' 
                             : activeCard === (index - 1 + 3) % 3
-                            ? 'translate-x-[-100px] translate-y-[-50px] rotate-[-15deg] z-10 scale-90 opacity-70'
-                            : 'translate-x-[100px] translate-y-[-50px] rotate-[15deg] z-20 scale-95 opacity-80'
+                            ? 'translate-x-[-60px] sm:translate-x-[-80px] lg:translate-x-[-100px] translate-y-[-30px] sm:translate-y-[-40px] lg:translate-y-[-50px] rotate-[-15deg] z-10 scale-90 opacity-70'
+                            : 'translate-x-[60px] sm:translate-x-[80px] lg:translate-x-[100px] translate-y-[-30px] sm:translate-y-[-40px] lg:translate-y-[-50px] rotate-[15deg] z-20 scale-95 opacity-80'
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-4">
-                          <span className={`${card.isProfile ? 'text-gray-700' : 'text-white'} text-sm font-medium`}>
+                        <div className="flex items-center justify-between mb-3 sm:mb-4">
+                          <span className={`${card.isProfile ? 'text-gray-700' : 'text-white'} text-xs sm:text-sm font-medium`}>
                             {card.title}
                           </span>
-                          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                            <div className={`w-4 h-4 ${card.dotColor} rounded-full`}></div>
+                          <div className="w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 bg-white rounded-full flex items-center justify-center">
+                            <div className={`w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 ${card.dotColor} rounded-full`}></div>
                           </div>
                         </div>
                         
                         {card.isProfile ? (
                           <>
-                            <div className="flex items-center justify-center h-24 mb-3">
-                              <div className="w-20 h-20 bg-gradient-to-br from-sky-400 to-sky-300 rounded-full flex items-center justify-center">
-                                <svg className="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <div className="flex items-center justify-center h-16 sm:h-20 lg:h-24 mb-2 sm:mb-3">
+                              <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-sky-400 to-sky-300 rounded-full flex items-center justify-center">
+                                <svg className="w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                   <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                                 </svg>
                               </div>
                             </div>
-                            <div className="text-gray-700 text-sm font-semibold text-center">{card.subtitle}</div>
+                            <div className="text-gray-700 text-xs sm:text-sm font-semibold text-center">{card.subtitle}</div>
                             <div className="text-gray-600 text-xs text-center mt-1">{card.description}</div>
                           </>
                         ) : (
                           <>
-                            <div className="text-white text-5xl font-bold mb-2">{card.temp}</div>
+                            <div className="text-white text-3xl sm:text-4xl lg:text-5xl font-bold mb-1 sm:mb-2">{card.temp}</div>
                             <div className="text-white text-xs opacity-90">{card.subtitle}</div>
                           </>
                         )}
@@ -188,13 +190,13 @@ const AppFeaturesPage: React.FC = () => {
                   </div>
 
                   {/* Dots Indicator */}
-                  <div className="absolute bottom-32 left-1/2 -translate-x-1/2 flex gap-2 z-40">
+                  <div className="absolute bottom-24 sm:bottom-28 lg:bottom-32 left-1/2 -translate-x-1/2 flex gap-2 z-40">
                     {[0, 1, 2].map((i) => (
                       <button
                         key={i}
                         onClick={() => setActiveCard(i)}
                         className={`rounded-full transition-all ${
-                          activeCard === i ? 'bg-blue-500 w-6 h-2' : 'bg-gray-400 w-2 h-2'
+                          activeCard === i ? 'bg-blue-500 w-5 h-2 sm:w-6 sm:h-2' : 'bg-gray-400 w-2 h-2'
                         }`}
                         aria-label={`View card ${i + 1}`}
                       />
@@ -206,17 +208,19 @@ const AppFeaturesPage: React.FC = () => {
           </div>
 
           {/* Right Features */}
-          <div className="space-y-12">
+          <div className="space-y-8 sm:space-y-12 order-3">
             {rightFeatures.map((feature, index) => (
-              <div key={index} className="flex items-start gap-6 group">
+              <div key={index} className="flex items-start gap-4 sm:gap-6 group">
                 <div className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
-                  {feature.icon}
+                  <div className="w-10 h-10 sm:w-12 sm:h-12">
+                    {React.cloneElement(feature.icon, { className: "w-full h-full text-blue-500" })}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="mt-2 text-xl sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
+                <div className="flex-1 min-w-0">
+                  <h3 className="mt-1 sm:mt-2 text-lg sm:text-xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700 dark:text-gray-200">
                     {feature.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed dark:text-gray-300">
+                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed dark:text-gray-300 mt-1">
                     {feature.description}
                   </p>
                 </div>
