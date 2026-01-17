@@ -69,17 +69,15 @@ export default function App() {
     <div className="bg-white text-gray-800">
       {/* Navigation/Header Bar (Stays Fixed CTA) */}
       <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
-        <div className="max-w-7xl mx-auto px-6 py-3 flex justify-end">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex justify-end">
           <button
             onClick={handleBookDemo}
-            // Added stronger hover effects (shadow/scale) and overflow-hidden for shine
-            className="group relative px-6 py-2 bg-blue-600 text-white rounded-lg hover:scale-[1.03] transition-all duration-300 font-semibold text-sm flex items-center space-x-2 overflow-hidden border border-blue-600"
+            className="group relative px-4 sm:px-6 py-2 bg-blue-600 text-white rounded-lg hover:scale-[1.03] transition-all duration-300 font-semibold text-xs sm:text-sm flex items-center space-x-2 overflow-hidden border border-blue-600"
           >
-            {/* Shine Effect */}
             <span className="absolute top-0 left-0 w-full h-full block bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 group-hover:translate-x-full"></span>
             
             <Link href="/auth/company-register"><span className="relative z-10">Book a Demo</span></Link>
-            <svg className="relative z-10 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="relative z-10 w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
             </svg>
           </button>
@@ -87,48 +85,43 @@ export default function App() {
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-6 pt-24 pb-16">
-        <div className="grid lg:grid-cols-12 gap-16 items-start">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-8 sm:pb-16">
+        <div className="grid lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-16 items-start">
           
           {/* Hero Section (Left Column) */}
-          <div className="lg:col-span-6 space-y-12">
+          <div className="lg:col-span-6 space-y-8 sm:space-y-12">
             
             {/* Headline and Subtext */}
-            <div className='mt-8'>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-gray-900">
+            <div className='mt-4 sm:mt-8'>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-gray-900">
                 See how our platform
                 <br className='hidden sm:block'/>
                 <span className='text-blue-600 drop-shadow-md inline-block mt-1 sm:mt-2'>grows your business.</span>
               </h1>
-              <p className="mt-6 text-lg text-gray-600 max-w-lg">
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg text-gray-600 max-w-lg">
                 The unified solution for modern retail and service management. Register your store or company and let us handle the heavy lifting.
               </p>
               {/* Primary CTA (visible on small screens) */}
               <button
                 onClick={handleBookDemo}
-                // Added stronger hover effects (shadow/scale) and overflow-hidden for shine
-                className="mt-8 md:hidden w-full sm:w-auto group relative px-8 py-3 bg-blue-600 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.03] transition-all duration-300 font-bold text-base flex items-center justify-center space-x-2 overflow-hidden border border-blue-600"
+                className="mt-6 sm:mt-8 md:hidden w-full sm:w-auto group relative px-6 sm:px-8 py-3 bg-blue-600 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.03] transition-all duration-300 font-bold text-sm sm:text-base flex items-center justify-center space-x-2 overflow-hidden border border-blue-600"
               >
-                {/* Shine Effect */}
                 <span className="absolute top-0 left-0 w-full h-full block bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 group-hover:translate-x-full"></span>
-
-                {/* Darker background color transition */}
                 <span className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-
                  <span className="relative z-10">Book a Live Demo</span>
               </button>
             </div>
 
             {/* Results/Stats Section */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <p className="text-xs uppercase tracking-widest font-bold text-blue-600">
                 RESULTS STORE MANAGER DELIVERS:
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 {statData.map((stat, index) => (
-                  <div key={index} className="bg-white rounded-xl p-6 shadow-xl ring-1 ring-blue-100 hover:ring-2 hover:ring-blue-200 transition-all duration-300 transform hover:-translate-y-0.5 border-t-4 border-blue-500">
-                    <div className="text-4xl font-extrabold text-blue-600 mb-2">{stat.value}</div>
-                    <div className="text-sm text-gray-600 leading-snug font-medium">
+                  <div key={index} className="bg-white rounded-xl p-4 sm:p-6 shadow-xl ring-1 ring-blue-100 hover:ring-2 hover:ring-blue-200 transition-all duration-300 transform hover:-translate-y-0.5 border-t-4 border-blue-500">
+                    <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-blue-600 mb-1 sm:mb-2">{stat.value}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 leading-snug font-medium">
                       {stat.label}
                     </div>
                   </div>
@@ -152,19 +145,21 @@ export default function App() {
           </div>
 
           {/* Features & Trust Section (Right Column) */}
-          <div className="lg:col-span-6 space-y-10 lg:pl-10 pt-10">
+          <div className="lg:col-span-6 space-y-6 sm:space-y-8 lg:space-y-10 lg:pl-6 xl:pl-10 pt-6 sm:pt-8 lg:pt-10">
             
             {/* Key Features List */}
-            <div className="bg-white rounded-3xl shadow-2xl p-8 border border-gray-100">
-              <h3 className="text-3xl font-bold text-gray-900 mb-8">Platform Highlights</h3>
-              <div className="space-y-8">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 border border-gray-100">
+              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Platform Highlights</h3>
+              <div className="space-y-6 sm:space-y-8">
                 {featureData.map((feature, index) => (
-                  <div key={index} className="flex items-start space-x-4 group">
-                    <div className="flex-shrink-0 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300 group-hover:bg-blue-600">
-                      {feature.icon}
+                  <div key={index} className="flex items-start space-x-3 sm:space-x-4 group">
+                    <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300 group-hover:bg-blue-600">
+                      <div className="w-5 h-5 sm:w-6 sm:h-6">
+                        {React.cloneElement(feature.icon, { className: "w-full h-full" })}
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200">{feature.title}</h4>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200">{feature.title}</h4>
                       <p className="text-sm text-gray-600">{feature.description}</p>
                     </div>
                   </div>
