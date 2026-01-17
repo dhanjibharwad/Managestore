@@ -17,11 +17,22 @@ import {
   Edit,
   Calendar,
   Save,
-  X
+  X,
+  ChevronDown
 } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
 interface ValidationErrors {
   [key: string]: string;
+}
+
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
 }
 
 const ProfilePage = () => {
@@ -30,6 +41,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
   const [user, setUser] = useState({ 
     name: '', email: '', phone: '', role: '', createdAt: '',
     profile: {
@@ -126,6 +139,12 @@ const ProfilePage = () => {
             accountNumber: userData.profile.accountNumber || '',
             ifscCode: userData.profile.ifscCode || ''
           });
+          
+          // Load cities for existing state
+          if (userData.profile.state) {
+            const stateCities = City.getCitiesOfState('IN', userData.profile.state);
+            setCities(stateCities);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -133,7 +152,25 @@ const ProfilePage = () => {
       }
     };
     fetchUserData();
+    
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
   }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.state) {
+      const stateCities = City.getCitiesOfState('IN', formData.state);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes (not on initial load)
+    if (formData.state && formData.state !== user.profile.state) {
+      setFormData(prev => ({ ...prev, city: '' }));
+    }
+  }, [formData.state, user.profile.state]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -523,28 +560,61 @@ const ProfilePage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Region/State
                   </label>
-                  <input
-                    type="text"
-                    value={isEditing ? formData.state : user.profile.state || ''}
-                    onChange={(e) => handleInputChange('state', e.target.value)}
-                    placeholder="Enter state"
-                    readOnly={!isEditing}
-                    className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900`}
-                  />
+                  {isEditing ? (
+                    <div className="relative">
+                      <select
+                        value={formData.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 appearance-none"
+                      >
+                        <option value="">Select region / state</option>
+                        {states.map((state) => (
+                          <option key={state.isoCode} value={state.isoCode}>
+                            {state.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={states.find(s => s.isoCode === user.profile.state)?.name || user.profile.state || ''}
+                      readOnly
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                    />
+                  )}
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     City/Town
                   </label>
-                  <input
-                    type="text"
-                    value={isEditing ? formData.city : user.profile.city || ''}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder="Enter city"
-                    readOnly={!isEditing}
-                    className={`w-full px-4 py-2.5 border border-gray-300 rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900`}
-                  />
+                  {isEditing ? (
+                    <div className="relative">
+                      <select
+                        value={formData.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        disabled={!formData.state}
+                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-900 disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none"
+                      >
+                        <option value="">Select city / town</option>
+                        {cities.map((city) => (
+                          <option key={city.name} value={city.name}>
+                            {city.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={user.profile.city || ''}
+                      readOnly
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-900"
+                    />
+                  )}
                 </div>
 
                 <div>

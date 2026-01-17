@@ -13,11 +13,22 @@ import {
   Edit,
   Save,
   X,
-  Calendar
+  Calendar,
+  ChevronDown
 } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
 interface ValidationErrors {
   [key: string]: string;
+}
+
+interface StateType {
+  isoCode: string;
+  name: string;
+}
+
+interface CityType {
+  name: string;
 }
 
 export default function ProfilePage() {
@@ -26,6 +37,8 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
+  const [states, setStates] = useState<StateType[]>([]);
+  const [cities, setCities] = useState<CityType[]>([]);
   const [user, setUser] = useState({
     name: '', email: '', phone: '', role: '', company: '', created_at: ''
   });
@@ -86,6 +99,12 @@ export default function ProfilePage() {
           };
           setCustomer(customerData);
           setFormData(customerData);
+          
+          // Load cities for existing state
+          if (data.user.profile?.state) {
+            const stateCities = City.getCitiesOfState('IN', data.user.profile.state);
+            setCities(stateCities);
+          }
         }
       } catch (error) {
         console.error('Failed to fetch user data:', error);
@@ -93,7 +112,25 @@ export default function ProfilePage() {
       }
     };
     fetchUserData();
+    
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
   }, []);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.region_state) {
+      const stateCities = City.getCitiesOfState('IN', formData.region_state);
+      setCities(stateCities);
+    } else {
+      setCities([]);
+    }
+    // Reset city when state changes (not on initial load)
+    if (formData.region_state && formData.region_state !== customer.region_state) {
+      setFormData(prev => ({ ...prev, city_town: '' }));
+    }
+  }, [formData.region_state, customer.region_state]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -391,28 +428,61 @@ export default function ProfilePage() {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Region/State
                       </label>
-                      <input
-                        type="text"
-                        value={isEditing ? formData.region_state : customer.region_state}
-                        onChange={(e) => handleInputChange('region_state', e.target.value)}
-                        placeholder="Enter region / state"
-                        readOnly={!isEditing}
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
-                      />
+                      {isEditing ? (
+                        <div className="relative">
+                          <select
+                            value={formData.region_state}
+                            onChange={(e) => handleInputChange('region_state', e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none"
+                          >
+                            <option value="">Select region / state</option>
+                            {states.map((state) => (
+                              <option key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={states.find(s => s.isoCode === customer.region_state)?.name || customer.region_state || ''}
+                          readOnly
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                        />
+                      )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         City/Town
                       </label>
-                      <input
-                        type="text"
-                        value={isEditing ? formData.city_town : customer.city_town}
-                        onChange={(e) => handleInputChange('city_town', e.target.value)}
-                        placeholder="Enter city / town"
-                        readOnly={!isEditing}
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
-                      />
+                      {isEditing ? (
+                        <div className="relative">
+                          <select
+                            value={formData.city_town}
+                            onChange={(e) => handleInputChange('city_town', e.target.value)}
+                            disabled={!formData.region_state}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none"
+                          >
+                            <option value="">Select city / town</option>
+                            {cities.map((city) => (
+                              <option key={city.name} value={city.name}>
+                                {city.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={customer.city_town || ''}
+                          readOnly
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50"
+                        />
+                      )}
                     </div>
 
                     <div>
