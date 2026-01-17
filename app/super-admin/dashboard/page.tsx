@@ -94,51 +94,74 @@ export default function SuperAdminDashboard() {
     value: number | string;
     color: string;
     icon: typeof Building2;
-    change: string;
-    changeType: 'positive' | 'negative' | 'neutral';
   }> = [
     { 
       title: "Total Companies", 
       value: totalCompanies, 
       color: "from-blue-500 to-blue-600",
-      icon: Building2,
-      change: "+12%",
-      changeType: "positive"
+      icon: Building2
     },
     { 
       title: "Active Subscriptions", 
       value: activeCompanies, 
       color: "from-green-500 to-green-600",
-      icon: CheckCircle,
-      change: "+8%",
-      changeType: "positive"
+      icon: CheckCircle
     },
     { 
       title: "Monthly Revenue", 
       value: `₹${monthlyRevenue.toLocaleString()}`, 
       color: "from-purple-500 to-purple-600",
-      icon: DollarSign,
-      change: "+15%",
-      changeType: "positive"
+      icon: DollarSign
     },
     { 
       title: "Inactive Companies", 
       value: inactiveCompanies, 
       color: "from-red-500 to-red-600",
-      icon: AlertCircle,
-      change: "-2%",
-      changeType: "negative"
+      icon: AlertCircle
     },
   ];
 
-  const revenueData = [
-    { month: "Jul", revenue: 0, companies: 0 },
-    { month: "Aug", revenue: 0, companies: 0 },
-    { month: "Sep", revenue: 0, companies: 0 },
-    { month: "Oct", revenue: 0, companies: 0 },
-    { month: "Nov", revenue: 0, companies: 0 },
-    { month: "Dec", revenue: monthlyRevenue, companies: totalCompanies },
-  ];
+  // Generate monthly data from company registration dates
+  const generateMonthlyData = () => {
+    const monthlyStats = new Map();
+    const currentDate = new Date();
+    
+    // Initialize last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+      const monthKey = date.toLocaleDateString('en-US', { month: 'short' });
+      monthlyStats.set(monthKey, { companies: 0, newCompanies: 0 });
+    }
+    
+    // Count companies by registration month
+    let cumulativeCompanies = 0;
+    companies.forEach(company => {
+      const createdDate = new Date(company.created_at);
+      const monthKey = createdDate.toLocaleDateString('en-US', { month: 'short' });
+      
+      if (monthlyStats.has(monthKey)) {
+        const current = monthlyStats.get(monthKey);
+        current.newCompanies += 1;
+        monthlyStats.set(monthKey, current);
+      }
+    });
+    
+    // Calculate cumulative companies
+    const result = [];
+    for (const [month, data] of monthlyStats) {
+      cumulativeCompanies += data.newCompanies;
+      
+      result.push({
+        month,
+        companies: cumulativeCompanies,
+        newCompanies: data.newCompanies
+      });
+    }
+    
+    return result;
+  };
+
+  const revenueData = generateMonthlyData();
 
   const planDistribution = [
     { name: "Free", value: companies.filter(c => c.subscription_plan?.toLowerCase() === 'free').length, color: "#6B7280" },
@@ -181,15 +204,6 @@ export default function SuperAdminDashboard() {
                 <div>
                   <p className="text-sm font-medium text-gray-600 mb-1">{item.title}</p>
                   <p className="text-3xl font-bold text-gray-800">{item.value}</p>
-                  <div className="flex items-center mt-2">
-                    <span className={`text-sm font-medium ${
-                      item.changeType === 'positive' ? 'text-green-600' : 
-                      item.changeType === 'negative' ? 'text-red-600' : 'text-gray-600'
-                    }`}>
-                      {item.change}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-1">vs last month</span>
-                  </div>
                 </div>
                 <div className={`p-3 rounded-full bg-gradient-to-r ${item.color}`}>
                   <IconComponent className="w-6 h-6 text-white" />
@@ -205,40 +219,95 @@ export default function SuperAdminDashboard() {
 
         {/* Revenue & Companies Growth */}
         <div className="xl:col-span-2 bg-white rounded-xl shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
-            Revenue & Company Growth
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={revenueData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="month" stroke="#6B7280" />
-              <YAxis yAxisId="left" stroke="#6B7280" />
-              <YAxis yAxisId="right" orientation="right" stroke="#6B7280" />
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-800">Company Growth</h3>
+              <p className="text-sm text-gray-500 mt-1">Monthly company registrations over the last 6 months</p>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <span className="text-gray-600">Companies</span>
+              </div>
+            </div>
+          </div>
+          
+          <ResponsiveContainer width="100%" height={350}>
+            <AreaChart data={revenueData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="companiesGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.2}/>
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0.05}/>
+                </linearGradient>
+              </defs>
+              
+              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+              <XAxis 
+                dataKey="month" 
+                stroke="#6B7280" 
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis 
+                stroke="#6B7280" 
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+              />
+              
               <Tooltip 
                 contentStyle={{ 
                   backgroundColor: 'white', 
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '8px'
+                  border: 'none',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+                  padding: '12px'
+                }}
+                labelStyle={{ color: '#374151', fontWeight: '600' }}
+                formatter={(value, name) => {
+                  if (name === 'companies') {
+                    return [value, 'Total Companies'];
+                  }
+                  if (name === 'newCompanies') {
+                    return [value, 'New Companies'];
+                  }
+                  return [value, name];
                 }}
               />
+              
               <Area 
-                yAxisId="left"
-                type="monotone" 
-                dataKey="revenue" 
-                stroke="#3B82F6" 
-                fill="#3B82F6" 
-                fillOpacity={0.1}
-                strokeWidth={3}
-              />
-              <Line 
-                yAxisId="right"
                 type="monotone" 
                 dataKey="companies" 
                 stroke="#10B981" 
-                strokeWidth={2}
+                fill="url(#companiesGradient)"
+                strokeWidth={3}
+                dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, stroke: '#10B981', strokeWidth: 2, fill: 'white' }}
+              />
+              
+              <Bar 
+                dataKey="newCompanies" 
+                fill="#10B981"
+                fillOpacity={0.3}
+                radius={[2, 2, 0, 0]}
               />
             </AreaChart>
           </ResponsiveContainer>
+          
+          {/* Growth Indicators */}
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div className="text-center p-3 bg-green-50 rounded-lg">
+              <p className="text-sm text-gray-600">Total Companies</p>
+              <p className="text-lg font-bold text-green-600">{totalCompanies}</p>
+            </div>
+            <div className="text-center p-3 bg-blue-50 rounded-lg">
+              <p className="text-sm text-gray-600">This Month</p>
+              <p className="text-lg font-bold text-blue-600">
+                +{revenueData[revenueData.length - 1]?.newCompanies || 0}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Plan Distribution */}
