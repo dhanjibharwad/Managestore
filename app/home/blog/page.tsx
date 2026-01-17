@@ -156,9 +156,9 @@ export default function BlogPage() {
                   </div>
                   <span>{featuredPost.readTime}</span>
                 </div>
-                <Button className="w-fit">
+                {/* <Button className="w-fit">
                   Read Full Article <ArrowRight size={16} className="ml-2" />
-                </Button>
+                </Button> */}
               </CardContent>
             </div>
           </Card>
