@@ -17,14 +17,42 @@ export default function CompanyRegisterPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Phone validation - only allow digits and limit to 10
+    if (name === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '');
+      if (digitsOnly.length <= 10) {
+        setFormData(prev => ({ ...prev, [name]: digitsOnly }));
+      }
+      return;
+    }
+    
+    // Country validation - only allow letters and spaces
+    if (name === 'country') {
+      const lettersOnly = value.replace(/[^a-zA-Z\s]/g, '');
+      setFormData(prev => ({ ...prev, [name]: lettersOnly }));
+      return;
+    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Validation
     if (!formData.companyName || !formData.companyOwnerName || !formData.email || !formData.phone || !formData.country) {
       alert('Please fill in all required fields');
+      return;
+    }
+    
+    if (formData.phone.length !== 10) {
+      alert('Phone number must be exactly 10 digits');
+      return;
+    }
+    
+    if (!/^[a-zA-Z\s]+$/.test(formData.country)) {
+      alert('Country name can only contain letters and spaces');
       return;
     }
 
@@ -101,7 +129,7 @@ export default function CompanyRegisterPage() {
             <div className="w-full max-w-lg">
               {/* Replace the src URL below with your own SVG image */}
               <img 
-                src="/images/registerl.svg"
+                src="/images/logt.svg"
                 alt="Company Registration Illustration"
                 className="w-full h-auto drop-shadow-2xl"
               />
@@ -119,10 +147,10 @@ export default function CompanyRegisterPage() {
           {/* Right Side - Registration Form */}
           <div className="w-full">
             {/* Header */}
-            <div className="text-center lg:text-left mb-8">
+            <div className="text-center mb-8">
               <div className="inline-block mb-4">
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-                  Get Started Today
+                  Get Started Now
                 </div>
               </div>
               {/* <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
@@ -206,7 +234,7 @@ export default function CompanyRegisterPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="1234567890"
                         className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
@@ -225,7 +253,7 @@ export default function CompanyRegisterPage() {
                         name="country"
                         value={formData.country}
                         onChange={handleInputChange}
-                        placeholder="United States"
+                        placeholder="Enter your country"
                         className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
