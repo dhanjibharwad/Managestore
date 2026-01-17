@@ -18,7 +18,9 @@ import {
   Calendar,
   Save,
   X,
-  ChevronDown
+  ChevronDown,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { State, City } from 'country-state-city';
 
@@ -35,6 +37,12 @@ interface CityType {
   name: string;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
@@ -43,6 +51,8 @@ const ProfilePage = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationErrors>({});
   const [states, setStates] = useState<StateType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
   const [user, setUser] = useState({ 
     name: '', email: '', phone: '', role: '', createdAt: '',
     profile: {
@@ -58,6 +68,17 @@ const ProfilePage = () => {
     city: '', postalCode: '', accountName: '', bankName: '', branch: '',
     accountNumber: '', ifscCode: ''
   });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const validateForm = () => {
     const errors: ValidationErrors = {};
@@ -182,7 +203,7 @@ const ProfilePage = () => {
 
   const handleSave = async () => {
     if (!validateForm()) {
-      setError('Please fix validation errors');
+      showToast('Please fix validation errors', 'warning');
       return;
     }
     
@@ -220,12 +241,13 @@ const ProfilePage = () => {
         }));
         setIsEditing(false);
         setValidationErrors({});
+        showToast('Profile updated successfully!', 'success');
       } else {
-        setError('Failed to update profile');
+        showToast('Failed to update profile', 'error');
       }
     } catch (error) {
       console.error('Failed to update profile:', error);
-      setError('Failed to update profile');
+      showToast('Failed to update profile', 'error');
     }
     setLoading(false);
   };
@@ -269,6 +291,30 @@ const ProfilePage = () => {
 
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
       {/* Header Section */}
       <div className="bg-white border-b border-gray-200">
         <div className="mx-auto px-6 py-8">
@@ -467,7 +513,10 @@ const ProfilePage = () => {
                     <input
                       type="text"
                       value={isEditing ? formData.phone : user.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                        handleInputChange('phone', value);
+                      }}
                       readOnly={!isEditing}
                       className={`flex-1 px-4 py-2.5 border rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900 ${
                         validationErrors.phone ? 'border-red-500' : 'border-gray-300'
@@ -486,7 +535,10 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     value={isEditing ? formData.alternatePhone : user.profile.alternatePhone || ''}
-                    onChange={(e) => handleInputChange('alternatePhone', e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 10);
+                      handleInputChange('alternatePhone', value);
+                    }}
                     placeholder="Eg: 9XXXXXXXXX"
                     readOnly={!isEditing}
                     className={`w-full px-4 py-2.5 border rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900 ${
@@ -505,7 +557,10 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     value={isEditing ? formData.aadhaarNumber : user.profile.aadhaarNumber || ''}
-                    onChange={(e) => handleInputChange('aadhaarNumber', e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 12);
+                      handleInputChange('aadhaarNumber', value);
+                    }}
                     placeholder="Type aadhaar number"
                     readOnly={!isEditing}
                     className={`w-full px-4 py-2.5 border rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900 ${
@@ -541,7 +596,10 @@ const ProfilePage = () => {
                   <input
                     type="text"
                     value={isEditing ? formData.panNumber : user.profile.panNumber || ''}
-                    onChange={(e) => handleInputChange('panNumber', e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase().slice(0, 10);
+                      handleInputChange('panNumber', value);
+                    }}
                     placeholder="Eg: ABCD1234A"
                     readOnly={!isEditing}
                     className={`w-full px-4 py-2.5 border rounded-lg ${isEditing ? 'bg-white' : 'bg-gray-50'} text-gray-900 ${
