@@ -35,6 +35,24 @@ export default function CustomerHeader() {
     fetchUser();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        window.location.href = '/auth/login';
+      } else {
+        console.error('Logout failed');
+        window.location.href = '/auth/login';
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.href = '/auth/login';
+    }
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3 flex justify-end items-center">
       {/* Right side - Search, Notification and user profile */}
@@ -110,7 +128,7 @@ export default function CustomerHeader() {
               
               <div className="border-t border-gray-200 my-1"></div>
               
-              <button onClick={() => { setIsDropdownOpen(false); window.location.href = '/auth/login'; }} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
+              <button onClick={handleLogout} className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-sm text-gray-700">
                 <LogOut className="w-4 h-4 text-gray-500" />
                 <span>Logout</span>
               </button>
