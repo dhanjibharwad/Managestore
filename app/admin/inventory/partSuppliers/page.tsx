@@ -1,22 +1,51 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, List, Plus } from 'lucide-react';
 import Link from 'next/link';
 
 interface Supplier {
-  id: string;
-  supplier: string;
-  mobile: string;
-  phone: string;
-  email: string;
-  taxNumber: string;
-  city: string;
+  id: number;
+  supplier_name: string;
+  mobile_number: string;
+  phone_number: string;
+  email_id: string;
+  tax_number: string;
+  city_town: string;
+  address_line: string;
+  region_state: string;
+  postal_code: string;
+  created_at: string;
 }
 
 export default function PartSuppliersPage() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const fetchSuppliers = async () => {
+    try {
+      const response = await fetch('/api/admin/part-suppliers');
+      if (response.ok) {
+        const data = await response.json();
+        setSuppliers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSuppliers();
+  }, []);
+
+  const filteredSuppliers = suppliers.filter(supplier =>
+    supplier.supplier_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    supplier.mobile_number.includes(searchQuery) ||
+    (supplier.email_id && supplier.email_id.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,37 +117,45 @@ export default function PartSuppliersPage() {
                 </tr>
               </thead>
               <tbody>
-                {suppliers.length === 0 ? (
+                {loading ? (
                   <tr>
                     <td colSpan={6} className="text-center py-16">
                       <div className="flex flex-col items-center justify-center text-gray-400">
-                        <p className="text-sm">No data</p>
+                        <p className="text-sm">Loading...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredSuppliers.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-16">
+                      <div className="flex flex-col items-center justify-center text-gray-400">
+                        <p className="text-sm">No suppliers found</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  suppliers.map((supplier) => (
+                  filteredSuppliers.map((supplier) => (
                     <tr 
                       key={supplier.id} 
                       className="border-b border-gray-200 hover:bg-gray-50 transition-colors cursor-pointer"
                     >
                       <td className="px-6 py-4 text-sm text-gray-800">
-                        {supplier.supplier}
+                        {supplier.supplier_name}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {supplier.mobile}
+                        +91 {supplier.mobile_number}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {supplier.phone}
+                        {supplier.phone_number || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {supplier.email}
+                        {supplier.email_id || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {supplier.taxNumber}
+                        {supplier.tax_number || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {supplier.city}
+                        {supplier.city_town || '-'}
                       </td>
                     </tr>
                   ))
