@@ -91,8 +91,11 @@ export async function middleware(request: NextRequest) {
 
   // Role-based route protection
   if (userRole) {
+    console.log('Checking access for role:', userRole, 'to path:', pathname);
     const allowedRoutes = roleRoutes[userRole as keyof typeof roleRoutes] || [];
+    console.log('Allowed routes for role:', allowedRoutes);
     const hasAccess = allowedRoutes.some(route => pathname.startsWith(route));
+    console.log('Has access:', hasAccess);
     
     if (!hasAccess) {
       console.log('Access denied for role:', userRole, 'to route:', pathname);

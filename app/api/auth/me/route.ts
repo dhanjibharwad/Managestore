@@ -18,8 +18,8 @@ export async function GET(req: NextRequest) {
         name: session.user.name,
         email: session.user.email,
         role: session.user.role,
-        companyId: session.company.id,
-        company: session.company.name,
+        companyId: session.company?.id || null,
+        company: session.company?.name || 'System Admin',
       }
     });
   } catch (error) {
