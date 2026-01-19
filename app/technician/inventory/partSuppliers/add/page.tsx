@@ -1,9 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, X } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { State, City } from 'country-state-city';
 import { useRouter } from 'next/navigation';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface StateType {
   isoCode: string;
@@ -30,12 +36,34 @@ export default function PartSupplierPage() {
     postalCode: ''
   });
 
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
+
   const [showRegionModal, setShowRegionModal] = useState(false);
   const [showCityModal, setShowCityModal] = useState(false);
   const [newRegion, setNewRegion] = useState('');
   const [newCity, setNewCity] = useState('');
   const [regions, setRegions] = useState(['gujarat', 'maharashtra', 'delhi']);
   const [citiesOld, setCitiesOld] = useState(['vadodara', 'ahmedabad', 'surat']);
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = {
+      id: nextToastId,
+      message,
+      type
+    };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    
+    setTimeout(() => {
+      removeToast(toast.id);
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   useEffect(() => {
     // Load Indian states
@@ -55,21 +83,70 @@ export default function PartSupplierPage() {
     setFormData(prev => ({ ...prev, cityTown: '' }));
   }, [formData.regionState]);
 
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case 'mobileNumber':
+        return /^[6-9]\d{9}$/.test(value) ? '' : 'Invalid mobile number';
+      case 'emailId':
+        return value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? 'Invalid email format' : '';
+      default:
+        return '';
+    }
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    const error = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   const handleCancel = () => {
-    router.push('/technician/inventory/partSuppliers');
+    router.push('/admin/inventory/partSuppliers');
   };
 
-  const handleCreate = () => {
-    console.log('Form Data:', formData);
-    // Handle form submission
+  const handleCreate = async () => {
+    const newErrors: {[key: string]: string} = {};
+    
+    if (!formData.supplierName.trim()) newErrors.supplierName = 'Supplier name is required';
+    if (!formData.mobileNumber.trim()) newErrors.mobileNumber = 'Mobile number is required';
+    else if (!/^[6-9]\d{9}$/.test(formData.mobileNumber)) newErrors.mobileNumber = 'Invalid mobile number';
+    if (formData.emailId && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailId)) newErrors.emailId = 'Invalid email format';
+    
+    setErrors(newErrors);
+    
+    if (Object.keys(newErrors).length > 0) return;
+    
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/admin/part-suppliers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        showToast('Part supplier created successfully!', 'success');
+        setTimeout(() => {
+          router.push('/technician/inventory/partSuppliers');
+        }, 2000);
+      } else {
+        const result = await response.json();
+        showToast(result.error || 'Failed to create supplier', 'error');
+      }
+    } catch (error) {
+      showToast('An error occurred while creating the supplier', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleSaveRegion = () => {
@@ -92,6 +169,30 @@ export default function PartSupplierPage() {
 
   return (
     <div className="bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
       <div className="mx-auto bg-white rounded-lg shadow-sm">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
@@ -105,9 +206,10 @@ export default function PartSupplierPage() {
             </button>
             <button
               onClick={handleCreate}
-              className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors"
+              disabled={isSubmitting}
+              className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors disabled:opacity-50"
             >
-              Create
+              {isSubmitting ? 'Creating...' : 'Create'}
             </button>
           </div>
         </div>
@@ -128,8 +230,11 @@ export default function PartSupplierPage() {
                   value={formData.supplierName}
                   onChange={handleInputChange}
                   placeholder="Type supplier name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.supplierName ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.supplierName && <p className="text-red-500 text-sm mt-1">{errors.supplierName}</p>}
               </div>
 
               {/* Mobile Number */}
@@ -150,9 +255,12 @@ export default function PartSupplierPage() {
                     value={formData.mobileNumber}
                     onChange={handleInputChange}
                     placeholder="Eg: 99XXXXXXXX"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className={`flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                      errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   />
                 </div>
+                {errors.mobileNumber && <p className="text-red-500 text-sm mt-1">{errors.mobileNumber}</p>}
               </div>
 
               {/* Phone Number */}
@@ -198,8 +306,11 @@ export default function PartSupplierPage() {
                   value={formData.emailId}
                   onChange={handleInputChange}
                   placeholder="Eg: example@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.emailId ? 'border-red-500' : 'border-gray-300'
+                  }`}
                 />
+                {errors.emailId && <p className="text-red-500 text-sm mt-1">{errors.emailId}</p>}
               </div>
             </div>
           </div>
