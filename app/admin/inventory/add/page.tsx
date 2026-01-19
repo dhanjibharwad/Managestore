@@ -183,6 +183,19 @@ export default function AddPartPage() {
     loadCategories();
   }, []);
 
+  // Prevent background scroll when modals are open
+  useEffect(() => {
+    if (showCategoryModal || showSubCategoryModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showCategoryModal, showSubCategoryModal]);
+
   const handleSubmit = async () => {
     if (!formData.partName || !formData.openingStock || !formData.purchasePrice) {
       showToast('Please fill in required fields: Part Name, Opening Stock, and Purchase Price', 'warning');

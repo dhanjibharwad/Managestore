@@ -49,6 +49,19 @@ export default function PurchasePage() {
     generatePurchaseNumber();
   }, []);
 
+  // Prevent background scroll when modal is open
+  React.useEffect(() => {
+    if (showModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showModal]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
     setToasts(prev => [...prev, toast]);

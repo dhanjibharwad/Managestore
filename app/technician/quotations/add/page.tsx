@@ -72,6 +72,19 @@ export default function QuotationPage() {
     fetchCustomers();
   }, []);
 
+  // Prevent background scroll when modals are open
+  React.useEffect(() => {
+    if (showServiceModal || showPartModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showServiceModal, showPartModal]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
     setToasts(prev => [...prev, toast]);

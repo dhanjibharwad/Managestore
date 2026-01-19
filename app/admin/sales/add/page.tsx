@@ -57,6 +57,19 @@ export default function SalesForm() {
     fetchCustomers();
   }, []);
 
+  // Prevent background scroll when modal is open
+  React.useEffect(() => {
+    if (showAddPartModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAddPartModal]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
     setToasts(prev => [...prev, toast]);

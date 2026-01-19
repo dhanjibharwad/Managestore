@@ -13,6 +13,7 @@ interface Sale {
   grand_total: number;
   subtotal: number;
   total_tax: number;
+  parts?: string;
 }
 
 export default function SalesPage() {
@@ -259,7 +260,7 @@ export default function SalesPage() {
                       {sale.customer_name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                      -
+                      {sale.parts || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                       ₹{parseFloat(sale.grand_total.toString()).toFixed(2)}

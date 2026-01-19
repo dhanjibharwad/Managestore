@@ -57,6 +57,19 @@ export default function SalesForm() {
     fetchCustomers();
   }, []);
 
+  // Prevent background scroll when modal is open
+  React.useEffect(() => {
+    if (showAddPartModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showAddPartModal]);
+
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: nextToastId, message, type };
     setToasts(prev => [...prev, toast]);
@@ -280,7 +293,7 @@ export default function SalesForm() {
           </h1>
           <div className="flex gap-3">
             <button 
-              onClick={() => router.push('/technician/sales')}
+              onClick={() => router.push('/admin/sales')}
               className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors"
             >
               Cancel
