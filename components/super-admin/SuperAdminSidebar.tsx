@@ -21,7 +21,7 @@ const navItems = [
   // { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
   // { label: "Admins", href: "/super-admin/admins", icon: UserCog },
   // { label: "Settings", href: "/super-admin/settings", icon: Settings },
-   { label: "Blogs", href: "/super-admin/blogs", icon: NotebookTabs },
+  //  { label: "Blogs", href: "/super-admin/blogs", icon: NotebookTabs },
 ];
 
 export default function SuperAdminSidebar() {
