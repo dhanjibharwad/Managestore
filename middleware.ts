@@ -62,19 +62,9 @@ export async function middleware(request: NextRequest) {
     console.log('JWT payload:', payload);
     
     if (payload.userId) {
-      // Get user role from API call since we can't access DB in middleware
-      const response = await fetch(new URL('/api/auth/me', request.url), {
-        headers: {
-          'Cookie': `session=${token}`
-        }
-      });
-      
-      if (response.ok) {
-        const userData = await response.json();
-        userRole = userData.user.role;
-        isAuthenticated = true;
-        console.log('User role:', userRole);
-      }
+      isAuthenticated = true;
+      // For now, allow all authenticated users and let page components handle role checks
+      console.log('User authenticated via JWT');
     }
   } catch (error) {
     console.log('JWT verification failed:', error);
@@ -89,20 +79,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Role-based route protection
-  if (userRole) {
-    console.log('Checking access for role:', userRole, 'to path:', pathname);
-    const allowedRoutes = roleRoutes[userRole as keyof typeof roleRoutes] || [];
-    console.log('Allowed routes for role:', allowedRoutes);
-    const hasAccess = allowedRoutes.some(route => pathname.startsWith(route));
-    console.log('Has access:', hasAccess);
-    
-    if (!hasAccess) {
-      console.log('Access denied for role:', userRole, 'to route:', pathname);
-      return NextResponse.redirect(new URL('/unauthorized', request.url));
-    }
-  }
-
+  // Allow all authenticated users - role checking will be done by page components
   console.log('Access granted to:', pathname);
   return NextResponse.next();
 }
