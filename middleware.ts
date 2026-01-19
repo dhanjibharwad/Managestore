@@ -36,35 +36,22 @@ export async function middleware(request: NextRequest) {
 
   console.log('Middleware running for:', pathname, 'Token exists:', !!token);
 
-  // Special handling for /auth/register - requires invite token
-  if (pathname === '/auth/register') {
-    const inviteToken = request.nextUrl.searchParams.get('token');
-    if (!inviteToken) {
-      console.log('No invite token - redirecting to login');
-      return NextResponse.redirect(new URL('/auth/login', request.url));
-    }
-    console.log('Invite token present, allowing register access');
-    return NextResponse.next();
-  }
-
   // FORCE REDIRECT FOR ALL PROTECTED ROUTES WITHOUT TOKEN
   if (!token) {
     console.log('No token - redirecting to login');
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Check if user is authenticated via JWT and get role
+  // Check if user is authenticated via JWT
   let isAuthenticated = false;
-  let userRole = null;
   
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     console.log('JWT payload:', payload);
     
-    if (payload.userId) {
+    if (payload.userId && payload.companyId) {
       isAuthenticated = true;
-      // For now, allow all authenticated users and let page components handle role checks
-      console.log('User authenticated via JWT');
+      console.log('User authenticated');
     }
   } catch (error) {
     console.log('JWT verification failed:', error);
@@ -79,7 +66,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Allow all authenticated users - role checking will be done by page components
   console.log('Access granted to:', pathname);
   return NextResponse.next();
 }
@@ -89,8 +75,7 @@ export const config = {
     '/admin/:path*',
     '/technician/:path*',
     '/customer/:path*',
-    '/super-admin/:path*',
-    '/auth/register'
+    '/super-admin/:path*'
   ],
 };
 
