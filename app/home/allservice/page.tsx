@@ -36,10 +36,10 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     description: "Tools for scheduling, task assignment, employee access control, and module visibility.",
     color: "text-amber-600 bg-amber-50/70",
     services: [
-      { name: "Task Management", href: "/user/services/task-management" },
-      { name: "Work Scheduler", href: "/user/services/work-scheduler" },
-      { name: "Employee Permissions", href: "/user/services/employee-permissions" },
-      { name: "Show / Hide Modules", href: "/user/services/module-control" },
+      { name: "Task Management", href: "#" },
+      { name: "Work Scheduler", href: "#" },
+      { name: "Employee Permissions", href: "#" },
+      { name: "Show / Hide Modules", href: "#" },
     ],
   },
   {
@@ -48,9 +48,9 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     description: "Handle customer relationships, lead generation, pickup/drop logistics, and outsource workflows.",
     color: "text-green-600 bg-green-50/70",
     services: [
-      { name: "Lead Management", href: "/user/services/lead-management" },
-      { name: "Pickup Drop Management", href: "/user/services/pickup-drop" },
-      { name: "Outsource Management", href: "/user/services/outsource-management" },
+      { name: "Lead Management", href: "#" },
+      { name: "Pickup Drop Management", href: "#" },
+      { name: "Outsource Management", href: "#" },
     ],
   },
   {
@@ -59,10 +59,10 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     description: "Manage stock, purchases, expenses, and point-of-sale transactions efficiently.",
     color: "text-purple-600 bg-purple-50/70",
     services: [
-      { name: "Inventory Management", href: "/user/services/inventory-management" },
-      { name: "Purchase Management", href: "/user/services/purchase-management" },
-      { name: "Expense Management", href: "/user/services/expense-management" },
-      { name: "Point of Sale (POS)", href: "/user/services/pos" },
+      { name: "Inventory Management", href: "#" },
+      { name: "Purchase Management", href: "#" },
+      { name: "Expense Management", href: "#" },
+      { name: "Point of Sale (POS)", href: "#" },
     ],
   },
   {
@@ -71,9 +71,9 @@ const SERVICE_CATEGORIES: ServiceCategory[] = [
     description: "Features dedicated to ensuring security, verification protocols, and data protection.",
     color: "text-red-600 bg-red-50/70",
     services: [
-      { name: "OTP for Delivery", href: "/user/services/otp-delivery" },
-      { name: "Device Image Gallery", href: "/user/services/device-gallery" },
-      { name: "Data Recovery Management", href: "/user/services/data-recovery" },
+      { name: "OTP for Delivery", href: "#" },
+      { name: "Device Image Gallery", href: "#" },
+      { name: "Data Recovery Management", href: "#" },
     ],
   },
 ];
