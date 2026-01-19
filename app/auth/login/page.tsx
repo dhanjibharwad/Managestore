@@ -63,7 +63,7 @@ export default function LoginPage() {
 
       // Redirect based on user role
       const roleRoutes = {
-        'super-admin': '/super-admin/dashboard',
+        'superadmin': '/super-admin/dashboard',
         'admin': '/admin/dashboard',
         'technician': '/technician/dashboard',
         'customer': '/customer/dashboard'
