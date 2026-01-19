@@ -1,13 +1,64 @@
-// app/(customer)/dashboard/page.tsx
+"use client";
+
 import { Receipt, TrendingUp, Briefcase, DollarSign } from "lucide-react";
+import { useState, useEffect } from "react";
+
+interface DashboardStats {
+  activeJobs: number;
+  completedJobs: number;
+  pendingPayments: number;
+  totalSpent: string;
+}
 
 export default function CustomerDashboard() {
-  const stats = [
-    { title: "Active Jobs", value: 4, change: "- 0%", icon: Receipt },
-    { title: "Completed Jobs", value: 28, change: "- 0%", icon: TrendingUp },
-    { title: "Pending Payments", value: 2, change: "- 0%", icon: Briefcase },
-    { title: "Total Spent", value: "₹12,450", change: "- 0%", icon: DollarSign },
+  const [stats, setStats] = useState<DashboardStats>({
+    activeJobs: 0,
+    completedJobs: 0,
+    pendingPayments: 0,
+    totalSpent: "₹0"
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const response = await fetch('/api/customer/dashboard-stats');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
+  const statsConfig = [
+    { title: "Active Jobs", value: stats.activeJobs, change: "- 0%", icon: Receipt },
+    { title: "Completed Jobs", value: stats.completedJobs, change: "- 0%", icon: TrendingUp },
+    { title: "Pending Payments", value: stats.pendingPayments, change: "- 0%", icon: Briefcase },
+    { title: "Total Spent", value: stats.totalSpent, change: "- 0%", icon: DollarSign },
   ];
+
+  if (loading) {
+    return (
+      <div>
+        <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-white rounded-lg shadow-sm p-6 animate-pulse">
+              <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div className="h-8 bg-gray-200 rounded"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -15,7 +66,7 @@ export default function CustomerDashboard() {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((item, i) => {
+        {statsConfig.map((item, i) => {
           const IconComponent = item.icon;
           return (
             <div key={i} className="bg-white rounded-lg shadow-sm p-6 relative overflow-hidden">
@@ -29,7 +80,6 @@ export default function CustomerDashboard() {
                   <span className="text-cyan-500 text-xs font-medium">{item.change}</span>
                 </div>
                 <div className="text-3xl font-bold text-gray-900">{item.value}</div>
-                {/* <div className="text-xs text-gray-400 mt-1">From 2025-11-04 - 2025-12-04</div> */}
               </div>
             </div>
           );
