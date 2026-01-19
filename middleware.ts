@@ -61,8 +61,7 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jwtVerify(token, JWT_SECRET);
     console.log('JWT payload:', payload);
     
-    if (payload.userId && payload.companyId) {
-      isAuthenticated = true;
+    if (payload.userId) {
       // Get user role from API call since we can't access DB in middleware
       const response = await fetch(new URL('/api/auth/me', request.url), {
         headers: {
@@ -73,6 +72,7 @@ export async function middleware(request: NextRequest) {
       if (response.ok) {
         const userData = await response.json();
         userRole = userData.user.role;
+        isAuthenticated = true;
         console.log('User role:', userRole);
       }
     }
