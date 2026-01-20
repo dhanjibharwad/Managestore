@@ -14,7 +14,15 @@ function ResetPasswordForm() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState(0);
+  const [passwordStrength, setPasswordStrength] = useState<{
+    score: number;
+    feedback: string[];
+    isValid: boolean;
+  }>({
+    score: 0,
+    feedback: [],
+    isValid: false
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -27,30 +35,63 @@ function ResetPasswordForm() {
     }
   }, [email, companyId, router]);
 
-  const calculatePasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[^a-zA-Z\d]/.test(password)) strength++;
-    return strength;
+  const validatePasswordStrength = (password: string) => {
+    const feedback: string[] = [];
+    let score = 0;
+
+    if (password.length >= 8) {
+      score += 1;
+    } else {
+      feedback.push('At least 8 characters');
+    }
+
+    if (/[A-Z]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('One uppercase letter');
+    }
+
+    if (/[a-z]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('One lowercase letter');
+    }
+
+    if (/\d/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('One number');
+    }
+
+    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      score += 1;
+    } else {
+      feedback.push('One special character (!@#$%^&*)');
+    }
+
+    const isValid = score >= 4;
+    return { score, feedback, isValid };
   };
 
   const handlePasswordChange = (password: string) => {
     setFormData({ ...formData, newPassword: password });
-    setPasswordStrength(calculatePasswordStrength(password));
+    const strength = validatePasswordStrength(password);
+    setPasswordStrength(strength);
   };
 
-  const getPasswordStrengthColor = () => {
-    if (passwordStrength <= 1) return 'bg-red-500';
-    if (passwordStrength <= 3) return 'bg-yellow-500';
-    return 'bg-green-500';
+  const getStrengthColor = (score: number) => {
+    if (score <= 1) return 'bg-red-500';
+    if (score <= 2) return 'bg-orange-500';
+    if (score <= 3) return 'bg-yellow-500';
+    if (score <= 4) return 'bg-green-500';
+    return 'bg-green-600';
   };
 
-  const getPasswordStrengthText = () => {
-    if (passwordStrength <= 1) return 'Weak';
-    if (passwordStrength <= 3) return 'Medium';
+  const getStrengthText = (score: number) => {
+    if (score <= 1) return 'Very Weak';
+    if (score <= 2) return 'Weak';
+    if (score <= 3) return 'Fair';
+    if (score <= 4) return 'Good';
     return 'Strong';
   };
 
@@ -94,8 +135,8 @@ function ResetPasswordForm() {
       return;
     }
 
-    if (formData.newPassword.length < 8) {
-      setError('Password must be at least 8 characters long');
+    if (!passwordStrength.isValid) {
+      setError('Password does not meet security requirements');
       return;
     }
 
@@ -263,14 +304,37 @@ function ResetPasswordForm() {
                 {formData.newPassword && (
                   <div className="mt-2">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-gray-600">Password strength:</span>
-                      <span className={`text-xs font-medium ${passwordStrength <= 1 ? 'text-red-600' : passwordStrength <= 3 ? 'text-yellow-600' : 'text-green-600'}`}>
-                        {getPasswordStrengthText()}
+                      <span className="text-xs text-gray-600">Password Strength:</span>
+                      <span className={`text-xs font-medium ${
+                        passwordStrength.score <= 1 ? 'text-red-600' :
+                        passwordStrength.score <= 2 ? 'text-orange-600' :
+                        passwordStrength.score <= 3 ? 'text-yellow-600' :
+                        'text-green-600'
+                      }`}>
+                        {getStrengthText(passwordStrength.score)}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-1.5">
-                      <div className={`h-1.5 rounded-full transition-all ${getPasswordStrengthColor()}`} style={{ width: `${(passwordStrength / 5) * 100}%` }}></div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-300 ${getStrengthColor(passwordStrength.score)}`}
+                        style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                      ></div>
                     </div>
+                    {passwordStrength.feedback.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-gray-600 mb-1">Password must include:</p>
+                        <ul className="text-xs space-y-1">
+                          {passwordStrength.feedback.map((item, index) => (
+                            <li key={index} className="flex items-center text-red-600">
+                              <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                              </svg>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
