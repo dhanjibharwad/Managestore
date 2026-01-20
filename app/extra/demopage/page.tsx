@@ -102,14 +102,11 @@ export default function App() {
                 The unified solution for modern retail and service management. Register your store or company and let us handle the heavy lifting.
               </p>
               {/* Primary CTA (visible on small screens) */}
-              <button
-                onClick={handleBookDemo}
-                className="mt-6 sm:mt-8 md:hidden w-full sm:w-auto group relative px-6 sm:px-8 py-3 bg-blue-600 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.03] transition-all duration-300 font-bold text-sm sm:text-base flex items-center justify-center space-x-2 overflow-hidden border border-blue-600"
-              >
+              <Link href="/auth/company-register" className="mt-6 sm:mt-8 md:hidden w-full sm:w-auto group relative px-6 sm:px-8 py-3 bg-blue-600 text-white rounded-xl shadow-lg hover:shadow-2xl transform hover:scale-[1.03] transition-all duration-300 font-bold text-sm sm:text-base flex items-center justify-center space-x-2 overflow-hidden border border-blue-600">
                 <span className="absolute top-0 left-0 w-full h-full block bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 group-hover:translate-x-full"></span>
                 <span className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                 <span className="relative z-10">Book a Live Demo</span>
-              </button>
+                <span className="relative z-10">Book a Live Demo</span>
+              </Link>
             </div>
 
             {/* Results/Stats Section */}

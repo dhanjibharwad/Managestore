@@ -6,7 +6,7 @@ const PrivacyPolicyPage = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
           <h1 className="text-4xl font-extrabold mb-4 text-gray-900">Privacy Policy</h1>
-          <p className="mb-8 text-gray-500">Last Updated: December 10, 2025</p>
+          <p className="mb-8 text-gray-500">Last Updated: January 5, 2026</p>
 
           <p className="mb-8 text-gray-700">
             Welcome to our Privacy Policy. Your privacy is critically important to us. This policy outlines how we collect, use, protect, and handle your personal information as you use our website and services to resolve technical issues with your laptops, TVs, mobiles, and other devices.

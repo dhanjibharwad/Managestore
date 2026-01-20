@@ -7,7 +7,7 @@ const TermsAndConditionsPage = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-4xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
           <h1 className="text-4xl font-extrabold mb-4 text-gray-900">Terms and Conditions</h1>
-          <p className="mb-8 text-gray-500">Last Updated: December 10, 2025</p>
+          <p className="mb-8 text-gray-500">Last Updated: January 5, 2026</p>
 
           <p className="mb-8 text-gray-700">
             Please read these Terms and Conditions ("Terms") carefully before using our website and services. Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.
@@ -17,7 +17,7 @@ const TermsAndConditionsPage = () => {
             <div>
               <h2 className="text-2xl font-bold mb-3 text-gray-800">1. Acceptance of Terms</h2>
               <p className="text-gray-700">
-                By submitting a service query form or otherwise using our services, you agree to be bound by these Terms and our <Link href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>. If you disagree with any part of the terms, then you may not access the Service.
+                By submitting a service query form or otherwise using our services, you agree to be bound by these Terms and our <Link href="/extra/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>. If you disagree with any part of the terms, then you may not access the Service.
               </p>
             </div>
 
