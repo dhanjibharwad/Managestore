@@ -98,7 +98,7 @@ export default function CompanyRegisterPage() {
               Registration Successful!
             </h1>
             <p className="text-xl text-gray-700 mb-4 font-medium">
-              Welcome aboard, {formData.companyName}
+              Welcome aboard, <strong>{formData.companyName}</strong>
             </p>
             <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
               The details have been registered with Store Manager. Soon our team will contact you and help in onboarding.
