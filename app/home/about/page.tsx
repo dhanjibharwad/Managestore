@@ -49,7 +49,7 @@ export default function AboutPage() {
         </div> */}
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20 lg:py-28 text-center">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-wide drop-shadow-md font-serif text-gray-700">
             About Us
           </h1>
           <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-700 leading-relaxed animate-fade-in delay-200 max-w-4xl mx-auto">
