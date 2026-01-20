@@ -204,7 +204,7 @@ function VerifyEmailForm() {
           <div className="mb-6">
             <h2 className="text-3xl font-bold text-gray-900 mb-2 text-center">Verify Your Email</h2>
             <p className="text-gray-600 text-center">We sent a 6-digit code to</p>
-            <p className="font-medium text-gray-900 mt-1">{email}</p>
+            <p className="font-medium text-blue-900 mt-1 text-center">{email}</p>
           </div>
 
           {/* Messages */}
