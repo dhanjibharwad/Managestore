@@ -264,19 +264,11 @@ export default function PickupDropsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
                       <div className="flex items-center gap-2">
-                        <Link href={`/admin/pickupdrop/edit/${item.id}`}>
+                        <Link href={`/technician/pickupdrop/edit/${item.id}`}>
                           <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                             <Edit className="w-4 h-4" />
                           </button>
                         </Link>
-                        <button 
-                          onClick={() => {
-                            setDeleteModal({show: true, item});
-                          }}
-                          className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
                       </div>
                     </td>
                   </tr>
