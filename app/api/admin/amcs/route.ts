@@ -81,7 +81,16 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const query = 'SELECT * FROM amc_contracts ORDER BY created_at DESC';
+    const query = `
+      SELECT 
+        ac.*,
+        c.customer_name as customer_display_name,
+        e.employee_name as assignee_display_name
+      FROM amc_contracts ac
+      LEFT JOIN customers c ON ac.customer_name = c.id::varchar
+      LEFT JOIN employees e ON ac.assignee = e.id::varchar
+      ORDER BY ac.created_at DESC
+    `;
     const result = await pool.query(query);
     
     return NextResponse.json({ 
