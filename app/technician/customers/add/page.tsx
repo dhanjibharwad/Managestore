@@ -2,8 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronDown, Plus } from 'lucide-react';
+import { ChevronDown, Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
 import { State, City } from 'country-state-city';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface StateType {
   isoCode: string;
@@ -17,6 +23,8 @@ interface CityType {
 export default function CustomerForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
   const [states, setStates] = useState<StateType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
   const [formData, setFormData] = useState({
@@ -36,19 +44,41 @@ export default function CustomerForm() {
   const [errors, setErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
+    // Load Indian states
     const indianStates = State.getStatesOfCountry('IN');
     setStates(indianStates);
   }, []);
 
   useEffect(() => {
+    // Load cities when state changes
     if (formData.regionState) {
       const stateCities = City.getCitiesOfState('IN', formData.regionState);
       setCities(stateCities);
     } else {
       setCities([]);
     }
+    // Reset city when state changes
     setFormData(prev => ({ ...prev, cityTown: '' }));
   }, [formData.regionState]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = {
+      id: nextToastId,
+      message,
+      type
+    };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      removeToast(toast.id);
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const validateField = (name: string, value: string) => {
     const newErrors = { ...errors };
@@ -62,7 +92,9 @@ export default function CustomerForm() {
         }
         break;
       case 'emailId':
-        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        if (!value) {
+          newErrors.emailId = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
           newErrors.emailId = 'Invalid email format';
         } else {
           delete newErrors.emailId;
@@ -74,14 +106,30 @@ export default function CustomerForm() {
   };
 
   const handleSubmit = async () => {
-    if (!formData.customerType || !formData.customerName) {
-      alert('Please fill in required fields: Customer Type and Customer Name');
+    if (!formData.customerType || !formData.customerName || !formData.emailId) {
+      showToast('Please fill in required fields: Customer Type, Customer Name, and Email ID', 'warning');
       return;
     }
 
+    // Validate email on submit
+    validateField('emailId', formData.emailId);
+
     if (Object.keys(errors).length > 0) {
-      alert('Please fix validation errors before submitting');
+      showToast('Please fix validation errors before submitting', 'error');
       return;
+    }
+
+    // Check for duplicate email
+    try {
+      const checkResponse = await fetch(`/api/admin/customers/check-email?email=${encodeURIComponent(formData.emailId)}`);
+      const checkResult = await checkResponse.json();
+      
+      if (checkResult.exists) {
+        showToast('A customer with this email address already exists', 'error');
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking email:', error);
     }
 
     setIsSubmitting(true);
@@ -98,25 +146,52 @@ export default function CustomerForm() {
       const result = await response.json();
 
       if (response.ok) {
-        alert(`Customer created successfully! Customer ID: ${result.customer.customer_id}`);
-        router.push('/admin/customers');
+        showToast(`Customer created successfully! Customer ID: ${result.customer.customer_id}`, 'success');
+        setTimeout(() => {
+          router.push('/technician/customers');
+        }, 2000);
       } else {
-        alert(result.error || 'Failed to create customer');
+        showToast(result.error || 'Failed to create customer', 'error');
       }
     } catch (error) {
       console.error('Error creating customer:', error);
-      alert('An error occurred while creating the customer');
+      showToast('An error occurred while creating the customer', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    router.push('/technician/customers');
+    router.push('/admin/customers');
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+
       <div className="mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
@@ -215,7 +290,7 @@ export default function CustomerForm() {
               {/* Email ID */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email ID
+                  Email ID <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -330,20 +405,28 @@ export default function CustomerForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Region/State
                 </label>
-                <div className="relative">
-                  <select
-                    value={formData.regionState}
-                    onChange={(e) => setFormData({ ...formData, regionState: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <select
+                      value={formData.regionState}
+                      onChange={(e) => setFormData({ ...formData, regionState: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    >
+                      <option value="">Select region / state</option>
+                      {states.map((state) => (
+                        <option key={state.isoCode} value={state.isoCode}>
+                          {state.name}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  </div>
+                  {/* <button
+                    type="button"
+                    className="w-10 h-10 flex items-center justify-center bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors flex-shrink-0"
                   >
-                    <option value="">Select region / state</option>
-                    {states.map((state) => (
-                      <option key={state.isoCode} value={state.isoCode}>
-                        {state.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    <Plus className="w-5 h-5" />
+                  </button> */}
                 </div>
               </div>
 

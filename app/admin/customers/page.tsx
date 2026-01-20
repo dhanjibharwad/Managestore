@@ -30,6 +30,7 @@ export default function CustomersPage() {
   const [sendingInvite, setSendingInvite] = useState<number | null>(null);
   const [deletingCustomer, setDeletingCustomer] = useState<number | null>(null);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
+  const [inviteModal, setInviteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -79,7 +80,7 @@ export default function CustomersPage() {
   const handleSendInvitation = async (customerId: number) => {
     try {
       setSendingInvite(customerId);
-      setOpenDropdown(null);
+      setInviteModal({show: false, customer: null});
       
       const response = await fetch('/api/admin/customers/invite', {
         method: 'POST',
@@ -255,7 +256,10 @@ export default function CustomersPage() {
                         <div className="absolute right-0 top-8 w-56 bg-white border border-zinc-200 rounded-lg shadow-lg z-50">
                           <div className="py-1">
                             <button 
-                              onClick={() => handleSendInvitation(customer.id)}
+                              onClick={() => {
+                                setInviteModal({show: true, customer});
+                                setOpenDropdown(null);
+                              }}
                               disabled={sendingInvite === customer.id}
                               className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 disabled:opacity-50"
                             >
@@ -301,6 +305,77 @@ export default function CustomersPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Invite Modal */}
+      {inviteModal.show && inviteModal.customer && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Send Invitation</h3>
+                  <p className="text-sm text-gray-500">Invite customer to access the portal</p>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Customer Name
+                </label>
+                <input
+                  type="text"
+                  value={inviteModal.customer.customer_name}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 text-gray-700"
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={inviteModal.customer.email_id || ''}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 text-gray-700"
+                />
+                {!inviteModal.customer.email_id && (
+                  <p className="text-red-500 text-xs mt-1">No email address found for this customer</p>
+                )}
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setInviteModal({show: false, customer: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleSendInvitation(inviteModal.customer!.id)}
+                  disabled={!inviteModal.customer.email_id || sendingInvite === inviteModal.customer.id}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {sendingInvite === inviteModal.customer.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Invitation'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.show && deleteModal.customer && (

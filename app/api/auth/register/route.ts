@@ -52,8 +52,8 @@ export async function POST(req: NextRequest) {
         // Check customer invites
         const customerInviteResult = await pool.query(
           `SELECT id, company_id, invitation_status, invited_at FROM customers 
-           WHERE invitation_token = $1 AND email_id = $2`,
-          [token, email.toLowerCase().trim()]
+           WHERE invitation_token = $1`,
+          [token]
         );
 
         if (customerInviteResult.rows.length > 0) {
@@ -82,8 +82,8 @@ export async function POST(req: NextRequest) {
           // Check employee invites
           const employeeInviteResult = await pool.query(
             `SELECT id, company_id, invitation_status, invited_at, employee_role FROM employees 
-             WHERE invitation_token = $1 AND email_id = $2`,
-            [token, email.toLowerCase().trim()]
+             WHERE invitation_token = $1`,
+            [token]
           );
 
           if (employeeInviteResult.rows.length === 0) {
@@ -155,16 +155,16 @@ export async function POST(req: NextRequest) {
       if (customerId) {
         if (userRole === 'customer') {
           await pool.query(
-            'UPDATE customers SET invitation_status = $1, user_id = $2 WHERE id = $3',
-            ['accepted', user.id, customerId]
+            'UPDATE customers SET invitation_status = $1, user_id = $2, email_id = $3 WHERE id = $4',
+            ['accepted', user.id, email.toLowerCase().trim(), customerId]
           );
-          console.log('Marked customer invite as accepted and linked user');
+          console.log('Marked customer invite as accepted, linked user, and updated email');
         } else {
           await pool.query(
-            'UPDATE employees SET invitation_status = $1, user_id = $2 WHERE id = $3',
-            ['accepted', user.id, customerId]
+            'UPDATE employees SET invitation_status = $1, user_id = $2, email_id = $3 WHERE id = $4',
+            ['accepted', user.id, email.toLowerCase().trim(), customerId]
           );
-          console.log('Marked employee invite as accepted and linked user');
+          console.log('Marked employee invite as accepted, linked user, and updated email');
         }
       } else {
         await pool.query(

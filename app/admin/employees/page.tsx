@@ -31,6 +31,7 @@ const EmployeeTable = () => {
   const [sendingInvite, setSendingInvite] = useState<number | null>(null);
   const [deletingEmployee, setDeletingEmployee] = useState<number | null>(null);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, employee: Employee | null}>({show: false, employee: null});
+  const [inviteModal, setInviteModal] = useState<{show: boolean, employee: Employee | null}>({show: false, employee: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -79,7 +80,7 @@ const EmployeeTable = () => {
   const handleSendInvitation = async (employeeId: number) => {
     try {
       setSendingInvite(employeeId);
-      setOpenDropdown(null);
+      setInviteModal({show: false, employee: null});
       
       const response = await fetch('/api/admin/employees/invite', {
         method: 'POST',
@@ -260,7 +261,10 @@ const EmployeeTable = () => {
                         <div className="absolute right-0 top-8 w-56 bg-white border border-zinc-200 rounded-lg shadow-lg z-50">
                           <div className="py-1">
                             <button 
-                              onClick={() => handleSendInvitation(employee.id)}
+                              onClick={() => {
+                                setInviteModal({show: true, employee});
+                                setOpenDropdown(null);
+                              }}
                               disabled={sendingInvite === employee.id}
                               className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 disabled:opacity-50"
                             >
@@ -306,6 +310,77 @@ const EmployeeTable = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Invite Modal */}
+      {inviteModal.show && inviteModal.employee && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Send Invitation</h3>
+                  <p className="text-sm text-gray-500">Invite employee to access the portal</p>
+                </div>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Employee Name
+                </label>
+                <input
+                  type="text"
+                  value={inviteModal.employee.employee_name}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 text-gray-700"
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  value={inviteModal.employee.email_id || ''}
+                  readOnly
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 text-gray-700"
+                />
+                {!inviteModal.employee.email_id && (
+                  <p className="text-red-500 text-xs mt-1">No email address found for this employee</p>
+                )}
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setInviteModal({show: false, employee: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleSendInvitation(inviteModal.employee!.id)}
+                  disabled={!inviteModal.employee.email_id || sendingInvite === inviteModal.employee.id}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {sendingInvite === inviteModal.employee.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Invitation'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteModal.show && deleteModal.employee && (
