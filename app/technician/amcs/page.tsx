@@ -6,7 +6,9 @@ interface Contract {
   id: number;
   contract_number: string;
   customer_name: string;
+  customer_display_name: string;
   assignee: string;
+  assignee_display_name: string;
   amount: string;
   contract_start_date: string;
   contract_end_date: string;
@@ -38,8 +40,8 @@ export default function AMCContractsPage() {
   };
 
   const filteredContracts = contracts.filter(contract =>
-    contract.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    contract.assignee.toLowerCase().includes(searchQuery.toLowerCase())
+    (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (contract.assignee_display_name || contract.assignee).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -160,10 +162,10 @@ export default function AMCContractsPage() {
                         {contract.contract_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.customer_name}
+                        {contract.customer_display_name || contract.customer_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.assignee}
+                        {contract.assignee_display_name || contract.assignee}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {contract.amc_type}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp, Plus, Info, Settings, CreditCard, DollarSign, FileText, Smartphone, Trash2, X, Calendar } from 'lucide-react';
+import { Search, ChevronDown, Plus, Settings, CreditCard, DollarSign, FileText, Smartphone, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface Sale {
@@ -17,7 +17,6 @@ interface Sale {
 }
 
 export default function SalesPage() {
-  const [isExpanded, setIsExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTax, setFilterTax] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -73,67 +72,8 @@ export default function SalesPage() {
     return matchesSearch && matchesStatus;
   });
 
-  const totalPayment = filteredSales.reduce((sum, sale) => sum + parseFloat(sale.grand_total.toString()), 0);
-  const totalPaymentReceived = 0; // TODO: Calculate from payments table
-  const totalDueAmount = totalPayment - totalPaymentReceived;
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="mb-6">
-        <button
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="flex items-center gap-2 text-xl font-semibold text-gray-800 hover:text-gray-600 transition-colors"
-        >
-          Sale Quick Overview Report
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5" />
-          ) : (
-            <ChevronDown className="w-5 h-5" />
-          )}
-        </button>
-      </div>
-
-      {/* Summary Cards */}
-      <div 
-        className={`grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 overflow-hidden transition-all duration-500 ease-in-out ${
-          isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        {/* Total Payment */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm font-medium">Total Payment</span>
-            <Info className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-3xl font-bold text-gray-800">
-            {totalPayment.toFixed(2)}
-          </div>
-        </div>
-
-        {/* Total Payment Received */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm font-medium">Total Payment Received</span>
-            <Info className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-3xl font-bold text-gray-800">
-            {totalPaymentReceived.toFixed(2)}
-          </div>
-        </div>
-
-        {/* Total Due Amount */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-600 text-sm font-medium">Total Due Amount</span>
-            <Info className="w-4 h-4 text-gray-400" />
-          </div>
-          <div className="text-3xl font-bold text-gray-800">
-            {totalDueAmount.toFixed(2)}
-          </div>
-        </div>
-      </div>
-
       {/* Sales Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         {/* Header with Filters */}
