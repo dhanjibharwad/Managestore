@@ -310,18 +310,12 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Customer <span className="text-red-500">*</span>
                 </label>
-                <div className="relative">
-                  <select value={customerSearch} onChange={(e) => setCustomerSearch(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white">
-                    <option value="">Select customer</option>
-                    {customers.map(cust => (
-                      <option key={cust.id} value={cust.id}>
-                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
-                </div>
+                <input 
+                  type="text" 
+                  value={customers.find(c => c.id.toString() === customerSearch)?.customer_name || 'Loading...'}
+                  readOnly
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md bg-gray-50 text-gray-700 cursor-not-allowed"
+                />
               </div>
 
               <div>
