@@ -104,7 +104,7 @@ export default function CompanyRegisterPage() {
               The details have been registered with Store Manager. Soon our team will contact you and help in onboarding.
             </p>
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-100">
-              <p className="text-sm text-gray-600 mb-2">A confirmation email has been sent to:</p>
+              <p className="text-sm text-gray-600 mb-2">Once verification is complete, a confirmation email will be sent to:</p>
               <p className="text-blue-600 font-semibold text-lg">{formData.email}</p>
             </div>
             <button
