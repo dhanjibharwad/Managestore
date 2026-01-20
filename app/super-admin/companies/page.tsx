@@ -25,6 +25,7 @@ export default function CompaniesPage() {
   const [filter, setFilter] = useState<'all' | 'inactive' | 'active' | 'suspended'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [approving, setApproving] = useState<number | null>(null);
+  const [resendingInvite, setResendingInvite] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   useEffect(() => {
@@ -87,6 +88,26 @@ export default function CompaniesPage() {
       console.error('Failed to update company status:', error);
     } finally {
       setApproving(null);
+    }
+  };
+
+  const handleResendInvite = async (companyId: number) => {
+    try {
+      setResendingInvite(companyId);
+      
+      const res = await fetch(`/api/super-admin/companies/${companyId}/resend-invite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (res.ok) {
+        // Show success message or toast
+        console.log('Invitation resent successfully');
+      }
+    } catch (error) {
+      console.error('Failed to resend invitation:', error);
+    } finally {
+      setResendingInvite(null);
     }
   };
 
@@ -358,6 +379,23 @@ export default function CompaniesPage() {
                           {approving === company.id ? 'Approving...' : 'Approve'}
                         </Button>
                       </div>
+                    )}
+                    
+                    {company.status === 'active' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleResendInvite(company.id)}
+                        disabled={resendingInvite === company.id}
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                      >
+                        {resendingInvite === company.id ? (
+                          <div className="w-4 h-4 mr-1 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                        ) : (
+                          <Mail className="w-4 h-4 mr-1" />
+                        )}
+                        {resendingInvite === company.id ? 'Sending...' : 'Resend Invite'}
+                      </Button>
                     )}
                   </div>
                 </CardContent>
