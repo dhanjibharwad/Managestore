@@ -234,7 +234,7 @@ export default function CompanyRegisterPage() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="1234567890"
+                        placeholder="Enter your phone number"
                         className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
