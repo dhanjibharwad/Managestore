@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create session with company context
-    await createSession(user.id, user.company_id);
+    await createSession(user.id, user.company_id, user.role);
 
     // Update last login
     await updateLastLogin(user.id);
