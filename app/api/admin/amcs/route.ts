@@ -81,17 +81,25 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const companyId = searchParams.get('companyId');
+
+    if (!companyId) {
+      return NextResponse.json({ error: 'Company ID is required' }, { status: 400 });
+    }
+
     const query = `
       SELECT 
         ac.*,
         c.customer_name as customer_display_name,
         e.employee_name as assignee_display_name
       FROM amc_contracts ac
-      LEFT JOIN customers c ON ac.customer_name = c.id::varchar
-      LEFT JOIN employees e ON ac.assignee = e.id::varchar
+      LEFT JOIN customers c ON ac.customer_name = c.id::varchar AND c.company_id = $1
+      LEFT JOIN employees e ON ac.assignee = e.id::varchar AND e.company_id = $1
+      WHERE ac.company_id = $1
       ORDER BY ac.created_at DESC
     `;
-    const result = await pool.query(query);
+    const result = await pool.query(query, [companyId]);
     
     return NextResponse.json({ 
       contracts: result.rows 

@@ -101,30 +101,22 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const companyId = searchParams.get('companyId');
 
-    const query = companyId
-      ? `SELECT s.*, 
+    if (!companyId) {
+      return NextResponse.json({ error: 'Company ID is required' }, { status: 400 });
+    }
+
+    const query = `SELECT s.*, 
                COALESCE(c.customer_name, s.customer_name) as customer_name,
                STRING_AGG(DISTINCT COALESCE(p.part_name, si.description), ', ') as parts
          FROM sales s 
-         LEFT JOIN customers c ON c.customer_id = s.customer_name OR c.id::text = s.customer_name
+         LEFT JOIN customers c ON (c.customer_id = s.customer_name OR c.id::text = s.customer_name) AND c.company_id = $1
          LEFT JOIN sale_items si ON si.sale_id = s.id
-         LEFT JOIN parts p ON p.id = si.part_id
+         LEFT JOIN parts p ON p.id = si.part_id AND p.company_id = $1
          WHERE s.company_id = $1 
-         GROUP BY s.id, c.customer_name
-         ORDER BY s.created_at DESC`
-      : `SELECT s.*, 
-               COALESCE(c.customer_name, s.customer_name) as customer_name,
-               STRING_AGG(DISTINCT COALESCE(p.part_name, si.description), ', ') as parts
-         FROM sales s 
-         LEFT JOIN customers c ON c.customer_id = s.customer_name OR c.id::text = s.customer_name
-         LEFT JOIN sale_items si ON si.sale_id = s.id
-         LEFT JOIN parts p ON p.id = si.part_id
          GROUP BY s.id, c.customer_name
          ORDER BY s.created_at DESC`;
 
-    const result = companyId
-      ? await pool.query(query, [companyId])
-      : await pool.query(query);
+    const result = await pool.query(query, [companyId]);
 
     return NextResponse.json({ sales: result.rows });
   } catch (error) {
