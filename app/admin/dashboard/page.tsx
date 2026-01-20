@@ -164,7 +164,7 @@ const JobsSection: React.FC = () => {
                 <option>{config.selectPlaceholder}</option>
               </select>
               
-              {config.showAllFilters && (
+              {/* {config.showAllFilters && (
                 <button className="px-2 sm:px-3 lg:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-1 sm:gap-2 font-medium">
                   <SlidersHorizontal className="w-4 h-4" />
                   <span className="hidden sm:inline">All Filters</span>
@@ -177,7 +177,7 @@ const JobsSection: React.FC = () => {
                   <Download className="w-4 sm:w-5 h-4 sm:h-5" />
                 </button>
               )}
-              
+               */}
               <Link href={config.buttonLink} className="px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-[#4A70A9] text-white rounded-md text-xs sm:text-sm hover:bg-[#3d5c8c] flex items-center gap-1 sm:gap-2 font-medium shadow-sm flex-shrink-0">
                 <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
                 <span className="hidden xs:inline">{config.buttonText}</span>

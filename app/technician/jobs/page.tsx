@@ -16,6 +16,13 @@ interface Job {
   created_at: string;
 }
 
+interface Employee {
+  id: number;
+  employee_name: string;
+  employee_role: string;
+  email: string;
+}
+
 interface CheckInLead {
   id: string;
   openLead: string;
@@ -37,25 +44,29 @@ const JobPage: React.FC = () => {
   const [jobStatus, setJobStatus] = useState('');
   const [assigneeFilter, setAssigneeFilter] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
-  const leads: CheckInLead[] = [
-    {
-      id: '1',
-      openLead: 'Uday Bhai',
-      mobile: '8208219903',
-      email: 'udayofficial31@gmail.com',
-      assignee: {
-        name: 'Dhanji Bharwad',
-        initials: 'DB'
-      },
-      status: 'Open',
-      deviceType: 'CF Card',
-      services: '',
-      comment: ''
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('/api/admin/employees');
+      const data = await response.json();
+      if (response.ok && data.employees) {
+        setEmployees(data.employees);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
     }
-  ];
+  };
+
+  const getEmployeeByName = (name: string) => {
+    return employees.find(emp => emp.employee_name === name);
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
   const fetchJobs = async () => {
     try {
@@ -78,7 +89,10 @@ const JobPage: React.FC = () => {
     }
   };
 
+  const leads: CheckInLead[] = [];
+
   useEffect(() => {
+    fetchEmployees();
     fetchJobs();
   }, [searchQuery, jobStatus, assigneeFilter]);
 
@@ -104,13 +118,7 @@ const JobPage: React.FC = () => {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              {tab === 'Self Check-In' && (
-                <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  1
-                </span>
-              )}
               {tab}
-              
             </button>
           ))}
         </div>
@@ -182,49 +190,68 @@ const JobPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.openLead}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#4A70A9] hover:underline cursor-pointer">{lead.mobile}</span>
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                              </svg>
-                            </button>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
-                              {lead.assignee.initials}
-                            </div>
-                            <span className="text-gray-900">{lead.assignee.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-cyan-400 text-white">
-                            {lead.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.deviceType}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.services}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.comment}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <Settings className="w-5 h-5" />
-                          </button>
+                    {leads.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
+                          No data
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      leads.map((lead) => (
+                        <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.openLead}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#4A70A9] hover:underline cursor-pointer">{lead.mobile}</span>
+                              <button className="text-gray-400 hover:text-gray-600">
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                                </svg>
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.email}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
+                                {lead.assignee.initials}
+                              </div>
+                              <span className="text-gray-900">{lead.assignee.name}</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-cyan-400 text-white">
+                              {lead.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.deviceType}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.services}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.comment}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            <button className="text-gray-400 hover:text-gray-600">
+                              <Settings className="w-5 h-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
             </div>
           </>
-        ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs' || activeTab === 'Outsourced Jobs') ? (
+        ) : activeTab === 'Outsourced Jobs' ? (
+          <>
+            {/* Outsourced Jobs - Currently under development */}
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="text-center">
+                <h2 className="text-xl font-semibold text-gray-900 mb-2">Outsourced Jobs</h2>
+                <p className="text-gray-500">This feature is currently under development.</p>
+                <p className="text-gray-400 text-sm mt-1">Coming soon...</p>
+              </div>
+            </div>
+          </>
+        ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs') ? (
           <>
             <div className="flex gap-4 mb-6 justify-end">
               <div className="relative w-64">
@@ -256,10 +283,11 @@ const JobPage: React.FC = () => {
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
               >
                 <option value="">Select assignee</option>
-                <option value="John Smith">John Smith</option>
-                <option value="Jane Doe">Jane Doe</option>
-                <option value="Mike Johnson">Mike Johnson</option>
-                <option value="Sarah Williams">Sarah Williams</option>
+                {employees.map(employee => (
+                  <option key={employee.id} value={employee.employee_name}>
+                    {employee.employee_name} ({employee.employee_role})
+                  </option>
+                ))}
               </select>
 
               <Link href="/technician/jobs/add">
@@ -302,7 +330,24 @@ const JobPage: React.FC = () => {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_brand}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_model || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{job.services}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.assignee}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {(() => {
+                              const employee = getEmployeeByName(job.assignee);
+                              return employee ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                    {getInitials(employee.employee_name)}
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-900 font-medium">{employee.employee_name}</div>
+                                    <div className="text-gray-500 text-xs">{employee.employee_role}</div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-900">{job.assignee}</span>
+                              );
+                            })()
+                          }</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               job.priority === 'High' ? 'bg-red-100 text-red-800' :
