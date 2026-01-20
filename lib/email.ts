@@ -151,7 +151,7 @@ export async function sendCustomerInviteEmail(
         <div style="background: #ffffff; padding: 30px; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 10px 10px;">
           <p style="font-size: 18px; margin-bottom: 20px;">Dear ${customerName},</p>
           
-          <p style="margin-bottom: 20px;">🎉 You have been invited to join <strong>${companyName}</strong> on our StoreManager platform!</p>
+          <p style="margin-bottom: 20px;">🎉 You have been invited to join <strong>${companyName}</strong> on our StoreManager platform as a <strong>Customer</strong>!</p>
           
           <p style="margin-bottom: 25px;">Click the button below to complete your registration and start accessing your account:</p>
           
