@@ -74,6 +74,8 @@ export default function LeadInformationPage() {
     postalCode: ''
   });
 
+  const [errors, setErrors] = useState<{[key: string]: string}>({});
+
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [deviceBrands, setDeviceBrands] = useState<DeviceBrand[]>([]);
   const [deviceModels, setDeviceModels] = useState<DeviceModel[]>([]);
@@ -232,11 +234,49 @@ export default function LeadInformationPage() {
     }
   };
 
+  const validateField = (name: string, value: string) => {
+    const newErrors = { ...errors };
+    
+    switch (name) {
+      case 'mobileNumber':
+        if (value && !/^[6-9][0-9]{9}$/.test(value)) {
+          newErrors.mobileNumber = 'Invalid mobile: 10 digits starting with 6-9';
+        } else {
+          delete newErrors.mobileNumber;
+        }
+        break;
+      case 'emailId':
+        if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+          newErrors.emailId = 'Invalid email format';
+        } else {
+          delete newErrors.emailId;
+        }
+        break;
+    }
+    
+    setErrors(newErrors);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    const newErrors: {[key: string]: string} = {};
+    
     if (!formData.leadName || !formData.assignee) {
       showToast('Lead Name and Assignee are required', 'warning');
+      return;
+    }
+
+    // Validate fields on submit
+    if (formData.mobileNumber) {
+      validateField('mobileNumber', formData.mobileNumber);
+    }
+    if (formData.emailId) {
+      validateField('emailId', formData.emailId);
+    }
+
+    if (Object.keys(errors).length > 0) {
+      showToast('Please fix validation errors before submitting', 'error');
       return;
     }
 
@@ -390,13 +430,23 @@ export default function LeadInformationPage() {
                 <div className="flex gap-2">
                   <input type="text" value="+91" readOnly className="w-16 px-3 py-2.5 border border-gray-300 rounded bg-gray-50 text-center" />
                   <input
-                    type="text"
-                    placeholder="Eg: 99XXXXXXXX"
-                    className="flex-1 px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    type="tel"
+                    placeholder="10 digits starting with 6-9"
+                    maxLength={10}
+                    className={`flex-1 px-4 py-2.5 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                      errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     value={formData.mobileNumber}
-                    onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setFormData({ ...formData, mobileNumber: value });
+                      validateField('mobileNumber', value);
+                    }}
                   />
                 </div>
+                {errors.mobileNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.mobileNumber}</p>
+                )}
               </div>
 
               <div>
@@ -404,10 +454,19 @@ export default function LeadInformationPage() {
                 <input
                   type="email"
                   placeholder="Eg: example@example.com"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className={`w-full px-4 py-2.5 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.emailId ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={formData.emailId}
-                  onChange={(e) => setFormData({ ...formData, emailId: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setFormData({ ...formData, emailId: value });
+                    validateField('emailId', value);
+                  }}
                 />
+                {errors.emailId && (
+                  <p className="text-red-500 text-xs mt-1">{errors.emailId}</p>
+                )}
               </div>
             </div>
 
