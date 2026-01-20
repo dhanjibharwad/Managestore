@@ -45,6 +45,18 @@ export async function POST(req: NextRequest) {
 
     const assigneeId = assignee ? parseInt(assignee) || null : null;
 
+    // Validate assignee_id exists in employees table if provided
+    if (assigneeId) {
+      const employeeCheck = await pool.query(
+        'SELECT id FROM employees WHERE id = $1 AND company_id = $2',
+        [assigneeId, companyId]
+      );
+      
+      if (employeeCheck.rows.length === 0) {
+        return NextResponse.json({ error: 'Selected assignee does not exist' }, { status: 400 });
+      }
+    }
+
     const result = await pool.query(
       `INSERT INTO pickup_drop (
         company_id, service_type, customer_search, mobile, device_type, schedule_date,
@@ -92,11 +104,11 @@ export async function GET(req: NextRequest) {
       SELECT 
         pd.*,
         c.customer_name,
-        u.name as assignee_name,
+        e.employee_name as assignee_name,
         dt.name as device_type_name
       FROM pickup_drop pd
       LEFT JOIN customers c ON pd.customer_search = c.id::text
-      LEFT JOIN users u ON pd.assignee_id = u.id
+      LEFT JOIN employees e ON pd.assignee_id = e.id
       LEFT JOIN device_types dt ON pd.device_type = dt.id::text
       WHERE pd.company_id = $1
     `;

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS pickup_drop (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE CASCADE,
-    FOREIGN KEY (assignee_id) REFERENCES users(id) ON DELETE SET NULL
+    FOREIGN KEY (assignee_id) REFERENCES employees(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_pickup_drop_company_id ON pickup_drop(company_id);

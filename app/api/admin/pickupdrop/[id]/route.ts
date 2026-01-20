@@ -22,10 +22,10 @@ export async function GET(
     }
 
     const result = await pool.query(
-      `SELECT pd.*, c.customer_name, u.name as assignee_name, dt.name as device_type_name
+      `SELECT pd.*, c.customer_name, e.employee_name as assignee_name, dt.name as device_type_name
        FROM pickup_drop pd
        LEFT JOIN customers c ON pd.customer_search = c.id::text
-       LEFT JOIN users u ON pd.assignee_id = u.id
+       LEFT JOIN employees e ON pd.assignee_id = e.id
        LEFT JOIN device_types dt ON pd.device_type = dt.id::text
        WHERE pd.id = $1 AND pd.company_id = $2`,
       [pickupDropId, companyId]
@@ -73,9 +73,21 @@ export async function PUT(
       return NextResponse.json({ error: 'Pickup/Drop not found' }, { status: 404 });
     }
 
+    // Validate assignee_id exists in employees table if provided
+    if (assignee_id) {
+      const employeeCheck = await pool.query(
+        'SELECT id FROM employees WHERE id = $1 AND company_id = $2',
+        [assignee_id, companyId]
+      );
+      
+      if (employeeCheck.rows.length === 0) {
+        return NextResponse.json({ error: 'Selected assignee does not exist' }, { status: 400 });
+      }
+    }
+
     const result = await pool.query(
       'UPDATE pickup_drop SET service_type = $1, customer_search = $2, mobile = $3, device_type = $4, address = $5, assignee_id = $6, schedule_date = $7, status = $8, updated_at = NOW() WHERE id = $9 AND company_id = $10 RETURNING *',
-      [service_type, customer_search, mobile, device_type, address, assignee_id, schedule_date, status, pickupDropId, companyId]
+      [service_type, customer_search, mobile, device_type, address, assignee_id || null, schedule_date, status, pickupDropId, companyId]
     );
 
     return NextResponse.json({ pickupDrop: result.rows[0] });
