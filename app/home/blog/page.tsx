@@ -12,92 +12,136 @@ import Image from 'next/image'
 const blogPosts = [
   {
     id: 1,
-    title: "Revolutionizing Store Management with AI-Powered Analytics",
-    excerpt: "Discover how artificial intelligence is transforming retail operations and helping store managers make data-driven decisions.",
-    content: "In today's competitive retail landscape, store managers need every advantage they can get. AI-powered analytics are revolutionizing how we understand customer behavior, optimize inventory, and predict trends...",
-    author: "Sarah Johnson",
-    date: "2024-01-15",
+    title: "Smart Store Management: Leveraging Technology for Better Operations",
+    excerpt: "Discover how modern store management systems are revolutionizing retail operations with real-time analytics, automated inventory tracking, and enhanced customer insights.",
+    content: "Today's store managers have access to powerful technology that transforms how they operate. From AI-powered inventory management to customer behavior analytics, smart systems are helping retailers optimize every aspect of their business...",
+    author: "Priya Sharma",
+    date: "2025-01-15",
     category: "Technology",
-    tags: ["AI", "Analytics", "Retail"],
+    tags: ["Store Management", "Analytics", "Automation"],
     image: "/images/Service1.jpg",
     readTime: "5 min read"
   },
   {
     id: 2,
-    title: "Best Practices for Inventory Management in 2024",
-    excerpt: "Learn the latest strategies and tools for efficient inventory management that can reduce costs and improve customer satisfaction.",
-    content: "Effective inventory management is the backbone of successful retail operations. With the right strategies and tools, store managers can significantly reduce costs while improving customer satisfaction...",
-    author: "Michael Chen",
-    date: "2024-01-12",
+    title: "Inventory Optimization: Reduce Costs and Increase Profits",
+    excerpt: "Master the art of inventory management with proven strategies that minimize waste, prevent stockouts, and maximize your store's profitability.",
+    content: "Effective inventory management is crucial for store success. Learn how to implement just-in-time ordering, ABC analysis, and demand forecasting to optimize your stock levels and boost profitability...",
+    author: "Rajesh Kumar",
+    date: "2025-01-12",
     category: "Operations",
-    tags: ["Inventory", "Management", "Best Practices"],
+    tags: ["Inventory", "Cost Reduction", "Profit Optimization"],
     image: "/images/Service2.jpg",
     readTime: "7 min read"
   },
   {
     id: 3,
-    title: "Customer Experience: The Key to Retail Success",
-    excerpt: "Explore how focusing on customer experience can drive sales, build loyalty, and differentiate your store from competitors.",
-    content: "In an era where customers have countless options, providing exceptional customer experience has become the ultimate differentiator. Store managers who prioritize CX see significant improvements in sales and loyalty...",
-    author: "Emily Rodriguez",
-    date: "2024-01-10",
+    title: "Building Customer Loyalty Through Exceptional Service",
+    excerpt: "Learn proven strategies to create memorable customer experiences that drive repeat business and build long-term loyalty for your store.",
+    content: "Customer loyalty is the foundation of sustainable retail success. Discover how to train your team, implement loyalty programs, and create personalized experiences that keep customers coming back...",
+    author: "Anita Patel",
+    date: "2025-01-10",
     category: "Customer Service",
-    tags: ["Customer Experience", "Sales", "Loyalty"],
+    tags: ["Customer Loyalty", "Service Excellence", "Retention"],
     image: "/images/service3.jpg",
     readTime: "6 min read"
   },
   {
     id: 4,
-    title: "Digital Transformation in Retail: A Complete Guide",
-    excerpt: "Navigate the digital transformation journey with practical steps and real-world examples from successful retail implementations.",
-    content: "Digital transformation is no longer optional for retail businesses. This comprehensive guide provides store managers with actionable insights and proven strategies for successful digital adoption...",
-    author: "David Park",
-    date: "2024-01-08",
-    category: "Digital",
-    tags: ["Digital Transformation", "Technology", "Innovation"],
+    title: "Staff Management: Building High-Performance Retail Teams",
+    excerpt: "Effective staff management strategies that improve productivity, reduce turnover, and create a positive work environment in your store.",
+    content: "Your team is your most valuable asset. Learn how to recruit, train, and motivate retail staff while creating schedules that optimize coverage and control labor costs...",
+    author: "Vikram Singh",
+    date: "2025-01-08",
+    category: "Management",
+    tags: ["Staff Management", "Team Building", "Management"],
     image: "/images/Service4.jpg",
-    readTime: "10 min read"
-  },
-  {
-    id: 5,
-    title: "Sustainable Retail Practices That Drive Profits",
-    excerpt: "Discover how implementing sustainable practices can reduce costs, attract conscious consumers, and boost your bottom line.",
-    content: "Sustainability isn't just good for the planet—it's good for business. Forward-thinking store managers are implementing eco-friendly practices that reduce operational costs and attract environmentally conscious customers...",
-    author: "Lisa Thompson",
-    date: "2024-01-05",
-    category: "Sustainability",
-    tags: ["Sustainability", "Profit", "Environment"],
-    image: "/images/Service5.jpg",
     readTime: "8 min read"
   },
   {
+    id: 5,
+    title: "Financial Management for Store Owners: Key Metrics That Matter",
+    excerpt: "Understanding essential financial metrics and KPIs that help you make informed decisions and drive your store's profitability.",
+    content: "Financial success requires more than just tracking sales. Learn about gross margins, inventory turnover, customer acquisition costs, and other critical metrics that impact your bottom line...",
+    author: "Meera Gupta",
+    date: "2025-01-05",
+    category: "Finance",
+    tags: ["Financial Management", "KPIs", "Profitability"],
+    image: "/images/Service5.jpg",
+    readTime: "9 min read"
+  },
+  {
     id: 6,
-    title: "The Future of Point-of-Sale Systems",
-    excerpt: "Explore emerging POS technologies and how they're reshaping the checkout experience for both customers and staff.",
-    content: "Point-of-sale systems have evolved far beyond simple transaction processing. Modern POS solutions integrate with inventory management, customer relationship systems, and analytics platforms...",
-    author: "Robert Kim",
-    date: "2024-01-03",
-    category: "Technology",
-    tags: ["POS", "Technology", "Innovation"],
+    title: "Store Layout and Visual Merchandising: Maximize Sales Per Square Foot",
+    excerpt: "Strategic store design and merchandising techniques that guide customer flow, increase dwell time, and boost average transaction values.",
+    content: "Your store layout is a powerful sales tool. Discover how to optimize product placement, create compelling displays, and design customer journeys that maximize revenue per square foot...",
+    author: "Arjun Reddy",
+    date: "2025-01-03",
+    category: "Merchandising",
+    tags: ["Store Layout", "Visual Merchandising", "Sales Optimization"],
     image: "/images/Service6.jpg",
     readTime: "6 min read"
+  },
+  {
+    id: 7,
+    title: "Loss Prevention: Protecting Your Store's Profitability",
+    excerpt: "Comprehensive strategies to reduce shrinkage, prevent theft, and protect your inventory while maintaining a welcoming customer environment.",
+    content: "Retail shrinkage can significantly impact your bottom line. Learn about modern loss prevention techniques, security systems, and staff training that protect your assets without compromising customer experience...",
+    author: "Kavya Nair",
+    date: "2025-01-01",
+    category: "Security",
+    tags: ["Loss Prevention", "Security", "Shrinkage Reduction"],
+    image: "/images/Service1.jpg",
+    readTime: "7 min read"
+  },
+  {
+    id: 8,
+    title: "Seasonal Planning: Maximizing Revenue Throughout the Year",
+    excerpt: "Strategic planning techniques to capitalize on seasonal trends, manage inventory cycles, and optimize marketing campaigns for peak performance.",
+    content: "Successful retailers think seasonally. Learn how to plan inventory, staffing, and marketing campaigns that align with seasonal demand patterns and maximize revenue opportunities...",
+    author: "Rohit Agarwal",
+    date: "2023-12-28",
+    category: "Planning",
+    tags: ["Seasonal Planning", "Revenue Optimization", "Marketing"],
+    image: "/images/Service2.jpg",
+    readTime: "8 min read"
   }
 ]
 
-const categories = ["All", "Technology", "Operations", "Customer Service", "Digital", "Sustainability"]
+const categories = ["All", "Technology", "Operations", "Customer Service", "Management", "Finance", "Merchandising", "Security", "Planning"]
 
 export default function BlogPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
   const [showFilters, setShowFilters] = useState(false)
 
+  const handleTagClick = (tag: string) => {
+    // Check if the tag matches a category
+    const matchingCategory = categories.find(cat => cat.toLowerCase() === tag.toLowerCase())
+    if (matchingCategory) {
+      setSelectedCategory(matchingCategory)
+      setSearchTerm("")
+    } else {
+      setSearchTerm(tag)
+      setSelectedCategory("All")
+    }
+  }
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category)
+    setSearchTerm("")
+  }
+
   const filteredPosts = useMemo(() => {
     return blogPosts.filter(post => {
-      const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      const matchesCategory = selectedCategory === "All" || post.category === selectedCategory
-      return matchesSearch && matchesCategory
+      // If there's a search term, only filter by search
+      if (searchTerm) {
+        return post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               post.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+               post.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      }
+      // Otherwise, filter by category
+      return selectedCategory === "All" || post.category === selectedCategory
     })
   }, [searchTerm, selectedCategory])
 
@@ -109,16 +153,16 @@ export default function BlogPage() {
       <section className="relative text-gray-700 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">Store Manager Insights</h1>
+            <h1 className="text-4xl font-bold mb-6 mt-6">Store Manager Hub</h1>
             <p className="text-xl mb-8 opacity-90">
-              Expert insights, best practices, and industry trends for modern retail management
+              Your ultimate resource for retail management success - expert insights, proven strategies, and actionable tips for store owners and managers
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-300">
-                Latest Articles
+              <Button size="lg" className="bg-blue-600 text-white hover:bg-blue-700">
+                Browse Articles
               </Button>
-              <Button size="lg" variant="outline" className="bg-white text-blue-600 hover:bg-gray-300">
-                Subscribe to Newsletter
+              <Button size="lg" variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
+                Join Community
               </Button>
             </div>
           </div>
@@ -142,7 +186,12 @@ export default function BlogPage() {
                 </div>
               </div>
               <CardContent className="p-8 flex flex-col justify-center">
-                <Badge className="w-fit mb-4">{featuredPost.category}</Badge>
+                <Badge 
+                  className="w-fit mb-4 cursor-pointer hover:bg-blue-100 transition-colors" 
+                  onClick={() => handleCategoryClick(featuredPost.category)}
+                >
+                  {featuredPost.category}
+                </Badge>
                 <CardTitle className="text-2xl mb-4">{featuredPost.title}</CardTitle>
                 <p className="text-gray-600 mb-6">{featuredPost.excerpt}</p>
                 <div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
@@ -196,7 +245,7 @@ export default function BlogPage() {
                     key={category}
                     variant={selectedCategory === category ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => handleCategoryClick(category)}
                   >
                     {category}
                   </Button>
@@ -227,7 +276,12 @@ export default function BlogPage() {
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-4 left-4">
-                      <Badge>{post.category}</Badge>
+                      <Badge 
+                        className="cursor-pointer hover:bg-blue-100 transition-colors"
+                        onClick={() => handleCategoryClick(post.category)}
+                      >
+                        {post.category}
+                      </Badge>
                     </div>
                   </div>
                   <CardContent className="p-6">
@@ -248,7 +302,12 @@ export default function BlogPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex flex-wrap gap-1">
                         {post.tags.slice(0, 2).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
+                          <Badge 
+                            key={tag} 
+                            variant="outline" 
+                            className="text-xs cursor-pointer hover:bg-blue-100 hover:border-blue-300 transition-colors"
+                            onClick={() => handleTagClick(tag)}
+                          >
                             {tag}
                           </Badge>
                         ))}
@@ -274,17 +333,17 @@ export default function BlogPage() {
       <section className="py-16 text-gray-700">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
+            <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
             <p className="text-xl mb-8 opacity-90">
-              Get the latest insights and best practices delivered to your inbox
+              Get weekly store management tips, industry insights, and exclusive resources delivered to your inbox
             </p>
             <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
               <Input
                 placeholder="Enter your email"
                 className="bg-white text-black"
               />
-              <Button className="bg-white text-blue-600 hover:bg-gray-300">
-                Subscribe
+              <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                Subscribe Now
               </Button>
             </div>
           </div>
