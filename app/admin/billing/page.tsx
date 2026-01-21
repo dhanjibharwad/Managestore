@@ -134,12 +134,12 @@ export default function BillingPage() {
             )}
           </button>
           
-          <button
+          {/* <button
             onClick={() => handleTabClick('payments')}
             className="pb-3 px-1 font-medium text-gray-600 hover:text-gray-900 transition-colors"
           >
             Payments
-          </button>
+          </button> */}
           
           {/* <button
             onClick={() => handleTabClick('collect')}

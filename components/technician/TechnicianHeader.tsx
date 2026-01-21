@@ -67,10 +67,10 @@ export default function TechnicianHeader() {
           />
         </div> */}
         {/* Notification bell with badge */}
-        <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
+        {/* <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors relative">
           <Bell className="w-5 h-5 text-gray-600" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-        </button>
+        </button> */}
 
         {/* Company name */}
         <div className="text-sm font-semibold text-gray-800 mr-4 px-3 py-1 bg-gray-50 rounded-md">
