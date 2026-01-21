@@ -95,7 +95,7 @@ export default function SalesPage() {
               </div>
 
               {/* Filter by Tax */}
-              <div className="relative">
+              {/* <div className="relative">
                 <select
                   value={filterTax}
                   onChange={(e) => setFilterTax(e.target.value)}
@@ -106,7 +106,7 @@ export default function SalesPage() {
                   <option value="non-gst">Non-GST</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
+              </div> */}
 
               {/* Select Status */}
               <div className="relative">

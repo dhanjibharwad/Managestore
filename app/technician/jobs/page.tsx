@@ -99,8 +99,8 @@ const JobPage: React.FC = () => {
   const tabs = [
     'Open Jobs',
     'All Jobs',
-    'Outsourced Jobs',
-    'Self Check-In'
+    // 'Outsourced Jobs',
+    // 'Self Check-In'
   ];
 
   return (

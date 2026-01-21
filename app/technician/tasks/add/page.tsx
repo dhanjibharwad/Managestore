@@ -671,7 +671,7 @@ export default function AddNewTaskPage() {
           </div>
 
           {/* Send Alert */}
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-3">
               Send Alert
             </label>
@@ -685,7 +685,7 @@ export default function AddNewTaskPage() {
                 />
                 <span className="text-sm text-gray-700">Mail</span>
               </label>
-              {/* <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={sendAlert.sms}
@@ -693,7 +693,7 @@ export default function AddNewTaskPage() {
                   className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
                 />
                 <span className="text-sm text-gray-700">SMS</span>
-              </label> */}
+              </label>
              
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -705,7 +705,7 @@ export default function AddNewTaskPage() {
                 <span className="text-sm text-gray-700">WhatsApp</span>
               </label>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

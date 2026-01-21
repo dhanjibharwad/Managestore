@@ -30,7 +30,7 @@ const navItems = [
   // { label: "Technicians", href: "/admin/technicians", icon: Wrench },
   // { label: "Settings", href: "/admin/settings", icon: Settings },
   { label: "AMCS", href: "/admin/amcs", icon: FileCheck },
-   { label: "Billing", href: "/admin/billing", icon: ReceiptIndianRupee },
+  //  { label: "Billing", href: "/admin/billing", icon: ReceiptIndianRupee },
   { label: "Customers", href: "/admin/customers", icon: Users },
    { label: "Sales", href: "/admin/sales", icon: LineChart }, 
    { label: "Quotations", href: "/admin/quotations", icon: FileText  },
