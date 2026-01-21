@@ -1,8 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Edit, Trash2 } from 'lucide-react';
+import { Search, Trash2, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface Quotation {
   id: string;
@@ -23,6 +29,21 @@ export default function QuotationsPage() {
   const [quotations, setQuotations] = useState<Quotation[]>([]);
   const [loading, setLoading] = useState(true);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, quotation: Quotation | null}>({show: false, quotation: null});
+  const [deletingQuotation, setDeletingQuotation] = useState<string | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   React.useEffect(() => {
     fetchUserSession();
@@ -70,6 +91,29 @@ export default function QuotationsPage() {
       console.error('Failed to fetch quotations:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (quotationId: string) => {
+    try {
+      setDeletingQuotation(quotationId);
+      setDeleteModal({show: false, quotation: null});
+      
+      const response = await fetch(`/api/admin/quotations?id=${quotationId}&companyId=${companyId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setQuotations(prev => prev.filter(q => q.id !== quotationId));
+        showToast('Quotation deleted successfully!', 'success');
+      } else {
+        showToast('Failed to delete quotation', 'error');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      showToast('Failed to delete quotation', 'error');
+    } finally {
+      setDeletingQuotation(null);
     }
   };
 
@@ -191,12 +235,10 @@ export default function QuotationsPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">₹{quotation.totalAmount.toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm text-gray-800">
                     <div className="flex items-center gap-2">
-                      <Link href={`/admin/quotations/edit/${quotation.id}`}>
-                        <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                      </Link>
-                      <button className="p-1 text-red-600 hover:text-red-800 transition-colors">
+                      <button 
+                        onClick={() => setDeleteModal({show: true, quotation})}
+                        className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -206,6 +248,86 @@ export default function QuotationsPage() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.quotation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Quotation</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete quotation <strong>{deleteModal.quotation.quotationNumber}</strong>? 
+                All associated data will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModal({show: false, quotation: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteModal.quotation!.id)}
+                  disabled={deletingQuotation === deleteModal.quotation.id}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deletingQuotation === deleteModal.quotation.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

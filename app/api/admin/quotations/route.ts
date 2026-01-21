@@ -175,3 +175,51 @@ export async function POST(req: NextRequest) {
     client.release();
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  const client = await pool.connect();
+  
+  try {
+    const { searchParams } = new URL(req.url);
+    const quotationId = searchParams.get('id');
+    const companyId = searchParams.get('companyId');
+
+    if (!quotationId || !companyId) {
+      return NextResponse.json({ error: 'Quotation ID and Company ID required' }, { status: 400 });
+    }
+
+    await client.query('BEGIN');
+
+    // Delete quotation services
+    await client.query(
+      'DELETE FROM quotation_services WHERE quotation_id = $1 AND company_id = $2',
+      [quotationId, companyId]
+    );
+
+    // Delete quotation parts
+    await client.query(
+      'DELETE FROM quotation_parts WHERE quotation_id = $1 AND company_id = $2',
+      [quotationId, companyId]
+    );
+
+    // Delete quotation
+    const result = await client.query(
+      'DELETE FROM quotations WHERE id = $1 AND company_id = $2 RETURNING id',
+      [quotationId, companyId]
+    );
+
+    if (result.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return NextResponse.json({ error: 'Quotation not found' }, { status: 404 });
+    }
+
+    await client.query('COMMIT');
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    await client.query('ROLLBACK');
+    console.error('Delete quotation error:', error);
+    return NextResponse.json({ error: 'Failed to delete quotation' }, { status: 500 });
+  } finally {
+    client.release();
+  }
+}
