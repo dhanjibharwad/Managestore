@@ -51,11 +51,6 @@ export async function GET(req: NextRequest) {
       paramCount++;
       query += ` AND j.status = $${paramCount}`;
       params.push(status);
-    } else {
-      // Default to showing only non-closed jobs if no specific status filter
-      paramCount++;
-      query += ` AND j.status != $${paramCount}`;
-      params.push('Closed');
     }
 
     if (search && search !== '') {

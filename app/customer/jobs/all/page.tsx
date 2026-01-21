@@ -30,6 +30,7 @@ export default function JobsPage() {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       if (statusFilter) params.append('status', statusFilter);
+      // Don't add default status filter for "All Jobs" page
       
       const response = await fetch(`/api/customer/jobs?${params}`);
       const data = await response.json();
@@ -108,10 +109,11 @@ export default function JobsPage() {
             className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm text-gray-700 bg-white min-w-[200px]"
           >
             <option value="">Select job status</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Closed">Closed</option>
+             <option value="Pending">Pending</option>
           </select>
           {/* <button className="px-6 py-2.5 bg-[#4A70A9] text-white rounded-lg hover:bg-[#3d5c8a] transition-colors text-sm font-medium">
             + New Job
