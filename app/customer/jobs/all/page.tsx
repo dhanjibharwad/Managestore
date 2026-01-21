@@ -109,10 +109,10 @@ export default function JobsPage() {
             className="px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm text-gray-700 bg-white min-w-[200px]"
           >
             <option value="">Select job status</option>
-            <option value="Open">Open</option>
+            {/* <option value="Open">Open</option> */}
             <option value="In Progress">In Progress</option>
             <option value="Completed">Completed</option>
-            <option value="Closed">Closed</option>
+            {/* <option value="Closed">Closed</option> */}
              <option value="Pending">Pending</option>
           </select>
           {/* <button className="px-6 py-2.5 bg-[#4A70A9] text-white rounded-lg hover:bg-[#3d5c8a] transition-colors text-sm font-medium">

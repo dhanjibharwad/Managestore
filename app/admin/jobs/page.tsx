@@ -317,10 +317,10 @@ const JobPage: React.FC = () => {
                 className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
               >
                 <option value="">Select job status</option>
-                <option value="Open">Open</option>
+                {/* <option value="Open">Open</option> */}
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
-                <option value="Closed">Closed</option>
+                {/* <option value="Closed">Closed</option> */}
                 <option value="Pending">Pending</option>
               </select>
 
