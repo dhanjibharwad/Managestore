@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp, Plus, Info, Settings, CreditCard, DollarSign, FileText, Smartphone, Trash2, X, Calendar } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Plus, Info, Settings, CreditCard, DollarSign, FileText, Smartphone, Trash2, X, Calendar, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface Sale {
@@ -16,6 +16,12 @@ interface Sale {
   parts?: string;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
 export default function SalesPage() {
   const [isExpanded, setIsExpanded] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +33,9 @@ export default function SalesPage() {
   const [dropdownPosition, setDropdownPosition] = useState<{top: number, right: number} | null>(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, sale: Sale | null}>({show: false, sale: null});
+  const [deletingSale, setDeletingSale] = useState<number | null>(null);
 
   useEffect(() => {
     fetchSales();
@@ -51,6 +60,41 @@ export default function SalesPage() {
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [openDropdown]);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const handleDeleteSale = async (saleId: number) => {
+    try {
+      setDeletingSale(saleId);
+      setDeleteModal({show: false, sale: null});
+      
+      const response = await fetch(`/api/admin/sales/${saleId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setSales(prev => prev.filter(s => s.id !== saleId));
+        showToast('Sale deleted successfully!', 'success');
+      } else {
+        showToast('Failed to delete sale', 'error');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      showToast('Failed to delete sale', 'error');
+    } finally {
+      setDeletingSale(null);
+    }
+  };
 
   const fetchSales = async () => {
     try {
@@ -155,7 +199,7 @@ export default function SalesPage() {
               </div>
 
               {/* Filter by Tax */}
-              <div className="relative">
+              {/* <div className="relative">
                 <select
                   value={filterTax}
                   onChange={(e) => setFilterTax(e.target.value)}
@@ -166,7 +210,7 @@ export default function SalesPage() {
                   <option value="non-gst">Non-GST</option>
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div>
+              </div> */}
 
               {/* Select Status */}
               <div className="relative">
@@ -314,7 +358,7 @@ export default function SalesPage() {
                                 <CreditCard className="w-4 h-4" />
                                 Add Payment
                               </button>
-                              <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                              {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <DollarSign className="w-4 h-4" />
                                 Collect Payment
                               </button>
@@ -325,8 +369,14 @@ export default function SalesPage() {
                               <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <Smartphone className="w-4 h-4" />
                                 Send UPI Link
-                              </button>
-                              <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                              </button> */}
+                              <button 
+                                onClick={() => {
+                                  setDeleteModal({show: true, sale});
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                              >
                                 <Trash2 className="w-4 h-4" />
                                 Delete Sale
                               </button>
@@ -502,6 +552,86 @@ export default function SalesPage() {
           </div>
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.sale && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Sale</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete sale <strong>{deleteModal.sale.sale_number}</strong>? 
+                All associated data will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModal({show: false, sale: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDeleteSale(deleteModal.sale!.id)}
+                  disabled={deletingSale === deleteModal.sale.id}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deletingSale === deleteModal.sale.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

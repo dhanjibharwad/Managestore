@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Plus, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, X, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -150,6 +150,11 @@ export default function SalesForm() {
     const calculatedTotal = calculatedSubTotal + calculatedTaxAmount;
     setTotalAmount(calculatedTotal.toFixed(2));
   }, [price, quantity, discount, tax]);
+
+  const removeItem = (itemId: string) => {
+    setItems(items.filter(item => item.id !== itemId));
+    showToast('Item removed successfully', 'success');
+  };
 
   const addItem = () => {
     setShowAddPartModal(true);
@@ -333,7 +338,7 @@ export default function SalesForm() {
                   </select>
                   <Link href="/admin/customers/add/">
                   <button className="p-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
-                    <Plus size={20} />
+                    <Plus size={22} />
                   </button>
                   </Link>
                 </div>
@@ -412,13 +417,14 @@ export default function SalesForm() {
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-r border-gray-200">Tax</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-r border-gray-200">Tax Amt</th>
                       <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-r border-gray-200">Sub Total</th>
-                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Total</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 border-r border-gray-200">Total</th>
+                      <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-4 py-12 text-center text-gray-400">
+                        <td colSpan={10} className="px-4 py-12 text-center text-gray-400">
                           No data
                         </td>
                       </tr>
@@ -449,8 +455,17 @@ export default function SalesForm() {
                           <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
                             {item.subTotal.toFixed(2)}
                           </td>
-                          <td className="px-4 py-2 text-sm text-gray-700">
+                          <td className="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
                             {item.total.toFixed(2)}
+                          </td>
+                          <td className="px-4 py-2 text-sm text-gray-700">
+                            <button
+                              onClick={() => removeItem(item.id)}
+                              className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                              title="Remove item"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </td>
                         </tr>
                       ))

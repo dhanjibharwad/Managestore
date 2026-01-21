@@ -138,29 +138,37 @@ export async function GET(req: NextRequest) {
     const assignee = searchParams.get('assignee');
     const search = searchParams.get('search');
 
-    let query = 'SELECT * FROM jobs WHERE company_id = $1';
+    let query = `SELECT j.*, 
+                        dt.name as device_type_name,
+                        db.name as device_brand_name, 
+                        dm.name as device_model_name 
+                 FROM jobs j 
+                 LEFT JOIN device_types dt ON CASE WHEN j.device_type ~ '^[0-9]+$' THEN j.device_type::integer ELSE NULL END = dt.id
+                 LEFT JOIN device_brands db ON CASE WHEN j.device_brand ~ '^[0-9]+$' THEN j.device_brand::integer ELSE NULL END = db.id 
+                 LEFT JOIN device_models dm ON CASE WHEN j.device_model ~ '^[0-9]+$' THEN j.device_model::integer ELSE NULL END = dm.id
+                 WHERE j.company_id = $1`;
     const params: any[] = [session.company.id];
     let paramCount = 1;
 
     if (status) {
       paramCount++;
-      query += ` AND status = $${paramCount}`;
+      query += ` AND j.status = $${paramCount}`;
       params.push(status);
     }
 
     if (assignee) {
       paramCount++;
-      query += ` AND assignee = $${paramCount}`;
+      query += ` AND j.assignee = $${paramCount}`;
       params.push(assignee);
     }
 
     if (search) {
       paramCount++;
-      query += ` AND (customer_name ILIKE $${paramCount} OR job_number ILIKE $${paramCount} OR job_id ILIKE $${paramCount} OR device_brand ILIKE $${paramCount})`;
+      query += ` AND (j.customer_name ILIKE $${paramCount} OR j.job_number ILIKE $${paramCount} OR j.job_id ILIKE $${paramCount} OR db.name ILIKE $${paramCount})`;
       params.push(`%${search}%`);
     }
 
-    query += ' ORDER BY created_at DESC';
+    query += ' ORDER BY j.created_at DESC';
     
     const offset = (page - 1) * limit;
     paramCount++;
@@ -174,25 +182,27 @@ export async function GET(req: NextRequest) {
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM jobs WHERE company_id = $1';
+    let countQuery = `SELECT COUNT(*) FROM jobs j 
+                      LEFT JOIN device_brands db ON CASE WHEN j.device_brand ~ '^[0-9]+$' THEN j.device_brand::integer ELSE NULL END = db.id
+                      WHERE j.company_id = $1`;
     const countParams: any[] = [session.company.id];
     let countParamCount = 1;
 
     if (status) {
       countParamCount++;
-      countQuery += ` AND status = $${countParamCount}`;
+      countQuery += ` AND j.status = $${countParamCount}`;
       countParams.push(status);
     }
 
     if (assignee) {
       countParamCount++;
-      countQuery += ` AND assignee = $${countParamCount}`;
+      countQuery += ` AND j.assignee = $${countParamCount}`;
       countParams.push(assignee);
     }
 
     if (search) {
       countParamCount++;
-      countQuery += ` AND (customer_name ILIKE $${countParamCount} OR job_number ILIKE $${countParamCount} OR job_id ILIKE $${countParamCount} OR device_brand ILIKE $${countParamCount})`;
+      countQuery += ` AND (j.customer_name ILIKE $${countParamCount} OR j.job_number ILIKE $${countParamCount} OR j.job_id ILIKE $${countParamCount} OR db.name ILIKE $${countParamCount})`;
       countParams.push(`%${search}%`);
     }
 
