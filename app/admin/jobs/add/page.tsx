@@ -339,7 +339,7 @@ export default function JobSheetForm() {
       <div className="h-full bg-white">
         {/* Header */}
         <div className="sticky top-0 z-10 border-b bg-white px-8 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">Job: 001</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Job :</h1>
           <div className="flex gap-3">
             <button
               onClick={handleCancel}
