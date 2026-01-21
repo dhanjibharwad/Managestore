@@ -10,6 +10,10 @@ interface Quotation {
   customerName: string;
   expiredOn: string;
   totalAmount: number;
+  taxAmount: number;
+  status: string;
+  approvedRejectedBy: string;
+  createdBy: string;
   createdAt: string;
 }
 
@@ -54,6 +58,10 @@ export default function QuotationsPage() {
           customerName: q.customer_name,
           expiredOn: q.expired_on ? new Date(q.expired_on).toLocaleDateString() : '-',
           totalAmount: parseFloat(q.total_amount) || 0,
+          taxAmount: parseFloat(q.tax_amount) || 0,
+          status: q.status || 'Pending',
+          approvedRejectedBy: q.approved_rejected_by || '-',
+          createdBy: q.created_by || '-',
           createdAt: new Date(q.created_at).toLocaleDateString()
         }));
         setQuotations(formattedQuotations);
@@ -93,7 +101,7 @@ export default function QuotationsPage() {
             >
               <option value="">Select status</option>
               <option value="modified">Modified</option>
-              <option value="await approved">Awaiting approval</option>
+              <option value="Pending">Pending</option>
                <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
             </select>
@@ -117,48 +125,67 @@ export default function QuotationsPage() {
           <thead>
             <tr className="bg-zinc-50 border-b border-gray-200">
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Quotation Number
+                Quotations
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
                 Customer Name
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Expired On
+                Approved/Rejected By
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Total Amount
+                Status
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Created On
+                Created By
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                Tax Amt
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                Amount
               </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-16 text-center">
+                <td colSpan={7} className="px-6 py-16 text-center">
                   <div className="text-gray-400 text-base">Loading...</div>
                 </td>
               </tr>
             ) : quotations.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-16 text-center">
+                <td colSpan={7} className="px-6 py-16 text-center">
                   <div className="text-gray-400 text-base">No data</div>
                 </td>
               </tr>
             ) : (
               quotations
-                .filter(q => 
-                  q.quotationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  q.customerName.toLowerCase().includes(searchQuery.toLowerCase())
-                )
+                .filter(q => {
+                  const matchesSearch = q.quotationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                      q.customerName.toLowerCase().includes(searchQuery.toLowerCase());
+                  const matchesStatus = !selectedStatus || q.status.toLowerCase() === selectedStatus.toLowerCase();
+                  return matchesSearch && matchesStatus;
+                })
                 .map((quotation) => (
                 <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotationNumber}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{quotation.customerName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.expiredOn}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹ {quotation.totalAmount.toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.createdAt}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.approvedRejectedBy}</td>
+                  <td className="px-6 py-4 text-sm">
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                      quotation.status === 'Approved' ? 'bg-green-100 text-green-800' :
+                      quotation.status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                      quotation.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {quotation.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.createdBy}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">₹{quotation.taxAmount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">₹{quotation.totalAmount.toFixed(2)}</td>
                 </tr>
               ))
             )}

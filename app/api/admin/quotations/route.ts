@@ -17,7 +17,12 @@ export async function GET(req: NextRequest) {
         c.customer_name,
         q.expired_on,
         q.total_amount,
-        q.created_at
+        q.created_at,
+        COALESCE(
+          (SELECT SUM(qs.tax_amount) FROM quotation_services qs WHERE qs.quotation_id = q.id), 0
+        ) + COALESCE(
+          (SELECT SUM(qp.tax_amount) FROM quotation_parts qp WHERE qp.quotation_id = q.id), 0
+        ) as tax_amount
       FROM quotations q
       LEFT JOIN customers c ON q.customer_name = c.id::text
       WHERE q.company_id = $1
