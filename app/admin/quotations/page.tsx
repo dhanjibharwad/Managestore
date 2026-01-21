@@ -149,8 +149,8 @@ export default function QuotationsPage() {
             ) : (
               quotations
                 .filter(q => 
-                  q.quotationNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  q.customerName.toLowerCase().includes(searchQuery.toLowerCase())
+                  (q.quotationNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (q.customerName || '').toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .map((quotation) => (
                 <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
