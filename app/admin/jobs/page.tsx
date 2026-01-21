@@ -113,14 +113,14 @@ const JobPage: React.FC = () => {
   const tabs = [
     'Open Jobs',
     'All Jobs',
-    'Outsourced Jobs',
-    'Self Check-In',
-    'Basic/Workflow Settings',
-    'Job Settings',
-    'Technician Print Options',
-    'Print Option Settings',
-    'Job Service Option',
-    'Overview'
+    // 'Outsourced Jobs',
+    // 'Self Check-In',
+    // 'Basic/Workflow Settings',
+    // 'Job Settings',
+    // 'Technician Print Options',
+    // 'Print Option Settings',
+    // 'Job Service Option',
+    // 'Overview'
   ];
 
   return (
