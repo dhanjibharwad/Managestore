@@ -67,7 +67,7 @@
 //             placeholder="Type or search for device type"
 //             value={searchDevice}
 //             onChange={(e) => setSearchDevice(e.target.value)}
-//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //           />
 //           <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -107,7 +107,7 @@
 //             placeholder="Type or search for device brand"
 //             value={searchBrand}
 //             onChange={(e) => setSearchBrand(e.target.value)}
-//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //           />
 //           <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -149,7 +149,7 @@
 //             placeholder="Type or search for device model"
 //             value={searchModel}
 //             onChange={(e) => setSearchModel(e.target.value)}
-//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//             className="w-full px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //           />
 //           <svg className="absolute left-3 top-3 h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -201,7 +201,7 @@
 //             <input
 //               type="text"
 //               placeholder="Type or search for service type"
-//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //             />
 //           </div>
 
@@ -272,7 +272,7 @@
 //                 placeholder="Type device serial number"
 //                 value={serialNumber}
 //                 onChange={(e) => setSerialNumber(e.target.value)}
-//                 className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//                 className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //               />
 //               <button
 //                 onClick={handleCopySerial}
@@ -291,7 +291,7 @@
 //                 placeholder="Device password"
 //                 value={password}
 //                 onChange={(e) => setPassword(e.target.value)}
-//                 className="w-full px-4 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//                 className="w-full px-4 py-2 pr-20 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //               />
 //               <div className="absolute right-2 top-2 flex gap-1">
 //                 <button className="p-1 hover:bg-gray-100 rounded">
@@ -313,7 +313,7 @@
 //           <select
 //             value={accessories}
 //             onChange={(e) => setAccessories(e.target.value)}
-//             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //           >
 //             <option value="">Select or search for accessories</option>
 //           </select>
@@ -364,7 +364,7 @@
 //               placeholder="Eg: John Smith"
 //               value={name}
 //               onChange={(e) => setName(e.target.value)}
-//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //             />
 //             {!name && <p className="text-xs text-red-500 mt-1">Name is a required field.</p>}
 //           </div>
@@ -372,7 +372,7 @@
 //           <div>
 //             <label className="block text-sm font-medium mb-2">Mobile Number</label>
 //             <div className="flex gap-2">
-//               <select className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]">
+//               <select className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]">
 //                 <option>+91</option>
 //               </select>
 //               <input
@@ -380,7 +380,7 @@
 //                 placeholder="Eg: 99XXXXXXXX"
 //                 value={mobile}
 //                 onChange={(e) => setMobile(e.target.value)}
-//                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//                 className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //               />
 //             </div>
 //             {!mobile && !email && (
@@ -395,7 +395,7 @@
 //               placeholder="Eg: example@example.com"
 //               value={email}
 //               onChange={(e) => setEmail(e.target.value)}
-//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+//               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
 //             />
 //           </div>
 //         </div>

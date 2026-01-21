@@ -62,7 +62,7 @@ export default function AdminSidebar() {
       {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`absolute top-6 bg-white shadow-md rounded-full p-2 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:ring-opacity-50 ${
+        className={`absolute top-6 bg-white shadow-md rounded-full p-2 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:ring-opacity-50 ${
           isCollapsed ? 'left-1/2 transform -translate-x-1/2' : 'right-2'
         }`}
         aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}

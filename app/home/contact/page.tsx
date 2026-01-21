@@ -181,14 +181,14 @@ export default function ContactPage() {
                     <div>
                       <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name<span className="text-red-500">*</span></label>
                       <input type="text" id="name" name="name" value={formData.name} onChange={handleChange}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-1 focus:ring-gray-500 focus:border-transparent"
                         placeholder="Enter your Name" required />
                     </div>
 
                     <div>
                       <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email Address<span className="text-red-500">*</span></label>
                       <input type="email" id="email" name="email" value={formData.email} onChange={handleChange}
-                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-1 focus:ring-gray-500 focus:border-transparent"
                         placeholder="Enter your Email" required />
                     </div>
                   </div>
@@ -198,26 +198,26 @@ export default function ContactPage() {
                     <input type="tel" id="phone" name="phone" value={formData.phone} onChange={handleChange}
                       onInvalid={(e) => e.currentTarget.setCustomValidity("Please enter a valid phone number")}
                       onInput={(e) => e.currentTarget.setCustomValidity("")}
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-1 focus:ring-gray-500 focus:border-transparent"
                       placeholder="+91 234 567 8900" pattern="[+]?[0-9\s\-\(\)]{1,15}" maxLength={15} required />
                   </div>
 
                   <div>
                     <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">Subject <span className="text-red-500">*</span></label>
                     <input type="text" id="subject" name="subject" value={formData.subject} onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-1 focus:ring-gray-500 focus:border-transparent"
                       placeholder="How can we help you?" required />
                   </div>
 
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Message <span className="text-red-500">*</span></label>
                     <textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={6}
-                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-1 focus:ring-gray-500 focus:border-transparent"
                       placeholder="Write your message here..." required />
                   </div>
 
                   <button type="submit" disabled={isSubmitting}
-                    className="w-full bg-gradient-to-r from-gray-900 to-gray-900 text-white py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 relative overflow-hidden group">
+                    className="w-full bg-gradient-to-r from-gray-900 to-gray-900 text-white py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-2 relative overflow-hidden group">
                     <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-700"></span>
                     <span className="relative flex items-center justify-center">
                       {isSubmitting ? (

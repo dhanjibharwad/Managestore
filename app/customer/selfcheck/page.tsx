@@ -314,7 +314,7 @@ export default function SelfCheckIn() {
                           placeholder="Type or search for device type"
                           value={searchDevice}
                           onChange={(e) => setSearchDevice(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -345,7 +345,7 @@ export default function SelfCheckIn() {
                           placeholder="Type or search for device brand"
                           value={searchBrand}
                           onChange={(e) => setSearchBrand(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -376,7 +376,7 @@ export default function SelfCheckIn() {
                           placeholder="Type or search for device model"
                           value={searchModel}
                           onChange={(e) => setSearchModel(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -411,7 +411,7 @@ export default function SelfCheckIn() {
                           placeholder="Type or search for service type"
                           value={searchService}
                           onChange={(e) => setSearchService(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -465,7 +465,7 @@ export default function SelfCheckIn() {
                           placeholder="Type device serial number"
                           value={serialNumber}
                           onChange={(e) => setSerialNumber(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -477,7 +477,7 @@ export default function SelfCheckIn() {
                           placeholder="Device password"
                           value={devicePassword}
                           onChange={(e) => setDevicePassword(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -495,7 +495,7 @@ export default function SelfCheckIn() {
                             const options = Array.from(e.target.selectedOptions, option => option.value);
                             setSelectedAccessories(options);
                           }}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         >
                           {accessories.map((accessory) => (
                             <option key={accessory} value={accessory}>
@@ -522,7 +522,7 @@ export default function SelfCheckIn() {
                           placeholder="Eg: John Smith"
                           value={yourName}
                           onChange={(e) => setYourName(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                         {yourName === '' && (
                           <p className="text-xs text-red-500 mt-1">Name is a required field.</p>
@@ -541,7 +541,7 @@ export default function SelfCheckIn() {
                             placeholder="Eg: 99XXXXXXXX"
                             value={mobileNumber}
                             onChange={(e) => setMobileNumber(e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                            className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                           />
                         </div>
                       </div>
@@ -554,7 +554,7 @@ export default function SelfCheckIn() {
                           placeholder="Eg: example@example.com"
                           value={emailId}
                           onChange={(e) => setEmailId(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>

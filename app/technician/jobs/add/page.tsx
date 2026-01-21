@@ -391,7 +391,7 @@ export default function JobSheetForm() {
                     name="customerName"
                     value={formData.customerName}
                     onChange={handleInputChange}
-                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                   >
                     <option value="">Select customer</option>
                     {customers.map(customer => (
@@ -417,7 +417,7 @@ export default function JobSheetForm() {
                   name="source"
                   value={formData.source}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option>Google</option>
                   <option>Just Dial</option>
@@ -434,7 +434,7 @@ export default function JobSheetForm() {
                   value={formData.referredBy}
                   onChange={handleInputChange}
                   placeholder="Search by name, mobile, email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -446,7 +446,7 @@ export default function JobSheetForm() {
                   name="serviceType"
                   value={formData.serviceType}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option>Carried By User</option>
                   <option>Pickup</option>
@@ -464,7 +464,7 @@ export default function JobSheetForm() {
                 name="jobType"
                 value={formData.jobType}
                 onChange={handleInputChange}
-                className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
               >
                 <option>No Warranty</option>
                 <option>Free</option>
@@ -486,7 +486,7 @@ export default function JobSheetForm() {
                   name="deviceType"
                   value={formData.deviceType}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Device type</option>
                   {deviceTypes.map(type => (
@@ -505,7 +505,7 @@ export default function JobSheetForm() {
                     value={formData.deviceBrand}
                     onChange={handleInputChange}
                     disabled={!formData.deviceType}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select device brand</option>
                     {filteredBrands.map(brand => (
@@ -531,7 +531,7 @@ export default function JobSheetForm() {
                     value={formData.deviceModel}
                     onChange={handleInputChange}
                     disabled={!formData.deviceBrand}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="">Select device model</option>
                     {filteredModels.map(model => (
@@ -557,7 +557,7 @@ export default function JobSheetForm() {
                   value={formData.serialNumber}
                   onChange={handleInputChange}
                   placeholder="Type device serial number"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -569,7 +569,7 @@ export default function JobSheetForm() {
                   value={formData.accessories}
                   onChange={handleInputChange}
                   placeholder="Select or search for accessories"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -579,7 +579,7 @@ export default function JobSheetForm() {
                   name="storageLocation"
                   value={formData.storageLocation}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select storage location</option>
                   <option>Warehouse A</option>
@@ -595,7 +595,7 @@ export default function JobSheetForm() {
                   name="deviceColor"
                   value={formData.deviceColor}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select device color</option>
                   <option>Black</option>
@@ -616,7 +616,7 @@ export default function JobSheetForm() {
                     value={formData.devicePassword}
                     onChange={handleInputChange}
                     placeholder="Device password"
-                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                   />
                   <button
                     type="button"
@@ -644,7 +644,7 @@ export default function JobSheetForm() {
                   value={formData.services}
                   onChange={handleInputChange}
                   placeholder="Select or search for services"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -656,7 +656,7 @@ export default function JobSheetForm() {
                   value={formData.tags}
                   onChange={handleInputChange}
                   placeholder="Eg: 4GB RAM, 1TB HDD etc, type name and press enter button to create"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
             </div>
@@ -669,7 +669,7 @@ export default function JobSheetForm() {
                 onChange={handleInputChange}
                 placeholder="Enter hardware configuration details (e.g: RAM, HDD Serial, Motherboard)"
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
               />
             </div>
 
@@ -708,7 +708,7 @@ export default function JobSheetForm() {
                   name="priority"
                   value={formData.priority}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option>Regular</option>
                   <option>High</option>
@@ -725,7 +725,7 @@ export default function JobSheetForm() {
                   name="assignee"
                   value={formData.assignee}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select assignee name</option>
                   {employees.map(employee => (
@@ -744,7 +744,7 @@ export default function JobSheetForm() {
                   value={formData.initialQuotation}
                   onChange={handleInputChange}
                   placeholder="2000-5000 etc"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
 
@@ -755,7 +755,7 @@ export default function JobSheetForm() {
                   name="dueDate"
                   value={formData.dueDate}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
               </div>
             </div>
@@ -768,7 +768,7 @@ export default function JobSheetForm() {
                 value={formData.dealerJobId}
                 onChange={handleInputChange}
                 placeholder="Dealer job id if any"
-                className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9]"
+                className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
               />
             </div>
           </section>
@@ -900,7 +900,7 @@ export default function JobSheetForm() {
               value={newBrandName}
               onChange={(e) => setNewBrandName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddBrand()}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] mb-4"
               autoFocus
             />
             <div className="flex gap-3 justify-end">
@@ -933,7 +933,7 @@ export default function JobSheetForm() {
               value={newModelName}
               onChange={(e) => setNewModelName(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAddModel()}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] mb-4"
               autoFocus
             />
             <div className="flex gap-3 justify-end">

@@ -359,7 +359,7 @@ export default function SelfCheckIn() {
                         placeholder="Type or search for device type"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
                     <div className="grid grid-cols-5 gap-4">
@@ -388,7 +388,7 @@ export default function SelfCheckIn() {
                       <input
                         type="text"
                         placeholder="Type or search for device brand"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
                     <div className="grid grid-cols-5 gap-4">
@@ -417,7 +417,7 @@ export default function SelfCheckIn() {
                       <input
                         type="text"
                         placeholder="Type or search for device model"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
                     <div className="grid grid-cols-5 gap-4">
@@ -451,7 +451,7 @@ export default function SelfCheckIn() {
                       <input
                         type="text"
                         placeholder="Type or search for service type"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
 
@@ -493,7 +493,7 @@ export default function SelfCheckIn() {
                             value={formData.serialNumber}
                             onChange={(e) => updateFormData('serialNumber', e.target.value)}
                             placeholder="Type device serial number"
-                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                           />
                         </div>
                       </div>
@@ -507,7 +507,7 @@ export default function SelfCheckIn() {
                             value={formData.password}
                             onChange={(e) => updateFormData('password', e.target.value)}
                             placeholder="Device password"
-                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                           />
                           <button
                             type="button"
@@ -527,7 +527,7 @@ export default function SelfCheckIn() {
                       <input
                         type="text"
                         placeholder="Select or search for accessories"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
 
@@ -613,7 +613,7 @@ export default function SelfCheckIn() {
                       value={formData.name}
                       onChange={(e) => updateFormData('name', e.target.value)}
                       placeholder="Eg: John Smith"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -633,7 +633,7 @@ export default function SelfCheckIn() {
                         onChange={handleMobileChange}
                         placeholder="Eg: 99XXXXXXXX"
                         maxLength={10}
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
                     <p className="text-xs text-red-500 mt-1">Either mobile number or email is required field</p>
@@ -647,7 +647,7 @@ export default function SelfCheckIn() {
                       value={formData.email}
                       onChange={(e) => updateFormData('email', e.target.value)}
                       placeholder="Eg: example@example.com"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -695,7 +695,7 @@ export default function SelfCheckIn() {
                         value={formData.addressLine}
                         onChange={(e) => updateFormData('addressLine', e.target.value)}
                         placeholder="House / building name/no. street name, locality"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -706,7 +706,7 @@ export default function SelfCheckIn() {
                         <select
                           value={formData.region}
                           onChange={(e) => updateFormData('region', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         >
                           <option value="">Select region / state</option>
                           {states.map((state) => (
@@ -723,7 +723,7 @@ export default function SelfCheckIn() {
                         <select
                           value={formData.city}
                           onChange={(e) => updateFormData('city', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                           disabled={!formData.region}
                         >
                           <option value="">Select city / town</option>
@@ -746,7 +746,7 @@ export default function SelfCheckIn() {
                           onChange={handlePostalCodeChange}
                           placeholder="Type postal code / zip code"
                           maxLength={6}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                       <div>
@@ -757,7 +757,7 @@ export default function SelfCheckIn() {
                           type="datetime-local"
                           value={formData.pickupDateTime}
                           onChange={(e) => updateFormData('pickupDateTime', e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                         />
                       </div>
                     </div>
@@ -794,7 +794,7 @@ export default function SelfCheckIn() {
                     <input
                       type="email"
                       placeholder="Eg: example@example.com"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     />
                   </div>
                   <button className="w-full px-6 py-2 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5d8f] transition-colors mb-4">
@@ -807,7 +807,7 @@ export default function SelfCheckIn() {
                     <input
                       type="text"
                       placeholder="Enter OTP"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     />
                   </div>
                 </div>

@@ -337,7 +337,7 @@ export default function PurchasePage() {
                   value={supplierName}
                   onChange={(e) => setSupplierName(e.target.value)}
                   placeholder="Select or create supplier"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
                 <Link href="/admin/inventory/partSuppliers/add">
                 <button className="px-3 py-3 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
@@ -357,7 +357,7 @@ export default function PurchasePage() {
                 type="text"
                 value={partyInvoiceNumber}
                 onChange={(e) => setPartyInvoiceNumber(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               />
             </div>
 
@@ -370,7 +370,7 @@ export default function PurchasePage() {
                 type="date"
                 value={purchaseDate}
                 onChange={(e) => setPurchaseDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               />
             </div>
 
@@ -383,7 +383,7 @@ export default function PurchasePage() {
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               />
             </div>
           </div>
@@ -509,7 +509,7 @@ export default function PurchasePage() {
                   <select
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option>Cash</option>
                     <option>Card</option>
@@ -530,7 +530,7 @@ export default function PurchasePage() {
                   type="text"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -650,7 +650,7 @@ export default function PurchasePage() {
                 <select
                   value={modalPart}
                   onChange={(e) => setModalPart(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Search and select existing part or create new below</option>
                 </select>
@@ -677,7 +677,7 @@ export default function PurchasePage() {
                     value={modalPartName}
                     onChange={(e) => setModalPartName(e.target.value)}
                     placeholder="Eg: RAM, HDD"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -687,7 +687,7 @@ export default function PurchasePage() {
                     value={modalWarranty}
                     onChange={(e) => setModalWarranty(e.target.value)}
                     placeholder="Type warranty"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -700,7 +700,7 @@ export default function PurchasePage() {
                   onChange={(e) => setModalDescription(e.target.value)}
                   placeholder="Enter description (optional)"
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent resize-none"
                 />
               </div>
 
@@ -715,7 +715,7 @@ export default function PurchasePage() {
                     value={modalPrice}
                     onChange={(e) => setModalPrice(e.target.value)}
                     placeholder="Enter price"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div className="flex items-end pb-2">
@@ -741,7 +741,7 @@ export default function PurchasePage() {
                     type="number"
                     value={modalQuantity}
                     onChange={(e) => setModalQuantity(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -751,7 +751,7 @@ export default function PurchasePage() {
                     value={modalDiscount}
                     onChange={(e) => setModalDiscount(e.target.value)}
                     placeholder="Discount"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -768,7 +768,7 @@ export default function PurchasePage() {
                     value={modalSubTotal}
                     onChange={(e) => setModalSubTotal(e.target.value)}
                     placeholder="Sub total"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     readOnly
                   />
                 </div>
@@ -777,7 +777,7 @@ export default function PurchasePage() {
                   <select
                     value={modalTax}
                     onChange={(e) => setModalTax(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select tax</option>
                     <option value="gst">GST 18%</option>
@@ -799,7 +799,7 @@ export default function PurchasePage() {
                     value={modalTaxAmount}
                     onChange={(e) => setModalTaxAmount(e.target.value)}
                     placeholder="Tax amount"
-                    className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                     readOnly
                   />
                 </div>
@@ -810,7 +810,7 @@ export default function PurchasePage() {
                     value={modalTaxCode}
                     onChange={(e) => setModalTaxCode(e.target.value)}
                     placeholder="Eg: HSN code"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -826,7 +826,7 @@ export default function PurchasePage() {
                   value={modalTotalAmount}
                   onChange={(e) => setModalTotalAmount(e.target.value)}
                   placeholder="Total amount"
-                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   readOnly
                 />
               </div>

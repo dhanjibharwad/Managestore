@@ -109,7 +109,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                   type="text"
                   value={expense.expense_name}
                   onChange={(e) => setExpense({...expense, expense_name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -121,7 +121,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                 <select
                   value={expense.category}
                   onChange={(e) => setExpense({...expense, category: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select category</option>
@@ -142,7 +142,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                   step="0.01"
                   value={expense.amount}
                   onChange={(e) => setExpense({...expense, amount: parseFloat(e.target.value)})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -154,7 +154,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                 <select
                   value={expense.payment_mode}
                   onChange={(e) => setExpense({...expense, payment_mode: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select payment mode</option>
@@ -173,7 +173,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                   type="date"
                   value={expense.expense_date?.split('T')[0] || ''}
                   onChange={(e) => setExpense({...expense, expense_date: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
@@ -187,7 +187,7 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                 value={expense.description || ''}
                 onChange={(e) => setExpense({...expense, description: e.target.value})}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="Enter expense description..."
               />
             </div>

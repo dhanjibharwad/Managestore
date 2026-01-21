@@ -53,7 +53,7 @@ const FAQAccordion: React.FC<{ item: FAQItem; isOpen: boolean; onToggle: () => v
         aria-expanded={isOpen}
         aria-controls={`faq-${item.id}`}
       >
-        <span className="text-xl font-semibold text-gray-800 pr-6 leading-relaxed">
+        <span className="text-lg font-semibold text-gray-800 pr-6 leading-relaxed">
           {item.question}
         </span>
         <div className="flex-shrink-0 ml-6 p-2 rounded-full bg-gray-100 group-hover:bg-gray-800 transition-all duration-300">
@@ -71,7 +71,7 @@ const FAQAccordion: React.FC<{ item: FAQItem; isOpen: boolean; onToggle: () => v
           isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="pb-6 px-8 text-gray-600 leading-relaxed border-t border-gray-100 pt-6">
+        <div className="pb-4 px-8 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
           {item.answer}
         </div>
       </div>
@@ -95,11 +95,11 @@ export default function FAQPage() {
       {/* Hero Section */}
       <section className="relative bg-white text-black">
 
-         <div className="relative mx-auto px-6 py-32 text-center">
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in text-gray-700">
+         <div className="relative mx-auto px-6 py-20 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in text-gray-700">
             Frequently Asked Questions
           </h1>
-          <p className="text-xl md:text-2xl max-w-3xl mx-auto mb-8 animate-fade-in delay-200">
+          <p className="text-lg md:text-xl max-w-3xl mx-auto mb-6 animate-fade-in delay-200">
             Find answers to common questions about our services, support, and technical solutions.
           </p>
 
@@ -116,11 +116,11 @@ export default function FAQPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-16">
+      <section className="py-8">
         <div className="max-w-4xl mx-auto px-6">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-800 mb-4">Common Questions</h2>
-            <p className="text-gray-600 text-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">Common Questions</h2>
+            <p className="text-gray-600 text-base">
               Can't find what you're looking for? Contact our support team for personalized assistance.
             </p>
           </div>
@@ -143,10 +143,10 @@ export default function FAQPage() {
       <section className="relative py-20 bg-gradient-to-r from-gray-600 to-gray-600 text-white overflow-hidden">
 
         <div className="relative max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Ready to Get Technical Support?
           </h2>
-          <p className="text-xl md:text-2xl mb-8 max-w-2xl mx-auto">
+          <p className="text-lg md:text-xl mb-6 max-w-2xl mx-auto">
             Join thousands of satisfied customers who trust Union Enterprise 
             for their technical support needs.
           </p>

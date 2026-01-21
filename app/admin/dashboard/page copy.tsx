@@ -154,13 +154,13 @@ const JobsSection: React.FC = () => {
               <input
                 type="text"
                 placeholder={config.searchPlaceholder}
-                className="pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64 lg:w-80"
+                className="pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64 lg:w-80"
               />
             </div>
             
             {/* Controls Row */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <select className="px-3 sm:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent flex-1 sm:flex-initial sm:min-w-[140px] lg:min-w-[180px]">
+              <select className="px-3 sm:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent flex-1 sm:flex-initial sm:min-w-[140px] lg:min-w-[180px]">
                 <option>{config.selectPlaceholder}</option>
               </select>
               

@@ -169,7 +169,7 @@ export default function ExpensePage() {
                   placeholder="Type expense name"
                   value={expenseName}
                   onChange={(e) => setExpenseName(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -182,7 +182,7 @@ export default function ExpensePage() {
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white cursor-pointer"
                   >
                     <option value="">Select category</option>
                     <option value="food">Food</option>
@@ -205,7 +205,7 @@ export default function ExpensePage() {
                   type="date"
                   value={expenseDate}
                   onChange={(e) => setExpenseDate(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -245,7 +245,7 @@ export default function ExpensePage() {
                 placeholder="Type expense description"
                 value={description}
                 onChange={handleDescriptionChange}
-                className="w-full px-4 py-3 border border-t-0 border-gray-300 rounded-b focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent resize-none"
+                className="w-full px-4 py-3 border border-t-0 border-gray-300 rounded-b focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent resize-none"
                 rows={6}
               />
               <p className="text-sm text-gray-500 mt-1">
@@ -268,7 +268,7 @@ export default function ExpensePage() {
                   <select
                     value={paymentMode}
                     onChange={(e) => setPaymentMode(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white cursor-pointer"
                   >
                     <option value="">Select payment mode</option>
                     <option value="cash">Cash</option>
@@ -291,7 +291,7 @@ export default function ExpensePage() {
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>

@@ -348,7 +348,7 @@ export default function PickupDropPage() {
                         }
                       }
                     }}
-                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                       mobileError ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -367,7 +367,7 @@ export default function PickupDropPage() {
                   <select
                     value={deviceType}
                     onChange={(e) => setDeviceType(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
                     <option value="">Select device type</option>
                     {deviceTypes.map(type => (
@@ -393,7 +393,7 @@ export default function PickupDropPage() {
                     value={scheduleDate}
                     onClick={() => setShowCalendar(!showCalendar)}
                     readOnly
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent cursor-pointer"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent cursor-pointer"
                   />
                   <Calendar
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
@@ -512,7 +512,7 @@ export default function PickupDropPage() {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent resize-none"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent resize-none"
               />
             </div>
 
@@ -522,7 +522,7 @@ export default function PickupDropPage() {
                 <select
                   value={savedResponse}
                   onChange={(e) => setSavedResponse(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-gray-500"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-500"
                 >
                   <option value="">Saved responses</option>
                   <option value="response1">Response 1</option>

@@ -49,21 +49,21 @@ export default function PaymentsPage() {
               placeholder="Payment against, customer"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
           
           <select
             value={filterBy}
             onChange={(e) => setFilterBy(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             <option value="filterByReceivedAt">filterByReceivedAt</option>
             <option value="filterByCreatedAt">filterByCreatedAt</option>
             <option value="filterByAmount">filterByAmount</option>
           </select>
 
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
               <Download className="w-5 h-5 text-gray-600" />
             </button>
@@ -73,7 +73,7 @@ export default function PaymentsPage() {
             <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
               <List className="w-5 h-5 text-gray-600" />
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* Table */}

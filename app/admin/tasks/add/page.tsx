@@ -370,7 +370,7 @@ export default function AddNewTaskPage() {
               placeholder="Type task title"
               value={taskTitle}
               onChange={(e) => setTaskTitle(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all"
             />
           </div>
 
@@ -440,7 +440,7 @@ export default function AddNewTaskPage() {
               <select
                 value={assignee}
                 onChange={(e) => setAssignee(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
               >
                 <option value="">Select assignee</option>
                 {Array.isArray(users) && users.map(user => (
@@ -459,7 +459,7 @@ export default function AddNewTaskPage() {
                   onClick={handleOpenDatePicker}
                   readOnly
                   placeholder="Select due date"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all cursor-pointer"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all cursor-pointer"
                 />
                 <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
                 
@@ -572,7 +572,7 @@ export default function AddNewTaskPage() {
               <select
                 value={taskStatus}
                 onChange={(e) => setTaskStatus(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-all appearance-none bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-all appearance-none bg-white"
               >
                 <option value="Not Started Yet">Not Started Yet</option>
                 <option value="In Progress">In Progress</option>
@@ -587,7 +587,7 @@ export default function AddNewTaskPage() {
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
               >
                 <option value="urgent">Urgent</option>
                 <option value="Medium">Medium</option>
@@ -604,7 +604,7 @@ export default function AddNewTaskPage() {
             <select
               value={customer}
               onChange={(e) => setCustomer(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none transition-all appearance-none bg-white"
             >
               <option value="">Select customer</option>
               {Array.isArray(customers) && customers.map(cust => (

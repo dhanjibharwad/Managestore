@@ -276,7 +276,7 @@ const ContractFormPage = () => {
                   <select
                     value={formData.customerName}
                     onChange={(e) => handleInputChange('customerName', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
                     <option value="">Select customer</option>
                     {Array.isArray(customers) && customers.map(cust => (
@@ -303,7 +303,7 @@ const ContractFormPage = () => {
                 <select 
                   value={formData.assignee}
                   onChange={(e) => handleInputChange('assignee', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
                   <option value="">Select assignee</option>
                   {Array.isArray(users) && users.map(user => (
@@ -321,7 +321,7 @@ const ContractFormPage = () => {
                 <select 
                   value={formData.amcType}
                   onChange={(e) => handleInputChange('amcType', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
                   <option value="">Select AMC type</option>
                   <option value="AMC">AMC</option>
@@ -341,7 +341,7 @@ const ContractFormPage = () => {
                   type="date"
                   value={contractStartDate}
                   onChange={(e) => setContractStartDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
                 {errors.contractStartDate && <p className="text-red-500 text-xs mt-1">{errors.contractStartDate}</p>}
               </div>
@@ -356,7 +356,7 @@ const ContractFormPage = () => {
                   value={contractEndDate}
                   onChange={(e) => setContractEndDate(e.target.value)}
                   min={contractStartDate}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
                 {errors.contractEndDate && <p className="text-red-500 text-xs mt-1">{errors.contractEndDate}</p>}
               </div>
@@ -380,7 +380,7 @@ const ContractFormPage = () => {
                   placeholder="Eg: 5, 10 etc..."
                   value={formData.devicesCovered}
                   onChange={(e) => handleInputChange('devicesCovered', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -396,12 +396,12 @@ const ContractFormPage = () => {
                     placeholder="Eg: 2 hours, 1 day, 2 days"
                     value={formData.responseTimeValue}
                     onChange={(e) => handleInputChange('responseTimeValue', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                   <select 
                     value={formData.responseTimeUnit}
                     onChange={(e) => handleInputChange('responseTimeUnit', e.target.value)}
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
                     <option value="">Select...</option>
                     <option value="HOURS">HOURS</option>
@@ -422,7 +422,7 @@ const ContractFormPage = () => {
                   placeholder="Eg: 5, 10 etc..."
                   value={formData.numberOfServices}
                   onChange={(e) => handleInputChange('numberOfServices', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -437,7 +437,7 @@ const ContractFormPage = () => {
                 <select 
                   value={formData.serviceOptions}
                   onChange={(e) => handleInputChange('serviceOptions', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
                   <option value="">Select service options</option>
                   <option value="On Site">On Site</option>
@@ -483,7 +483,7 @@ const ContractFormPage = () => {
                 <select 
                   value={formData.paymentFrequency}
                   onChange={(e) => handleInputChange('paymentFrequency', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
                   <option value="">Eg: monthly, quarterly, annual, etc.</option>
                   <option value="Monthly">Monthly</option>
@@ -502,7 +502,7 @@ const ContractFormPage = () => {
                   placeholder="Enter contract amount"
                   value={formData.amount}
                   onChange={(e) => handleInputChange('amount', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>

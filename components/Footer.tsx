@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
               <li><a href="#" className={linkClasses}>Online Support</a></li>
               <li><a href="#" className={linkClasses}>Track Order</a></li>
               <li><a href="/extra/privacy/" className={linkClasses}>Privacy Policy</a></li>
-              <li><a href="#" className={linkClasses}>FAQs</a></li>
+              <li><a href="/home/FAQ" className={linkClasses}>FAQs</a></li>
               <li><a href="/extra/terms/" className={linkClasses}>Terms</a></li>
             </ul>
           </div>
@@ -56,9 +56,9 @@ const Footer: React.FC = () => {
             <h3 className={titleClasses}>Company</h3>
             <ul className="space-y-2 text-sm">
               <li><a href="#" className={linkClasses}>About Us</a></li>
-              <li><a href="#" className={linkClasses}>Careers</a></li>
+              {/* <li><a href="#" className={linkClasses}>Careers</a></li> */}
               <li><a href="#" className={linkClasses}>Blog</a></li>
-              <li><a href="#" className={linkClasses}>Partners</a></li>
+              {/* <li><a href="#" className={linkClasses}>Partners</a></li> */}
             </ul>
           </div>
 

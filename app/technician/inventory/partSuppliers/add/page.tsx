@@ -230,7 +230,7 @@ export default function PartSupplierPage() {
                   value={formData.supplierName}
                   onChange={handleInputChange}
                   placeholder="Type supplier name"
-                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                     errors.supplierName ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -255,7 +255,7 @@ export default function PartSupplierPage() {
                     value={formData.mobileNumber}
                     onChange={handleInputChange}
                     placeholder="Eg: 99XXXXXXXX"
-                    className={`flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    className={`flex-1 px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                       errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -274,7 +274,7 @@ export default function PartSupplierPage() {
                   value={formData.phoneNumber}
                   onChange={handleInputChange}
                   placeholder="Eg: 91XXXXXXXXX"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -291,7 +291,7 @@ export default function PartSupplierPage() {
                   value={formData.taxNumber}
                   onChange={handleInputChange}
                   placeholder="Type Tax number"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -306,7 +306,7 @@ export default function PartSupplierPage() {
                   value={formData.emailId}
                   onChange={handleInputChange}
                   placeholder="Eg: example@example.com"
-                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                     errors.emailId ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -333,7 +333,7 @@ export default function PartSupplierPage() {
                   value={formData.addressLine}
                   onChange={handleInputChange}
                   placeholder="House / building name/no, street name, locality"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -346,7 +346,7 @@ export default function PartSupplierPage() {
                   name="regionState"
                   value={formData.regionState}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                 >
                   <option value="">Select region / state</option>
                   {states.map((state) => (
@@ -367,7 +367,7 @@ export default function PartSupplierPage() {
                   value={formData.cityTown}
                   onChange={handleInputChange}
                   disabled={!formData.regionState}
-                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select city / town</option>
                   {cities.map((city) => (
@@ -391,7 +391,7 @@ export default function PartSupplierPage() {
                   value={formData.postalCode}
                   onChange={handleInputChange}
                   placeholder="Type postal code / zip code"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -426,7 +426,7 @@ export default function PartSupplierPage() {
                 type="text"
                 value={newRegion}
                 onChange={(e) => setNewRegion(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 placeholder="Enter region/state name"
                 autoFocus
               />
@@ -481,7 +481,7 @@ export default function PartSupplierPage() {
                 type="text"
                 value={newCity}
                 onChange={(e) => setNewCity(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 placeholder="Enter city/town name"
                 autoFocus
               />

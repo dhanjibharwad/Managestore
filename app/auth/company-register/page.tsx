@@ -176,7 +176,7 @@ export default function CompanyRegisterPage() {
                       value={formData.companyName}
                       onChange={handleInputChange}
                       placeholder="Enter your company name"
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -195,7 +195,7 @@ export default function CompanyRegisterPage() {
                       value={formData.companyOwnerName}
                       onChange={handleInputChange}
                       placeholder="Enter owner's full name"
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -214,7 +214,7 @@ export default function CompanyRegisterPage() {
                       value={formData.email}
                       onChange={handleInputChange}
                       placeholder="company@example.com"
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -235,7 +235,7 @@ export default function CompanyRegisterPage() {
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="Enter your phone number"
-                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
+                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
                     </div>
@@ -254,7 +254,7 @@ export default function CompanyRegisterPage() {
                         value={formData.country}
                         onChange={handleInputChange}
                         placeholder="Enter your country"
-                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
+                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
                     </div>
@@ -272,7 +272,7 @@ export default function CompanyRegisterPage() {
                       name="subscriptionPlan"
                       value={formData.subscriptionPlan}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 appearance-none bg-gray-50 focus:bg-white text-gray-900 font-medium cursor-pointer"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 appearance-none bg-gray-50 focus:bg-white text-gray-900 font-medium cursor-pointer"
                     >
                       <option value="free">Free Plan - $0/month</option>
                       <option value="basic">Basic Plan - $29/month</option>

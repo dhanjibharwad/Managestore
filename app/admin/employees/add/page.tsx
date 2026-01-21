@@ -195,7 +195,7 @@ const EmployeeForm = () => {
                   name="employeeRole"
                   value={formData.employeeRole}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Select employee type</option>
                   <option value="admin">Admin</option>
@@ -216,7 +216,7 @@ const EmployeeForm = () => {
                   value={formData.employeeName}
                   onChange={handleChange}
                   placeholder="Eg: John Smith"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -232,7 +232,7 @@ const EmployeeForm = () => {
                   value={formData.displayName}
                   onChange={handleChange}
                   placeholder="Eg: Dummy name visible to customer"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -249,7 +249,7 @@ const EmployeeForm = () => {
                   value={formData.emailId}
                   onChange={handleChange}
                   placeholder="Eg: example@example.com"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -269,7 +269,7 @@ const EmployeeForm = () => {
                     onChange={handleChange}
                     placeholder="10 digits starting with 6-9"
                     maxLength={10}
-                    className={`flex-1 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    className={`flex-1 px-3 py-2 border rounded-r-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                       errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -290,7 +290,7 @@ const EmployeeForm = () => {
                   value={formData.phoneNumber}
                   onChange={handleChange}
                   placeholder="Eg: 91XXXXXXXXX"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -308,7 +308,7 @@ const EmployeeForm = () => {
                   onChange={handleChange}
                   placeholder="12 digits starting with 2-9"
                   maxLength={12}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                     errors.aadhaarNumber ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -326,7 +326,7 @@ const EmployeeForm = () => {
                   name="gender"
                   value={formData.gender}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Select gender</option>
                   <option value="male">Male</option>
@@ -348,7 +348,7 @@ const EmployeeForm = () => {
                   placeholder="Format: ABCDE1234F"
                   maxLength={10}
                   style={{textTransform: 'uppercase'}}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                     errors.panCard ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
@@ -370,7 +370,7 @@ const EmployeeForm = () => {
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -394,7 +394,7 @@ const EmployeeForm = () => {
                   value={formData.addressLine}
                   onChange={handleChange}
                   placeholder="House / building name/no, street name, locality"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -408,7 +408,7 @@ const EmployeeForm = () => {
                     name="regionState"
                     value={formData.regionState}
                     onChange={handleChange}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select region / state</option>
                     {states.map((state) => (
@@ -433,7 +433,7 @@ const EmployeeForm = () => {
                   value={formData.cityTown}
                   onChange={handleChange}
                   disabled={!formData.regionState}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                 >
                   <option value="">Select city / town</option>
                   {cities.map((city) => (
@@ -457,7 +457,7 @@ const EmployeeForm = () => {
                   value={formData.postalCode}
                   onChange={handleChange}
                   placeholder="Type postal code / zip code"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -479,7 +479,7 @@ const EmployeeForm = () => {
                   value={formData.accountName}
                   onChange={handleChange}
                   placeholder="Type account name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -494,7 +494,7 @@ const EmployeeForm = () => {
                   value={formData.bankName}
                   onChange={handleChange}
                   placeholder="Type bank name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -509,7 +509,7 @@ const EmployeeForm = () => {
                   value={formData.branch}
                   onChange={handleChange}
                   placeholder="Type branch name"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -526,7 +526,7 @@ const EmployeeForm = () => {
                   value={formData.accountNumber}
                   onChange={handleChange}
                   placeholder="Type account number"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -542,7 +542,7 @@ const EmployeeForm = () => {
                   value={formData.ifscCode}
                   onChange={handleChange}
                   placeholder="Type IFSC code"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>

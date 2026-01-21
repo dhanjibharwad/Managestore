@@ -243,7 +243,7 @@ function VerifyEmailForm() {
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
-                    className="w-12 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
+                    className="w-12 h-14 text-center text-2xl font-semibold border-2 border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
                     disabled={loading}
                   />
                 ))}

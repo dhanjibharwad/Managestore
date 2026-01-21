@@ -33,7 +33,7 @@ export default function SalesPage() {
                 placeholder="Sale number, customer name, mobile"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               />
             </div>
 
@@ -42,7 +42,7 @@ export default function SalesPage() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="appearance-none w-44 px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                className="appearance-none w-44 px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               >
                 <option>Select status</option>
                 <option>Paid</option>

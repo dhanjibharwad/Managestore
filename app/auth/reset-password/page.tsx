@@ -260,7 +260,7 @@ function ResetPasswordForm() {
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-11 h-12 text-center text-xl font-semibold bg-white border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
+                      className="w-11 h-12 text-center text-xl font-semibold bg-white border-2 border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition"
                     />
                   ))}
                 </div>
@@ -281,7 +281,7 @@ function ResetPasswordForm() {
                     required
                     value={formData.newPassword}
                     onChange={(e) => handlePasswordChange(e.target.value)}
-                    className="w-full px-4 py-3 pr-10 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
+                    className="w-full px-4 py-3 pr-10 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
                     placeholder="••••••••"
                   />
                   <button
@@ -351,7 +351,7 @@ function ResetPasswordForm() {
                     required
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="w-full px-4 py-3 pr-10 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
+                    className="w-full px-4 py-3 pr-10 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
                     placeholder="••••••••"
                   />
                   <button

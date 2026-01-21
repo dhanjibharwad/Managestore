@@ -463,7 +463,7 @@ export default function QuotationPage() {
                 <select
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 bg-white"
                 >
                   <option value="">Select customer</option>
                   {Array.isArray(customers) && customers.map(cust => (
@@ -490,7 +490,7 @@ export default function QuotationPage() {
                 type="date"
                 value={expiredOn}
                 onChange={(e) => setExpiredOn(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -680,7 +680,7 @@ export default function QuotationPage() {
               placeholder="Enter any note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
               rows={3}
             />
           </div>
@@ -754,7 +754,7 @@ export default function QuotationPage() {
                   <select
                     value={serviceForm.repairService}
                     onChange={(e) => handleServiceFormChange('repairService', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">Eg: virus or malware attack, broken di...</option>
                     <option value="Virus Removal">Virus Removal</option>
@@ -782,7 +782,7 @@ export default function QuotationPage() {
                   placeholder="Enter description (optional)"
                   value={serviceForm.description}
                   onChange={(e) => handleServiceFormChange('description', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                   rows={3}
                 />
               </div>
@@ -798,7 +798,7 @@ export default function QuotationPage() {
                     placeholder="Enter price"
                     value={serviceForm.price}
                     onChange={(e) => handleServiceFormChange('price', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -810,7 +810,7 @@ export default function QuotationPage() {
                     placeholder="Discount"
                     value={serviceForm.discount}
                     onChange={(e) => handleServiceFormChange('discount', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -838,7 +838,7 @@ export default function QuotationPage() {
                   <select
                     value={serviceForm.tax}
                     onChange={(e) => handleServiceFormChange('tax', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">Select tax</option>
                     <option value="gst5">GST 5%</option>
@@ -873,7 +873,7 @@ export default function QuotationPage() {
                     placeholder="Ex: HSN code"
                     value={serviceForm.taxCode}
                     onChange={(e) => handleServiceFormChange('taxCode', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -940,7 +940,7 @@ export default function QuotationPage() {
                 <select
                   value={partForm.part}
                   onChange={(e) => handlePartFormChange('part', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Search and select existing part or create new below</option>
                   <option value="RAM">RAM</option>
@@ -970,7 +970,7 @@ export default function QuotationPage() {
                     placeholder="Eg: RAM, HDD"
                     value={partForm.partName}
                     onChange={(e) => handlePartFormChange('partName', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -982,7 +982,7 @@ export default function QuotationPage() {
                     placeholder="Eg: C02CQ261MD6P"
                     value={partForm.serialNumber}
                     onChange={(e) => handlePartFormChange('serialNumber', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -996,7 +996,7 @@ export default function QuotationPage() {
                   placeholder="Enter description (optional)"
                   value={partForm.description}
                   onChange={(e) => handlePartFormChange('description', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
                   rows={3}
                 />
               </div>
@@ -1012,7 +1012,7 @@ export default function QuotationPage() {
                     placeholder="Type warranty"
                     value={partForm.warranty}
                     onChange={(e) => handlePartFormChange('warranty', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -1024,7 +1024,7 @@ export default function QuotationPage() {
                     placeholder="Enter price"
                     value={partForm.price}
                     onChange={(e) => handlePartFormChange('price', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1050,7 +1050,7 @@ export default function QuotationPage() {
                     type="number"
                     value={partForm.quantity}
                     onChange={(e) => handlePartFormChange('quantity', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -1066,7 +1066,7 @@ export default function QuotationPage() {
                     placeholder="Discount"
                     value={partForm.discount}
                     onChange={(e) => handlePartFormChange('discount', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -1094,7 +1094,7 @@ export default function QuotationPage() {
                   <select
                     value={partForm.tax}
                     onChange={(e) => handlePartFormChange('tax', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
                     <option value="">Select tax</option>
                     <option value="gst5">GST 5%</option>
@@ -1129,7 +1129,7 @@ export default function QuotationPage() {
                     placeholder="Eg: HSN code"
                     value={partForm.taxCode}
                     onChange={(e) => handlePartFormChange('taxCode', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div>

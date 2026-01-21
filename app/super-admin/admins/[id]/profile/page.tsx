@@ -134,7 +134,7 @@ export default function CustomerPage() {
               <input
                 type="text"
                 value="Vishwanth Anna"
-                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-base"
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-base"
                 readOnly
               />
             </div>
@@ -147,13 +147,13 @@ export default function CustomerPage() {
                 <input
                   type="text"
                   value="+91"
-                  className="w-24 px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-center text-base"
+                  className="w-24 px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-center text-base"
                   readOnly
                 />
                 <input
                   type="text"
                   value="8857859209"
-                  className="flex-1 px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-base"
+                  className="flex-1 px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-base"
                   readOnly
                 />
               </div>
@@ -166,7 +166,7 @@ export default function CustomerPage() {
               <input
                 type="text"
                 placeholder="Eg: 91XXXXXXXXX"
-                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
               />
             </div>
           </div>
@@ -185,7 +185,7 @@ export default function CustomerPage() {
               <input
                 type="text"
                 placeholder="House / building name/no, street name, locality"
-                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
               />
             </div>
 
@@ -193,7 +193,7 @@ export default function CustomerPage() {
               <label className="block font-medium text-gray-700 mb-3 text-base">
                 Region/State
               </label>
-              <select className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 appearance-none bg-white text-base">
+              <select className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 appearance-none bg-white text-base">
                 <option>Select region / state</option>
               </select>
             </div>
@@ -202,7 +202,7 @@ export default function CustomerPage() {
               <label className="block font-medium text-gray-700 mb-3 text-base">
                 City/Town
               </label>
-              <select className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 appearance-none bg-white text-base">
+              <select className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 appearance-none bg-white text-base">
                 <option>Select city / town</option>
               </select>
             </div>
@@ -216,7 +216,7 @@ export default function CustomerPage() {
               <input
                 type="text"
                 placeholder="Type postal code / zip code"
-                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
+                className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none text-gray-400 text-base"
               />
             </div>
           </div>

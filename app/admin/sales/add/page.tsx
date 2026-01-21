@@ -322,7 +322,7 @@ export default function SalesForm() {
                   <select
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
                     <option value="">Select customer</option>
                     {Array.isArray(customers) && customers.map(cust => (
@@ -348,7 +348,7 @@ export default function SalesForm() {
                   type="date"
                   value={saleDate}
                   onChange={(e) => setSaleDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -360,7 +360,7 @@ export default function SalesForm() {
                 <select
                   value={referredBy}
                   onChange={(e) => setReferredBy(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                 >
                   <option value="">Select customer</option>
                   {Array.isArray(customers) && customers.map(cust => (
@@ -621,7 +621,7 @@ export default function SalesForm() {
                 <select
                   value={partSearch}
                   onChange={(e) => setPartSearch(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Search and select existing part or create new below</option>
                 </select>
@@ -648,7 +648,7 @@ export default function SalesForm() {
                     placeholder="Eg: RAM, HDD"
                     value={partName}
                     onChange={(e) => setPartName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -660,7 +660,7 @@ export default function SalesForm() {
                     placeholder="Eg: C02CQ261MD6P"
                     value={serialNumber}
                     onChange={(e) => setSerialNumber(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -675,7 +675,7 @@ export default function SalesForm() {
                   placeholder="Enter description (optional)"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
 
@@ -690,7 +690,7 @@ export default function SalesForm() {
                     placeholder="Type warranty"
                     value={warranty}
                     onChange={(e) => setWarranty(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -702,7 +702,7 @@ export default function SalesForm() {
                     placeholder="Enter price"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -728,7 +728,7 @@ export default function SalesForm() {
                     type="text"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
               </div>
@@ -744,7 +744,7 @@ export default function SalesForm() {
                     placeholder="Discount"
                     value={discount}
                     onChange={(e) => setDiscount(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -761,7 +761,7 @@ export default function SalesForm() {
                     placeholder="Sub total"
                     value={subTotal}
                     onChange={(e) => setSubTotal(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
                     readOnly
                   />
                 </div>
@@ -776,7 +776,7 @@ export default function SalesForm() {
                   <select
                     value={tax}
                     onChange={(e) => setTax(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   >
                     <option value="">Select tax</option>
                     <option value="18">GST 18%</option>
@@ -798,7 +798,7 @@ export default function SalesForm() {
                     placeholder="Tax amount"
                     value={taxAmount}
                     onChange={(e) => setTaxAmount(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
                     readOnly
                   />
                 </div>
@@ -815,7 +815,7 @@ export default function SalesForm() {
                     placeholder="Eg: HSN code"
                     value={taxCode}
                     onChange={(e) => setTaxCode(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -832,7 +832,7 @@ export default function SalesForm() {
                     placeholder="Total amount"
                     value={totalAmount}
                     onChange={(e) => setTotalAmount(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-gray-50"
                     readOnly
                   />
                 </div>

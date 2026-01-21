@@ -275,7 +275,7 @@ function RegisterForm() {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 readOnly={isCustomerInvite}
-                className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
+                className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
                   isCustomerInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
                 }`}
                 placeholder="User Name"
@@ -294,7 +294,7 @@ function RegisterForm() {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 readOnly={isCustomerInvite}
-                className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
+                className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
                   isCustomerInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
                 }`}
                 placeholder="you@example.com"
@@ -311,7 +311,7 @@ function RegisterForm() {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
                 placeholder="+1234567890"
               />
             </div>
@@ -327,7 +327,7 @@ function RegisterForm() {
                 required
                 value={formData.password}
                 onChange={(e) => handlePasswordChange(e.target.value)}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
                 placeholder="••••••••"
               />
               
@@ -381,7 +381,7 @@ function RegisterForm() {
                 required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-2 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
+                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900"
                 placeholder="••••••••"
               />
             </div>

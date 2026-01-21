@@ -330,7 +330,7 @@ export default function AddPartPage() {
                   value={formData.partName}
                   onChange={handleInputChange}
                   placeholder="Eg: RAM, optical drive, etc"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
 
@@ -341,7 +341,7 @@ export default function AddPartPage() {
                     name="category"
                     value={formData.category}
                     onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                   >
                     <option value="">Select category</option>
                     {categories.map(cat => (
@@ -364,7 +364,7 @@ export default function AddPartPage() {
                     name="subCategory"
                     value={formData.subCategory}
                     onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                     disabled={!formData.category}
                   >
                     <option value="">Select sub category</option>
@@ -389,7 +389,7 @@ export default function AddPartPage() {
                   value={formData.warranty}
                   onChange={handleInputChange}
                   placeholder="Type warranty"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
             </div>
@@ -401,7 +401,7 @@ export default function AddPartPage() {
                   name="storageLocation"
                   value={formData.storageLocation}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 >
                   <option value="">Select storage location</option>
                   <option value="warehouse-a">Warehouse A</option>
@@ -426,7 +426,7 @@ export default function AddPartPage() {
                   value={formData.openingStock}
                   onChange={handleInputChange}
                   placeholder="Type in numbers only"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
 
@@ -436,7 +436,7 @@ export default function AddPartPage() {
                   name="unitType"
                   value={formData.unitType}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 >
                   <option value="">Select unit type</option>
                   <option value="pcs">Pieces</option>
@@ -453,7 +453,7 @@ export default function AddPartPage() {
                   value={formData.sku}
                   onChange={handleInputChange}
                   placeholder="Type SKU code / barcode"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
 
@@ -465,7 +465,7 @@ export default function AddPartPage() {
                   value={formData.lowStockUnits}
                   onChange={handleInputChange}
                   placeholder="Type low stock units"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
             </div>
@@ -483,7 +483,7 @@ export default function AddPartPage() {
                   name="barcodeNumber"
                   value={formData.barcodeNumber}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
               <div className="flex items-end">
@@ -563,7 +563,7 @@ export default function AddPartPage() {
                   name="purchasePrice"
                   value={formData.purchasePrice}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
 
@@ -575,7 +575,7 @@ export default function AddPartPage() {
                   value={formData.sellingPrice}
                   onChange={handleInputChange}
                   placeholder="Enter selling price"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
 
@@ -586,7 +586,7 @@ export default function AddPartPage() {
                     name="tax"
                     value={formData.tax}
                     onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                   >
                     <option value="GST 18%">GST 18%</option>
                     <option value="GST 12%">IGST 18%</option>
@@ -606,7 +606,7 @@ export default function AddPartPage() {
                   value={formData.hsnCode}
                   onChange={handleInputChange}
                   placeholder="Type HSN / SAC code"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
             </div>
@@ -643,7 +643,7 @@ export default function AddPartPage() {
                   onChange={handleInputChange}
                   placeholder="Enter part description"
                   rows={5}
-                  className="w-full px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#4A70A9] resize-none text-sm"
+                  className="w-full px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] resize-none text-sm"
                 />
               </div>
               <p className="text-xs text-gray-500 mt-2">Max Allowed Characters 5000</p>
@@ -740,7 +740,7 @@ export default function AddPartPage() {
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
                 placeholder="Eg: storage, power supply etc"
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
               />
             </div>
 
@@ -792,7 +792,7 @@ export default function AddPartPage() {
                 <select
                   value={selectedCategoryForSub}
                   onChange={(e) => setSelectedCategoryForSub(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 >
                   <option value="">Select category</option>
                   {categories.map(cat => (
@@ -810,7 +810,7 @@ export default function AddPartPage() {
                   value={newSubCategoryName}
                   onChange={(e) => setNewSubCategoryName(e.target.value)}
                   placeholder="Eg: storage, power supply etc"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
             </div>

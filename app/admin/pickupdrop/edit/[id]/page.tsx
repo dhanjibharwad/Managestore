@@ -340,7 +340,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
                         }
                       }
                     }}
-                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${mobileError ? 'border-red-500' : 'border-gray-300'}`} />
+                    className={`flex-1 px-4 py-2.5 border rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${mobileError ? 'border-red-500' : 'border-gray-300'}`} />
                 </div>
                 {mobileError && <p className="text-red-500 text-sm mt-1">{mobileError}</p>}
               </div>
@@ -353,7 +353,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
                 </label>
                 <div className="relative">
                   <select value={deviceType} onChange={(e) => setDeviceType(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                     <option value="">Select device type</option>
                     {deviceTypes.map(type => (
                       <option key={type.id} value={type.id}>{type.name}</option>
@@ -370,7 +370,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
                 <div className="relative" ref={calendarRef}>
                   <input type="text" placeholder="Select from calendar" value={scheduleDate}
                     onClick={() => setShowCalendar(!showCalendar)} readOnly
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent cursor-pointer" />
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent cursor-pointer" />
                   <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={20} />
 
                   {showCalendar && (
@@ -440,7 +440,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
               </label>
               <div className="relative">
                 <select value={assignee} onChange={(e) => setAssignee(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                   <option value="">Select assignee</option>
                   {users.map(user => (
                     <option key={user.id} value={user.id}>{user.name} ({user.role})</option>
@@ -456,7 +456,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
               </label>
               <div className="relative">
                 <select value={status} onChange={(e) => setStatus(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent bg-white">
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white">
                   <option value="scheduled">Scheduled</option>
                   <option value="in_progress">In Progress</option>
                   <option value="completed">Completed</option>
@@ -471,7 +471,7 @@ export default function EditPickupDropPage({ params }: { params: Promise<{ id: s
                 Address <span className="text-red-500">*</span>
               </label>
               <textarea placeholder="Type address" value={address} onChange={(e) => setAddress(e.target.value)} rows={4}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent resize-none" />
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent resize-none" />
             </div>
           </div>
         </div>

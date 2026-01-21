@@ -358,7 +358,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lead Type</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.leadType}
                     onChange={(e) => setFormData({ ...formData, leadType: e.target.value })}
                   >
@@ -378,7 +378,7 @@ export default function LeadInformationPage() {
                 <input
                   type="text"
                   placeholder="Eg: John Smith"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   value={formData.leadName}
                   onChange={(e) => setFormData({ ...formData, leadName: e.target.value })}
                 />
@@ -388,7 +388,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lead Source</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.leadSource}
                     onChange={(e) => setFormData({ ...formData, leadSource: e.target.value })}
                   >
@@ -410,7 +410,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Referred By Customer</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.referredBy}
                     onChange={(e) => setFormData({ ...formData, referredBy: e.target.value })}
                   >
@@ -433,7 +433,7 @@ export default function LeadInformationPage() {
                     type="tel"
                     placeholder="10 digits starting with 6-9"
                     maxLength={10}
-                    className={`flex-1 px-4 py-2.5 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                    className={`flex-1 px-4 py-2.5 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                       errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
                     }`}
                     value={formData.mobileNumber}
@@ -454,7 +454,7 @@ export default function LeadInformationPage() {
                 <input
                   type="email"
                   placeholder="Eg: example@example.com"
-                  className={`w-full px-4 py-2.5 border rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent ${
+                  className={`w-full px-4 py-2.5 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                     errors.emailId ? 'border-red-500' : 'border-gray-300'
                   }`}
                   value={formData.emailId}
@@ -476,7 +476,7 @@ export default function LeadInformationPage() {
                 <input
                   type="text"
                   placeholder="Eg: 91XXXXXXXX"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   value={formData.phoneNumber}
                   onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                 />
@@ -487,7 +487,7 @@ export default function LeadInformationPage() {
                 <input
                   type="text"
                   placeholder="Type contact person"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   value={formData.contactPerson}
                   onChange={(e) => setFormData({ ...formData, contactPerson: e.target.value })}
                 />
@@ -499,7 +499,7 @@ export default function LeadInformationPage() {
                   type="date"
                   value={formData.nextFollowUp}
                   onChange={(e) => setFormData({ ...formData, nextFollowUp: e.target.value })}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
             </div>
@@ -511,7 +511,7 @@ export default function LeadInformationPage() {
                 </label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.assignee}
                     onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
                   >
@@ -534,7 +534,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Device Type</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.deviceType}
                     onChange={(e) => setFormData({ ...formData, deviceType: e.target.value })}
                   >
@@ -552,7 +552,7 @@ export default function LeadInformationPage() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <select
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                       value={formData.deviceBrand}
                       onChange={(e) => setFormData({ ...formData, deviceBrand: e.target.value })}
                       disabled={!formData.deviceType}
@@ -580,7 +580,7 @@ export default function LeadInformationPage() {
                 <div className="flex gap-2">
                   <div className="relative flex-1">
                     <select
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                       value={formData.deviceModel}
                       onChange={(e) => setFormData({ ...formData, deviceModel: e.target.value })}
                       disabled={!formData.deviceBrand}
@@ -607,7 +607,7 @@ export default function LeadInformationPage() {
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">Comment</label>
               <textarea
-                className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] resize-none"
                 rows={4}
                 placeholder="Type text here"
                 value={formData.comment}
@@ -628,7 +628,7 @@ export default function LeadInformationPage() {
                 <input
                   type="text"
                   placeholder="House / building name/no, street name, locality"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   value={formData.addressLine}
                   onChange={(e) => setFormData({ ...formData, addressLine: e.target.value })}
                 />
@@ -638,7 +638,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Region/State</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                     value={formData.region}
                     onChange={(e) => setFormData({ ...formData, region: e.target.value })}
                   >
@@ -657,7 +657,7 @@ export default function LeadInformationPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">City/Town</label>
                 <div className="relative">
                   <select
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white disabled:bg-gray-100 disabled:cursor-not-allowed"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     disabled={!formData.region}
@@ -680,7 +680,7 @@ export default function LeadInformationPage() {
                 <input
                   type="text"
                   placeholder="Type postal code / zip code"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   value={formData.postalCode}
                   onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                 />
@@ -699,7 +699,7 @@ export default function LeadInformationPage() {
                 value={newBrandName}
                 onChange={(e) => setNewBrandName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddBrand()}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] mb-4"
                 autoFocus
               />
               <div className="flex gap-3 justify-end">
@@ -731,7 +731,7 @@ export default function LeadInformationPage() {
                 value={newModelName}
                 onChange={(e) => setNewModelName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleAddModel()}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#4A70A9] mb-4"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] mb-4"
                 autoFocus
               />
               <div className="flex gap-3 justify-end">

@@ -394,7 +394,7 @@ export default function ProfilePage() {
                       value={isEditing ? formData.customer_name : customer.customer_name}
                       onChange={(e) => handleInputChange('customer_name', e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
                         validationErrors.customer_name ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -422,7 +422,7 @@ export default function ProfilePage() {
                           handleInputChange('mobile_number', value);
                         }}
                         readOnly={!isEditing}
-                        className={`flex-1 px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                        className={`flex-1 px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
                           validationErrors.mobile_number ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
@@ -445,7 +445,7 @@ export default function ProfilePage() {
                       }}
                       placeholder="Eg: 91XXXXXXXXX"
                       readOnly={!isEditing}
-                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                      className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
                         validationErrors.phone_number ? 'border-red-500' : 'border-gray-300'
                       }`}
                     />
@@ -472,7 +472,7 @@ export default function ProfilePage() {
                         onChange={(e) => handleInputChange('address_line', e.target.value)}
                         placeholder="House / building name/no, street name, locality"
                         readOnly={!isEditing}
-                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'}`}
                       />
                     </div>
 
@@ -485,7 +485,7 @@ export default function ProfilePage() {
                           <select
                             value={formData.region_state}
                             onChange={(e) => handleInputChange('region_state', e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent appearance-none"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none"
                           >
                             <option value="">Select region / state</option>
                             {states.map((state) => (
@@ -516,7 +516,7 @@ export default function ProfilePage() {
                             value={formData.city_town}
                             onChange={(e) => handleInputChange('city_town', e.target.value)}
                             disabled={!formData.region_state}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed appearance-none"
                           >
                             <option value="">Select city / town</option>
                             {cities.map((city) => (
@@ -547,7 +547,7 @@ export default function ProfilePage() {
                         onChange={(e) => handleInputChange('postal_code', e.target.value)}
                         placeholder="Type postal code / zip code"
                         readOnly={!isEditing}
-                        className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-2 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
+                        className={`w-full px-3 py-2 border rounded-md ${isEditing ? 'bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent' : 'bg-gray-50'} ${
                           validationErrors.postal_code ? 'border-red-500' : 'border-gray-300'
                         }`}
                       />
