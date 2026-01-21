@@ -591,7 +591,7 @@ export default function SalesForm() {
             </div>
 
             {/* Send Alert */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Send Alert
               </label>
@@ -606,7 +606,7 @@ export default function SalesForm() {
                   <span className="text-sm text-gray-700">Mail</span>
                 </label>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

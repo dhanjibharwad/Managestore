@@ -279,14 +279,14 @@ const ProfilePage = () => {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'jobs', label: 'Assigned Jobs', icon: Briefcase },
-    { id: 'tasks', label: 'Assigned Task', icon: ClipboardList },
-    { id: 'leads', label: 'Assigned Leads', icon: Users },
-    { id: 'pickups', label: 'Assigned Pickup Drops', icon: Package },
-    { id: 'permissions', label: 'Permissions', icon: Lock },
-    { id: 'notes', label: 'Private Notes', icon: FileText },
-    { id: 'notifications', label: 'Notification Preferences', icon: Bell },
-    { id: 'travel', label: 'Employee Travel Logs', icon: Plane },
+    // { id: 'jobs', label: 'Assigned Jobs', icon: Briefcase },
+    // { id: 'tasks', label: 'Assigned Task', icon: ClipboardList },
+    // { id: 'leads', label: 'Assigned Leads', icon: Users },
+    // { id: 'pickups', label: 'Assigned Pickup Drops', icon: Package },
+    // { id: 'permissions', label: 'Permissions', icon: Lock },
+    // { id: 'notes', label: 'Private Notes', icon: FileText },
+    // { id: 'notifications', label: 'Notification Preferences', icon: Bell },
+    // { id: 'travel', label: 'Employee Travel Logs', icon: Plane },
   ];
 
   return (

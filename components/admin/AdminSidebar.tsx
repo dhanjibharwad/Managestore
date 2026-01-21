@@ -36,7 +36,7 @@ const navItems = [
    { label: "Quotations", href: "/admin/quotations", icon: FileText  },
     { label: "Purchase", href: "/admin/purchase", icon: ShoppingCart  },
     { label: "Inventory", href: "/admin/inventory", icon: Warehouse },
-   { label: "Reports", href: "/admin/reports", icon: FileText },
+  //  { label: "Reports", href: "/admin/reports", icon: FileText },
    { label: "Employees", href: "/admin/employees", icon: IdCard },
     { label: "Tasks", href: "/admin/tasks", icon: ListTodo },
    { label: "Leads", href: "/admin/leads", icon: UserPlus },

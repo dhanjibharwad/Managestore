@@ -212,15 +212,15 @@ export default function ProfilePage() {
 
   const tabs = [
     { name: 'Profile', icon: User },
-    { name: 'Contacts', icon: Phone },
-    { name: 'Jobs', icon: FileText },
-    { name: 'Sales', icon: Package },
-    { name: 'Referred List', icon: FileText },
-    { name: 'Payments', icon: CreditCard },
-    { name: 'Pickup Drops', icon: Package },
-    { name: 'Bulk Payments', icon: CreditCard },
-    { name: 'Invoices', icon: FileText },
-    { name: 'Notification Preferences', icon: Bell },
+    // { name: 'Contacts', icon: Phone },
+    // { name: 'Jobs', icon: FileText },
+    // { name: 'Sales', icon: Package },
+    // { name: 'Referred List', icon: FileText },
+    // { name: 'Payments', icon: CreditCard },
+    // { name: 'Pickup Drops', icon: Package },
+    // { name: 'Bulk Payments', icon: CreditCard },
+    // { name: 'Invoices', icon: FileText },
+    // { name: 'Notification Preferences', icon: Bell },
   ];
 
   return (
@@ -287,12 +287,12 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 mt-2">
+                {/* <div className="flex gap-3 mt-2">
                   <button className="flex items-center gap-2 px-4 py-2 border border-green-500 text-green-600 rounded-md hover:bg-green-50 transition-colors">
                     <MessageCircle className="w-4 h-4" />
                     <span className="text-sm font-medium">Whatsapp</span>
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -306,12 +306,12 @@ export default function ProfilePage() {
                 </span>
               </div>
               
-              <div className="flex items-center gap-2">
+              {/* <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600">Payment Remaining</span>
                 <span className="px-3 py-1 bg-red-500 text-white text-sm font-medium rounded-md">
                   ₹ 0.00
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

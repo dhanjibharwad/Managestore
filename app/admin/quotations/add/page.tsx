@@ -576,13 +576,13 @@ export default function QuotationPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800">Parts</h2>
               <div className="flex gap-3">
-                <button
+                {/* <button
                   className="flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
                   style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
                 >
                   <Scan className="w-4 h-4" />
                   Scan Part
-                </button>
+                </button> */}
                 <button
                   onClick={openPartModal}
                   className="cursor-pointer flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
