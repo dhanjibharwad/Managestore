@@ -44,7 +44,7 @@ export default function JobsPage() {
                 Open Jobs
               </Link>
               <Link
-                href="/customer/jobs/all"
+                href="/customer/jobs/all/"
                 className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                   activeTab === 'all'
                     ? 'border-[#4A70A9] text-[#4A70A9]'
