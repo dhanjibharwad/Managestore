@@ -1,17 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
-  const client = await pool.connect();
-  
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const {
-      companyId,
       saleNumber,
       customerName,
       saleDate,
@@ -23,11 +25,9 @@ export async function POST(req: NextRequest) {
       items
     } = body;
 
-    if (!companyId || !saleNumber || !customerName || !saleDate || !items || items.length === 0) {
+    if (!saleNumber || !customerName || !saleDate || !items || items.length === 0) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
     }
-
-    await client.query('BEGIN');
 
     // Calculate totals
     const subtotal = items.reduce((sum: number, item: any) => sum + parseFloat(item.subTotal), 0);
@@ -46,12 +46,12 @@ export async function POST(req: NextRequest) {
     `;
 
     const saleValues = [
-      companyId, saleNumber, customerName, saleDate, referredBy,
+      session.company.id, saleNumber, customerName, saleDate, referredBy,
       paymentStatus, termsConditions, sendMail, sendSms,
       subtotal, totalDiscount, totalTax, grandTotal
     ];
 
-    const saleResult = await client.query(saleQuery, saleValues);
+    const saleResult = await pool.query(saleQuery, saleValues);
     const saleId = saleResult.rows[0].id;
 
     // Insert sale items
@@ -77,10 +77,8 @@ export async function POST(req: NextRequest) {
         item.total
       ];
 
-      await client.query(itemQuery, itemValues);
+      await pool.query(itemQuery, itemValues);
     }
-
-    await client.query('COMMIT');
 
     return NextResponse.json({
       success: true,
@@ -88,21 +86,19 @@ export async function POST(req: NextRequest) {
     }, { status: 201 });
 
   } catch (error) {
-    await client.query('ROLLBACK');
     console.error('Database error:', error);
     return NextResponse.json({ error: 'Failed to create sale' }, { status: 500 });
-  } finally {
-    client.release();
   }
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const companyId = searchParams.get('companyId');
-
-    if (!companyId) {
-      return NextResponse.json({ error: 'Company ID is required' }, { status: 400 });
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
     }
 
     const query = `SELECT s.*, 
@@ -116,7 +112,7 @@ export async function GET(req: NextRequest) {
          GROUP BY s.id, c.customer_name
          ORDER BY s.created_at DESC`;
 
-    const result = await pool.query(query, [companyId]);
+    const result = await pool.query(query, [session.company.id]);
 
     return NextResponse.json({ sales: result.rows });
   } catch (error) {

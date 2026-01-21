@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+import pool from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 export async function POST(req: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     
     const {
-      companyId,
       contractNumber,
       customerName,
       assignee,
@@ -31,7 +35,7 @@ export async function POST(req: NextRequest) {
     } = body;
 
     // Validation
-    if (!companyId || !contractNumber || !customerName || !assignee || !amcType || !contractStartDate || !contractEndDate) {
+    if (!contractNumber || !customerName || !assignee || !amcType || !contractStartDate || !contractEndDate) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
     }
 
@@ -46,7 +50,7 @@ export async function POST(req: NextRequest) {
     `;
 
     const values = [
-      companyId,
+      session.company.id,
       contractNumber,
       customerName,
       assignee,
@@ -81,11 +85,12 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const companyId = searchParams.get('companyId');
-
-    if (!companyId) {
-      return NextResponse.json({ error: 'Company ID is required' }, { status: 400 });
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
     }
 
     const query = `
@@ -99,7 +104,7 @@ export async function GET(req: NextRequest) {
       WHERE ac.company_id = $1
       ORDER BY ac.created_at DESC
     `;
-    const result = await pool.query(query, [companyId]);
+    const result = await pool.query(query, [session.company.id]);
     
     return NextResponse.json({ 
       contracts: result.rows 
