@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     company_id INTEGER NOT NULL,
     
     -- Customer Information
+    customer_id INTEGER, -- Link to customers table
     customer_name VARCHAR(255) NOT NULL,
     source VARCHAR(100) DEFAULT 'Google',
     referred_by VARCHAR(255),

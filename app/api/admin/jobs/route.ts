@@ -51,6 +51,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Get customer_id if customer exists
+    let customerId = null;
+    const customerResult = await pool.query(
+      'SELECT id FROM customers WHERE customer_name = $1 AND company_id = $2',
+      [customerName, session.company.id]
+    );
+    if (customerResult.rows.length > 0) {
+      customerId = customerResult.rows[0].id;
+    }
+
     // Generate unique job_id
     const generateJobId = () => {
       return 'JOB_' + randomBytes(4).toString('hex').toUpperCase();
@@ -77,18 +87,18 @@ export async function POST(req: NextRequest) {
 
     const result = await pool.query(
       `INSERT INTO jobs (
-        job_id, job_number, company_id, customer_name, source, referred_by, service_type, job_type,
+        job_id, job_number, company_id, customer_id, customer_name, source, referred_by, service_type, job_type,
         device_type, device_brand, device_model, serial_number, accessories,
         storage_location, device_color, device_password, services, tags,
         hardware_config, service_assessment, priority, assignee,
         initial_quotation, due_date, dealer_job_id, terms_conditions, images
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-        $12, $13, $14, $15, $16, $17, $18, $19, $20,
-        $21, $22, $23, $24, $25, $26, $27
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+        $13, $14, $15, $16, $17, $18, $19, $20, $21,
+        $22, $23, $24, $25, $26, $27, $28
       ) RETURNING *`,
       [
-        jobId, jobNumber, session.company.id, customerName, source, referredBy, serviceType, jobType,
+        jobId, jobNumber, session.company.id, customerId, customerName, source, referredBy, serviceType, jobType,
         deviceType, deviceBrand, deviceModel, serialNumber, accessories,
         storageLocation, deviceColor, devicePassword, services, tags,
         hardwareConfig, serviceAssessment, priority, assignee,

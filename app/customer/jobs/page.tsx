@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Search } from 'lucide-react';
 
@@ -21,9 +21,38 @@ export default function JobsPage() {
   const [activeTab, setActiveTab] = useState<'open' | 'all'>('open');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Sample data - replace with your actual data
-  const jobs: Job[] = [];
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      if (statusFilter) params.append('status', statusFilter);
+      if (activeTab === 'open') params.append('status', 'Open');
+      
+      const response = await fetch(`/api/customer/jobs?${params}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setJobs(data.jobs || []);
+        setError('');
+      } else {
+        setError(data.error || 'Failed to fetch jobs');
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      setError('Failed to fetch jobs');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, [searchQuery, statusFilter, activeTab]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -122,10 +151,22 @@ export default function JobsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {jobs.length === 0 ? (
+                {loading ? (
                   <tr>
                     <td colSpan={9} className="px-6 py-16 text-center">
-                      <div className="text-gray-400 text-sm">No data</div>
+                      <div className="text-gray-400 text-sm">Loading...</div>
+                    </td>
+                  </tr>
+                ) : error ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-16 text-center">
+                      <div className="text-red-500 text-sm">{error}</div>
+                    </td>
+                  </tr>
+                ) : jobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={9} className="px-6 py-16 text-center">
+                      <div className="text-gray-400 text-sm">No jobs found</div>
                     </td>
                   </tr>
                 ) : (
