@@ -359,7 +359,7 @@ export default function JobSheetForm() {
       <div className="h-full bg-white">
         {/* Header */}
         <div className="sticky top-0 z-10 border-b bg-white px-8 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-800">Job: 001</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">Job :</h1>
           <div className="flex gap-3">
             <button
               onClick={handleCancel}
@@ -428,14 +428,19 @@ export default function JobSheetForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Referred By</label>
-                <input
-                  type="text"
+                <select
                   name="referredBy"
                   value={formData.referredBy}
                   onChange={handleInputChange}
-                  placeholder="Search by name, mobile, email"
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
-                />
+                >
+                  <option value="">Select customer</option>
+                  {customers.map(customer => (
+                    <option key={customer.id} value={customer.customer_name}>
+                      {customer.customer_name} - {customer.customer_id} ({customer.mobile_number})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

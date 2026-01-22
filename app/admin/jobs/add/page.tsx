@@ -408,14 +408,19 @@ export default function JobSheetForm() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Referred By</label>
-                <input
-                  type="text"
+                <select
                   name="referredBy"
                   value={formData.referredBy}
                   onChange={handleInputChange}
-                  placeholder="Search by name, mobile, email"
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
-                />
+                >
+                  <option value="">Select customer</option>
+                  {customers.map(customer => (
+                    <option key={customer.id} value={customer.customer_name}>
+                      {customer.customer_name} - {customer.customer_id} ({customer.mobile_number})
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
