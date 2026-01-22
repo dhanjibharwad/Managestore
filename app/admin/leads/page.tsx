@@ -13,6 +13,7 @@ interface Lead {
   lead_source: string;
   next_follow_up: string;
   comment: string;
+  status: string;
   created_at: string;
 }
 
@@ -74,8 +75,11 @@ export default function LeadsPage() {
       (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()));
     
     const matchesAssignee = selectedAssignee === '' || lead.assignee_id.toString() === selectedAssignee;
+    // Since status column doesn't exist in database, treat all leads as 'new' for filtering
+    const leadStatus = lead.status || 'new';
+    const matchesStatus = selectedStatus === '' || leadStatus === selectedStatus;
     
-    return matchesSearch && matchesAssignee;
+    return matchesSearch && matchesAssignee && matchesStatus;
   });
 
   return (
@@ -192,7 +196,9 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">New</span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                      New
+                    </span>
                   </td>
                 </tr>
               ))

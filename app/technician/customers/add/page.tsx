@@ -20,6 +20,15 @@ interface CityType {
   name: string;
 }
 
+interface Customer {
+  id: number;
+  customer_id: string;
+  customer_name: string;
+  mobile_number: string;
+  email_id: string;
+  customer_type: string;
+}
+
 export default function CustomerForm() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,6 +36,7 @@ export default function CustomerForm() {
   const [nextToastId, setNextToastId] = useState(1);
   const [states, setStates] = useState<StateType[]>([]);
   const [cities, setCities] = useState<CityType[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [formData, setFormData] = useState({
     customerType: '',
     customerName: '',
@@ -47,6 +57,8 @@ export default function CustomerForm() {
     // Load Indian states
     const indianStates = State.getStatesOfCountry('IN');
     setStates(indianStates);
+    // Fetch customers for referred by dropdown
+    fetchCustomers();
   }, []);
 
   useEffect(() => {
@@ -74,6 +86,18 @@ export default function CustomerForm() {
     setTimeout(() => {
       removeToast(toast.id);
     }, 5000);
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      const data = await response.json();
+      if (data.customers) {
+        setCustomers(data.customers);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
   };
 
   const removeToast = (id: number) => {
@@ -162,7 +186,7 @@ export default function CustomerForm() {
   };
 
   const handleCancel = () => {
-    router.push('/admin/customers');
+    router.push('/technician/customers');
   };
 
   return (
@@ -351,13 +375,18 @@ export default function CustomerForm() {
                   Referred By
                 </label>
                 <div className="relative">
-                  <input
-                    type="text"
+                  <select
                     value={formData.referredBy}
                     onChange={(e) => setFormData({ ...formData, referredBy: e.target.value })}
-                    placeholder="Search by name, mobile, email"
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
-                  />
+                    className="w-full px-3 py-2 border border-gray-300 rounded appearance-none bg-white focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
+                  >
+                    <option value="">Select customer</option>
+                    {Array.isArray(customers) && customers.map(cust => (
+                      <option key={cust.id} value={cust.id}>
+                        {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
+                      </option>
+                    ))}
+                  </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                 </div>
               </div>

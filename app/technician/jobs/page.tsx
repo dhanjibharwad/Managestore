@@ -9,6 +9,8 @@ interface Job {
   customer_name: string;
   device_brand: string;
   device_model: string;
+  device_brand_name?: string;
+  device_model_name?: string;
   assignee: string;
   status: string;
   priority: string;
@@ -327,8 +329,8 @@ const JobPage: React.FC = () => {
                         <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{job.job_number}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.customer_name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_brand}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_model || '-'}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_brand_name || job.device_brand}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_model_name || job.device_model || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{job.services}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             {(() => {

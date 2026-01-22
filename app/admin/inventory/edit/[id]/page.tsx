@@ -189,7 +189,7 @@ export default function EditPartPage({ params }: { params: Promise<{ id: string 
                 </label>
                 <input
                   type="number"
-                  value={part.current_stock || part.opening_stock || 0}
+                  value={part.current_stock || 0}
                   onChange={(e) => setPart({...part, current_stock: parseInt(e.target.value) || 0})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />

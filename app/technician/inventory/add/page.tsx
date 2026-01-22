@@ -25,7 +25,7 @@ export default function AddPartPage() {
     unitType: '',
     sku: '',
     lowStockUnits: '',
-    barcodeNumber: '9627478723',
+    barcodeNumber: '',
     rateIncludingTax: false,
     manageStock: true,
     lowStockAlert: true,
@@ -486,7 +486,7 @@ export default function AddPartPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 />
               </div>
-              <div className="flex items-end">
+              {/* <div className="flex items-end">
                 <button className="px-8 py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium flex items-center gap-2 transition-colors text-sm">
                   View Barcode
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -494,7 +494,7 @@ export default function AddPartPage() {
                     <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h.01M12 12h.01M12 17h.01M17 7h.01M17 12h.01M17 17h.01" />
                   </svg>
                 </button>
-              </div>
+              </div> */}
             </div>
 
             {/* Toggle Switches */}
