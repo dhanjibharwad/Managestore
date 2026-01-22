@@ -661,11 +661,11 @@ export default function JobSheetForm() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Service Assessment</label>
               <div className="border border-gray-300 rounded">
-                <div className="bg-gray-50 border-b px-3 py-2 flex items-center gap-2">
+                {/* <div className="bg-gray-50 border-b px-3 py-2 flex items-center gap-2">
                   <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm font-bold">B</button>
                   <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm italic">I</button>
                   <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm underline">U</button>
-                </div>
+                </div> */}
                 <textarea
                   name="serviceAssessment"
                   value={formData.serviceAssessment}
@@ -818,11 +818,11 @@ export default function JobSheetForm() {
           <section className="mb-6">
             <h2 className="text-base font-semibold text-gray-800 mb-3">Terms and Conditions</h2>
             <div className="border border-gray-300 rounded">
-              <div className="bg-gray-50 border-b px-3 py-2 flex items-center gap-2">
+              {/* <div className="bg-gray-50 border-b px-3 py-2 flex items-center gap-2">
                 <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm font-bold">B</button>
                 <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm italic">I</button>
                 <button type="button" className="px-2 py-1 hover:bg-gray-200 rounded text-sm underline">U</button>
-              </div>
+              </div> */}
               <textarea
                 name="termsConditions"
                 value={formData.termsConditions}
