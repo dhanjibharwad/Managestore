@@ -47,6 +47,13 @@ const InventoryPage: React.FC = () => {
 
   useEffect(() => {
     fetchParts();
+    
+    // Check for success message from localStorage
+    const message = localStorage.getItem('successMessage');
+    if (message) {
+      showToast(message, 'success');
+      localStorage.removeItem('successMessage');
+    }
   }, []);
 
   const fetchParts = async () => {
