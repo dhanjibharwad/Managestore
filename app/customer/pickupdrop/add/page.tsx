@@ -517,7 +517,7 @@ export default function PickupDropPage() {
             </div>
 
             {/* Saved Responses */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <div className="relative">
                 <select
                   value={savedResponse}
@@ -533,7 +533,7 @@ export default function PickupDropPage() {
                   size={20}
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Description Field */}
             <div className="mb-6">

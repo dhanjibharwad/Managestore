@@ -1,21 +1,72 @@
 "use client"
-import React, { useState } from 'react';
-import { Search, ChevronDown, Menu } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, ChevronDown } from 'lucide-react';
 
 interface Sale {
+  id: number;
   saleNumber: string;
   customerName: string;
-  part: string;
+  parts: string;
   totalAmount: number;
   paymentReceived: number;
   paymentRemaining: number;
-  paymentStatus: 'Paid' | 'Pending' | 'Overdue';
+  paymentStatus: string;
+  saleDate: string;
+  createdAt: string;
 }
 
 export default function SalesPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('Select status');
-  const [sales] = useState<Sale[]>([]);
+  const [statusFilter, setStatusFilter] = useState('');
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchSales();
+  }, []);
+
+  const fetchSales = async () => {
+    try {
+      const response = await fetch('/api/customer/sales');
+      if (response.ok) {
+        const data = await response.json();
+        setSales(data.sales || []);
+      } else {
+        console.error('Failed to fetch sales');
+      }
+    } catch (error) {
+      console.error('Error fetching sales:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getPaymentStatusDisplay = (status: string, received: number, total: number) => {
+    if (received >= total) return 'Paid';
+    if (received > 0) return 'Partially Paid';
+    return 'Unpaid';
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'paid': return 'bg-green-100 text-green-800';
+      case 'partially paid': return 'bg-yellow-100 text-yellow-800';
+      case 'unpaid': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const filteredSales = sales.filter(sale => {
+    const matchesSearch = searchQuery === '' ||
+      sale.saleNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sale.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      sale.parts.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const displayStatus = getPaymentStatusDisplay(sale.paymentStatus, sale.paymentReceived, sale.totalAmount);
+    const matchesStatus = statusFilter === '' || displayStatus === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="bg-white">
@@ -44,11 +95,10 @@ export default function SalesPage() {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="appearance-none w-44 px-4 py-2 pr-10 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               >
-                <option>Select status</option>
-                <option>Paid</option>
-                <option>Partially Paid</option>
-                <option>Unpaid</option>
-                 <option>Over Paid</option>
+                <option value="">Select status</option>
+                <option value="Paid">Paid</option>
+                <option value="Partially Paid">Partially Paid</option>
+                <option value="Unpaid">Unpaid</option>
               </select>
               <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
             </div>
@@ -73,7 +123,7 @@ export default function SalesPage() {
                 Customer Name
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Part
+                Parts
               </th>
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
                 Total Amount
@@ -90,36 +140,37 @@ export default function SalesPage() {
             </tr>
           </thead>
           <tbody>
-            {sales.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-32 text-center">
+                  <div className="text-gray-400 text-base">Loading...</div>
+                </td>
+              </tr>
+            ) : filteredSales.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-32 text-center">
                   <div className="text-gray-400 text-base">No data</div>
                 </td>
               </tr>
             ) : (
-              sales.map((sale) => (
-                <tr key={sale.saleNumber} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{sale.saleNumber}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{sale.customerName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{sale.part}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹{sale.totalAmount.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹{sale.paymentReceived.toLocaleString()}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹{sale.paymentRemaining.toLocaleString()}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                        sale.paymentStatus === 'Paid'
-                          ? 'bg-green-100 text-green-800'
-                          : sale.paymentStatus === 'Pending'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}
-                    >
-                      {sale.paymentStatus}
-                    </span>
-                  </td>
-                </tr>
-              ))
+              filteredSales.map((sale) => {
+                const displayStatus = getPaymentStatusDisplay(sale.paymentStatus, sale.paymentReceived, sale.totalAmount);
+                return (
+                  <tr key={sale.id} className="border-b border-gray-200 hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-900">{sale.saleNumber}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{sale.customerName}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">{sale.parts}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{sale.totalAmount.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{sale.paymentReceived.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-sm text-gray-900">₹{sale.paymentRemaining.toLocaleString()}</td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(displayStatus)}`}>
+                        {displayStatus}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
