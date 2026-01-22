@@ -122,7 +122,7 @@ export default function SalesPage() {
   const totalDueAmount = totalPayment - totalPaymentReceived;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="mb-6">
         <button
@@ -179,9 +179,9 @@ export default function SalesPage() {
       </div>
 
       {/* Sales Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col flex-1 overflow-hidden">
         {/* Header with Filters */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <h2 className="text-lg font-semibold text-gray-800">Sales</h2>
             
@@ -198,20 +198,6 @@ export default function SalesPage() {
                 />
               </div>
 
-              {/* Filter by Tax */}
-              {/* <div className="relative">
-                <select
-                  value={filterTax}
-                  onChange={(e) => setFilterTax(e.target.value)}
-                  className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md text-sm text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white cursor-pointer"
-                >
-                  <option value="">Filter by tax</option>
-                  <option value="gst">GST</option>
-                  <option value="non-gst">Non-GST</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-              </div> */}
-
               {/* Select Status */}
               <div className="relative">
                 <select
@@ -227,16 +213,6 @@ export default function SalesPage() {
                 </select>
                 <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
-
-              {/* Action Buttons */}
-              {/* <button
-                className="px-4 py-2 text-white rounded-md text-sm font-medium transition-colors"
-                style={{ backgroundColor: '#4A70A9' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#3a5a89'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4A70A9'}
-              >
-                Export
-              </button> */}
               
               <Link href="/admin/sales/add">
               <button
@@ -251,9 +227,9 @@ export default function SalesPage() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto overflow-visible">
+        <div className="flex-1 overflow-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50 border-b border-gray-200 sticky top-0">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                   Sale Number

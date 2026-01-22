@@ -536,13 +536,13 @@ export default function SalesForm() {
                   <select className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700">
                     <option>Normal text</option>
                   </select>
-                  <div className="w-px h-6 bg-gray-300"></div>
+                  {/* <div className="w-px h-6 bg-gray-300"></div>
                   <button className="p-1 hover:bg-gray-200 rounded font-bold text-gray-700">B</button>
                   <button className="p-1 hover:bg-gray-200 rounded italic text-gray-700">I</button>
                   <button className="p-1 hover:bg-gray-200 rounded text-gray-700 line-through">S</button>
                   <button className="p-1 hover:bg-gray-200 rounded underline text-gray-700">U</button>
-                  <div className="w-px h-6 bg-gray-300"></div>
-                  <button className="p-1 hover:bg-gray-200 rounded">
+                  <div className="w-px h-6 bg-gray-300"></div> */}
+                  {/* <button className="p-1 hover:bg-gray-200 rounded">
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
@@ -561,7 +561,7 @@ export default function SalesForm() {
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8M4 18h8" />
                     </svg>
-                  </button>
+                  </button> */}
                 </div>
                 {/* Text Area */}
                 <textarea

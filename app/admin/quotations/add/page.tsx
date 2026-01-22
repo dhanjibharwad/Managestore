@@ -695,7 +695,7 @@ export default function QuotationPage() {
                 <select className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
                 </select>
-                <div className="flex gap-1 border-l border-gray-300 pl-2">
+                {/* <div className="flex gap-1 border-l border-gray-300 pl-2">
                   <button className="p-1 hover:bg-gray-200 rounded">
                     <span className="font-bold text-sm">B</span>
                   </button>
@@ -708,10 +708,10 @@ export default function QuotationPage() {
                   <button className="p-1 hover:bg-gray-200 rounded">
                     <span className="text-sm underline">U</span>
                   </button>
-                </div>
-                <div className="flex gap-1 border-l border-gray-300 pl-2">
+                </div> */}
+                {/* <div className="flex gap-1 border-l border-gray-300 pl-2">
                   <button className="p-1 hover:bg-gray-200 rounded">≡</button>
-                </div>
+                </div> */}
               </div>
               <textarea
                 placeholder="Type text here"

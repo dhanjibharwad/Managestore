@@ -267,7 +267,7 @@ export default function AddPartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="bg-gray-50">
       {/* Toast Container */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
