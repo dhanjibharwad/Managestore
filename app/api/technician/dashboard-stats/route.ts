@@ -33,8 +33,8 @@ export async function GET() {
     // Get assigned tasks count
     const assignedTasksResult = await pool.query(
       `SELECT COUNT(*) as count FROM tasks 
-       WHERE company_id = $1 AND assignee = $2`,
-      [companyId, technicianName]
+       WHERE company_id = $1 AND assignee_id = $2`,
+      [companyId, session.user.id]
     );
 
     // Get delayed jobs count (jobs past due date)

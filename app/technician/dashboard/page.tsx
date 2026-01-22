@@ -15,6 +15,46 @@ interface Job {
   status: string;
   priority: string;
   services: string;
+  initial_quotation?: string;
+  created_at: string;
+}
+
+interface Lead {
+  id: number;
+  lead_name: string;
+  mobile_number: string;
+  email_id: string;
+  device_type_name?: string;
+  device_brand_name?: string;
+  device_model_name?: string;
+  next_follow_up: string;
+  created_at: string;
+}
+
+interface Task {
+  id: number;
+  task_id: string;
+  task_title: string;
+  task_description: string;
+  customer_name?: string;
+  assignee_name: string;
+  task_status: string;
+  priority: string;
+  due_date: string;
+  created_at: string;
+}
+
+interface PickupDrop {
+  id: number;
+  pickup_drop_id: string;
+  service_type: string;
+  customer_search: string;
+  mobile: string;
+  device_type: string;
+  schedule_date: string;
+  assignee_name: string;
+  status: string;
+  address: string;
   created_at: string;
 }
 
@@ -36,17 +76,20 @@ export default function DashboardPage() {
     delayedJobs: 0
   });
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [pickupDrops, setPickupDrops] = useState<PickupDrop[]>([]);
   const [loading, setLoading] = useState(true);
-  const [jobsLoading, setJobsLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardStats();
-    fetchAssignedJobs();
+    fetchTabData();
   }, []);
 
   useEffect(() => {
-    fetchAssignedJobs();
-  }, [searchQuery, jobStatus]);
+    fetchTabData();
+  }, [activeTab, searchQuery, jobStatus]);
 
   const fetchDashboardStats = async () => {
     try {
@@ -62,23 +105,54 @@ export default function DashboardPage() {
     }
   };
 
-  const fetchAssignedJobs = async () => {
+  const fetchTabData = async () => {
     try {
-      setJobsLoading(true);
+      setDataLoading(true);
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       if (jobStatus) params.append('status', jobStatus);
       
-      const response = await fetch(`/api/technician/assigned-jobs?${params}`);
+      let endpoint = '';
+      switch (activeTab) {
+        case 'assigned-jobs':
+          endpoint = '/api/technician/assigned-jobs';
+          break;
+        case 'assigned-leads':
+          endpoint = '/api/technician/assigned-leads';
+          break;
+        case 'assigned-task':
+          endpoint = '/api/technician/assigned-tasks';
+          break;
+        case 'assigned-scheduled':
+          endpoint = '/api/technician/assigned-pickupdrop';
+          break;
+        default:
+          endpoint = '/api/technician/assigned-jobs';
+      }
+      
+      const response = await fetch(`${endpoint}?${params}`);
       const data = await response.json();
       
       if (response.ok) {
-        setJobs(data.jobs || []);
+        switch (activeTab) {
+          case 'assigned-jobs':
+            setJobs(data.jobs || []);
+            break;
+          case 'assigned-leads':
+            setLeads(data.leads || []);
+            break;
+          case 'assigned-task':
+            setTasks(data.tasks || []);
+            break;
+          case 'assigned-scheduled':
+            setPickupDrops(data.pickupDrops || []);
+            break;
+        }
       }
     } catch (error) {
-      console.error('Error fetching assigned jobs:', error);
+      console.error(`Error fetching ${activeTab}:`, error);
     } finally {
-      setJobsLoading(false);
+      setDataLoading(false);
     }
   };
 
@@ -177,11 +251,16 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Jobs Section */}
+      {/* Content Section */}
       <div className="bg-white mx-6 rounded-b-lg shadow-sm border border-t-0 border-gray-200">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Jobs</h2>
+            <h2 className="text-2xl font-bold text-gray-800">
+              {activeTab === 'assigned-jobs' && 'Jobs'}
+              {activeTab === 'assigned-leads' && 'Leads'}
+              {activeTab === 'assigned-task' && 'Tasks'}
+              {activeTab === 'assigned-scheduled' && 'Scheduled Pickups'}
+            </h2>
             <div className="flex items-center gap-4">
               {/* Search Input */}
               <div className="relative">
@@ -215,67 +294,242 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Table */}
+          {/* Dynamic Table Content */}
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Job Sheet</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Customer</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Payment Received</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Payment Remaining</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Payment Status</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Brand</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Model</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Assignee</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Service Assignee</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {jobsLoading ? (
-                  <tr>
-                    <td colSpan={10} className="text-center py-16 text-gray-400 text-lg">
-                      Loading...
-                    </td>
+            {activeTab === 'assigned-jobs' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Job Sheet</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Customer</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Quotation</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Brand</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Model</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Priority</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Created</th>
                   </tr>
-                ) : jobs.length === 0 ? (
-                  <tr>
-                    <td colSpan={10} className="text-center py-16 text-gray-400 text-lg">
-                      No data
-                    </td>
-                  </tr>
-                ) : (
-                  jobs.map((job) => (
-                    <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="py-3 px-4 text-sm text-blue-600 font-medium">{job.job_number}</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{job.customer_name}</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">₹0</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">₹0</td>
-                      <td className="py-3 px-4 text-sm">
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          Pending
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{job.device_brand_name || job.device_brand}</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{job.device_model_name || job.device_model || '-'}</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{job.assignee}</td>
-                      <td className="py-3 px-4 text-sm text-gray-900">{job.assignee}</td>
-                      <td className="py-3 px-4 text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                          job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                          job.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {job.status}
-                        </span>
+                </thead>
+                <tbody>
+                  {dataLoading ? (
+                    <tr>
+                      <td colSpan={8} className="text-center py-16 text-gray-400 text-lg">
+                        Loading...
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : jobs.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="text-center py-16 text-gray-400 text-lg">
+                        No jobs assigned
+                      </td>
+                    </tr>
+                  ) : (
+                    jobs.map((job) => (
+                      <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-sm text-blue-600 font-medium">{job.job_number}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{job.customer_name}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">₹{job.initial_quotation || '0'}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{job.device_brand_name || job.device_brand}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{job.device_model_name || job.device_model || '-'}</td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            job.priority === 'High' ? 'bg-red-100 text-red-800' :
+                            job.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                          }`}>
+                            {job.priority}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                            job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                            job.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {job.status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {new Date(job.created_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'assigned-leads' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Lead Name</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Mobile</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Email</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Type</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device Brand</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Next Follow Up</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataLoading ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : leads.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        No leads assigned
+                      </td>
+                    </tr>
+                  ) : (
+                    leads.map((lead) => (
+                      <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-sm text-blue-600 font-medium">{lead.lead_name}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{lead.mobile_number}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{lead.email_id || '-'}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{lead.device_type_name || '-'}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{lead.device_brand_name || '-'}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {lead.next_follow_up ? new Date(lead.next_follow_up).toLocaleDateString() : '-'}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {new Date(lead.created_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'assigned-task' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Task ID</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Title</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Customer</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Priority</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Due Date</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Created</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataLoading ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : tasks.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        No tasks assigned
+                      </td>
+                    </tr>
+                  ) : (
+                    tasks.map((task) => (
+                      <tr key={task.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-sm text-blue-600 font-medium">{task.task_id}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{task.task_title}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{task.customer_name || '-'}</td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            task.priority === 'High' ? 'bg-red-100 text-red-800' :
+                            task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-green-100 text-green-800'
+                          }`}>
+                            {task.priority}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            task.task_status === 'Not Started Yet' ? 'bg-gray-100 text-gray-800' :
+                            task.task_status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                            task.task_status === 'Completed' ? 'bg-green-100 text-green-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {task.task_status}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {task.due_date ? new Date(task.due_date).toLocaleDateString() : '-'}
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {new Date(task.created_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
+
+            {activeTab === 'assigned-scheduled' && (
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Service ID</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Type</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Customer</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Mobile</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Device</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Schedule Date</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700 text-sm">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataLoading ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        Loading...
+                      </td>
+                    </tr>
+                  ) : pickupDrops.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="text-center py-16 text-gray-400 text-lg">
+                        No scheduled services assigned
+                      </td>
+                    </tr>
+                  ) : (
+                    pickupDrops.map((service) => (
+                      <tr key={service.id} className="border-b border-gray-200 hover:bg-gray-50">
+                        <td className="py-3 px-4 text-sm text-blue-600 font-medium">{service.pickup_drop_id}</td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            service.service_type === 'pickup' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
+                          }`}>
+                            {service.service_type.charAt(0).toUpperCase() + service.service_type.slice(1)}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{service.customer_search}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{service.mobile}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">{service.device_type}</td>
+                        <td className="py-3 px-4 text-sm text-gray-900">
+                          {new Date(service.schedule_date).toLocaleDateString()}
+                        </td>
+                        <td className="py-3 px-4 text-sm">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            service.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
+                            service.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                            service.status === 'completed' ? 'bg-green-100 text-green-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            {service.status.replace('_', ' ').charAt(0).toUpperCase() + service.status.replace('_', ' ').slice(1)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </div>
