@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { Trash2, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface Contract {
   id: number;
@@ -20,10 +27,25 @@ export default function AMCContractsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, contract: Contract | null}>({show: false, contract: null});
+  const [deletingContract, setDeletingContract] = useState<number | null>(null);
 
   useEffect(() => {
     fetchContracts();
   }, []);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   const fetchContracts = async () => {
     try {
@@ -36,6 +58,29 @@ export default function AMCContractsPage() {
       console.error('Failed to fetch contracts:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (contractId: number) => {
+    try {
+      setDeletingContract(contractId);
+      setDeleteModal({show: false, contract: null});
+      
+      const response = await fetch(`/api/admin/amcs?id=${contractId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        setContracts(prev => prev.filter(c => c.id !== contractId));
+        showToast('Contract deleted successfully!', 'success');
+      } else {
+        showToast('Failed to delete contract', 'error');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      showToast('Failed to delete contract', 'error');
+    } finally {
+      setDeletingContract(null);
     }
   };
 
@@ -138,18 +183,21 @@ export default function AMCContractsPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Auto Renew
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-32 text-center">
+                    <td colSpan={9} className="px-6 py-32 text-center">
                       <p className="text-gray-400 text-lg">Loading...</p>
                     </td>
                   </tr>
                 ) : filteredContracts.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-32 text-center">
+                    <td colSpan={9} className="px-6 py-32 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <p className="text-gray-400 text-lg">No data</p>
                       </div>
@@ -186,6 +234,16 @@ export default function AMCContractsPage() {
                           {contract.auto_renew ? 'Yes' : 'No'}
                         </span>
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => setDeleteModal({show: true, contract})}
+                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))
                 )}
@@ -193,6 +251,86 @@ export default function AMCContractsPage() {
             </table>
           </div>
         </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.contract && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Contract</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete contract <strong>{deleteModal.contract.contract_number}</strong>? 
+                All associated data will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModal({show: false, contract: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteModal.contract!.id)}
+                  disabled={deletingContract === deleteModal.contract.id}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deletingContract === deleteModal.contract.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

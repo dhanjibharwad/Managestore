@@ -114,3 +114,34 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch contracts' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const contractId = searchParams.get('id');
+
+    if (!contractId) {
+      return NextResponse.json({ error: 'Contract ID is required' }, { status: 400 });
+    }
+
+    const query = 'DELETE FROM amc_contracts WHERE id = $1 AND company_id = $2';
+    const result = await pool.query(query, [contractId, session.company.id]);
+
+    if (result.rowCount === 0) {
+      return NextResponse.json({ error: 'Contract not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Database error:', error);
+    return NextResponse.json({ error: 'Failed to delete contract' }, { status: 500 });
+  }
+}
