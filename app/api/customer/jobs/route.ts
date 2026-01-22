@@ -32,15 +32,8 @@ export async function GET(req: NextRequest) {
 
     // Build query to get jobs for this customer
     let query = `
-      SELECT 
-        j.*,
-        dt.name as device_type_name,
-        db.name as device_brand_name,
-        dm.name as device_model_name
+      SELECT j.*
       FROM jobs j
-      LEFT JOIN device_types dt ON j.device_type::integer = dt.id
-      LEFT JOIN device_brands db ON j.device_brand::integer = db.id  
-      LEFT JOIN device_models dm ON j.device_model::integer = dm.id
       WHERE j.company_id = $1 AND (j.customer_id = $2 OR j.customer_name = $3)
     `;
     
@@ -71,8 +64,8 @@ export async function GET(req: NextRequest) {
       paymentReceived: 0, // TODO: Add payment tracking
       paymentRemaining: 0, // TODO: Add payment tracking  
       paymentStatus: 'Pending', // TODO: Add payment status
-      deviceBrand: job.device_brand_name || job.device_brand,
-      deviceModel: job.device_model_name || job.device_model || '-',
+      deviceBrand: job.device_brand || '-',
+      deviceModel: job.device_model || '-',
       dueDate: job.due_date ? new Date(job.due_date).toLocaleDateString() : '-',
       status: job.status,
       services: job.services,

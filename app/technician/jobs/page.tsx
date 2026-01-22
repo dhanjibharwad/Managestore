@@ -104,7 +104,7 @@ const JobPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="bg-white">
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto">

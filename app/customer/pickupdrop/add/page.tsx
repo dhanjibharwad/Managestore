@@ -608,7 +608,7 @@ export default function PickupDropPage() {
             </div>
 
             {/* Send Alert */}
-            <div className="mb-6">
+            {/* <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Send Alert
               </label>
@@ -624,7 +624,7 @@ export default function PickupDropPage() {
                   />
                   <span className="text-sm text-gray-700">Mail</span>
                 </label>
-                {/* <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendAlert.sms}
@@ -634,8 +634,8 @@ export default function PickupDropPage() {
                     className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
                   />
                   <span className="text-sm text-gray-700">SMS</span>
-                </label> */}
-                {/* <label className="flex items-center gap-2 cursor-pointer">
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={sendAlert.inApp}
@@ -645,9 +645,9 @@ export default function PickupDropPage() {
                     className="w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
                   />
                   <span className="text-sm text-gray-700">In App</span>
-                </label> */}
+                </label>
               </div>
-            </div>
+            </div> */}
 
           </div>
         </div>
