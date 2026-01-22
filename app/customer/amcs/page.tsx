@@ -1,24 +1,52 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 interface Contract {
-  id: string;
-  customer: string;
+  id: number;
+  contract_number: string;
+  customer_name: string;
+  customer_display_name: string;
   assignee: string;
-  paymentReceived: string;
-  totalAmount: string;
-  contractStartOn: string;
-  contractEndsAt: string;
-  status: string;
-  paymentStatus: string;
+  assignee_display_name: string;
+  amount: string;
+  contract_start_date: string;
+  contract_end_date: string;
+  amc_type: string;
+  auto_renew: boolean;
+  created_at: string;
 }
 
 export default function AMCContractsPage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Sample data - replace with your actual data
-  const contracts: Contract[] = [];
+  useEffect(() => {
+    fetchContracts();
+  }, [searchQuery]);
+
+  const fetchContracts = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`/api/customer/amcs?${params}`);
+      const data = await response.json();
+      if (data.contracts) {
+        setContracts(data.contracts);
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredContracts = contracts.filter(contract =>
+    (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    contract.contract_number.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="bg-gray-50">
@@ -89,7 +117,7 @@ export default function AMCContractsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contracts
+                    Contract ID
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Customer
@@ -98,66 +126,66 @@ export default function AMCContractsPage() {
                     Assignee
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment Received
+                    AMC Type
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Total Amount
+                    Amount
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contract Start On
+                    Start Date
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contract Ends At
+                    End Date
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Payment Status
+                    Auto Renew
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {contracts.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-32 text-center">
+                    <td colSpan={8} className="px-6 py-32 text-center">
+                      <p className="text-gray-400 text-lg">Loading...</p>
+                    </td>
+                  </tr>
+                ) : filteredContracts.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-6 py-32 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <p className="text-gray-400 text-lg">No data</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
-                  contracts.map((contract) => (
+                  filteredContracts.map((contract) => (
                     <tr key={contract.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.id}
+                        {contract.contract_number}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.customer}
+                        {contract.customer_display_name || contract.customer_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.assignee}
+                        {contract.assignee_display_name || contract.assignee}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.paymentReceived}
+                        {contract.amc_type}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.totalAmount}
+                        {contract.amount ? `₹${contract.amount}` : '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.contractStartOn}
+                        {new Date(contract.contract_start_date).toLocaleDateString('en-GB')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.contractEndsAt}
+                        {new Date(contract.contract_end_date).toLocaleDateString('en-GB')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {contract.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {contract.paymentStatus}
+                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                          contract.auto_renew ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {contract.auto_renew ? 'Yes' : 'No'}
                         </span>
                       </td>
                     </tr>
