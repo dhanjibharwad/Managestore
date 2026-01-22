@@ -30,8 +30,15 @@ export default function JobsPage() {
       setLoading(true);
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
-      if (statusFilter) params.append('status', statusFilter);
-      if (activeTab === 'open') params.append('status', 'Open');
+      
+      // Handle tab-based filtering
+      if (activeTab === 'open') {
+        // For open jobs tab, show jobs with 'Pending' status (newly created jobs)
+        params.append('status', 'Pending');
+      } else if (statusFilter) {
+        // For all jobs tab, apply status filter if selected
+        params.append('status', statusFilter);
+      }
       
       const response = await fetch(`/api/customer/jobs?${params}`);
       const data = await response.json();
@@ -95,10 +102,13 @@ export default function JobsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
+            disabled={activeTab === 'open'}
+            className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700 ${
+              activeTab === 'open' ? 'bg-gray-100 cursor-not-allowed' : ''
+            }`}
           >
             <option value="">Select job status</option>
-            <option value="pending">Pending</option>
+            <option value="Pending">Pending</option>
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
@@ -188,9 +198,9 @@ export default function JobsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          job.status === 'Open' ? 'bg-green-100 text-green-800' :
+                          job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                           job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                          job.status === 'Completed' ? 'bg-purple-100 text-purple-800' :
+                          job.status === 'Completed' ? 'bg-green-100 text-green-800' :
                           'bg-gray-100 text-gray-800'
                         }`}>
                           {job.status}
