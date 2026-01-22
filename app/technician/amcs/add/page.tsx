@@ -531,7 +531,7 @@ const ContractFormPage = () => {
                       <span className="underline text-sm">U</span>
                     </button>
                     <div className="w-px h-6 bg-gray-300 mx-1"></div>
-                    <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
+                    {/* <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
                       <span className="text-sm">≡</span>
                     </button>
                     <button className="p-1 hover:bg-gray-200 rounded" title="Align Center">
@@ -542,7 +542,7 @@ const ContractFormPage = () => {
                     </button>
                     <button className="p-1 hover:bg-gray-200 rounded" title="Justify">
                       <span className="text-sm">≡</span>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
                 <textarea
