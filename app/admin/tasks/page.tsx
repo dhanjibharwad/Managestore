@@ -49,12 +49,33 @@
     const [sortAscending, setSortAscending] = useState(true);
     const [deleteModal, setDeleteModal] = useState<{show: boolean, task: Task | null}>({show: false, task: null});
     const [deletingTask, setDeletingTask] = useState<number | null>(null);
+    const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     const [toasts, setToasts] = useState<Toast[]>([]);
 
     useEffect(() => {
       fetchTasks();
       fetchUsers();
       fetchCustomers();
+      
+      // Check for success message from localStorage
+      const message = localStorage.getItem('successMessage');
+      if (message) {
+        setSuccessMessage(message);
+        setShowSuccessPopup(true);
+        localStorage.removeItem('successMessage');
+        
+        // Hide popup after 5 seconds with fade-out
+        setTimeout(() => {
+          const popup = document.querySelector('.success-popup');
+          if (popup) {
+            popup.classList.add('animate-fade-out');
+            setTimeout(() => {
+              setShowSuccessPopup(false);
+            }, 300);
+          }
+        }, 4700);
+      }
     }, []);
 
     const fetchTasks = async () => {
@@ -437,6 +458,46 @@
               </div>
             ))}
           </div>
+          
+          {/* Success Popup */}
+          {showSuccessPopup && (
+            <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
+              <CheckCircle size={24} className="text-green-600" />
+              <div>
+                <div className="font-semibold text-green-900">Success!</div>
+                <div className="text-sm text-green-700">{successMessage}</div>
+              </div>
+            </div>
+          )}
+          
+          <style jsx>{`
+            .success-popup {
+              animation: slideInRight 0.5s ease-out;
+            }
+            .animate-fade-out {
+              animation: fadeOut 0.3s ease-in forwards;
+            }
+            @keyframes slideInRight {
+              from {
+                transform: translateX(100%);
+                opacity: 0;
+              }
+              to {
+                transform: translateX(0);
+                opacity: 1;
+              }
+            }
+            @keyframes fadeOut {
+              from {
+                transform: translateX(0);
+                opacity: 1;
+              }
+              to {
+                transform: translateX(100%);
+                opacity: 0;
+              }
+            }
+          `}</style>
         </div>
       </div>
     );
