@@ -1,9 +1,9 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Receipt, TrendingUp, Briefcase, AlertCircle, DollarSign, ClipboardList, ListTodo, UserPlus, Calendar, Search, Plus, SlidersHorizontal, Download, Upload, FileText, List } from 'lucide-react';
+import { Receipt, TrendingUp, Briefcase, AlertCircle, IndianRupee, ClipboardList, ListTodo, UserPlus, Calendar, Search, Plus, SlidersHorizontal, Download, Upload, FileText, List } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -11,6 +11,14 @@ interface StatCardProps {
   percentage: string;
   icon: React.ReactNode;
   dateRange: string;
+}
+
+interface DashboardStats {
+  paymentReceived: string;
+  totalExpense: string;
+  totalBusiness: string;
+  totalDue: string;
+  netProfit: string;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ title, value, percentage, icon, dateRange }) => {
@@ -217,40 +225,67 @@ const JobsSection: React.FC = () => {
 };
 
 export default function DashboardPage() {
-  const stats = [
+  const [stats, setStats] = useState<DashboardStats>({
+    paymentReceived: "₹0",
+    totalExpense: "₹0",
+    totalBusiness: "₹0",
+    totalDue: "₹0",
+    netProfit: "₹0"
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardStats = async () => {
+      try {
+        const response = await fetch('/api/admin/dashboard-stats');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardStats();
+  }, []);
+
+  const statsConfig = [
     {
       title: "Payment Received",
-      value: "0.00",
+      value: stats.paymentReceived,
       percentage: "- 0%",
       icon: <Receipt className="w-4 h-4" />,
       dateRange: ""
     },
     {
       title: "Total Expense",
-      value: "0.00",
+      value: stats.totalExpense,
       percentage: "- 0%",
       icon: <TrendingUp className="w-4 h-4" />,
       dateRange: ""
     },
     {
       title: "Total Business",
-      value: "0.00",
+      value: stats.totalBusiness,
       percentage: "- 0%",
       icon: <Briefcase className="w-4 h-4" />,
       dateRange: ""
     },
     {
       title: "Total Due Amount",
-      value: "0.00",
+      value: stats.totalDue,
       percentage: "- 0%",
       icon: <AlertCircle className="w-4 h-4" />,
       dateRange: ""
     },
     {
       title: "Net Profit",
-      value: "0.00",
+      value: stats.netProfit,
       percentage: "- 0%",
-      icon: <DollarSign className="w-4 h-4" />,
+      icon: <IndianRupee className="w-4 h-4" />,
       dateRange: ""
     }
   ];
@@ -260,16 +295,27 @@ export default function DashboardPage() {
       <div className="max-w-[1600px] mx-auto">
         {/* Stats Grid - Responsive layout */}
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-10">
-          {stats.map((stat, index) => (
-            <StatCard
-              key={index}
-              title={stat.title}
-              value={stat.value}
-              percentage={stat.percentage}
-              icon={stat.icon}
-              dateRange={stat.dateRange}
-            />
-          ))}
+          {loading ? (
+            // Loading skeleton
+            [1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-4 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-8 bg-gray-200 rounded mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+              </div>
+            ))
+          ) : (
+            statsConfig.map((stat, index) => (
+              <StatCard
+                key={index}
+                title={stat.title}
+                value={stat.value}
+                percentage={stat.percentage}
+                icon={stat.icon}
+                dateRange={stat.dateRange}
+              />
+            ))
+          )}
         </div>
 
         <JobsSection />

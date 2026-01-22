@@ -1,10 +1,14 @@
 'use client';
 
-'use client';
-
 import React, { useState } from 'react';
-import { ChevronUp, Search, Plus } from 'lucide-react';
+import { ChevronUp, Search, Plus, Trash2, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
+
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
 
 interface Purchase {
   id: string;
@@ -24,6 +28,21 @@ export default function PurchasePage() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, purchase: Purchase | null}>({show: false, purchase: null});
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [deletingPurchase, setDeletingPurchase] = useState<string | null>(null);
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
 
   React.useEffect(() => {
     fetchUserSession();
@@ -70,6 +89,29 @@ export default function PurchasePage() {
       console.error('Failed to fetch purchases:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (purchaseId: string) => {
+    try {
+      setDeletingPurchase(purchaseId);
+      setDeleteModal({show: false, purchase: null});
+      
+      const response = await fetch(`/api/admin/purchases/${purchaseId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setPurchases(purchases.filter(p => p.id !== purchaseId));
+        showToast('Purchase deleted successfully!', 'success');
+      } else {
+        showToast('Failed to delete purchase', 'error');
+      }
+    } catch (error) {
+      console.error('Error deleting purchase:', error);
+      showToast('Failed to delete purchase', 'error');
+    } finally {
+      setDeletingPurchase(null);
     }
   };
 
@@ -193,18 +235,21 @@ export default function PurchasePage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                   Due Date
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center">
+                  <td colSpan={9} className="px-6 py-16 text-center">
                     <div className="text-gray-400 text-sm">Loading...</div>
                   </td>
                 </tr>
               ) : purchases.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center">
+                  <td colSpan={9} className="px-6 py-16 text-center">
                     <div className="text-gray-400 text-sm">No data</div>
                   </td>
                 </tr>
@@ -220,36 +265,115 @@ export default function PurchasePage() {
                     <tr key={purchase.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.purchase}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.supplier}</td>
-                      <td className="px-6 py-4 text-sm text-gray-800">
-                        {purchase.partyInvoiceNumber}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-800">
-                        {purchase.amount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-800">
-                        {purchase.remainingAmount.toFixed(2)}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <span
-                          className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                            purchase.status === 'Paid'
-                              ? 'bg-green-100 text-green-800'
-                              : purchase.status === 'Partial'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}
-                        >
+                      <td className="px-6 py-4 text-sm text-gray-800">{purchase.partyInvoiceNumber}</td>
+                      <td className="px-6 py-4 text-sm text-gray-800">₹{purchase.amount.toFixed(2)}</td>
+                      <td className="px-6 py-4 text-sm text-gray-800">₹{purchase.remainingAmount.toFixed(2)}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          purchase.status === 'Paid' ? 'bg-green-100 text-green-800' :
+                          purchase.status === 'Partial' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
                           {purchase.status}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.purchasedOn}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.dueDate}</td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => setDeleteModal({ show: true, purchase })}
+                          className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                          title="Delete purchase"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
                   ))
               )}
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.purchase && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+            <div className="p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertCircle className="w-6 h-6 text-red-600" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Delete Purchase</h3>
+                  <p className="text-sm text-gray-500">This action cannot be undone</p>
+                </div>
+              </div>
+              <p className="text-gray-700 mb-6">
+                Are you sure you want to delete purchase <strong>{deleteModal.purchase.purchase}</strong>? 
+                All associated data will be permanently removed.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeleteModal({show: false, purchase: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleDelete(deleteModal.purchase!.id)}
+                  disabled={deletingPurchase === deleteModal.purchase.id}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {deletingPurchase === deleteModal.purchase.id ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Deleting...
+                    </>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
