@@ -1,6 +1,6 @@
 "use client";
 
-import { Receipt, TrendingUp, Briefcase, DollarSign } from "lucide-react";
+import { Receipt, TrendingUp, Briefcase, IndianRupee } from "lucide-react";
 import { useState, useEffect } from "react";
 
 interface DashboardStats {
@@ -41,7 +41,7 @@ export default function CustomerDashboard() {
     { title: "Active Jobs", value: stats.activeJobs, change: "- 0%", icon: Receipt },
     { title: "Completed Jobs", value: stats.completedJobs, change: "- 0%", icon: TrendingUp },
     { title: "Pending Payments", value: stats.pendingPayments, change: "- 0%", icon: Briefcase },
-    { title: "Total Spent", value: stats.totalSpent, change: "- 0%", icon: DollarSign },
+    { title: "Total Spent", value: stats.totalSpent, change: "- 0%", icon: IndianRupee },
   ];
 
   if (loading) {
