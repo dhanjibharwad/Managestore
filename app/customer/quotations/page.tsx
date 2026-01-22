@@ -1,23 +1,50 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search } from 'lucide-react';
 
 interface Quotation {
   id: string;
-  quotationFor: string;
-  customerName: string;
-  approvedRejectedBy: string;
+  quotation_number: string;
+  customer_display_name: string;
+  approved_rejected_by: string;
   status: string;
-  createdBy: string;
-  taxAmt: number;
-  amount: number;
+  created_by: string;
+  tax_amount: number;
+  total_amount: number;
+  note: string;
+  expired_on: string;
 }
 
 export default function QuotationsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
-  const [quotations] = useState<Quotation[]>([]);
+  const [quotations, setQuotations] = useState<Quotation[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchQuotations();
+  }, []);
+
+  const fetchQuotations = async () => {
+    try {
+      const response = await fetch('/api/customer/quotations');
+      const data = await response.json();
+      if (data.quotations) {
+        setQuotations(data.quotations);
+      }
+    } catch (error) {
+      console.error('Error fetching quotations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredQuotations = quotations.filter(quotation => {
+    const matchesSearch = quotation.quotation_number.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = !selectedStatus || quotation.status === selectedStatus;
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="bg-white">
@@ -46,7 +73,7 @@ export default function QuotationsPage() {
               className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white min-w-[160px]"
             >
               <option value="">Select status</option>
-              <option value="modified">Modified</option>
+              <option value="pending">Pending</option>
               <option value="await approved">Awaiting approval</option>
                <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
@@ -95,27 +122,33 @@ export default function QuotationsPage() {
             </tr>
           </thead>
           <tbody>
-            {quotations.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan={8} className="px-6 py-16 text-center">
+                  <div className="text-gray-400 text-base">Loading...</div>
+                </td>
+              </tr>
+            ) : filteredQuotations.length === 0 ? (
               <tr>
                 <td colSpan={8} className="px-6 py-16 text-center">
                   <div className="text-gray-400 text-base">No data</div>
                 </td>
               </tr>
             ) : (
-              quotations.map((quotation) => (
+              filteredQuotations.map((quotation) => (
                 <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.id}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotationFor}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.customerName}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.approvedRejectedBy}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotation_number}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.note || '-'}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.customer_display_name}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.approved_rejected_by || '-'}</td>
                   <td className="px-6 py-4 text-sm">
                     <span className="px-2 py-1 rounded-full text-xs font-medium bg-zinc-100 text-gray-700">
                       {quotation.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.createdBy}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.taxAmt.toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.amount.toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.created_by}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.tax_amount.toString()).toFixed(2)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.total_amount.toString()).toFixed(2)}</td>
                 </tr>
               ))
             )}
