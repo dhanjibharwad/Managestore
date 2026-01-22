@@ -1,25 +1,86 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Plus, Clipboard, Users, CheckSquare, Calendar } from 'lucide-react';
 
 interface Job {
-  jobSheet: string;
-  customer: string;
-  paymentReceived: string;
-  paymentRemaining: string;
-  paymentStatus: string;
-  deviceBrand: string;
-  deviceModel: string;
+  id: number;
+  job_number: string;
+  customer_name: string;
+  device_brand: string;
+  device_model: string;
+  device_brand_name?: string;
+  device_model_name?: string;
   assignee: string;
-  serviceAssignee: string;
   status: string;
+  priority: string;
+  services: string;
+  created_at: string;
+}
+
+interface DashboardStats {
+  assignedJobs: number;
+  assignedLeads: number;
+  assignedTasks: number;
+  delayedJobs: number;
 }
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('assigned-jobs');
   const [searchQuery, setSearchQuery] = useState('');
   const [jobStatus, setJobStatus] = useState('');
+  const [stats, setStats] = useState<DashboardStats>({
+    assignedJobs: 0,
+    assignedLeads: 0,
+    assignedTasks: 0,
+    delayedJobs: 0
+  });
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [jobsLoading, setJobsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardStats();
+    fetchAssignedJobs();
+  }, []);
+
+  useEffect(() => {
+    fetchAssignedJobs();
+  }, [searchQuery, jobStatus]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await fetch('/api/technician/dashboard-stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAssignedJobs = async () => {
+    try {
+      setJobsLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      if (jobStatus) params.append('status', jobStatus);
+      
+      const response = await fetch(`/api/technician/assigned-jobs?${params}`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setJobs(data.jobs || []);
+      }
+    } catch (error) {
+      console.error('Error fetching assigned jobs:', error);
+    } finally {
+      setJobsLoading(false);
+    }
+  };
 
   const tabs = [
     { id: 'assigned-jobs', label: 'Assigned Jobs', icon: Clipboard },
@@ -34,7 +95,13 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
         {/* Assigned Jobs Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-4xl font-bold text-gray-800 mb-2">0</div>
+          <div className="text-4xl font-bold text-gray-800 mb-2">
+            {loading ? (
+              <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+            ) : (
+              stats.assignedJobs
+            )}
+          </div>
           <div className="flex items-center gap-2 text-gray-600">
             <Clipboard className="w-5 h-5" />
             <span className="font-medium">Assigned Jobs</span>
@@ -43,7 +110,13 @@ export default function DashboardPage() {
 
         {/* Assigned Leads Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-4xl font-bold text-gray-800 mb-2">0</div>
+          <div className="text-4xl font-bold text-gray-800 mb-2">
+            {loading ? (
+              <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+            ) : (
+              stats.assignedLeads
+            )}
+          </div>
           <div className="flex items-center gap-2 text-gray-600">
             <Users className="w-5 h-5" />
             <span className="font-medium">Assigned Leads</span>
@@ -52,7 +125,13 @@ export default function DashboardPage() {
 
         {/* Assigned Task Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-4xl font-bold text-gray-800 mb-2">0</div>
+          <div className="text-4xl font-bold text-gray-800 mb-2">
+            {loading ? (
+              <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+            ) : (
+              stats.assignedTasks
+            )}
+          </div>
           <div className="flex items-center gap-2 text-gray-600">
             <CheckSquare className="w-5 h-5" />
             <span className="font-medium">Assigned Task</span>
@@ -61,7 +140,13 @@ export default function DashboardPage() {
 
         {/* Assigned Delayed Jobs Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <div className="text-4xl font-bold text-gray-800 mb-2">0</div>
+          <div className="text-4xl font-bold text-gray-800 mb-2">
+            {loading ? (
+              <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+            ) : (
+              stats.delayedJobs
+            )}
+          </div>
           <div className="flex items-center gap-2 text-gray-600">
             <Clipboard className="w-5 h-5" />
             <span className="font-medium">Assigned Delayed Jobs</span>
@@ -148,11 +233,47 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan={10} className="text-center py-16 text-gray-400 text-lg">
-                    No data
-                  </td>
-                </tr>
+                {jobsLoading ? (
+                  <tr>
+                    <td colSpan={10} className="text-center py-16 text-gray-400 text-lg">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : jobs.length === 0 ? (
+                  <tr>
+                    <td colSpan={10} className="text-center py-16 text-gray-400 text-lg">
+                      No data
+                    </td>
+                  </tr>
+                ) : (
+                  jobs.map((job) => (
+                    <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
+                      <td className="py-3 px-4 text-sm text-blue-600 font-medium">{job.job_number}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{job.customer_name}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">₹0</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">₹0</td>
+                      <td className="py-3 px-4 text-sm">
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          Pending
+                        </span>
+                      </td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{job.device_brand_name || job.device_brand}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{job.device_model_name || job.device_model || '-'}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{job.assignee}</td>
+                      <td className="py-3 px-4 text-sm text-gray-900">{job.assignee}</td>
+                      <td className="py-3 px-4 text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                          job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                          job.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {job.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
