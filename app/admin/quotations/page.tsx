@@ -82,7 +82,7 @@ export default function QuotationsPage() {
           taxAmount: parseFloat(q.tax_amount) || 0,
           status: q.status || 'Pending',
           approvedRejectedBy: q.approved_rejected_by || '-',
-          createdBy: q.created_by || '-',
+          createdBy: q.created_by || 'Admin',
           createdAt: new Date(q.created_at).toLocaleDateString()
         }));
         setQuotations(formattedQuotations);

@@ -38,6 +38,7 @@ export async function GET() {
         q.total_amount,
         q.note,
         q.created_at,
+        q.created_by,
         c.customer_name as customer_display_name,
         COALESCE(
           (SELECT SUM(qs.tax_amount) FROM quotation_services qs WHERE qs.quotation_id = q.id), 0
@@ -45,7 +46,7 @@ export async function GET() {
           (SELECT SUM(qp.tax_amount) FROM quotation_parts qp WHERE qp.quotation_id = q.id), 0
         ) as tax_amount,
         'pending' as status,
-        'Admin' as created_by,
+        q.created_by as created_by,
         '' as approved_rejected_by
       FROM quotations q
       LEFT JOIN customers c ON q.customer_name = c.id::text

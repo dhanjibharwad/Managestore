@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
         q.expired_on,
         q.total_amount,
         q.created_at,
+        q.created_by,
         COALESCE(
           (SELECT SUM(qs.tax_amount) FROM quotation_services qs WHERE qs.quotation_id = q.id), 0
         ) + COALESCE(
@@ -50,7 +51,8 @@ export async function POST(req: NextRequest) {
       note,
       termsConditions,
       services,
-      parts
+      parts,
+      createdBy
     } = body;
 
     // Validation
@@ -74,8 +76,8 @@ export async function POST(req: NextRequest) {
     const quotationResult = await client.query(
       `INSERT INTO quotations (
         company_id, quotation_number, customer_name, expired_on,
-        note, terms_conditions, total_amount
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+        note, terms_conditions, total_amount, created_by
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id`,
       [
         companyId,
@@ -84,7 +86,8 @@ export async function POST(req: NextRequest) {
         expiredOn || null,
         note || null,
         termsConditions || null,
-        totalAmount
+        totalAmount,
+        createdBy || 'Admin'
       ]
     );
 

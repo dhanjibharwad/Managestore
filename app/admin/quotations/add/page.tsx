@@ -62,6 +62,7 @@ export default function QuotationPage() {
   const [showPartModal, setShowPartModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [currentUser, setCurrentUser] = useState<string>('Admin');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -102,6 +103,7 @@ export default function QuotationPage() {
       const data = await response.json();
       if (data.user) {
         setCompanyId(data.user.companyId);
+        setCurrentUser(data.user.name || data.user.email || 'Admin');
       }
     } catch (error) {
       console.error('Failed to fetch session:', error);
@@ -327,6 +329,7 @@ export default function QuotationPage() {
           expiredOn: expiredOn || null,
           note: note || null,
           termsConditions: termsConditions || null,
+          createdBy: currentUser,
           services: services.map(s => ({
             serviceName: s.serviceName,
             description: s.description,

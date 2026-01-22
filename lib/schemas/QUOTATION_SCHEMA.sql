@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS quotations (
   note TEXT,
   terms_conditions TEXT,
   total_amount DECIMAL(10, 2) DEFAULT 0,
+  created_by VARCHAR(255) DEFAULT 'Admin',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
