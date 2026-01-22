@@ -171,7 +171,7 @@ export default function AddNewTaskPage() {
 
       if (response.ok) {
         showToast(`Task created successfully! Task ID: ${result.task.task_id}`, 'success');
-        setTimeout(() => window.location.href = '/admin/tasks', 2000);
+        setTimeout(() => window.location.href = '/technician/tasks', 2000);
       } else {
         showToast(result.error || 'Failed to create task', 'error');
       }

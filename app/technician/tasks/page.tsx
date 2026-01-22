@@ -53,6 +53,13 @@
       fetchTasks();
       fetchUsers();
       fetchCustomers();
+      
+      // Check for success message from localStorage
+      const successMessage = localStorage.getItem('successMessage');
+      if (successMessage) {
+        showToast(successMessage, 'success');
+        localStorage.removeItem('successMessage');
+      }
     }, []);
 
     const fetchTasks = async () => {
@@ -184,7 +191,7 @@
                 className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white text-gray-700 min-w-[180px]"
               >
                 <option value="">Select status</option>
-                <option value="Not Started Yet">Not Started Yet</option>
+                {/* <option value="Not Started Yet">Not Started Yet</option> */}
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
                 <option value="Cancelled">Cancelled</option>

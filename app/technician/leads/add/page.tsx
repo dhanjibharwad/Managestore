@@ -286,7 +286,7 @@ export default function LeadInformationPage() {
       if (response.ok) {
         const result = await response.json();
         showToast('Lead created successfully!', 'success');
-        setTimeout(() => window.location.href = '/admin/leads', 2000);
+        setTimeout(() => window.location.href = '/technician/leads', 2000);
       } else {
         const error = await response.json();
         showToast(error.error || 'Failed to create lead', 'error');
@@ -609,7 +609,7 @@ export default function LeadInformationPage() {
                 value={formData.comment}
                 onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
               ></textarea>
-              <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 50000</p>
+              <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 5000</p>
             </div>
           </div>
 

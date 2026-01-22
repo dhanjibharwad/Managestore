@@ -626,9 +626,9 @@ export default function PickupDropPage() {
                   </button>
                   <div className="flex items-center gap-2 ml-2">
                     <span className="text-sm text-gray-600">Normal text</span>
-                    <ChevronDown size={16} className="text-gray-400" />
+                    {/* <ChevronDown size={16} className="text-gray-400" /> */}
                   </div>
-                  <div className="flex items-center gap-3 ml-auto">
+                  {/* <div className="flex items-center gap-3 ml-auto">
                     <button className="text-gray-600 hover:text-gray-800 font-semibold">
                       B
                     </button>
@@ -638,19 +638,7 @@ export default function PickupDropPage() {
                     <button className="text-gray-600 hover:text-gray-800">
                       <span className="line-through">S</span>
                     </button>
-                    <button className="text-gray-400 hover:text-gray-600">
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <circle cx="12" cy="5" r="1.5" />
-                        <circle cx="12" cy="12" r="1.5" />
-                        <circle cx="12" cy="19" r="1.5" />
-                      </svg>
-                    </button>
-                  </div>
+                  </div> */}
                 </div>
                 <textarea
                   placeholder="Type text here"
@@ -661,7 +649,7 @@ export default function PickupDropPage() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Max Allowed Characters 50000
+                Max Allowed Characters 5000
               </p>
             </div>
 
