@@ -609,7 +609,7 @@ export default function LeadInformationPage() {
                 value={formData.comment}
                 onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
               ></textarea>
-              <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 5000</p>
+              <p className="text-xs text-gray-500 mt-1">Max Allowed Characters 50000</p>
             </div>
           </div>
 

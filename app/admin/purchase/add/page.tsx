@@ -586,18 +586,18 @@ export default function PurchasePage() {
                 </button> */}
                 <select className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
-                  <option>Heading 1</option>
-                  <option>Heading 2</option>
+                  {/* <option>Heading 1</option>
+                  <option>Heading 2</option> */}
                 </select>
-                <div className="flex gap-1 ml-2">
+                {/* <div className="flex gap-1 ml-2">
                   <button className="p-1 text-gray-600 hover:text-gray-800 font-bold">B</button>
                   <button className="p-1 text-gray-600 hover:text-gray-800 italic">I</button>
                   <button className="p-1 text-gray-600 hover:text-gray-800 line-through">S</button>
                   <button className="p-1 text-gray-600 hover:text-gray-800 underline">U</button>
-                </div>
-                <div className="flex gap-1 ml-2">
+                </div> */}
+                {/* <div className="flex gap-1 ml-2">
                   <button className="p-1 text-gray-600 hover:text-gray-800">≡</button>
-                </div>
+                </div> */}
               </div>
               <textarea
                 value={terms}

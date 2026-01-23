@@ -218,18 +218,18 @@ export default function ExpensePage() {
               
               {/* Toolbar */}
               <div className="border border-gray-300 rounded-t bg-gray-50 px-3 py-2 flex items-center gap-2">
-                <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600">
+                {/* <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600">
                   <Undo2 className="w-4 h-4" />
                 </button>
                 <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600">
                   <Redo2 className="w-4 h-4" />
-                </button>
+                </button> */}
                 <select className="px-2 py-1 border border-gray-300 rounded text-sm bg-white">
                   <option>Normal text</option>
-                  <option>Heading 1</option>
-                  <option>Heading 2</option>
+                  {/* <option>Heading 1</option>
+                  <option>Heading 2</option> */}
                 </select>
-                <div className="flex gap-1 ml-2">
+                {/* <div className="flex gap-1 ml-2">
                   <button className="px-2 py-1 hover:bg-gray-200 rounded font-bold text-gray-700">B</button>
                   <button className="px-2 py-1 hover:bg-gray-200 rounded italic text-gray-700">I</button>
                   <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">S</button>
@@ -237,7 +237,7 @@ export default function ExpensePage() {
                 </div>
                 <div className="flex gap-1 ml-2">
                   <button className="px-2 py-1 hover:bg-gray-200 rounded text-gray-700">≡</button>
-                </div>
+                </div> */}
               </div>
 
               {/* Textarea */}

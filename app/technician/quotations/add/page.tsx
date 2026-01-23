@@ -576,13 +576,13 @@ export default function QuotationPage() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-gray-800">Parts</h2>
               <div className="flex gap-3">
-                <button
+                {/* <button
                   className="flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
                   style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
                 >
                   <Scan className="w-4 h-4" />
                   Scan Part
-                </button>
+                </button> */}
                 <button
                   onClick={openPartModal}
                   className="cursor-pointer flex items-center gap-2 px-4 py-2 border-2 rounded text-sm font-medium"
@@ -691,7 +691,7 @@ export default function QuotationPage() {
               Terms and Conditions
             </label>
             <div className="border border-gray-300 rounded">
-              <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-300 bg-gray-50">
+              {/* <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-300 bg-gray-50">
                 <select className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
                 </select>
@@ -712,7 +712,7 @@ export default function QuotationPage() {
                 <div className="flex gap-1 border-l border-gray-300 pl-2">
                   <button className="p-1 hover:bg-gray-200 rounded">≡</button>
                 </div>
-              </div>
+              </div> */}
               <textarea
                 placeholder="Type text here"
                 value={termsConditions}

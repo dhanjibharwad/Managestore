@@ -515,7 +515,7 @@ const ContractFormPage = () => {
                   <select className="text-sm border-none focus:outline-none bg-transparent">
                     <option>Normal text</option>
                   </select>
-                  <div className="flex gap-1 ml-2">
+                  {/* <div className="flex gap-1 ml-2">
                     <button className="p-1 hover:bg-gray-200 rounded" title="Bold">
                       <span className="font-bold text-sm">B</span>
                     </button>
@@ -532,7 +532,7 @@ const ContractFormPage = () => {
                     <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
                       <span className="text-sm">≡</span>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
                 <textarea
                   className="w-full px-3 py-2 focus:outline-none resize-none"
@@ -610,7 +610,7 @@ const ContractFormPage = () => {
                 <select className="text-sm border-none focus:outline-none bg-transparent">
                   <option>Normal text</option>
                 </select>
-                <div className="flex gap-1 ml-2">
+                {/* <div className="flex gap-1 ml-2">
                   <button className="p-1 hover:bg-gray-200 rounded" title="Bold">
                     <span className="font-bold text-sm">B</span>
                   </button>
@@ -627,7 +627,7 @@ const ContractFormPage = () => {
                   <button className="p-1 hover:bg-gray-200 rounded" title="Align Left">
                     <span className="text-sm">≡</span>
                   </button>
-                </div>
+                </div> */}
               </div>
               <textarea
                 className="w-full px-3 py-2 focus:outline-none resize-none"

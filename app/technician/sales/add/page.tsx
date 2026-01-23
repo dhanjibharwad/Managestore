@@ -523,7 +523,7 @@ export default function SalesForm() {
               <div className="border border-gray-300 rounded">
                 {/* Toolbar */}
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-300 bg-gray-50">
-                  <button className="p-1 hover:bg-gray-200 rounded">
+                  {/* <button className="p-1 hover:bg-gray-200 rounded">
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
@@ -532,7 +532,7 @@ export default function SalesForm() {
                     <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
                     </svg>
-                  </button>
+                  </button> */}
                   <select className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700">
                     <option>Normal text</option>
                   </select>

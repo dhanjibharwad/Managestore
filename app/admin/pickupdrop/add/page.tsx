@@ -622,7 +622,7 @@ export default function PickupDropPage() {
               </label>
               <div className="border border-gray-300 rounded-md">
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                  <button className="text-gray-400 hover:text-gray-600">
+                  {/* <button className="text-gray-400 hover:text-gray-600">
                     <svg
                       width="20"
                       height="20"
@@ -633,8 +633,8 @@ export default function PickupDropPage() {
                     >
                       <path d="M3 10h10a8 8 0 0 1 8 8v2M3 10l6 6m-6-6l6-6" />
                     </svg>
-                  </button>
-                  <button className="text-gray-400 hover:text-gray-600">
+                  </button> */}
+                  {/* <button className="text-gray-400 hover:text-gray-600">
                     <svg
                       width="20"
                       height="20"
@@ -645,12 +645,12 @@ export default function PickupDropPage() {
                     >
                       <path d="M21 10H11a8 8 0 0 0-8 8v2m18-10l-6-6m6 6l-6 6" />
                     </svg>
-                  </button>
+                  </button> */}
                   <div className="flex items-center gap-2 ml-2">
                     <span className="text-sm text-gray-600">Normal text</span>
                     <ChevronDown size={16} className="text-gray-400" />
                   </div>
-                  <div className="flex items-center gap-3 ml-auto">
+                  {/* <div className="flex items-center gap-3 ml-auto">
                     <button className="text-gray-600 hover:text-gray-800 font-semibold">
                       B
                     </button>
@@ -672,7 +672,7 @@ export default function PickupDropPage() {
                         <circle cx="12" cy="19" r="1.5" />
                       </svg>
                     </button>
-                  </div>
+                  </div> */}
                 </div>
                 <textarea
                   placeholder="Type text here"

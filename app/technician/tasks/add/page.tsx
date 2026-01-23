@@ -381,21 +381,21 @@ export default function AddNewTaskPage() {
             </label>
             <div className="border border-gray-300 rounded-md">
               {/* Toolbar */}
-              <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                {/* <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
+              {/* <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
+                <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Undo size={18} className="text-gray-600" />
                 </button>
                 <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Redo size={18} className="text-gray-600" />
-                </button> */}
-                {/* <div className="h-6 w-px bg-gray-300 mx-1"></div> */}
+                </button>
+                <div className="h-6 w-px bg-gray-300 mx-1"></div>
                 <select className="px-2 py-1 text-sm border-0 bg-transparent text-gray-700 focus:ring-0 outline-none">
                   <option>Normal text</option>
                   <option>Heading 1</option>
                   <option>Heading 2</option>
                 </select>
-                {/* <div className="h-6 w-px bg-gray-300 mx-1"></div> */}
-                {/* <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
+                <div className="h-6 w-px bg-gray-300 mx-1"></div>
+                <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Bold size={18} className="text-gray-600" />
                 </button>
                 <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
@@ -417,8 +417,8 @@ export default function AddNewTaskPage() {
                 <div className="h-6 w-px bg-gray-300 mx-1"></div>
                 <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <MoreVertical size={18} className="text-gray-600" />
-                </button> */}
-              </div>
+                </button>
+              </div> */}
               {/* Text Area */}
               <textarea
                 placeholder="Type task description"
