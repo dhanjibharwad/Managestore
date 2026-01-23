@@ -4,30 +4,14 @@ import { jwtVerify } from 'jose';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || 'your-secret-key');
 
-const publicRoutes = [
-  '/auth/login', 
-  '/auth/register', 
-  '/auth/company-register',
-  '/auth/verify-email', 
-  '/auth/forgot-password', 
-  '/auth/reset-password',
-  '/home',
-  '/extra',
-  '/',
-  '/api/auth',
-  '/api/contact',
-  '/api/leads',
-  '/unauthorized'
-];
+type UserRole = 'superadmin' | 'admin' | 'technician' | 'customer';
 
-const authRoutes = ['/auth/login', '/auth/register', '/auth/company-register'];
-
-// Role-based route mapping
-const roleRoutes = {
-  'admin': ['/admin'],
-  'technician': ['/technician'],
-  'customer': ['/customer'],
-  'superadmin': ['/super-admin']
+// Role-based access control: which roles can access which dashboard prefixes
+const roleAccessMap: Record<string, UserRole[]> = {
+  '/admin': ['admin', 'superadmin'],
+  '/technician': ['technician', 'superadmin'],
+  '/customer': ['customer', 'superadmin'],
+  '/super-admin': ['superadmin'],
 };
 
 export async function middleware(request: NextRequest) {
@@ -36,23 +20,18 @@ export async function middleware(request: NextRequest) {
 
   console.log('Middleware running for:', pathname, 'Token exists:', !!token);
 
-  // FORCE REDIRECT FOR ALL PROTECTED ROUTES WITHOUT TOKEN
+  // 1. Check if user has a token
   if (!token) {
     console.log('No token - redirecting to login');
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
 
-  // Check if user is authenticated via JWT
-  let isAuthenticated = false;
-  
+  // 2. Verify JWT and extract payload
+  let payload: any;
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const result = await jwtVerify(token, JWT_SECRET);
+    payload = result.payload;
     console.log('JWT payload:', payload);
-    
-    if (payload.userId && payload.companyId) {
-      isAuthenticated = true;
-      console.log('User authenticated');
-    }
   } catch (error) {
     console.log('JWT verification failed:', error);
     const response = NextResponse.redirect(new URL('/auth/login', request.url));
@@ -60,13 +39,44 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // FINAL CHECK - If not authenticated, redirect to login
-  if (!isAuthenticated) {
-    console.log('Final check: not authenticated - redirecting to login');
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+  // 3. Validate required JWT fields
+  if (!payload.userId || !payload.companyId) {
+    console.log('Invalid JWT payload - missing userId or companyId');
+    const response = NextResponse.redirect(new URL('/auth/login', request.url));
+    response.cookies.delete('session');
+    return response;
   }
 
-  console.log('Access granted to:', pathname);
+  // 4. Extract user role from JWT
+  const userRole = payload.role as UserRole | undefined;
+  if (!userRole) {
+    console.log('JWT payload missing role - redirecting to login');
+    const response = NextResponse.redirect(new URL('/auth/login', request.url));
+    response.cookies.delete('session');
+    return response;
+  }
+
+  // 5. Determine which dashboard prefix is being accessed
+  const matchedPrefix = Object.keys(roleAccessMap).find((prefix) =>
+    pathname.startsWith(prefix)
+  );
+
+  // If not a dashboard path, allow access (other routes handle their own auth)
+  if (!matchedPrefix) {
+    console.log('Not a dashboard route - allowing access');
+    return NextResponse.next();
+  }
+
+  // 6. Check if user's role has access to this dashboard
+  const allowedRoles = roleAccessMap[matchedPrefix];
+  
+  if (!allowedRoles.includes(userRole)) {
+    console.log(`Access denied: ${userRole} cannot access ${matchedPrefix}`);
+    return NextResponse.redirect(new URL('/unauthorized', request.url));
+  }
+
+  // 7. User has correct role - allow access
+  console.log(`Access granted: ${userRole} accessing ${pathname}`);
   return NextResponse.next();
 }
 
