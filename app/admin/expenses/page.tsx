@@ -51,7 +51,7 @@ export default function ExpensePage() {
     
     // Check for success message from localStorage
     const message = localStorage.getItem('successMessage');
-    if (message) {
+    if (message && message.trim()) {
       setSuccessMessage(message);
       setShowSuccessPopup(true);
       localStorage.removeItem('successMessage');

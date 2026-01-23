@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal, Plus } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Edit, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface Lead {
@@ -30,10 +30,31 @@ export default function LeadsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState('');
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchLeads();
     fetchUsers();
+    
+    // Check for success message from localStorage
+    const message = localStorage.getItem('successMessage');
+    if (message && message.trim()) {
+      setSuccessMessage(message);
+      setShowSuccessPopup(true);
+      localStorage.removeItem('successMessage');
+      
+      // Hide popup after 5 seconds with fade-out
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => {
+            setShowSuccessPopup(false);
+          }, 300);
+        }
+      }, 4700);
+    }
   }, []);
 
   const fetchUsers = async () => {
@@ -165,18 +186,21 @@ export default function LeadsPage() {
               <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
                 Status
               </th>
+              <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-16 text-center">
+                <td colSpan={8} className="px-6 py-16 text-center">
                   <p className="text-gray-400 text-sm">Loading...</p>
                 </td>
               </tr>
             ) : filteredLeads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-16 text-center">
+                <td colSpan={8} className="px-6 py-16 text-center">
                   <p className="text-gray-400 text-sm">No data</p>
                 </td>
               </tr>
@@ -194,12 +218,59 @@ export default function LeadsPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">New</span>
                   </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    <Link href={`/technician/leads/edit/${lead.id}`}>
+                      <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                    </Link>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+      
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
+          <CheckCircle size={24} className="text-green-600" />
+          <div>
+            <div className="font-semibold text-green-900">Success!</div>
+            <div className="text-sm text-green-700">{successMessage}</div>
+          </div>
+        </div>
+      )}
+      
+      <style jsx>{`
+        .success-popup {
+          animation: slideInRight 0.5s ease-out;
+        }
+        .animate-fade-out {
+          animation: fadeOut 0.3s ease-in forwards;
+        }
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }

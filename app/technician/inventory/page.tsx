@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Search, Plus } from 'lucide-react';
+import { Search, Plus, Edit, CheckCircle } from 'lucide-react';
 
 interface Part {
   part_id: string;
@@ -22,9 +22,30 @@ const InventoryPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     fetchParts();
+    
+    // Check for success message from localStorage
+    const message = localStorage.getItem('successMessage');
+    if (message && message.trim()) {
+      setSuccessMessage(message);
+      setShowSuccessPopup(true);
+      localStorage.removeItem('successMessage');
+      
+      // Hide popup after 5 seconds with fade-out
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => {
+            setShowSuccessPopup(false);
+          }, 300);
+        }
+      }, 4700);
+    }
   }, []);
 
   const fetchParts = async () => {
@@ -108,18 +129,21 @@ const InventoryPage: React.FC = () => {
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                   Qty
                 </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-16 text-center text-gray-500">
+                  <td colSpan={9} className="px-4 py-16 text-center text-gray-500">
                     Loading...
                   </td>
                 </tr>
               ) : parts.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-16 text-center text-gray-500">
+                  <td colSpan={9} className="px-4 py-16 text-center text-gray-500">
                     No data
                   </td>
                 </tr>
@@ -161,6 +185,13 @@ const InventoryPage: React.FC = () => {
                       {part.rate_including_tax ? 'Yes' : 'No'}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-800">{part.current_stock || part.opening_stock || 0}</td>
+                    <td className="px-4 py-3 text-sm text-gray-800">
+                      <Link href={`/technician/inventory/edit/${part.part_id}`}>
+                        <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      </Link>
+                    </td>
                   </tr>
                 ))
               )}
@@ -168,6 +199,46 @@ const InventoryPage: React.FC = () => {
           </table>
         </div>
       </div>
+      
+      {/* Success Popup */}
+      {showSuccessPopup && (
+        <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
+          <CheckCircle size={24} className="text-green-600" />
+          <div>
+            <div className="font-semibold text-green-900">Success!</div>
+            <div className="text-sm text-green-700">{successMessage}</div>
+          </div>
+        </div>
+      )}
+      
+      <style jsx>{`
+        .success-popup {
+          animation: slideInRight 0.5s ease-out;
+        }
+        .animate-fade-out {
+          animation: fadeOut 0.3s ease-in forwards;
+        }
+        @keyframes slideInRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from {
+            transform: translateX(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };
