@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useRouter } from 'next/navigation';
 import { X, Calendar, ChevronDown, Info, ChevronLeft, ChevronRight, CheckCircle, AlertCircle, XCircle } from "lucide-react";
 
@@ -44,6 +44,14 @@ export default function PickupDropPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
+  const [address, setAddress] = useState("");
+  const [savedResponse, setSavedResponse] = useState("");
+  const [description, setDescription] = useState("");
+  const [sendAlert, setSendAlert] = useState({
+    mail: false,
+    sms: false,
+    inApp: false,
+  });
   const [showCalendar, setShowCalendar] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedHour, setSelectedHour] = useState(
@@ -84,19 +92,19 @@ export default function PickupDropPage() {
       .then(data => {
         if (data.customers) setCustomers(data.customers);
       })
-      .catch(err => console.error('Error fetching customers:', err));
+      .catch(() => showToast('Failed to load customers', 'error'));
 
     fetch('/api/users')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setUsers(data);
       })
-      .catch(err => console.error('Error fetching users:', err));
+      .catch(() => showToast('Failed to load users', 'error'));
 
     fetch('/api/devices/types')
       .then(res => res.json())
       .then(data => setDeviceTypes(data))
-      .catch(err => console.error('Error fetching device types:', err));
+      .catch(() => showToast('Failed to load device types', 'error'));
   }, []);
 
   const getDaysInMonth = (year: number, month: number) => {
@@ -114,7 +122,13 @@ export default function PickupDropPage() {
 
   const handleDateSelect = (day: number) => {
     const newDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day);
-    setSelectedDate(newDate);
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+    
+    // Only allow selection of today and future dates
+    if (newDate >= todayMidnight) {
+      setSelectedDate(newDate);
+    }
   };
 
   const handleConfirmDate = () => {
@@ -139,12 +153,16 @@ export default function PickupDropPage() {
     setSelectedDate(newDate);
   };
 
-  const renderCalendar = () => {
+  const HOUR_OPTIONS = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const MINUTE_OPTIONS = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
+
+  const renderCalendar = useMemo(() => {
     const year = selectedDate.getFullYear();
     const month = selectedDate.getMonth();
     const daysInMonth = getDaysInMonth(year, month);
     const firstDay = getFirstDayOfMonth(year, month);
     const today = new Date();
+    const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
 
     const days = [];
@@ -152,14 +170,24 @@ export default function PickupDropPage() {
 
     // Previous month days
     for (let i = firstDay - 1; i >= 0; i--) {
+      const prevMonthDate = new Date(year, month - 1, prevMonthDays - i);
+      const isPastDate = prevMonthDate < todayMidnight;
+      
       days.push(
         <button
           key={`prev-${i}`}
           type="button"
-          className="p-1.5 text-gray-400 text-xs hover:bg-gray-100 rounded"
+          disabled={isPastDate}
+          className={`p-1.5 text-xs rounded ${
+            isPastDate 
+              ? 'text-gray-300 cursor-not-allowed' 
+              : 'text-gray-400 hover:bg-gray-100'
+          }`}
           onClick={() => {
-            changeMonth(-1);
-            handleDateSelect(prevMonthDays - i);
+            if (!isPastDate) {
+              changeMonth(-1);
+              handleDateSelect(prevMonthDays - i);
+            }
           }}
         >
           {prevMonthDays - i}
@@ -169,6 +197,8 @@ export default function PickupDropPage() {
 
     // Current month days
     for (let day = 1; day <= daysInMonth; day++) {
+      const currentDate = new Date(year, month, day);
+      const isPastDate = currentDate < todayMidnight;
       const isSelected = selectedDate.getDate() === day;
       const isToday = isCurrentMonth && today.getDate() === day;
 
@@ -176,9 +206,12 @@ export default function PickupDropPage() {
         <button
           key={day}
           type="button"
-          onClick={() => handleDateSelect(day)}
+          disabled={isPastDate}
+          onClick={() => !isPastDate && handleDateSelect(day)}
           className={`p-1.5 text-xs rounded transition-colors ${
-            isSelected
+            isPastDate
+              ? 'text-gray-300 cursor-not-allowed'
+              : isSelected
               ? 'bg-[#4A70A9] text-white'
               : isToday
               ? 'border-2 border-[#4A70A9] text-gray-900'
@@ -209,16 +242,7 @@ export default function PickupDropPage() {
     }
 
     return days;
-  };
-  const [address, setAddress] = useState("");
-  const [savedResponse, setSavedResponse] = useState("");
-  const [description, setDescription] = useState("");
-  const [sendAlert, setSendAlert] = useState({
-    mail: false,
-    sms: false,
-    inApp: false,
-  });
-
+  }, [selectedDate]);
   const handleSubmit = async () => {
     // Validate mobile number
     if (!mobile || !/^[6-9]\d{9}$/.test(mobile)) {
@@ -261,7 +285,6 @@ export default function PickupDropPage() {
         showToast(result.error || 'Failed to schedule pickup/drop', 'error');
       }
     } catch (error) {
-      console.error('Error scheduling pickup/drop:', error);
       showToast('An error occurred while scheduling', 'error');
     } finally {
       setIsSubmitting(false);
@@ -435,7 +458,7 @@ export default function PickupDropPage() {
 
                       {/* Calendar Days */}
                       <div className="grid grid-cols-7 gap-1 mb-3">
-                        {renderCalendar()}
+                        {renderCalendar}
                       </div>
 
                       {/* Time Picker */}
@@ -445,10 +468,9 @@ export default function PickupDropPage() {
                           onChange={(e) => setSelectedHour(e.target.value)}
                           className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none"
                         >
-                          {Array.from({ length: 12 }, (_, i) => {
-                            const hour = (i + 1).toString().padStart(2, '0');
-                            return <option key={hour} value={hour}>{hour}</option>;
-                          })}
+                          {HOUR_OPTIONS.map(hour => (
+                            <option key={hour} value={hour}>{hour}</option>
+                          ))}
                         </select>
                         <span className="text-gray-600 text-xs">:</span>
                         <select
@@ -456,10 +478,9 @@ export default function PickupDropPage() {
                           onChange={(e) => setSelectedMinute(e.target.value)}
                           className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-none"
                         >
-                          {Array.from({ length: 60 }, (_, i) => {
-                            const minute = i.toString().padStart(2, '0');
-                            return <option key={minute} value={minute}>{minute}</option>;
-                          })}
+                          {MINUTE_OPTIONS.map(minute => (
+                            <option key={minute} value={minute}>{minute}</option>
+                          ))}
                         </select>
                         <select
                           value={selectedPeriod}
