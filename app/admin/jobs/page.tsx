@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Settings, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+import { Search, Plus, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface Job {
@@ -25,21 +25,6 @@ interface Employee {
   email: string;
 }
 
-interface CheckInLead {
-  id: string;
-  openLead: string;
-  mobile: string;
-  email: string;
-  assignee: {
-    name: string;
-    initials: string;
-  };
-  status: 'Open' | 'Closed' | 'Pending';
-  deviceType: string;
-  services: string;
-  comment: string;
-}
-
 interface Toast {
   id: number;
   message: string;
@@ -47,7 +32,6 @@ interface Toast {
 }
 
 const JobPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('Open Jobs');
   const [searchQuery, setSearchQuery] = useState('');
   const [jobStatus, setJobStatus] = useState('');
   const [assigneeFilter, setAssigneeFilter] = useState('');
@@ -58,9 +42,6 @@ const JobPage: React.FC = () => {
   const [deleteModal, setDeleteModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
   const [deletingJob, setDeletingJob] = useState<number | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
-
-
-  const leads: CheckInLead[] = [];
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -165,373 +146,219 @@ const JobPage: React.FC = () => {
     }
   }, [openDropdown]);
 
-  const tabs = [
-    'Open Jobs',
-    'All Jobs',
-    // 'Outsourced Jobs',
-    // 'Self Check-In',
-    // 'Basic/Workflow Settings',
-    // 'Job Settings',
-    // 'Technician Print Options',
-    // 'Print Option Settings',
-    // 'Job Service Option',
-    // 'Overview'
-  ];
-
   return (
-    <div className="bg-white">
-      {/* Tabs Navigation */}
-      <div className="border-b border-gray-200">
-        <div className="flex overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
-                activeTab === tab
-                  ? 'text-gray-900 border-b-2 border-[#4A70A9]'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {/* {tab === 'Self Check-In' && 
-              (
-                <span className="absolute top-2 right-2 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                  2
-                </span>
-              )
-              } */}
-              {tab}
-              
+    <div>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-semibold">Jobs</h1>
+        
+        <div className="flex gap-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Job sheet, customer, serial..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 pr-4 py-2 border border-zinc-300 rounded-lg w-80 text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+            />
+            <svg className="w-4 h-4 absolute left-3 top-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          
+          <select
+            value={jobStatus}
+            onChange={(e) => setJobStatus(e.target.value)}
+            className="px-4 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600"
+          >
+            <option value="">Select job status</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+            <option value="Pending">Pending</option>
+          </select>
+
+          <select
+            value={assigneeFilter}
+            onChange={(e) => setAssigneeFilter(e.target.value)}
+            className="px-4 py-2 border border-zinc-300 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600"
+          >
+            <option value="">Select assignee</option>
+            {employees.map(employee => (
+              <option key={employee.id} value={employee.employee_name}>
+                {employee.employee_name} ({employee.employee_role})
+              </option>
+            ))}
+          </select>
+          
+          <Link href="/admin/jobs/add">
+            <button className="cursor-pointer px-4 py-2 bg-[#4A70A9] text-white rounded-lg text-sm font-medium hover:bg-[#3d5c8a]">
+              + Add
             </button>
-          ))}
+          </Link>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="p-6">
-        {activeTab === 'Self Check-In' ? (
-          <>
-            {/* Self Check-In Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">Self Check-In</h1>
-              
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Lead name, number, comment"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-80"
-                  />
+      <div className="bg-white rounded-lg shadow">
+        <table className="w-full text-sm">
+          <thead className="bg-zinc-50 border-b border-zinc-200">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">
+                <div className="flex items-center gap-1">
+                  Job Number
+                  <svg className="w-3 h-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                  </svg>
                 </div>
+              </th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Customer</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Device Brand</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Device Model</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Services</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Assignee</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Priority</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Status</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Created On</th>
+              <th className="px-4 py-3"></th>
+            </tr>
+          </thead>
 
-                <select
-                  value={jobStatus}
-                  onChange={(e) => setJobStatus(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
-                >
-                  <option value="">Select status</option>
-                  <option value="Open">Open</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Pending">Pending</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Self Check-In Table */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Open Lead</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Mobile</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Assignee</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Device Type</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Services</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Comment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {leads.map((lead) => (
-                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.openLead}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#4A70A9] hover:underline cursor-pointer">{lead.mobile}</span>
-                            <button className="text-gray-400 hover:text-gray-600">
+          <tbody>
+            {loading ? (
+              <tr>
+                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                  Loading...
+                </td>
+              </tr>
+            ) : jobs.length === 0 ? (
+              <tr>
+                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                  No jobs found
+                </td>
+              </tr>
+            ) : (
+              jobs.map((job, index) => (
+                <tr key={job.id} className="border-b border-zinc-200 hover:bg-zinc-50">
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-blue-600">{job.job_number}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="font-medium text-zinc-900">{job.customer_name}</div>
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">{job.device_brand_name || job.device_brand}</td>
+                  <td className="px-4 py-3 text-zinc-600">{job.device_model_name || job.device_model || '-'}</td>
+                  <td className="px-4 py-3 text-zinc-600 max-w-xs truncate">{job.services}</td>
+                  <td className="px-4 py-3">
+                    {(() => {
+                      const employee = getEmployeeByName(job.assignee);
+                      return employee ? (
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-[#4A70A9] rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                            {getInitials(employee.employee_name)}
+                          </div>
+                          <div>
+                            <div className="font-medium text-zinc-900">{employee.employee_name}</div>
+                            <div className="text-xs text-zinc-500">{employee.employee_role}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-zinc-900">{job.assignee}</span>
+                      );
+                    })()
+                  }</td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      job.priority === 'High' ? 'bg-red-100 text-red-800' :
+                      job.priority === 'Urgent' ? 'bg-orange-100 text-orange-800' :
+                      job.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {job.priority}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      job.status === 'Open' ? 'bg-green-100 text-green-800' :
+                      job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                      job.status === 'Completed' ? 'bg-purple-100 text-purple-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {job.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-zinc-600">{formatDateTime(job.created_at)}</td>
+                  <td className="px-4 py-3">
+                    <div className="relative">
+                      <button 
+                        onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                        className="text-zinc-400 hover:text-zinc-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                      </button>
+                      
+                      {openDropdown === index && (
+                        <div className="absolute right-0 top-8 w-56 bg-white border border-zinc-200 rounded-lg shadow-lg z-50">
+                          <div className="py-1">
+                            <button 
+                              onClick={() => {
+                                // Edit functionality can be added here
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit Job
+                            </button>
+                            <button 
+                              onClick={() => {
+                                // View details functionality
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                              </svg>
+                              View Details
+                            </button>
+                            <button 
+                              onClick={() => {
+                                // Duplicate functionality
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-50 flex items-center gap-2"
+                            >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
+                              Duplicate Job
+                            </button>
+                            <button 
+                              onClick={() => {
+                                setDeleteModal({show: true, job});
+                                setOpenDropdown(null);
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete Job
                             </button>
                           </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.email}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
-                              {lead.assignee.initials}
-                            </div>
-                            <span className="text-gray-900">{lead.assignee.name}</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-cyan-400 text-white">
-                            {lead.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.deviceType}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.services}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.comment}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                          <button className="text-gray-400 hover:text-gray-600">
-                            <Settings className="w-5 h-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        ) : activeTab === 'Outsourced Jobs' ? (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">Outsourced Jobs</h1>
-              
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="text"
-                    placeholder="Outsource vendor name"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-80"
-                  />
-                </div>
-
-                <select
-                  value={jobStatus}
-                  onChange={(e) => setJobStatus(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
-                >
-                  <option value="">Select status</option>
-                  <option value="Open">Open</option>
-                  <option value="In Progress">In Progress</option>
-                  <option value="Completed">Completed</option>
-                  <option value="Closed">Closed</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Job Sheet</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Vendor</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Customer</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Price</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Comment</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Job Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white">
-                    <tr>
-                      <td colSpan={7} className="px-6 py-16 text-center text-gray-500">No data</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs') ? (
-          <>
-            <div className="flex gap-4 mb-6 justify-end">
-              <div className="relative w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Job sheet, customer, serial..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                />
-              </div>
-              
-              <select
-                value={jobStatus}
-                onChange={(e) => setJobStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
-              >
-                <option value="">Select job status</option>
-                {/* <option value="Open">Open</option> */}
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-                {/* <option value="Closed">Closed</option> */}
-                <option value="Pending">Pending</option>
-              </select>
-
-              <select
-                value={assigneeFilter}
-                onChange={(e) => setAssigneeFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
-              >
-                <option value="">Select assignee</option>
-                {employees.map(employee => (
-                  <option key={employee.id} value={employee.employee_name}>
-                    {employee.employee_name} ({employee.employee_role})
-                  </option>
-                ))}
-              </select>
-
-              <Link href="/admin/jobs/add">
-                <button className="px-6 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors flex items-center gap-2 font-medium">
-                  <Plus className="w-5 h-5" />
-                </button>
-              </Link>
-            </div>
-
-            <div className="border border-gray-200 rounded-lg">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Job Number</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Customer</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Device Brand</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Device Model</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Services</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Assignee</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Priority</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
-                      <th className="px-6 py-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white">
-                    {loading ? (
-                      <tr>
-                        <td colSpan={10} className="px-6 py-16 text-center text-gray-500">Loading...</td>
-                      </tr>
-                    ) : jobs.length === 0 ? (
-                      <tr>
-                        <td colSpan={10} className="px-6 py-16 text-center text-gray-500">No jobs found</td>
-                      </tr>
-                    ) : (
-                      jobs.map((job, index) => (
-                        <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{job.job_number}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.customer_name}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_brand_name || job.device_brand}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.device_model_name || job.device_model || '-'}</td>
-                          <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{job.services}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {(() => {
-                              const employee = getEmployeeByName(job.assignee);
-                              return employee ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
-                                    {getInitials(employee.employee_name)}
-                                  </div>
-                                  <div>
-                                    <div className="text-gray-900 font-medium">{employee.employee_name}</div>
-                                    <div className="text-gray-500 text-xs">{employee.employee_role}</div>
-                                  </div>
-                                </div>
-                              ) : (
-                                <span className="text-gray-900">{job.assignee}</span>
-                              );
-                            })()
-                          }</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              job.priority === 'High' ? 'bg-red-100 text-red-800' :
-                              job.priority === 'Urgent' ? 'bg-orange-100 text-orange-800' :
-                              job.priority === 'Low' ? 'bg-gray-100 text-gray-800' :
-                              'bg-blue-100 text-blue-800'
-                            }`}>
-                              {job.priority}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              job.status === 'Open' ? 'bg-green-100 text-green-800' :
-                              job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                              job.status === 'Completed' ? 'bg-purple-100 text-purple-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                              {job.status}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {formatDateTime(job.created_at)}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm relative">
-                            <div className="relative">
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOpenDropdown(openDropdown === index ? null : index);
-                                }}
-                                className="text-gray-400 hover:text-gray-600"
-                              >
-                                <Settings className="w-5 h-5" />
-                              </button>
-                            
-                            {openDropdown === index && (
-                              <div className="absolute right-0 top-8 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
-                                <div className="py-1">
-                                  {/* <Link href={`/admin/jobs/edit/${job.id}`}>
-                                    <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                      </svg>
-                                      Edit Job
-                                    </button>
-                                  </Link> */}
-                                  <button 
-                                    onClick={() => {
-                                      setDeleteModal({show: true, job});
-                                      setOpenDropdown(null);
-                                    }}
-                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
-                                  >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                    </svg>
-                                    Delete Job
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">{activeTab}</h3>
-              <p className="text-gray-500">Content for this tab is coming soon...</p>
-            </div>
-          </div>
-        )}
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
       
       {/* Delete Confirmation Modal */}
