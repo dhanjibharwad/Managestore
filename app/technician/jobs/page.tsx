@@ -274,9 +274,10 @@ const JobPage: React.FC = () => {
               >
                 <option value="">Select job status</option>
                 {/* <option value="Open">Open</option> */}
+                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
-                <option value="Pending">Pending</option>
+                <option value="Cancelled">Cancelled</option>
               </select>
 
               <select
