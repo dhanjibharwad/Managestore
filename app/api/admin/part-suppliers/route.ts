@@ -84,3 +84,39 @@ export async function GET() {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Supplier ID is required' }, { status: 400 });
+    }
+
+    const client = await pool.connect();
+    
+    try {
+      const result = await client.query(
+        'DELETE FROM part_suppliers WHERE id = $1 AND company_id = $2 RETURNING *',
+        [id, session.company.id]
+      );
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Supplier not found' }, { status: 404 });
+      }
+
+      return NextResponse.json({ success: true, message: 'Supplier deleted successfully' });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Database error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

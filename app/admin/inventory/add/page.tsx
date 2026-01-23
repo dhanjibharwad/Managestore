@@ -629,13 +629,13 @@ export default function AddPartPage() {
                   <select className="px-3 py-1.5 text-sm border border-gray-300 rounded">
                     <option>Normal text</option>
                     <option>Heading 1</option>
-                    <option>Heading 2</option>
+                    {/* <option>Heading 2</option> */}
                   </select>
-                  <button className="p-1.5 hover:bg-gray-200 rounded font-bold transition-colors">B</button>
+                  {/* <button className="p-1.5 hover:bg-gray-200 rounded font-bold transition-colors">B</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded italic transition-colors">I</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">S</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded underline transition-colors">U</button>
-                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button>
+                  <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">≡</button> */}
                 </div>
                 <textarea
                   name="partDescription"
@@ -646,7 +646,7 @@ export default function AddPartPage() {
                   className="w-full px-4 py-3 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] resize-none text-sm"
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-2">Max Allowed Characters 5000</p>
+              <p className="text-xs text-gray-500 mt-2">Max Allowed Characters 50000</p>
             </div>
           </div>
 

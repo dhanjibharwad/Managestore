@@ -134,8 +134,10 @@ const InventoryPage: React.FC = () => {
                     <td className="px-4 py-3 text-sm text-gray-800">
                       <div className="font-medium">{part.part_name}</div>
                       <div className="text-xs text-gray-500">{part.part_id}</div>
-                      {part.category && (
-                        <div className="text-xs text-blue-600">{part.category}{part.sub_category && ` > ${part.sub_category}`}</div>
+                      {part.category && !/^\d+$/.test(part.category.toString().trim()) && (
+                        <div className="text-xs text-blue-600">
+                          {part.category}{part.sub_category && !/^\d+$/.test(part.sub_category.toString().trim()) && ` > ${part.sub_category}`}
+                        </div>
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-800">

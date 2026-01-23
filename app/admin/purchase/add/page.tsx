@@ -24,6 +24,13 @@ interface Toast {
   type: 'success' | 'error' | 'warning';
 }
 
+interface Supplier {
+  id: number;
+  supplier_name: string;
+  mobile_number: string;
+  email_id: string;
+}
+
 export default function PurchasePage() {
   const router = useRouter();
   const [supplierName, setSupplierName] = useState('');
@@ -43,10 +50,13 @@ export default function PurchasePage() {
   const [purchaseNumber, setPurchaseNumber] = useState('');
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
+  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [loadingSuppliers, setLoadingSuppliers] = useState(false);
 
   React.useEffect(() => {
     fetchUserSession();
     generatePurchaseNumber();
+    fetchSuppliers();
   }, []);
 
   // Prevent background scroll when modal is open
@@ -89,6 +99,21 @@ export default function PurchasePage() {
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.floor(Math.random() * 100);
     setPurchaseNumber(`PUR-${timestamp}-${random}`);
+  };
+
+  const fetchSuppliers = async () => {
+    setLoadingSuppliers(true);
+    try {
+      const response = await fetch('/api/admin/part-suppliers');
+      if (response.ok) {
+        const data = await response.json();
+        setSuppliers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching suppliers:', error);
+    } finally {
+      setLoadingSuppliers(false);
+    }
   };
 
   // Modal form state
@@ -332,13 +357,19 @@ export default function PurchasePage() {
                 Part Supplier Name <span className="text-red-500">*</span>
               </label>
               <div className="flex gap-2">
-                <input
-                  type="text"
+                <select
                   value={supplierName}
                   onChange={(e) => setSupplierName(e.target.value)}
-                  placeholder="Select or create supplier"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                />
+                  disabled={loadingSuppliers}
+                >
+                  <option value="">Select supplier</option>
+                  {suppliers.map((supplier) => (
+                    <option key={supplier.id} value={supplier.supplier_name}>
+                      {supplier.supplier_name}
+                    </option>
+                  ))}
+                </select>
                 <Link href="/admin/inventory/partSuppliers/add">
                 <button className="px-3 py-3 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
                   <Plus size={20} />
