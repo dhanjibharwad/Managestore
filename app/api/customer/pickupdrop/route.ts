@@ -83,11 +83,11 @@ export async function GET(req: NextRequest) {
       SELECT 
         pd.*,
         u2.name as customer_name,
-        u.name as assignee_name,
+        e.employee_name as assignee_name,
         dt.name as device_type_name
       FROM pickup_drop pd
       LEFT JOIN users u2 ON pd.customer_search = u2.id::text
-      LEFT JOIN users u ON pd.assignee_id = u.id
+      LEFT JOIN employees e ON pd.assignee_id = e.id
       LEFT JOIN device_types dt ON pd.device_type = dt.id::text
       WHERE pd.company_id = $1 AND pd.customer_search = $2
       ORDER BY pd.created_at DESC
