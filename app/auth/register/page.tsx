@@ -181,12 +181,21 @@ function RegisterForm() {
         }),
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseError) {
+        console.error('Failed to parse response:', parseError);
+        setError('Invalid response from server');
+        return;
+      }
+
       console.log('Registration response:', data);
 
       if (!res.ok) {
-        console.error('Registration failed:', data);
-        setError(data.error || 'Registration failed');
+        const errorMessage = data?.error || `Registration failed (${res.status})`;
+        console.error('Registration failed:', { status: res.status, error: errorMessage, data });
+        setError(errorMessage);
         return;
       }
 
