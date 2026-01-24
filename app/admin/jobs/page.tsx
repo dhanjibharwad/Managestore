@@ -96,9 +96,12 @@ const JobPage: React.FC = () => {
       
       if (response.ok) {
         setJobs(data.jobs || []);
+      } else {
+        showToast(data.error || 'Failed to fetch jobs', 'error');
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
+      showToast('Failed to fetch jobs. Please try again.', 'error');
     } finally {
       setLoading(false);
     }
