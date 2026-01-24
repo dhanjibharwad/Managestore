@@ -766,7 +766,13 @@ export default function SalesForm() {
                     type="text"
                     placeholder="Eg: C02CQ261MD6P"
                     value={serialNumber}
-                    onChange={(e) => setSerialNumber(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow alphanumeric characters for serial numbers
+                      if (/^[a-zA-Z0-9]*$/.test(value)) {
+                        setSerialNumber(value);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
@@ -808,7 +814,13 @@ export default function SalesForm() {
                     type="text"
                     placeholder="Enter price"
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setPrice(value);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
@@ -834,7 +846,13 @@ export default function SalesForm() {
                   <input
                     type="text"
                     value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setQuantity(value);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
@@ -850,7 +868,13 @@ export default function SalesForm() {
                     type="text"
                     placeholder="Discount"
                     value={discount}
-                    onChange={(e) => setDiscount(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setDiscount(value);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>

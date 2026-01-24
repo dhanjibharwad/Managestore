@@ -560,7 +560,13 @@ export default function PurchasePage() {
                 <input
                   type="text"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Allow only numbers and decimal point
+                    if (/^\d*\.?\d*$/.test(value)) {
+                      setAmount(value);
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 />
               </div>
@@ -744,7 +750,13 @@ export default function PurchasePage() {
                   <input
                     type="text"
                     value={modalPrice}
-                    onChange={(e) => setModalPrice(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setModalPrice(value);
+                      }
+                    }}
                     placeholder="Enter price"
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
@@ -769,9 +781,15 @@ export default function PurchasePage() {
                     Quantity <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     value={modalQuantity}
-                    onChange={(e) => setModalQuantity(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setModalQuantity(value);
+                      }
+                    }}
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
                 </div>
@@ -780,7 +798,13 @@ export default function PurchasePage() {
                   <input
                     type="text"
                     value={modalDiscount}
-                    onChange={(e) => setModalDiscount(e.target.value)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Allow only numbers and decimal point
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        setModalDiscount(value);
+                      }
+                    }}
                     placeholder="Discount"
                     className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                   />
