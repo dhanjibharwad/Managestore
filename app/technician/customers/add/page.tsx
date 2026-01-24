@@ -295,7 +295,7 @@ export default function CustomerForm() {
                     type="tel"
                     value={formData.mobileNumber}
                     onChange={(e) => {
-                      const value = e.target.value;
+                      const value = e.target.value.replace(/[^0-9]/g, '');
                       setFormData({ ...formData, mobileNumber: value });
                       validateField('mobileNumber', value);
                     }}
@@ -342,7 +342,10 @@ export default function CustomerForm() {
                 <input
                   type="tel"
                   value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData({ ...formData, phoneNumber: value });
+                  }}
                   placeholder="Eg: 91XXXXXXXX"
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />
@@ -490,7 +493,10 @@ export default function CustomerForm() {
                 <input
                   type="text"
                   value={formData.postalCode}
-                  onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9]/g, '');
+                    setFormData({ ...formData, postalCode: value });
+                  }}
                   placeholder="Type postal code / zip code"
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 />

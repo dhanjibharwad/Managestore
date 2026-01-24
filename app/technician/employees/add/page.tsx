@@ -110,8 +110,15 @@ const EmployeeForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    validateField(name, value);
+    let processedValue = value;
+    
+    // Apply number-only validation for specific fields
+    if (['mobileNumber', 'phoneNumber', 'aadhaarNumber', 'postalCode', 'accountNumber'].includes(name)) {
+      processedValue = value.replace(/[^0-9]/g, '');
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: processedValue }));
+    validateField(name, processedValue);
   };
 
   const handleSubmit = async () => {
