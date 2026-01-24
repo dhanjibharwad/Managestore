@@ -514,9 +514,9 @@ const ContractFormPage = () => {
               </label>
               <div className="border border-gray-300 rounded-md">
                 <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                  <select className="text-sm border-none focus:outline-none bg-transparent">
+                  <div className="text-sm border-none focus:outline-none bg-transparent">
                     <option>Normal text</option>
-                  </select>
+                  </div>
                   {/* <div className="flex gap-1 ml-2">
                     <button className="p-1 hover:bg-gray-200 rounded" title="Bold">
                       <span className="font-bold text-sm">B</span>
@@ -618,9 +618,9 @@ const ContractFormPage = () => {
             
             <div className="border border-gray-300 rounded-md">
               <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                <select className="text-sm border-none focus:outline-none bg-transparent">
+                <div className="text-sm border-none focus:outline-none bg-transparent">
                   <option>Normal text</option>
-                </select>
+                </div>
                 {/* <div className="flex gap-1 ml-2">
                   <button className="p-1 hover:bg-gray-200 rounded" title="Bold">
                     <span className="font-bold text-sm">B</span>

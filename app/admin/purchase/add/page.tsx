@@ -584,11 +584,11 @@ export default function PurchasePage() {
                     <path d="M2 2h12v2H2z" />
                   </svg>
                 </button> */}
-                <select className="px-2 py-1 border border-gray-300 rounded text-sm">
+                <div className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
                   {/* <option>Heading 1</option>
                   <option>Heading 2</option> */}
-                </select>
+                </div>
                 {/* <div className="flex gap-1 ml-2">
                   <button className="p-1 text-gray-600 hover:text-gray-800 font-bold">B</button>
                   <button className="p-1 text-gray-600 hover:text-gray-800 italic">I</button>

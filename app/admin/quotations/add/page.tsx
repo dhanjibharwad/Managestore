@@ -695,9 +695,9 @@ export default function QuotationPage() {
             </label>
             <div className="border border-gray-300 rounded">
               <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-300 bg-gray-50">
-                <select className="px-2 py-1 border border-gray-300 rounded text-sm">
+                <div className="px-2 py-1 border border-gray-300 rounded text-sm">
                   <option>Normal text</option>
-                </select>
+                </div>
                 {/* <div className="flex gap-1 border-l border-gray-300 pl-2">
                   <button className="p-1 hover:bg-gray-200 rounded">
                     <span className="font-bold text-sm">B</span>

@@ -648,7 +648,7 @@ export default function PickupDropPage() {
                   </button> */}
                   <div className="flex items-center gap-2 ml-2">
                     <span className="text-sm text-gray-600">Normal text</span>
-                    <ChevronDown size={16} className="text-gray-400" />
+                    {/* <ChevronDown size={16} className="text-gray-400" /> */}
                   </div>
                   {/* <div className="flex items-center gap-3 ml-auto">
                     <button className="text-gray-600 hover:text-gray-800 font-semibold">

@@ -333,7 +333,7 @@ export default function SalesForm() {
                   </select>
                   <Link href="/admin/customers/add/">
                   <button className="p-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors">
-                    <Plus size={20} />
+                    <Plus size={22} />
                   </button>
                   </Link>
                 </div>
@@ -533,9 +533,9 @@ export default function SalesForm() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
                     </svg>
                   </button> */}
-                  <select className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700">
+                  <div className="px-2 py-1 text-sm border border-gray-300 rounded bg-white text-gray-700">
                     <option>Normal text</option>
-                  </select>
+                  </div>
                   {/* <div className="w-px h-6 bg-gray-300"></div>
                   <button className="p-1 hover:bg-gray-200 rounded font-bold text-gray-700">B</button>
                   <button className="p-1 hover:bg-gray-200 rounded italic text-gray-700">I</button>

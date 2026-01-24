@@ -228,11 +228,11 @@ export default function ExpensePage() {
                 <button className="p-1.5 hover:bg-gray-200 rounded text-gray-600">
                   <Redo2 className="w-4 h-4" />
                 </button> */}
-                <select className="px-2 py-1 border border-gray-300 rounded text-sm bg-white">
+                <div className="px-2 py-1 border border-gray-300 rounded text-sm bg-white">
                   <option>Normal text</option>
-                  <option>Heading 1</option>
-                  <option>Heading 2</option>
-                </select>
+                  {/* <option>Heading 1</option>
+                  <option>Heading 2</option> */}
+                </div>
                 {/* <div className="flex gap-1 ml-2">
                   <button className="px-2 py-1 hover:bg-gray-200 rounded font-bold text-gray-700">B</button>
                   <button className="px-2 py-1 hover:bg-gray-200 rounded italic text-gray-700">I</button>

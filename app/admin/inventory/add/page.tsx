@@ -626,11 +626,11 @@ export default function AddPartPage() {
                       <path d="M5 12h14" />
                     </svg>
                   </button> */}
-                  <select className="px-3 py-1.5 text-sm border border-gray-300 rounded">
+                  {/* <div className="px-3 py-1.5 text-sm border border-gray-300 rounded"> */}
                     <option>Normal text</option>
-                    <option>Heading 1</option>
+                    {/* <option>Heading 1</option> */}
                     {/* <option>Heading 2</option> */}
-                  </select>
+                  {/* </div> */}
                   {/* <button className="p-1.5 hover:bg-gray-200 rounded font-bold transition-colors">B</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded italic transition-colors">I</button>
                   <button className="p-1.5 hover:bg-gray-200 rounded transition-colors">S</button>

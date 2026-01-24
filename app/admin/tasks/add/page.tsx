@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, MoreVertical, Undo, Redo, Upload, ChevronLeft, ChevronRight, Calendar, CheckCircle, AlertCircle } from 'lucide-react';
+import { X, Bold, Italic, Underline, AlignLeft, AlignCenter, MoreVertical, Undo, Redo, Upload, ChevronLeft, ChevronRight, Calendar, CheckCircle, AlertCircle, DivideCircleIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -382,19 +382,19 @@ export default function AddNewTaskPage() {
             <div className="border border-gray-300 rounded-md">
               {/* Toolbar */}
               <div className="flex items-center gap-2 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
+                {/* <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Undo size={18} className="text-gray-600" />
                 </button>
                 <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Redo size={18} className="text-gray-600" />
-                </button>
-                <div className="h-6 w-px bg-gray-300 mx-1"></div>
-                <select className="px-2 py-1 text-sm border-0 bg-transparent text-gray-700 focus:ring-0 outline-none">
+                </button> */}
+                {/* <div className="h-6 w-px bg-gray-300 mx-1"></div> */}
+                <div className="px-2 py-1 text-sm border-0 bg-transparent text-gray-700 focus:ring-0 outline-none">
                   <option>Normal text</option>
-                  <option>Heading 1</option>
-                  <option>Heading 2</option>
-                </select>
-                <div className="h-6 w-px bg-gray-300 mx-1"></div>
+                  {/* <option>Heading 1</option>
+                  <option>Heading 2</option> */}
+                </div>
+                {/* <div className="h-6 w-px bg-gray-300 mx-1"></div> */}
                 {/* <button type="button" className="p-1.5 hover:bg-gray-200 rounded transition-colors">
                   <Bold size={18} className="text-gray-600" />
                 </button>

@@ -624,7 +624,7 @@ export default function PickupDropPage() {
                 />
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Max Allowed Characters 5000
+                Max Allowed Characters 50000
               </p>
             </div>
 

@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, Grid, List, Settings } from 'lucide-react';
+import { Search, Plus, Grid, List, Settings, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface Job {
@@ -40,6 +40,17 @@ interface CheckInLead {
   comment: string;
 }
 
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
+interface StatusUpdateModal {
+  show: boolean;
+  job: Job | null;
+}
+
 const JobPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('Open Jobs');
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,6 +60,12 @@ const JobPage: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, job: null});
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedAssignee, setSelectedAssignee] = useState('');
 
   const fetchEmployees = async () => {
     try {
@@ -93,10 +110,72 @@ const JobPage: React.FC = () => {
 
   const leads: CheckInLead[] = [];
 
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 5000);
+  };
+
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!statusModal.job || !selectedStatus) return;
+
+    setUpdatingStatus(true);
+    try {
+      const response = await fetch(`/api/admin/jobs/${statusModal.job.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: selectedStatus,
+          assignee: selectedAssignee
+        })
+      });
+
+      if (response.ok) {
+        showToast('Job status updated successfully!', 'success');
+        setStatusModal({show: false, job: null});
+        fetchJobs();
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to update status', 'error');
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      showToast('Failed to update status', 'error');
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   useEffect(() => {
     fetchEmployees();
     fetchJobs();
   }, [searchQuery, jobStatus, assigneeFilter]);
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    if (openDropdown !== null) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdown]);
 
   const tabs = [
     'Open Jobs',
@@ -178,6 +257,7 @@ const JobPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
+
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Open Lead</th>
@@ -300,8 +380,8 @@ const JobPage: React.FC = () => {
               </Link>
             </div>
 
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div className="overflow-x-auto">
+            <div className="border border-gray-200 rounded-lg">
+              <div className="">
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
@@ -314,19 +394,20 @@ const JobPage: React.FC = () => {
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Priority</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
+                      <th className="px-6 py-3"></th>
                     </tr>
                   </thead>
                   <tbody className="bg-white">
                     {loading ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-16 text-center text-gray-500">Loading...</td>
+                        <td colSpan={10} className="px-6 py-16 text-center text-gray-500">Loading...</td>
                       </tr>
                     ) : jobs.length === 0 ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-16 text-center text-gray-500">No jobs found</td>
+                        <td colSpan={10} className="px-6 py-16 text-center text-gray-500">No jobs found</td>
                       </tr>
                     ) : (
-                      jobs.map((job) => (
+                      jobs.map((job, index) => (
                         <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{job.job_number}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.customer_name}</td>
@@ -363,16 +444,51 @@ const JobPage: React.FC = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              job.status === 'Open' ? 'bg-green-100 text-green-800' :
+                              job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
                               job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                              job.status === 'Completed' ? 'bg-purple-100 text-purple-800' :
+                              job.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                              job.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
                               {job.status}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {new Date(job.created_at).toLocaleDateString()}
+                            {formatDateTime(job.created_at)}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm relative">
+                            <div className="relative">
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenDropdown(openDropdown === index ? null : index);
+                                }}
+                                className="text-gray-400 hover:text-gray-600"
+                              >
+                                <Settings className="w-5 h-5" />
+                              </button>
+                            
+                            {openDropdown === index && (
+                              <div className="absolute right-0 top-8 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
+                                <div className="py-1">
+                                  <button 
+                                    onClick={() => {
+                                      setStatusModal({show: true, job});
+                                      setSelectedStatus(job.status);
+                                      setSelectedAssignee(job.assignee);
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                    </svg>
+                                    Update Status
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -383,6 +499,142 @@ const JobPage: React.FC = () => {
             </div>
           </>
         ) : null}
+      </div>
+      
+      {/* Status Update Modal */}
+      {statusModal.show && statusModal.job && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Update Job Status</h3>
+                <button
+                  onClick={() => setStatusModal({show: false, job: null})}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Job:</span>
+                    <span className="ml-2 font-medium">{statusModal.job.job_number}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Status:</span>
+                    <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                      statusModal.job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                      statusModal.job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                      statusModal.job.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                      statusModal.job.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {statusModal.job.status}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Customer:</span>
+                    <span className="ml-2 font-medium">{statusModal.job.customer_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Assignee:</span>
+                    <span className="ml-2 font-medium">{statusModal.job.assignee}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Assignee Name</label>
+                  <select
+                    value={selectedAssignee}
+                    onChange={(e) => setSelectedAssignee(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    {employees.map(employee => (
+                      <option key={employee.id} value={employee.employee_name}>
+                        {employee.employee_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStatusModal({show: false, job: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateStatus}
+                  disabled={updatingStatus}
+                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {updatingStatus ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Toast Notifications */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg min-w-80 max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border border-green-200' :
+              toast.type === 'error' ? 'bg-red-50 border border-red-200' :
+              'bg-yellow-50 border border-yellow-200'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="text-green-600" size={20} />}
+            {toast.type === 'error' && <XCircle className="text-red-600" size={20} />}
+            {toast.type === 'warning' && <AlertCircle className="text-yellow-600" size={20} />}
+            <span className={`flex-1 text-sm font-medium ${
+              toast.type === 'success' ? 'text-green-800' :
+              toast.type === 'error' ? 'text-red-800' :
+              'text-yellow-800'
+            }`}>
+              {toast.message}
+            </span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className={`hover:opacity-70 ${
+                toast.type === 'success' ? 'text-green-600' :
+                toast.type === 'error' ? 'text-red-600' :
+                'text-yellow-600'
+              }`}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
