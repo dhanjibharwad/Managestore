@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Trash2, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+import { Search, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -235,6 +235,11 @@ export default function QuotationsPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">₹{quotation.totalAmount.toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm text-gray-800">
                     <div className="flex items-center gap-2">
+                      <Link href={`/admin/quotations/edit/${quotation.id}`}>
+                        <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      </Link>
                       <button 
                         onClick={() => setDeleteModal({show: true, quotation})}
                         className="p-1 text-red-600 hover:text-red-800 transition-colors"
