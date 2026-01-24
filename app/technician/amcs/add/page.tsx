@@ -287,7 +287,7 @@ const ContractFormPage = () => {
                   </select>
                   <Link href="/admin/customers/add/">
                   <button className="bg-[#4A70A9] text-white p-2 rounded-md hover:bg-[#3d5c8c] transition-colors">
-                    <Plus size={20} />
+                    <Plus size={22} />
                   </button>
                   </Link>
                 </div>
