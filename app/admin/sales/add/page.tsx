@@ -135,7 +135,11 @@ export default function SalesForm() {
       const response = await fetch(url);
       const data = await response.json();
       if (data.parts) {
-        setParts(data.parts);
+        // Remove duplicates based on part id to prevent key conflicts
+        const uniqueParts = data.parts.filter((part: Part, index: number, self: Part[]) => 
+          index === self.findIndex((p: Part) => p.id === part.id)
+        );
+        setParts(uniqueParts);
       }
     } catch (error) {
       console.error('Error fetching parts:', error);
@@ -240,7 +244,7 @@ export default function SalesForm() {
     }
 
     const newItem: SaleItem = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       description: description || partName,
       taxCode: taxCode,
       qty: parseFloat(quantity) || 0,
@@ -723,7 +727,7 @@ export default function SalesForm() {
                 >
                   <option value="">Search and select existing part or create new below</option>
                   {parts.map((part, index) => (
-                    <option key={`part-${part.id}-${index}`} value={part.id.toString()}>
+                    <option key={`part-option-${index}`} value={part.id.toString()}>
                       {part.part_name} - {part.serial_number || 'No Serial'} (₹{part.price})
                     </option>
                   ))}

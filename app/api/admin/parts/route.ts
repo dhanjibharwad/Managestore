@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
+import { getSession } from '@/lib/auth';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -7,11 +8,22 @@ const pool = new Pool({
 
 export async function POST(req: NextRequest) {
   try {
+    // Verify user is authenticated
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { companyId, partName, serialNumber, description, warranty, price, taxCode } = body;
 
     if (!companyId || !partName || !price) {
       return NextResponse.json({ error: 'Required fields missing' }, { status: 400 });
+    }
+
+    // Verify user belongs to the company they're trying to add a part for
+    if (session.company.id !== companyId) {
+      return NextResponse.json({ error: 'Forbidden - Company mismatch' }, { status: 403 });
     }
 
     const query = `
@@ -32,16 +44,26 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const companyId = searchParams.get('companyId');
+    // Verify user is authenticated
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const query = companyId 
-      ? 'SELECT * FROM parts WHERE company_id = $1 ORDER BY part_name'
-      : 'SELECT * FROM parts ORDER BY part_name';
-    
-    const result = companyId 
-      ? await pool.query(query, [companyId])
-      : await pool.query(query);
+    const { searchParams } = new URL(req.url);
+    const requestedCompanyId = searchParams.get('companyId');
+
+    // Use session company ID if not provided, or verify requested company matches session
+    const companyId = requestedCompanyId 
+      ? (requestedCompanyId === session.company.id.toString() ? requestedCompanyId : null)
+      : session.company.id.toString();
+
+    if (!companyId) {
+      return NextResponse.json({ error: 'Forbidden - Company mismatch' }, { status: 403 });
+    }
+
+    const query = 'SELECT * FROM parts WHERE company_id = $1 ORDER BY part_name';
+    const result = await pool.query(query, [companyId]);
 
     return NextResponse.json({ parts: result.rows });
   } catch (error) {
