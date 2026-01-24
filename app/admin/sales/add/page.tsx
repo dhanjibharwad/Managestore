@@ -34,6 +34,16 @@ interface Customer {
   customer_type: string;
 }
 
+interface Part {
+  id: number;
+  part_name: string;
+  serial_number?: string;
+  description?: string;
+  warranty?: string;
+  price: number;
+  company_id: number;
+}
+
 export default function SalesForm() {
   const router = useRouter();
   const [saleId, setSaleId] = useState('');
@@ -50,12 +60,20 @@ export default function SalesForm() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [parts, setParts] = useState<Part[]>([]);
 
   React.useEffect(() => {
     fetchUserSession();
     generateSaleNumber();
     fetchCustomers();
   }, []);
+
+  // Fetch parts after companyId is available
+  React.useEffect(() => {
+    if (companyId) {
+      fetchParts();
+    }
+  }, [companyId]);
 
   // Prevent background scroll when modal is open
   React.useEffect(() => {
@@ -110,6 +128,30 @@ export default function SalesForm() {
       console.error('Error fetching customers:', error);
     }
   };
+
+  const fetchParts = async () => {
+    try {
+      const url = companyId ? `/api/admin/parts?companyId=${companyId}` : '/api/admin/parts';
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.parts) {
+        setParts(data.parts);
+      }
+    } catch (error) {
+      console.error('Error fetching parts:', error);
+    }
+  };
+
+  const handlePartSelect = (partId: string) => {
+    const selectedPart = parts.find(part => part.id.toString() === partId);
+    if (selectedPart) {
+      setPartName(selectedPart.part_name);
+      setSerialNumber(selectedPart.serial_number || '');
+      setDescription(selectedPart.description || '');
+      setWarranty(selectedPart.warranty || '');
+      setPrice(selectedPart.price.toString());
+    }
+  };
   
   // Add Part Form States
   const [partSearch, setPartSearch] = useState('');
@@ -160,7 +202,43 @@ export default function SalesForm() {
     setShowAddPartModal(true);
   };
 
-  const handleSavePart = () => {
+  const handleSavePart = async () => {
+    if (!partName || !price) {
+      showToast('Part name and price are required', 'warning');
+      return;
+    }
+
+    // If this is a new part (not selected from existing), save it to database first
+    let partId = null;
+    if (!partSearch && companyId) {
+      try {
+        const partResponse = await fetch('/api/admin/parts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            companyId: companyId,
+            partName: partName,
+            serialNumber: serialNumber || null,
+            description: description || null,
+            warranty: warranty || null,
+            price: parseFloat(price),
+            taxCode: taxCode || null
+          })
+        });
+        
+        const partData = await partResponse.json();
+        if (partData.success) {
+          partId = partData.part.id;
+          showToast('New part saved to database', 'success');
+          // Refresh parts list
+          fetchParts();
+        }
+      } catch (error) {
+        console.error('Error saving part:', error);
+        showToast('Failed to save part to database', 'warning');
+      }
+    }
+
     const newItem: SaleItem = {
       id: Math.random().toString(36).substr(2, 9),
       description: description || partName,
@@ -175,6 +253,7 @@ export default function SalesForm() {
     };
     setItems([...items, newItem]);
     handleCloseModal();
+    showToast('Item added to sale', 'success');
   };
 
   const handleSubmitSale = async () => {
@@ -194,7 +273,6 @@ export default function SalesForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          companyId,
           saleNumber: saleId,
           customerName,
           saleDate,
@@ -330,8 +408,8 @@ export default function SalesForm() {
                     className="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white"
                   >
                     <option value="">Select customer</option>
-                    {Array.isArray(customers) && customers.map(cust => (
-                      <option key={cust.id} value={cust.id}>
+                    {Array.isArray(customers) && customers.map((cust, index) => (
+                      <option key={`customer-${cust.id}-${index}`} value={cust.id}>
                         {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
                       </option>
                     ))}
@@ -368,8 +446,8 @@ export default function SalesForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent appearance-none bg-white"
                 >
                   <option value="">Select customer</option>
-                  {Array.isArray(customers) && customers.map(cust => (
-                    <option key={cust.id} value={cust.id}>
+                  {Array.isArray(customers) && customers.map((cust, index) => (
+                    <option key={`referred-${cust.id}-${index}`} value={cust.id}>
                       {cust.customer_name} - {cust.customer_id} ({cust.mobile_number})
                     </option>
                   ))}
@@ -635,10 +713,20 @@ export default function SalesForm() {
                 </label>
                 <select
                   value={partSearch}
-                  onChange={(e) => setPartSearch(e.target.value)}
+                  onChange={(e) => {
+                    setPartSearch(e.target.value);
+                    if (e.target.value) {
+                      handlePartSelect(e.target.value);
+                    }
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Search and select existing part or create new below</option>
+                  {parts.map((part, index) => (
+                    <option key={`part-${part.id}-${index}`} value={part.id.toString()}>
+                      {part.part_name} - {part.serial_number || 'No Serial'} (₹{part.price})
+                    </option>
+                  ))}
                 </select>
               </div>
 
