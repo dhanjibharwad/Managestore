@@ -183,7 +183,7 @@ export default function EditTaskPage({ params }: { params: Promise<{ id: string 
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                   required
                 >
-                  <option value="Not Started Yet">Not Started Yet</option>
+                  <option value="Pending">Pending</option>
                   <option value="In Progress">In Progress</option>
                   <option value="Completed">Completed</option>
                   <option value="Cancelled">Cancelled</option>

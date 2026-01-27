@@ -1,7 +1,7 @@
   'use client';
 
   import React, { useState, useEffect } from 'react';
-  import { Search, ChevronDown, Plus, ChevronUp, Edit, AlertCircle, X, CheckCircle, XCircle } from 'lucide-react';
+  import { Search, ChevronDown, Plus, ChevronUp, Edit, AlertCircle, X, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
   import Link from 'next/link';
 
   interface Task {
@@ -38,6 +38,11 @@
     type: 'success' | 'error' | 'warning';
   }
 
+  interface StatusUpdateModal {
+    show: boolean;
+    task: Task | null;
+  }
+
   export default function TasksPage() {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [users, setUsers] = useState<User[]>([]);
@@ -48,6 +53,9 @@
     const [selectedStatus, setSelectedStatus] = useState('');
     const [sortAscending, setSortAscending] = useState(true);
     const [toasts, setToasts] = useState<Toast[]>([]);
+    const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, task: null});
+    const [updatingStatus, setUpdatingStatus] = useState(false);
+    const [newStatus, setNewStatus] = useState('');
 
     useEffect(() => {
       fetchTasks();
@@ -132,6 +140,7 @@
       switch (status) {
         case 'Completed': return 'bg-green-100 text-green-800';
         case 'In Progress': return 'bg-blue-100 text-blue-800';
+        case 'Pending': return 'bg-orange-100 text-orange-800';
         case 'Not Started Yet': return 'bg-gray-100 text-gray-800';
         default: return 'bg-gray-100 text-gray-800';
       }
@@ -143,6 +152,62 @@
         case 'Medium': return 'bg-yellow-100 text-yellow-800';
         case 'low': return 'bg-green-100 text-green-800';
         default: return 'bg-gray-100 text-gray-800';
+      }
+    };
+
+    const handleUpdateStatus = async () => {
+      if (!statusModal.task || !newStatus) {
+        showToast('Please select a status', 'warning');
+        return;
+      }
+
+      if (newStatus === statusModal.task.task_status) {
+        showToast('Status is already set to this value', 'warning');
+        return;
+      }
+
+      setUpdatingStatus(true);
+      try {
+        const response = await fetch(`/api/admin/tasks/${statusModal.task.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            task_title: statusModal.task.task_title,
+            task_description: statusModal.task.task_description,
+            assignee_id: statusModal.task.assignee_id,
+            task_status: newStatus,
+            priority: statusModal.task.priority,
+            due_date: statusModal.task.due_date,
+            customer_id: statusModal.task.customer_id
+          })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          showToast('Task status updated successfully!', 'success');
+          setStatusModal({show: false, task: null});
+          fetchTasks();
+        } else {
+          if (response.status === 401) {
+            showToast('Session expired. Please login again.', 'error');
+          } else if (response.status === 404) {
+            showToast('Task not found', 'error');
+          } else if (response.status === 400) {
+            showToast('Invalid request data', 'error');
+          } else {
+            showToast(data.error || 'Failed to update status', 'error');
+          }
+        }
+      } catch (error) {
+        console.error('Error updating status:', error);
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          showToast('Network error. Please check your connection.', 'error');
+        } else {
+          showToast('An unexpected error occurred. Please try again.', 'error');
+        }
+      } finally {
+        setUpdatingStatus(false);
       }
     };
 
@@ -191,7 +256,7 @@
                 className="appearance-none pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white text-gray-700 min-w-[180px]"
               >
                 <option value="">Select status</option>
-                {/* <option value="Not Started Yet">Not Started Yet</option> */}
+                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
                 <option value="Cancelled">Cancelled</option>
@@ -225,6 +290,9 @@
                     Status
                   </th>
                   <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                    Priority
+                  </th>
+                  <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
                     Due Date
                   </th>
                   <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
@@ -250,13 +318,13 @@
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-16 text-gray-400">
+                    <td colSpan={8} className="text-center py-16 text-gray-400">
                       Loading...
                     </td>
                   </tr>
                 ) : tasks.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-16 text-gray-400">
+                    <td colSpan={8} className="text-center py-16 text-gray-400">
                       No data
                     </td>
                   </tr>
@@ -284,14 +352,14 @@
                         {task.assignee_name || task.assignee_id || '-'}
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
-                        <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.task_status)}`}>
-                            {task.task_status}
-                          </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
-                            {task.priority}
-                          </span>
-                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.task_status)}`}>
+                          {task.task_status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-zinc-700">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(task.priority)}`}>
+                          {task.priority}
+                        </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
                         {formatDate(task.due_date)}
@@ -316,6 +384,16 @@
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
                         <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => {
+                              setStatusModal({show: true, task});
+                              setNewStatus(task.task_status);
+                            }}
+                            className="p-1 text-green-600 hover:text-green-800 transition-colors" 
+                            title="Update Status"
+                          >
+                            <RefreshCw className="w-4 h-4" />
+                          </button>
                           <Link href={`/technician/tasks/edit/${task.id}`}>
                             <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                               <Edit className="w-4 h-4" />
@@ -329,6 +407,85 @@
               </tbody>
             </table>
           </div>
+          
+          {/* Status Update Modal */}
+          {statusModal.show && statusModal.task && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-lg font-semibold text-gray-900">Update Task Status</h3>
+                    <button
+                      onClick={() => setStatusModal({show: false, task: null})}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                  
+                  <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="text-gray-600">Task:</span>
+                        <span className="ml-2 font-medium">{statusModal.task.task_title}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Task ID:</span>
+                        <span className="ml-2 font-medium">{statusModal.task.task_id}</span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Current Status:</span>
+                        <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(statusModal.task.task_status)}`}>
+                          {statusModal.task.task_status}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-gray-600">Assignee:</span>
+                        <span className="ml-2 font-medium">{statusModal.task.assignee_name || statusModal.task.assignee_id}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                    <select
+                      value={newStatus}
+                      onChange={(e) => setNewStatus(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="In Progress">In Progress</option>
+                      <option value="Completed">Completed</option>
+                      <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                  
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setStatusModal({show: false, task: null})}
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleUpdateStatus}
+                      disabled={updatingStatus}
+                      className="flex-1 px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {updatingStatus ? (
+                        <>
+                          <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                          Updating...
+                        </>
+                      ) : (
+                        'Update'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Toast Notifications */}
           <div className="fixed top-4 right-4 z-50 space-y-2">

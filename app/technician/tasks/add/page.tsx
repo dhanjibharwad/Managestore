@@ -55,7 +55,7 @@ export default function AddNewTaskPage() {
     currentMinute.toString().padStart(2, '0')
   );
   const [selectedPeriod, setSelectedPeriod] = useState(currentHour >= 12 ? 'PM' : 'AM');
-  const [taskStatus, setTaskStatus] = useState('Not Started Yet');
+  const [taskStatus, setTaskStatus] = useState('Pending');
   const [priority, setPriority] = useState('Medium');
   const [customer, setCustomer] = useState('');
   const [sendAlert, setSendAlert] = useState({
@@ -574,7 +574,7 @@ export default function AddNewTaskPage() {
                 onChange={(e) => setTaskStatus(e.target.value)}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent outline-all appearance-none bg-white"
               >
-                <option value="Not Started Yet">Not Started Yet</option>
+                <option value="Pending">Pending</option>
                 <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
                 <option value="Cancelled">Cancelled</option>
