@@ -355,7 +355,7 @@ export default function QuotationPage() {
       const data = await response.json();
       if (data.success) {
         showToast('Quotation created successfully!', 'success');
-        setTimeout(() => window.location.href = '/admin/quotations', 2000);
+        setTimeout(() => window.location.href = '/technician/quotations', 2000);
       } else {
         showToast(data.error || 'Failed to create quotation', 'error');
       }
@@ -472,7 +472,7 @@ export default function QuotationPage() {
                     </option>
                   ))}
                 </select>
-                <Link href="/admin/customers/add">
+                <Link href="/technician/customers/add">
                   <button 
                     className="p-3 text-white rounded hover:opacity-90"
                     style={{ backgroundColor: '#4A70A9' }}
