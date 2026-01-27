@@ -212,7 +212,7 @@ export default function PickupDropsPage() {
                       <div className="text-xs text-blue-600 capitalize">{item.service_type}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
-                      <div className="font-medium">{item.customer_name || item.customer_search}</div>
+                      <div className="font-medium">{item.customer_name || 'Unknown Customer'}</div>
                       <div className="text-xs text-gray-500">+91 {item.mobile}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800 capitalize">

@@ -82,18 +82,19 @@ export async function GET(req: NextRequest) {
     const query = `
       SELECT 
         pd.*,
-        u2.name as customer_name,
+        COALESCE(c.customer_name, u2.name) as customer_name,
         e.employee_name as assignee_name,
         dt.name as device_type_name
       FROM pickup_drop pd
       LEFT JOIN users u2 ON pd.customer_search = u2.id::text
+      LEFT JOIN customers c ON pd.customer_search = c.id::text
       LEFT JOIN employees e ON pd.assignee_id = e.id
       LEFT JOIN device_types dt ON pd.device_type = dt.id::text
-      WHERE pd.company_id = $1 AND pd.customer_search = $2
+      WHERE pd.company_id = $1
       ORDER BY pd.created_at DESC
     `;
 
-    const result = await pool.query(query, [companyId, userId.toString()]);
+    const result = await pool.query(query, [companyId]);
 
     return NextResponse.json({
       pickupDrops: result.rows
