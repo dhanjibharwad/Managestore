@@ -232,6 +232,11 @@ export default function QuotationPage() {
   }, [partForm.price, partForm.quantity, partForm.discount, partForm.tax]);
 
   const saveService = () => {
+    if (!serviceForm.price || parseFloat(serviceForm.price) <= 0) {
+      showToast('Please enter a valid price', 'warning');
+      return;
+    }
+
     let taxRate = 0;
     if (serviceForm.tax === 'gst' || serviceForm.tax === 'igst') taxRate = 18;
     else if (serviceForm.tax === 'gst5') taxRate = 5;
@@ -794,7 +799,7 @@ export default function QuotationPage() {
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price
+                    Price <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="number"
@@ -802,6 +807,7 @@ export default function QuotationPage() {
                     value={serviceForm.price}
                     onChange={(e) => handleServiceFormChange('price', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    required
                   />
                 </div>
                 <div>
