@@ -234,10 +234,12 @@ export default function SalesPage() {
                                 <DollarSign className="w-4 h-4" />
                                 Collect Payment
                               </button> */}
-                              <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                <FileText className="w-4 h-4" />
-                                Sale Invoice
-                              </button>
+                              <Link href={`/technician/sales/${sale.id}/invoice`}>
+                                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                  <FileText className="w-4 h-4" />
+                                  Sale Invoice
+                                </button>
+                              </Link>
                               {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <Smartphone className="w-4 h-4" />
                                 Send UPI Link

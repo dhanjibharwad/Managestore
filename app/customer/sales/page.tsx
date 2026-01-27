@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, Settings, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 interface Sale {
   id: number;
@@ -20,10 +21,20 @@ export default function SalesPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState<{top: number, right: number} | null>(null);
 
   useEffect(() => {
     fetchSales();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdown(null);
+    if (openDropdown !== null) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openDropdown]);
 
   const fetchSales = async () => {
     try {
@@ -137,23 +148,26 @@ export default function SalesPage() {
               <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
                 Payment Status
               </th>
+              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-32 text-center">
+                <td colSpan={8} className="px-6 py-32 text-center">
                   <div className="text-gray-400 text-base">Loading...</div>
                 </td>
               </tr>
             ) : filteredSales.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-32 text-center">
+                <td colSpan={8} className="px-6 py-32 text-center">
                   <div className="text-gray-400 text-base">No data</div>
                 </td>
               </tr>
             ) : (
-              filteredSales.map((sale) => {
+              filteredSales.map((sale, index) => {
                 const displayStatus = getPaymentStatusDisplay(sale.paymentStatus, sale.paymentReceived, sale.totalAmount);
                 return (
                   <tr key={sale.id} className="border-b border-gray-200 hover:bg-gray-50">
@@ -167,6 +181,40 @@ export default function SalesPage() {
                       <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(displayStatus)}`}>
                         {displayStatus}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="relative">
+                        <button 
+                          onClick={(e) => {
+                            const rect = e.currentTarget.getBoundingClientRect();
+                            setDropdownPosition({
+                              top: rect.bottom + window.scrollY,
+                              right: window.innerWidth - rect.right
+                            });
+                            setOpenDropdown(openDropdown === index ? null : index);
+                          }}
+                          className="text-gray-400 hover:text-gray-600"
+                        >
+                          <Settings className="w-5 h-5" />
+                        </button>
+                        
+                        {openDropdown === index && dropdownPosition && (
+                          <div className="fixed bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-56" 
+                               style={{
+                                 top: `${dropdownPosition.top}px`,
+                                 right: `${dropdownPosition.right}px`
+                               }}>
+                            <div className="py-1">
+                              <Link href={`/customer/sales/${sale.id}/invoice`}>
+                                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                  <FileText className="w-4 h-4" />
+                                  Sale Invoice
+                                </button>
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );
