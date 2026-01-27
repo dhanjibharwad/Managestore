@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Trash2, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+import { Trash2, AlertCircle, CheckCircle, XCircle, X, Edit } from 'lucide-react';
 
 interface Toast {
   id: number;
@@ -237,6 +237,11 @@ export default function AMCContractsPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                         <div className="flex items-center gap-2">
+                          <Link href={`/admin/amcs/edit/${contract.id}`}>
+                            <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          </Link>
                           <button 
                             onClick={() => setDeleteModal({show: true, contract})}
                             className="p-1 text-red-600 hover:text-red-800 transition-colors"
