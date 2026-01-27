@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS leads (
   device_brand_id INT,
   device_model_id INT,
   comment TEXT,
+  status VARCHAR(20) DEFAULT 'new',
   address_line VARCHAR(500),
   region VARCHAR(100),
   city VARCHAR(100),
@@ -33,3 +34,7 @@ CREATE TABLE IF NOT EXISTS leads (
 CREATE INDEX idx_leads_company ON leads(company_id);
 CREATE INDEX idx_leads_assignee ON leads(assignee_id);
 CREATE INDEX idx_leads_created_at ON leads(created_at);
+CREATE INDEX idx_leads_status ON leads(status);
+
+-- Add status column to existing leads table if it doesn't exist
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'new';

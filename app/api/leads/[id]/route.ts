@@ -59,7 +59,7 @@ export async function PUT(
 
     const companyId = session.company.id;
     const body = await request.json();
-    const { lead_name, mobile_number, assignee_id, lead_source, next_follow_up, comment } = body;
+    const { lead_name, mobile_number, assignee_id, lead_source, next_follow_up, comment, status } = body;
 
     // Check if lead exists and belongs to the company
     const leadCheck = await pool.query(
@@ -71,11 +71,21 @@ export async function PUT(
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    // Update the lead
-    const result = await pool.query(
-      'UPDATE leads SET lead_name = $1, mobile_number = $2, assignee_id = $3, lead_source = $4, next_follow_up = $5, comment = $6, updated_at = NOW() WHERE id = $7 AND company_id = $8 RETURNING *',
-      [lead_name, mobile_number, assignee_id, lead_source, next_follow_up, comment, leadId, companyId]
-    );
+    // Update the lead - handle both full update and status-only update
+    let result;
+    if (status && !lead_name) {
+      // Status-only update
+      result = await pool.query(
+        'UPDATE leads SET status = $1, updated_at = NOW() WHERE id = $2 AND company_id = $3 RETURNING *',
+        [status, leadId, companyId]
+      );
+    } else {
+      // Full update
+      result = await pool.query(
+        'UPDATE leads SET lead_name = $1, mobile_number = $2, assignee_id = $3, lead_source = $4, next_follow_up = $5, comment = $6, status = COALESCE($7, status), updated_at = NOW() WHERE id = $8 AND company_id = $9 RETURNING *',
+        [lead_name, mobile_number, assignee_id, lead_source, next_follow_up, comment, status, leadId, companyId]
+      );
+    }
 
     return NextResponse.json({ lead: result.rows[0] });
   } catch (error) {

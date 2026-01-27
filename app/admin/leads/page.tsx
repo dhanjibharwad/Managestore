@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal, Plus, Edit, Trash2, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Edit, Trash2, AlertCircle, CheckCircle, XCircle, X, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -30,6 +30,11 @@ interface User {
   role: string;
 }
 
+interface StatusUpdateModal {
+  show: boolean;
+  lead: Lead | null;
+}
+
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -43,6 +48,9 @@ export default function LeadsPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, lead: null});
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -109,6 +117,56 @@ export default function LeadsPage() {
   const getAssigneeName = (assigneeId: number) => {
     const user = users.find(u => u.id === assigneeId);
     return user ? `${user.name} (${user.role})` : assigneeId.toString();
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!statusModal.lead || !newStatus) {
+      showToast('Please select a status', 'warning');
+      return;
+    }
+
+    if (newStatus === (statusModal.lead.status || 'new')) {
+      showToast('Status is already set to this value', 'warning');
+      return;
+    }
+
+    setUpdatingStatus(true);
+    try {
+      const response = await fetch(`/api/leads/${statusModal.lead.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        showToast('Lead status updated successfully!', 'success');
+        setStatusModal({show: false, lead: null});
+        fetchLeads();
+      } else {
+        if (response.status === 401) {
+          showToast('Session expired. Please login again.', 'error');
+        } else if (response.status === 404) {
+          showToast('Lead not found', 'error');
+        } else if (response.status === 400) {
+          showToast('Invalid request data', 'error');
+        } else {
+          showToast(data.error || 'Failed to update status', 'error');
+        }
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        showToast('Network error. Please check your connection.', 'error');
+      } else {
+        showToast('An unexpected error occurred. Please try again.', 'error');
+      }
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleDeleteLead = async (leadId: number, leadName: string) => {
@@ -268,11 +326,21 @@ export default function LeadsPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
-                      New
+                      {lead.status || 'new'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => {
+                          setStatusModal({show: true, lead});
+                          setNewStatus(lead.status || 'new');
+                        }}
+                        className="p-1 text-green-600 hover:text-green-800 transition-colors" 
+                        title="Update Status"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                      </button>
                       <Link href={`/admin/leads/edit/${lead.id}`}>
                         <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                           <Edit className="w-4 h-4" />
@@ -341,7 +409,85 @@ export default function LeadsPage() {
         </div>
       )}
       
-      {/* Toast Notifications */}
+      {/* Status Update Modal */}
+      {statusModal.show && statusModal.lead && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Update Lead Status</h3>
+                <button
+                  onClick={() => setStatusModal({show: false, lead: null})}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Lead:</span>
+                    <span className="ml-2 font-medium">{statusModal.lead.lead_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Mobile:</span>
+                    <span className="ml-2 font-medium">{statusModal.lead.mobile_number || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Current Status:</span>
+                    <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {statusModal.lead.status || 'new'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Assignee:</span>
+                    <span className="ml-2 font-medium">{getAssigneeName(statusModal.lead.assignee_id)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                <select
+                  value={newStatus}
+                  onChange={(e) => setNewStatus(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="qualified">Qualified</option>
+                  <option value="lost">Lost</option>
+                </select>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStatusModal({show: false, lead: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateStatus}
+                  disabled={updatingStatus}
+                  className="flex-1 px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {updatingStatus ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Update'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
           <div
