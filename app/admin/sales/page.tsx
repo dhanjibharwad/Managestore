@@ -338,12 +338,12 @@ export default function SalesPage() {
                               {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <DollarSign className="w-4 h-4" />
                                 Collect Payment
-                              </button>
+                              </button> */}
                               <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <FileText className="w-4 h-4" />
                                 Sale Invoice
                               </button>
-                              <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                              {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                 <Smartphone className="w-4 h-4" />
                                 Send UPI Link
                               </button> */}
