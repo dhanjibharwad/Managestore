@@ -30,6 +30,7 @@ const InventoryPage: React.FC = () => {
   const [parts, setParts] = useState<Part[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingPart, setDeletingPart] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, part: Part | null}>({show: false, part: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -72,8 +73,7 @@ const InventoryPage: React.FC = () => {
 
   const handleDeletePart = async (partId: string, partName: string) => {
     try {
-      setDeletingPart(partId);
-      setDeleteModal({show: false, part: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/inventory/${partId}`, {
         method: 'DELETE',
@@ -82,6 +82,7 @@ const InventoryPage: React.FC = () => {
       
       if (response.ok) {
         showToast('Part deleted successfully!', 'success');
+        setDeleteModal({show: false, part: null});
         fetchParts();
       } else {
         const error = await response.json();
@@ -91,7 +92,7 @@ const InventoryPage: React.FC = () => {
       console.error('Error deleting part:', error);
       showToast('Failed to delete part', 'error');
     } finally {
-      setDeletingPart(null);
+      setIsDeleting(false);
     }
   };
 
@@ -331,16 +332,17 @@ const InventoryPage: React.FC = () => {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setDeleteModal({show: false, part: null})}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleDeletePart(deleteModal.part!.part_id, deleteModal.part!.part_name)}
-                    disabled={deletingPart === deleteModal.part.part_id}
+                    disabled={isDeleting}
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {deletingPart === deleteModal.part.part_id ? (
+                    {isDeleting ? (
                       <>
                         <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                         Deleting...

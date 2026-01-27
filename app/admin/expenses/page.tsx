@@ -31,6 +31,7 @@ export default function ExpensePage() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [deletingExpense, setDeletingExpense] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, expense: Expense | null}>({show: false, expense: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -106,8 +107,7 @@ export default function ExpensePage() {
 
   const handleDeleteExpense = async (expenseId: number, expenseName: string) => {
     try {
-      setDeletingExpense(expenseId);
-      setDeleteModal({show: false, expense: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/expenses/${expenseId}`, {
         method: 'DELETE',
@@ -116,6 +116,7 @@ export default function ExpensePage() {
       
       if (response.ok) {
         showToast('Expense deleted successfully!', 'success');
+        setDeleteModal({show: false, expense: null});
         fetchExpenses();
       } else {
         const error = await response.json();
@@ -125,7 +126,7 @@ export default function ExpensePage() {
       console.error('Error deleting expense:', error);
       showToast('Failed to delete expense', 'error');
     } finally {
-      setDeletingExpense(null);
+      setIsDeleting(false);
     }
   };
 
@@ -353,16 +354,17 @@ export default function ExpensePage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setDeleteModal({show: false, expense: null})}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleDeleteExpense(deleteModal.expense!.id, deleteModal.expense!.expense_name)}
-                    disabled={deletingExpense === deleteModal.expense.id}
+                    disabled={isDeleting}
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {deletingExpense === deleteModal.expense.id ? (
+                    {isDeleting ? (
                       <>
                         <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                         Deleting...

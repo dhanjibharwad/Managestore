@@ -35,6 +35,7 @@ export default function PickupDropsPage() {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [deletingItem, setDeletingItem] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, item: PickupDrop | null}>({show: false, item: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -110,8 +111,7 @@ export default function PickupDropsPage() {
 
   const handleDeleteItem = async (itemId: number, itemName: string) => {
     try {
-      setDeletingItem(itemId);
-      setDeleteModal({show: false, item: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/pickupdrop/${itemId}`, {
         method: 'DELETE',
@@ -120,6 +120,7 @@ export default function PickupDropsPage() {
       
       if (response.ok) {
         showToast('Pickup/Drop deleted successfully!', 'success');
+        setDeleteModal({show: false, item: null});
         fetchPickupDrops();
       } else {
         const error = await response.json();
@@ -129,7 +130,7 @@ export default function PickupDropsPage() {
       console.error('Error deleting pickup/drop:', error);
       showToast('Failed to delete pickup/drop', 'error');
     } finally {
-      setDeletingItem(null);
+      setIsDeleting(false);
     }
   };
 
@@ -307,16 +308,17 @@ export default function PickupDropsPage() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setDeleteModal({show: false, item: null})}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={() => handleDeleteItem(deleteModal.item!.id, deleteModal.item!.pickup_drop_id)}
-                    disabled={deletingItem === deleteModal.item.id}
+                    disabled={isDeleting}
                     className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {deletingItem === deleteModal.item.id ? (
+                    {isDeleting ? (
                       <>
                         <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                         Deleting...

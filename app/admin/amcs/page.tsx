@@ -30,6 +30,7 @@ export default function AMCContractsPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, contract: Contract | null}>({show: false, contract: null});
   const [deletingContract, setDeletingContract] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchContracts();
@@ -63,8 +64,7 @@ export default function AMCContractsPage() {
 
   const handleDelete = async (contractId: number) => {
     try {
-      setDeletingContract(contractId);
-      setDeleteModal({show: false, contract: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/amcs?id=${contractId}`, {
         method: 'DELETE'
@@ -73,6 +73,7 @@ export default function AMCContractsPage() {
       if (response.ok) {
         setContracts(prev => prev.filter(c => c.id !== contractId));
         showToast('Contract deleted successfully!', 'success');
+        setDeleteModal({show: false, contract: null});
       } else {
         showToast('Failed to delete contract', 'error');
       }
@@ -80,7 +81,7 @@ export default function AMCContractsPage() {
       console.error('Delete error:', error);
       showToast('Failed to delete contract', 'error');
     } finally {
-      setDeletingContract(null);
+      setIsDeleting(false);
     }
   };
 
@@ -274,16 +275,17 @@ export default function AMCContractsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, contract: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDelete(deleteModal.contract!.id)}
-                  disabled={deletingContract === deleteModal.contract.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingContract === deleteModal.contract.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

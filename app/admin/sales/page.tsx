@@ -36,6 +36,7 @@ export default function SalesPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, sale: Sale | null}>({show: false, sale: null});
   const [deletingSale, setDeletingSale] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchSales();
@@ -75,8 +76,7 @@ export default function SalesPage() {
 
   const handleDeleteSale = async (saleId: number) => {
     try {
-      setDeletingSale(saleId);
-      setDeleteModal({show: false, sale: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/sales/${saleId}`, {
         method: 'DELETE'
@@ -85,6 +85,7 @@ export default function SalesPage() {
       if (response.ok) {
         setSales(prev => prev.filter(s => s.id !== saleId));
         showToast('Sale deleted successfully!', 'success');
+        setDeleteModal({show: false, sale: null});
       } else {
         showToast('Failed to delete sale', 'error');
       }
@@ -92,7 +93,7 @@ export default function SalesPage() {
       console.error('Delete error:', error);
       showToast('Failed to delete sale', 'error');
     } finally {
-      setDeletingSale(null);
+      setIsDeleting(false);
     }
   };
 
@@ -550,16 +551,17 @@ export default function SalesPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, sale: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteSale(deleteModal.sale!.id)}
-                  disabled={deletingSale === deleteModal.sale.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingSale === deleteModal.sale.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

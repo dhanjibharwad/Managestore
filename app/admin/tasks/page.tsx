@@ -49,6 +49,7 @@
     const [sortAscending, setSortAscending] = useState(true);
     const [deleteModal, setDeleteModal] = useState<{show: boolean, task: Task | null}>({show: false, task: null});
     const [deletingTask, setDeletingTask] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
     const [toasts, setToasts] = useState<Toast[]>([]);
@@ -135,8 +136,7 @@
 
     const handleDeleteTask = async (taskId: number, taskTitle: string) => {
       try {
-        setDeletingTask(taskId);
-        setDeleteModal({show: false, task: null});
+        setIsDeleting(true);
         
         const response = await fetch(`/api/admin/tasks/${taskId}`, {
           method: 'DELETE',
@@ -145,6 +145,7 @@
         
         if (response.ok) {
           showToast('Task deleted successfully!', 'success');
+          setDeleteModal({show: false, task: null});
           fetchTasks();
         } else {
           const error = await response.json();
@@ -154,7 +155,7 @@
         console.error('Error deleting task:', error);
         showToast('Failed to delete task', 'error');
       } finally {
-        setDeletingTask(null);
+        setIsDeleting(false);
       }
     };
 
@@ -400,16 +401,17 @@
                   <div className="flex gap-3">
                     <button
                       onClick={() => setDeleteModal({show: false, task: null})}
-                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                      disabled={isDeleting}
+                      className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={() => handleDeleteTask(deleteModal.task!.id, deleteModal.task!.task_title)}
-                      disabled={deletingTask === deleteModal.task.id}
+                      disabled={isDeleting}
                       className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                      {deletingTask === deleteModal.task.id ? (
+                      {isDeleting ? (
                         <>
                           <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                           Deleting...

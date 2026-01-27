@@ -30,6 +30,7 @@ const EmployeeTable = () => {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [sendingInvite, setSendingInvite] = useState<number | null>(null);
   const [deletingEmployee, setDeletingEmployee] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, employee: Employee | null}>({show: false, employee: null});
   const [inviteModal, setInviteModal] = useState<{show: boolean, employee: Employee | null}>({show: false, employee: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -105,8 +106,7 @@ const EmployeeTable = () => {
 
   const handleDeleteEmployee = async (employeeId: number, employeeName: string) => {
     try {
-      setDeletingEmployee(employeeId);
-      setDeleteModal({show: false, employee: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/employees/${employeeId}`, {
         method: 'DELETE',
@@ -115,6 +115,7 @@ const EmployeeTable = () => {
       
       if (response.ok) {
         showToast('Employee deleted successfully!', 'success');
+        setDeleteModal({show: false, employee: null});
         fetchEmployees();
       } else {
         const error = await response.json();
@@ -124,7 +125,7 @@ const EmployeeTable = () => {
       console.error('Error deleting employee:', error);
       showToast('Failed to delete employee', 'error');
     } finally {
-      setDeletingEmployee(null);
+      setIsDeleting(false);
     }
   };
 
@@ -403,16 +404,17 @@ const EmployeeTable = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, employee: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteEmployee(deleteModal.employee!.id, deleteModal.employee!.employee_name)}
-                  disabled={deletingEmployee === deleteModal.employee.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingEmployee === deleteModal.employee.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

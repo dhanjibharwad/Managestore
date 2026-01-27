@@ -62,6 +62,7 @@ const JobPage: React.FC = () => {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
   const [deletingJob, setDeletingJob] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, job: null});
   const [updatingStatus, setUpdatingStatus] = useState(false);
@@ -171,8 +172,7 @@ const JobPage: React.FC = () => {
 
   const handleDeleteJob = async (jobId: number, jobNumber: string) => {
     try {
-      setDeletingJob(jobId);
-      setDeleteModal({show: false, job: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/jobs/${jobId}`, {
         method: 'DELETE',
@@ -181,6 +181,7 @@ const JobPage: React.FC = () => {
       
       if (response.ok) {
         showToast('Job deleted successfully!', 'success');
+        setDeleteModal({show: false, job: null});
         fetchJobs();
       } else {
         const error = await response.json();
@@ -190,7 +191,7 @@ const JobPage: React.FC = () => {
       console.error('Error deleting job:', error);
       showToast('Failed to delete job', 'error');
     } finally {
-      setDeletingJob(null);
+      setIsDeleting(false);
     }
   };
 
@@ -619,16 +620,17 @@ const JobPage: React.FC = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, job: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteJob(deleteModal.job!.id, deleteModal.job!.job_number)}
-                  disabled={deletingJob === deleteModal.job.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingJob === deleteModal.job.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

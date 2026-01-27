@@ -31,6 +31,7 @@ export default function PurchasePage() {
   const [deleteModal, setDeleteModal] = useState<{show: boolean, purchase: Purchase | null}>({show: false, purchase: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [deletingPurchase, setDeletingPurchase] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -94,8 +95,7 @@ export default function PurchasePage() {
 
   const handleDelete = async (purchaseId: string) => {
     try {
-      setDeletingPurchase(purchaseId);
-      setDeleteModal({show: false, purchase: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/purchases/${purchaseId}`, {
         method: 'DELETE'
@@ -104,6 +104,7 @@ export default function PurchasePage() {
       if (response.ok) {
         setPurchases(purchases.filter(p => p.id !== purchaseId));
         showToast('Purchase deleted successfully!', 'success');
+        setDeleteModal({show: false, purchase: null});
       } else {
         showToast('Failed to delete purchase', 'error');
       }
@@ -111,7 +112,7 @@ export default function PurchasePage() {
       console.error('Error deleting purchase:', error);
       showToast('Failed to delete purchase', 'error');
     } finally {
-      setDeletingPurchase(null);
+      setIsDeleting(false);
     }
   };
 
@@ -317,16 +318,17 @@ export default function PurchasePage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, purchase: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDelete(deleteModal.purchase!.id)}
-                  disabled={deletingPurchase === deleteModal.purchase.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingPurchase === deleteModal.purchase.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

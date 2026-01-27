@@ -38,6 +38,7 @@ export default function LeadsPage() {
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [deletingLead, setDeletingLead] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, lead: Lead | null}>({show: false, lead: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -112,8 +113,7 @@ export default function LeadsPage() {
 
   const handleDeleteLead = async (leadId: number, leadName: string) => {
     try {
-      setDeletingLead(leadId);
-      setDeleteModal({show: false, lead: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/leads/${leadId}`, {
         method: 'DELETE',
@@ -122,6 +122,7 @@ export default function LeadsPage() {
       
       if (response.ok) {
         showToast('Lead deleted successfully!', 'success');
+        setDeleteModal({show: false, lead: null});
         fetchLeads();
       } else {
         const error = await response.json();
@@ -131,7 +132,7 @@ export default function LeadsPage() {
       console.error('Error deleting lead:', error);
       showToast('Failed to delete lead', 'error');
     } finally {
-      setDeletingLead(null);
+      setIsDeleting(false);
     }
   };
 
@@ -315,16 +316,17 @@ export default function LeadsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, lead: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteLead(deleteModal.lead!.id, deleteModal.lead!.lead_name)}
-                  disabled={deletingLead === deleteModal.lead.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingLead === deleteModal.lead.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

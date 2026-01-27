@@ -32,6 +32,7 @@ export default function QuotationsPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, quotation: Quotation | null}>({show: false, quotation: null});
   const [deletingQuotation, setDeletingQuotation] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -96,8 +97,7 @@ export default function QuotationsPage() {
 
   const handleDelete = async (quotationId: string) => {
     try {
-      setDeletingQuotation(quotationId);
-      setDeleteModal({show: false, quotation: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/quotations?id=${quotationId}&companyId=${companyId}`, {
         method: 'DELETE'
@@ -106,6 +106,7 @@ export default function QuotationsPage() {
       if (response.ok) {
         setQuotations(prev => prev.filter(q => q.id !== quotationId));
         showToast('Quotation deleted successfully!', 'success');
+        setDeleteModal({show: false, quotation: null});
       } else {
         showToast('Failed to delete quotation', 'error');
       }
@@ -113,7 +114,7 @@ export default function QuotationsPage() {
       console.error('Delete error:', error);
       showToast('Failed to delete quotation', 'error');
     } finally {
-      setDeletingQuotation(null);
+      setIsDeleting(false);
     }
   };
 
@@ -276,16 +277,17 @@ export default function QuotationsPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, quotation: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDelete(deleteModal.quotation!.id)}
-                  disabled={deletingQuotation === deleteModal.quotation.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingQuotation === deleteModal.quotation.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...

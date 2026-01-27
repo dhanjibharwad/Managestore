@@ -29,6 +29,7 @@ export default function CustomersPage() {
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [sendingInvite, setSendingInvite] = useState<number | null>(null);
   const [deletingCustomer, setDeletingCustomer] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
   const [inviteModal, setInviteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -105,8 +106,7 @@ export default function CustomersPage() {
 
   const handleDeleteCustomer = async (customerId: number, customerName: string) => {
     try {
-      setDeletingCustomer(customerId);
-      setDeleteModal({show: false, customer: null});
+      setIsDeleting(true);
       
       const response = await fetch(`/api/admin/customers/${customerId}`, {
         method: 'DELETE',
@@ -115,6 +115,7 @@ export default function CustomersPage() {
       
       if (response.ok) {
         showToast('Customer deleted successfully!', 'success');
+        setDeleteModal({show: false, customer: null});
         fetchCustomers(); // Refresh the customer list
       } else {
         const error = await response.json();
@@ -124,7 +125,7 @@ export default function CustomersPage() {
       console.error('Error deleting customer:', error);
       showToast('Failed to delete customer', 'error');
     } finally {
-      setDeletingCustomer(null);
+      setIsDeleting(false);
     }
   };
 
@@ -398,16 +399,17 @@ export default function CustomersPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, customer: null})}
-                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleDeleteCustomer(deleteModal.customer!.id, deleteModal.customer!.customer_name)}
-                  disabled={deletingCustomer === deleteModal.customer.id}
+                  disabled={isDeleting}
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  {deletingCustomer === deleteModal.customer.id ? (
+                  {isDeleting ? (
                     <>
                       <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                       Deleting...
