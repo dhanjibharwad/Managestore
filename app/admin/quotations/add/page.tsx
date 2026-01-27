@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, Plus, Scan, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Calendar, Plus, Scan, X, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface Service {
@@ -258,6 +258,11 @@ export default function QuotationPage() {
     closeServiceModal();
   };
 
+  const deleteService = (serviceId: string) => {
+    setServices(services.filter(service => service.id !== serviceId));
+    showToast('Service removed successfully', 'success');
+  };
+
   const openPartModal = () => {
     setShowPartModal(true);
     setPartForm({
@@ -304,6 +309,11 @@ export default function QuotationPage() {
     };
     setParts([...parts, newPart]);
     closePartModal();
+  };
+
+  const deletePart = (partId: string) => {
+    setParts(parts.filter(part => part.id !== partId));
+    showToast('Part removed successfully', 'success');
   };
 
   const handleSubmitQuotation = async () => {
@@ -529,12 +539,13 @@ export default function QuotationPage() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Tax</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Tax Amt</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Total</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {services.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-gray-400">
+                      <td colSpan={9} className="py-12 text-center text-gray-400">
                         No data
                       </td>
                     </tr>
@@ -549,6 +560,15 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">{service.tax}</td>
                         <td className="px-4 py-2 text-sm">{service.taxAmt.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{service.total.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">
+                          <button
+                            onClick={() => deleteService(service.id)}
+                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                            title="Remove service"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -573,6 +593,7 @@ export default function QuotationPage() {
                     <td className="px-4 py-3 text-sm font-medium">
                       {serviceTotals.total.toFixed(2)}
                     </td>
+                    <td className="px-4 py-3"></td>
                   </tr>
                 </tfoot>
               </table>
@@ -615,12 +636,13 @@ export default function QuotationPage() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Tax Amt</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Sub Total</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Total</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {parts.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="py-12 text-center text-gray-400">
+                      <td colSpan={10} className="py-12 text-center text-gray-400">
                         No data
                       </td>
                     </tr>
@@ -636,6 +658,15 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">{part.taxAmt.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.total.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">
+                          <button
+                            onClick={() => deletePart(part.id)}
+                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                            title="Remove part"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -661,6 +692,7 @@ export default function QuotationPage() {
                     <td className="px-4 py-3 text-sm font-medium">
                       {partTotals.total.toFixed(2)}
                     </td>
+                    <td className="px-4 py-3"></td>
                   </tr>
                 </tfoot>
               </table>
