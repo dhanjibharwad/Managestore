@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal, Plus, Edit, CheckCircle } from 'lucide-react';
+import { Search, SlidersHorizontal, Plus, Edit, CheckCircle, RefreshCw, X } from 'lucide-react';
 import Link from 'next/link';
 
 interface Lead {
@@ -13,6 +13,7 @@ interface Lead {
   lead_source: string;
   next_follow_up: string;
   comment: string;
+  status?: string;
   created_at: string;
 }
 
@@ -21,6 +22,11 @@ interface User {
   name: string;
   email: string;
   role: string;
+}
+
+interface StatusUpdateModal {
+  show: boolean;
+  lead: Lead | null;
 }
 
 export default function LeadsPage() {
@@ -32,6 +38,9 @@ export default function LeadsPage() {
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, lead: null});
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
 
   useEffect(() => {
     fetchLeads();
@@ -86,6 +95,114 @@ export default function LeadsPage() {
   const getAssigneeName = (assigneeId: number) => {
     const user = users.find(u => u.id === assigneeId);
     return user ? `${user.name} (${user.role})` : assigneeId.toString();
+  };
+
+  const getStatusStyle = (status: string) => {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
+      case 'new':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200';
+      case 'contacted':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200';
+      case 'qualified':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 border border-green-200';
+      case 'lost':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800 border border-red-200';
+      default:
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 border border-gray-200';
+    }
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!statusModal.lead || !newStatus) {
+      setSuccessMessage('Please select a status');
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => setShowSuccessPopup(false), 300);
+        }
+      }, 4700);
+      return;
+    }
+
+    if (newStatus === (statusModal.lead.status || 'new')) {
+      setSuccessMessage('Status is already set to this value');
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => setShowSuccessPopup(false), 300);
+        }
+      }, 4700);
+      return;
+    }
+
+    setUpdatingStatus(true);
+    try {
+      const response = await fetch(`/api/leads/${statusModal.lead.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setStatusModal({show: false, lead: null});
+        fetchLeads();
+        setSuccessMessage('Lead status updated successfully!');
+        setShowSuccessPopup(true);
+        setTimeout(() => {
+          const popup = document.querySelector('.success-popup');
+          if (popup) {
+            popup.classList.add('animate-fade-out');
+            setTimeout(() => setShowSuccessPopup(false), 300);
+          }
+        }, 4700);
+      } else {
+        let errorMessage = 'Failed to update status';
+        if (response.status === 401) {
+          errorMessage = 'Session expired. Please login again.';
+        } else if (response.status === 404) {
+          errorMessage = 'Lead not found';
+        } else if (response.status === 400) {
+          errorMessage = 'Invalid request data';
+        } else if (data.error) {
+          errorMessage = data.error;
+        }
+        
+        setSuccessMessage(errorMessage);
+        setShowSuccessPopup(true);
+        setTimeout(() => {
+          const popup = document.querySelector('.success-popup');
+          if (popup) {
+            popup.classList.add('animate-fade-out');
+            setTimeout(() => setShowSuccessPopup(false), 300);
+          }
+        }, 4700);
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      let errorMessage = 'An unexpected error occurred. Please try again.';
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+      
+      setSuccessMessage(errorMessage);
+      setShowSuccessPopup(true);
+      setTimeout(() => {
+        const popup = document.querySelector('.success-popup');
+        if (popup) {
+          popup.classList.add('animate-fade-out');
+          setTimeout(() => setShowSuccessPopup(false), 300);
+        }
+      }, 4700);
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const filteredLeads = leads.filter(lead => {
@@ -144,18 +261,11 @@ export default function LeadsPage() {
             ))}
           </select>
 
-          {/* All Filters Button */}
-          {/* <button className="flex items-center gap-2 px-4 py-2.5 bg-[#4A70A9] text-white rounded-md text-sm font-medium hover:bg-[#3d5d8f] transition-colors">
-            <SlidersHorizontal className="w-4 h-4" />
-            All Filters
-          </button> */}
-
           {/* Add Button */}
           <Link href="/technician/leads/add">
-            
-          <button className="flex items-center justify-center w-10 h-10 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors cursor-pointer">
-            <Plus className="w-5 h-5" />
-          </button>
+            <button className="flex items-center justify-center w-10 h-10 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors cursor-pointer">
+              <Plus className="w-5 h-5" />
+            </button>
           </Link>
         </div>
       </div>
@@ -216,14 +326,26 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">New</span>
+                    <span className={getStatusStyle(lead.status || 'new')}>{lead.status || 'new'}</span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    <Link href={`/technician/leads/edit/${lead.id}`}>
-                      <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
-                        <Edit className="w-4 h-4" />
+                    <div className="flex items-center gap-2">
+                      <button 
+                        onClick={() => {
+                          setStatusModal({show: true, lead});
+                          setNewStatus(lead.status || 'new');
+                        }}
+                        className="p-1 text-green-600 hover:text-green-800 transition-colors" 
+                        title="Update Status"
+                      >
+                        <RefreshCw className="w-4 h-4" />
                       </button>
-                    </Link>
+                      <Link href={`/technician/leads/edit/${lead.id}`}>
+                        <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -232,13 +354,99 @@ export default function LeadsPage() {
         </table>
       </div>
       
+      {/* Status Update Modal */}
+      {statusModal.show && statusModal.lead && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Update Lead Status</h3>
+                <button
+                  onClick={() => setStatusModal({show: false, lead: null})}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              
+              <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Lead:</span>
+                    <span className="ml-2 font-medium">{statusModal.lead.lead_name}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Mobile:</span>
+                    <span className="ml-2 font-medium">{statusModal.lead.mobile_number || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Current Status:</span>
+                    <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {statusModal.lead.status || 'new'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Assignee:</span>
+                    <span className="ml-2 font-medium">{getAssigneeName(statusModal.lead.assignee_id)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                <select
+                  value={newStatus}
+                  onChange={(e) => setNewStatus(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                >
+                  <option value="new">New</option>
+                  <option value="contacted">Contacted</option>
+                  <option value="qualified">Qualified</option>
+                  <option value="lost">Lost</option>
+                </select>
+              </div>
+              
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setStatusModal({show: false, lead: null})}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleUpdateStatus}
+                  disabled={updatingStatus}
+                  className="flex-1 px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {updatingStatus ? (
+                    <>
+                      <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      Updating...
+                    </>
+                  ) : (
+                    'Update'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Success Popup */}
       {showSuccessPopup && (
-        <div className="success-popup fixed top-4 right-4 z-50 bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100">
-          <CheckCircle size={24} className="text-green-600" />
+        <div className={
+          'success-popup fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 transform transition-all duration-500 ease-in-out translate-x-0 opacity-100 ' +
+          (successMessage.includes('successfully') 
+            ? 'bg-green-50 border border-green-200 text-green-800' 
+            : 'bg-red-50 border border-red-200 text-red-800')
+        }>
+          <CheckCircle size={24} className={successMessage.includes('successfully') ? 'text-green-600' : 'text-red-600'} />
           <div>
-            <div className="font-semibold text-green-900">Success!</div>
-            <div className="text-sm text-green-700">{successMessage}</div>
+            <div className={`font-semibold ${successMessage.includes('successfully') ? 'text-green-900' : 'text-red-900'}`}>
+              {successMessage.includes('successfully') ? 'Success!' : 'Error!'}
+            </div>
+            <div className={`text-sm ${successMessage.includes('successfully') ? 'text-green-700' : 'text-red-700'}`}>{successMessage}</div>
           </div>
         </div>
       )}

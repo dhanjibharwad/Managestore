@@ -119,6 +119,22 @@ export default function LeadsPage() {
     return user ? `${user.name} (${user.role})` : assigneeId.toString();
   };
 
+  const getStatusStyle = (status: string) => {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
+      case 'new':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800 border border-blue-200';
+      case 'contacted':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800 border border-yellow-200';
+      case 'qualified':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-800 border border-green-200';
+      case 'lost':
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800 border border-red-200';
+      default:
+        return 'px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-800 border border-gray-200';
+    }
+  };
+
   const handleUpdateStatus = async () => {
     if (!statusModal.lead || !newStatus) {
       showToast('Please select a status', 'warning');
@@ -325,7 +341,7 @@ export default function LeadsPage() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
-                    <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">
+                    <span className={getStatusStyle(lead.status || 'new')}>
                       {lead.status || 'new'}
                     </span>
                   </td>
@@ -436,7 +452,7 @@ export default function LeadsPage() {
                   </div>
                   <div>
                     <span className="text-gray-600">Current Status:</span>
-                    <span className="ml-2 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    <span className={getStatusStyle(statusModal.lead.status || 'new')}>
                       {statusModal.lead.status || 'new'}
                     </span>
                   </div>
