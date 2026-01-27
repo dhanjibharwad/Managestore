@@ -282,7 +282,9 @@ export default function PickupDropPage() {
       const result = await response.json();
 
       if (response.ok) {
-        showToast(`${serviceType === 'pickup' ? 'Pickup' : 'Drop'} scheduled successfully! ID: ${result.pickupDrop.pickup_drop_id}`, 'success');
+        const pickupDropId = result.pickupDrop?.pickup_drop_id;
+        const successMsg = `${serviceType === 'pickup' ? 'Pickup' : 'Drop'} scheduled successfully!${pickupDropId ? ` ID: ${pickupDropId}` : ''}`;
+        showToast(successMsg, 'success');
         setTimeout(() => router.push('/technician/pickupdrop'), 2000);
       } else {
         showToast(result.error || 'Failed to schedule pickup/drop', 'error');
