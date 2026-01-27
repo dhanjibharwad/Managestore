@@ -179,7 +179,6 @@ const EmployeeTable = () => {
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Email</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Gender</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Active</th>
-              <th className="px-4 py-3 text-left font-medium text-zinc-700">On Ride</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Last Login</th>
               <th className="px-4 py-3"></th>
             </tr>
@@ -188,13 +187,13 @@ const EmployeeTable = () => {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                <td colSpan={9} className="px-4 py-16 text-center text-zinc-500">
                   Loading...
                 </td>
               </tr>
             ) : employees.length === 0 ? (
               <tr>
-                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                <td colSpan={9} className="px-4 py-16 text-center text-zinc-500">
                   No employees found
                 </td>
               </tr>
@@ -240,9 +239,6 @@ const EmployeeTable = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <X className="w-5 h-5 text-red-500" />
                   </td>
                   <td className="px-4 py-3 text-zinc-600">{new Date(employee.created_at).toLocaleString()}</td>
                   <td className="px-4 py-3">
