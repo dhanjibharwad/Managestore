@@ -43,7 +43,7 @@ export async function POST(
       [companyId, company.email, inviteToken, expiresAt]
     );
 
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/company-register?token=${inviteToken}`;
+    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/register?token=${inviteToken}`;
 
     await sendInviteEmail(
       company.email,
