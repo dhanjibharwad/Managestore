@@ -1,19 +1,11 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { Building2, User, Mail, Phone, Globe, CreditCard, CheckCircle2 } from 'lucide-react';
 
-function CompanyRegisterForm() {
-  const searchParams = useSearchParams();
-  const token = searchParams.get('token');
-
+export default function CompanyRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [loadingInvite, setLoadingInvite] = useState(false);
-  const [isCompanyInvite, setIsCompanyInvite] = useState(false);
-  const [error, setError] = useState('');
-
   const [formData, setFormData] = useState({
     companyName: '',
     companyOwnerName: '',
@@ -22,37 +14,6 @@ function CompanyRegisterForm() {
     country: '',
     subscriptionPlan: 'free'
   });
-
-  // Fetch invite data when component mounts
-  useEffect(() => {
-    if (token) {
-      fetchInviteData();
-    }
-  }, [token]);
-
-  const fetchInviteData = async () => {
-    try {
-      setLoadingInvite(true);
-      const response = await fetch(`/api/auth/invite-data?token=${token}`);
-      const data = await response.json();
-      
-      if (response.ok && data.type === 'company' && data.company) {
-        setFormData(prev => ({
-          ...prev,
-          companyName: data.company.company_name || '',
-          email: data.company.email || '',
-          phone: data.company.phone || '',
-          country: data.company.country || ''
-        }));
-        setIsCompanyInvite(true);
-      }
-    } catch (error) {
-      console.error('Error fetching invite data:', error);
-      setError('Failed to load invitation details');
-    } finally {
-      setLoadingInvite(false);
-    }
-  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -78,21 +39,20 @@ function CompanyRegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     
     // Validation
     if (!formData.companyName || !formData.companyOwnerName || !formData.email || !formData.phone || !formData.country) {
-      setError('Please fill in all required fields');
+      alert('Please fill in all required fields');
       return;
     }
     
     if (formData.phone.length !== 10) {
-      setError('Phone number must be exactly 10 digits');
+      alert('Phone number must be exactly 10 digits');
       return;
     }
     
     if (!/^[a-zA-Z\s]+$/.test(formData.country)) {
-      setError('Country name can only contain letters and spaces');
+      alert('Country name can only contain letters and spaces');
       return;
     }
 
@@ -104,10 +64,7 @@ function CompanyRegisterForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...formData,
-          token
-        }),
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
@@ -115,11 +72,11 @@ function CompanyRegisterForm() {
       if (response.ok) {
         setShowSuccess(true);
       } else {
-        setError(result.error || 'Failed to register company');
+        alert(result.error || 'Failed to register company');
       }
     } catch (error) {
       console.error('Error registering company:', error);
-      setError('An error occurred while registering the company');
+      alert('An error occurred while registering the company');
     } finally {
       setIsSubmitting(false);
     }
@@ -128,24 +85,6 @@ function CompanyRegisterForm() {
   const handleBackToHome = () => {
     window.location.href = '/';
   };
-
-  if (loadingInvite) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 md:p-12">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-            <div className="space-y-3 mt-6">
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   if (showSuccess) {
     return (
@@ -162,10 +101,10 @@ function CompanyRegisterForm() {
               Welcome aboard, <strong>{formData.companyName}</strong>
             </p>
             <p className="text-gray-600 mb-8 max-w-md mx-auto leading-relaxed">
-              Your company registration has been completed. You can now access the Store Manager platform.
+              The details have been registered with Store Manager. Soon our team will contact you and help in onboarding.
             </p>
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-100">
-              <p className="text-sm text-gray-600 mb-2">Registered email:</p>
+              <p className="text-sm text-gray-600 mb-2">Once verification is complete, a confirmation email will be sent to:</p>
               <p className="text-blue-600 font-semibold text-lg">{formData.email}</p>
             </div>
             <button
@@ -188,6 +127,7 @@ function CompanyRegisterForm() {
           {/* Left Side - SVG Illustration */}
           <div className="hidden lg:flex items-center justify-center p-8">
             <div className="w-full max-w-lg">
+              {/* Replace the src URL below with your own SVG image */}
               <img 
                 src="/images/logt.svg"
                 alt="Company Registration Illustration"
@@ -213,6 +153,9 @@ function CompanyRegisterForm() {
                   Get Started Now
                 </div>
               </div>
+              {/* <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3">
+                Company Registration
+              </h1> */}
               <p className="text-gray-600 text-lg">Create your business account in minutes</p>
             </div>
 
@@ -220,16 +163,6 @@ function CompanyRegisterForm() {
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-10">
               <form onSubmit={handleSubmit} className="space-y-5">
                 
-                {/* Error Message */}
-                {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start text-sm">
-                    <svg className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                    </svg>
-                    <span>{error}</span>
-                  </div>
-                )}
-
                 {/* Company Name */}
                 <div className="group">
                   <label className="block text-sm font-bold text-gray-700 mb-2">
@@ -242,11 +175,8 @@ function CompanyRegisterForm() {
                       name="companyName"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      readOnly={isCompanyInvite}
                       placeholder="Enter your company name"
-                      className={`w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 text-gray-900 font-medium ${
-                        isCompanyInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white focus:bg-white'
-                      }`}
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -265,7 +195,7 @@ function CompanyRegisterForm() {
                       value={formData.companyOwnerName}
                       onChange={handleInputChange}
                       placeholder="Enter owner's full name"
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-white focus:bg-white text-gray-900 font-medium"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -283,11 +213,8 @@ function CompanyRegisterForm() {
                       name="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      readOnly={isCompanyInvite}
                       placeholder="company@example.com"
-                      className={`w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 text-gray-900 font-medium ${
-                        isCompanyInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white focus:bg-white'
-                      }`}
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                       required
                     />
                   </div>
@@ -307,11 +234,8 @@ function CompanyRegisterForm() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        readOnly={isCompanyInvite}
                         placeholder="Enter your phone number"
-                        className={`w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 text-gray-900 font-medium ${
-                          isCompanyInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white focus:bg-white'
-                        }`}
+                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
                     </div>
@@ -329,11 +253,8 @@ function CompanyRegisterForm() {
                         name="country"
                         value={formData.country}
                         onChange={handleInputChange}
-                        readOnly={isCompanyInvite}
                         placeholder="Enter your country"
-                        className={`w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 text-gray-900 font-medium ${
-                          isCompanyInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white focus:bg-white'
-                        }`}
+                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 bg-gray-50 focus:bg-white text-gray-900 font-medium"
                         required
                       />
                     </div>
@@ -351,7 +272,7 @@ function CompanyRegisterForm() {
                       name="subscriptionPlan"
                       value={formData.subscriptionPlan}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 appearance-none bg-white focus:bg-white text-gray-900 font-medium cursor-pointer"
+                      className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 appearance-none bg-gray-50 focus:bg-white text-gray-900 font-medium cursor-pointer"
                     >
                       <option value="free">Free Plan - $0/month</option>
                       <option value="basic">Basic Plan - $29/month</option>
@@ -379,6 +300,7 @@ function CompanyRegisterForm() {
                     </div>
                   ) : (
                     <span className="flex items-center justify-center">
+                      {/* <Building2 className="w-5 h-5 mr-2" /> */}
                       Create Company Account
                     </span>
                   )}
@@ -401,27 +323,5 @@ function CompanyRegisterForm() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default function CompanyRegisterPage() {
-  return (
-    <Suspense fallback={
-      <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 md:p-12">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-3/4 mx-auto"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-            <div className="space-y-3 mt-6">
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-              <div className="h-12 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    }>
-      <CompanyRegisterForm />
-    </Suspense>
   );
 }

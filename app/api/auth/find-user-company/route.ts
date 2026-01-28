@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       `SELECT u.company_id, c.company_name, c.status as company_status
        FROM users u
        JOIN companies c ON u.company_id = c.id
-       WHERE u.email = $1
+       WHERE u.email = $1 AND c.status = 'active'
        LIMIT 1`,
       [email.toLowerCase().trim()]
     );

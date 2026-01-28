@@ -13,26 +13,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check company invites
-    const companyInviteResult = await pool.query(
-      `SELECT c.id, c.company_name, c.email, c.phone, c.country, c.company_owner_name
-       FROM company_invites ci
-       JOIN companies c ON ci.company_id = c.id
-       WHERE ci.token = $1`,
-      [token]
-    );
-
-    if (companyInviteResult.rows.length > 0) {
-      const company = companyInviteResult.rows[0];
-      return NextResponse.json({
-        customer: {
-          customer_name: company.company_owner_name || company.company_name,
-          email_id: company.email,
-          mobile_number: company.phone || ''
-        }
-      });
-    }
-
     // Check customer invites
     const customerResult = await pool.query(
       `SELECT id, customer_name, email_id, mobile_number, company_id 
