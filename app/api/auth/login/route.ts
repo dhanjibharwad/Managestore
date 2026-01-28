@@ -32,14 +32,6 @@ export async function POST(req: NextRequest) {
 
     const user = result.rows[0];
 
-    // Check company status
-    if (user.company_status !== 'active') {
-      return NextResponse.json(
-        { error: 'Company account is not active' },
-        { status: 403 }
-      );
-    }
-
     // Check if user is active
     if (!user.is_active) {
       return NextResponse.json(
