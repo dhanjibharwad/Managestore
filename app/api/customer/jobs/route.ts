@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
 
     if (search && search !== '') {
       paramCount++;
-      query += ` AND (j.job_number ILIKE $${paramCount} OR j.services ILIKE $${paramCount} OR j.serial_number ILIKE $${paramCount})`;
+      query += ` AND (j.job_number ILIKE $${paramCount} OR j.services ILIKE $${paramCount} OR j.serial_number ILIKE $${paramCount} OR j.customer_name ILIKE $${paramCount})`;
       params.push(`%${search}%`);
     }
 
