@@ -25,7 +25,7 @@ export default function CompaniesPage() {
   const [filter, setFilter] = useState<'all' | 'inactive' | 'active' | 'suspended'>('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [approving, setApproving] = useState<number | null>(null);
-  const [resendingInvite, setResendingInvite] = useState<number | null>(null);
+  const [sendingInvite, setSendingInvite] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
 
   useEffect(() => {
@@ -91,9 +91,29 @@ export default function CompaniesPage() {
     }
   };
 
+  const handleSendInvite = async (companyId: number) => {
+    try {
+      setSendingInvite(companyId);
+      
+      const res = await fetch(`/api/super-admin/companies/${companyId}/send-invite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (res.ok) {
+        fetchCompanies();
+        console.log('Invitation sent successfully');
+      }
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+    } finally {
+      setSendingInvite(null);
+    }
+  };
+
   const handleResendInvite = async (companyId: number) => {
     try {
-      setResendingInvite(companyId);
+      setSendingInvite(companyId);
       
       const res = await fetch(`/api/super-admin/companies/${companyId}/resend-invite`, {
         method: 'POST',
@@ -101,13 +121,12 @@ export default function CompaniesPage() {
       });
       
       if (res.ok) {
-        // Show success message or toast
         console.log('Invitation resent successfully');
       }
     } catch (error) {
       console.error('Failed to resend invitation:', error);
     } finally {
-      setResendingInvite(null);
+      setSendingInvite(null);
     }
   };
 
@@ -149,8 +168,6 @@ export default function CompaniesPage() {
       default: return null;
     }
   };
-
-
 
   if (loading) {
     return (
@@ -359,24 +376,25 @@ export default function CompaniesPage() {
                         <Button
                           size="sm"
                           variant="outline"
+                          onClick={() => handleSendInvite(company.id)}
+                          disabled={sendingInvite === company.id}
+                          className="text-blue-600 border-blue-200 hover:bg-blue-50"
+                        >
+                          {sendingInvite === company.id ? (
+                            <div className="w-4 h-4 mr-1 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+                          ) : (
+                            <Mail className="w-4 h-4 mr-1" />
+                          )}
+                          {sendingInvite === company.id ? 'Sending...' : 'Send Invite'}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
                           onClick={() => handleStatusUpdate(company.id, 'suspended')}
                           className="text-red-600 border-red-200 hover:bg-red-50"
                         >
                           <XCircle className="w-4 h-4 mr-1" />
                           Suspend
-                        </Button>
-                        <Button
-                          size="sm"
-                          onClick={() => handleStatusUpdate(company.id, 'active')}
-                          disabled={approving === company.id}
-                          className="bg-green-600 hover:bg-green-700"
-                        >
-                          {approving === company.id ? (
-                            <div className="w-4 h-4 mr-1 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                          ) : (
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {approving === company.id ? 'Approving...' : 'Approve'}
                         </Button>
                       </div>
                     )}
@@ -386,15 +404,15 @@ export default function CompaniesPage() {
                         size="sm"
                         variant="outline"
                         onClick={() => handleResendInvite(company.id)}
-                        disabled={resendingInvite === company.id}
+                        disabled={sendingInvite === company.id}
                         className="text-blue-600 border-blue-200 hover:bg-blue-50"
                       >
-                        {resendingInvite === company.id ? (
+                        {sendingInvite === company.id ? (
                           <div className="w-4 h-4 mr-1 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
                         ) : (
                           <Mail className="w-4 h-4 mr-1" />
                         )}
-                        {resendingInvite === company.id ? 'Sending...' : 'Resend Invite'}
+                        {sendingInvite === company.id ? 'Sending...' : 'Resend Invite'}
                       </Button>
                     )}
                   </div>

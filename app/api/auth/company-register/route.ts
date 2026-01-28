@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
       email,
       phone,
       country,
-      subscriptionPlan = 'free'
+      subscriptionPlan = 'free',
+      token
     } = body;
 
     // Validation
@@ -20,6 +21,37 @@ export async function POST(req: NextRequest) {
         { error: 'Required fields: companyName, companyOwnerName, email, phone, country' },
         { status: 400 }
       );
+    }
+
+    // If token is provided, verify it and update existing company
+    if (token) {
+      const companyResult = await pool.query(
+        'SELECT id FROM companies WHERE invitation_token = $1',
+        [token]
+      );
+
+      if (companyResult.rows.length === 0) {
+        return NextResponse.json(
+          { error: 'Invalid invitation token' },
+          { status: 404 }
+        );
+      }
+
+      const companyId = companyResult.rows[0].id;
+
+      // Update company with registration details
+      const result = await pool.query(
+        `UPDATE companies 
+         SET company_owner_name = $1, status = $2, invitation_token = NULL, invited_at = NULL
+         WHERE id = $3 
+         RETURNING *`,
+        [companyOwnerName, 'active', companyId]
+      );
+
+      return NextResponse.json({
+        message: 'Company registration completed successfully',
+        company: result.rows[0]
+      }, { status: 200 });
     }
 
     // Check if email already exists

@@ -13,6 +13,27 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Check company invites
+    const companyResult = await pool.query(
+      `SELECT id, company_name, email, phone, country
+       FROM companies 
+       WHERE invitation_token = $1`,
+      [token]
+    );
+
+    if (companyResult.rows.length > 0) {
+      const company = companyResult.rows[0];
+      return NextResponse.json({
+        type: 'company',
+        company: {
+          company_name: company.company_name,
+          email: company.email,
+          phone: company.phone,
+          country: company.country
+        }
+      });
+    }
+
     // Check customer invites
     const customerResult = await pool.query(
       `SELECT id, customer_name, email_id, mobile_number, company_id 
@@ -24,6 +45,7 @@ export async function GET(req: NextRequest) {
     if (customerResult.rows.length > 0) {
       const customer = customerResult.rows[0];
       return NextResponse.json({
+        type: 'customer',
         customer: {
           customer_name: customer.customer_name,
           email_id: customer.email_id,
@@ -43,6 +65,7 @@ export async function GET(req: NextRequest) {
     if (employeeResult.rows.length > 0) {
       const employee = employeeResult.rows[0];
       return NextResponse.json({
+        type: 'employee',
         customer: {
           customer_name: employee.employee_name,
           email_id: employee.email_id,
