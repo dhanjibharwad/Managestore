@@ -22,12 +22,20 @@ export default function AMCContractsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchContracts();
-  }, []);
+    const timeoutId = setTimeout(() => {
+      fetchContracts();
+    }, 300); // Debounce search by 300ms
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const fetchContracts = async () => {
     try {
-      const response = await fetch('/api/admin/amcs');
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`/api/admin/amcs?${params}`);
       const data = await response.json();
       if (data.contracts) {
         setContracts(data.contracts);
@@ -39,10 +47,13 @@ export default function AMCContractsPage() {
     }
   };
 
-  const filteredContracts = contracts.filter(contract =>
-    (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (contract.assignee_display_name || contract.assignee).toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Client-side filtering as fallback
+  const filteredContracts = searchQuery ? 
+    contracts.filter(contract =>
+      (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (contract.assignee_display_name || contract.assignee).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contract.contract_number.toLowerCase().includes(searchQuery.toLowerCase())
+    ) : contracts;
 
   return (
     <div className="bg-gray-50">

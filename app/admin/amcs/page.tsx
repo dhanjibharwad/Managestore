@@ -33,8 +33,12 @@ export default function AMCContractsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    fetchContracts();
-  }, []);
+    const timeoutId = setTimeout(() => {
+      fetchContracts();
+    }, 300); // Debounce search by 300ms
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -50,7 +54,11 @@ export default function AMCContractsPage() {
 
   const fetchContracts = async () => {
     try {
-      const response = await fetch('/api/admin/amcs');
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (searchQuery) params.append('search', searchQuery);
+      
+      const response = await fetch(`/api/admin/amcs?${params}`);
       const data = await response.json();
       if (data.contracts) {
         setContracts(data.contracts);
@@ -61,6 +69,14 @@ export default function AMCContractsPage() {
       setLoading(false);
     }
   };
+
+  // Client-side filtering as fallback
+  const filteredContracts = searchQuery ? 
+    contracts.filter(contract =>
+      (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (contract.assignee_display_name || contract.assignee).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contract.contract_number.toLowerCase().includes(searchQuery.toLowerCase())
+    ) : contracts;
 
   const handleDelete = async (contractId: number) => {
     try {
@@ -84,11 +100,6 @@ export default function AMCContractsPage() {
       setIsDeleting(false);
     }
   };
-
-  const filteredContracts = contracts.filter(contract =>
-    (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (contract.assignee_display_name || contract.assignee).toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   return (
     <div className="bg-gray-50">
