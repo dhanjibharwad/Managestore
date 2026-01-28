@@ -62,6 +62,22 @@ export async function PUT(
     }
 
     const body = await request.json();
+    
+    // Check if this is a status-only update
+    if (Object.keys(body).length === 1 && body.status) {
+      const result = await pool.query(
+        'UPDATE pickup_drop SET status = $1, updated_at = NOW() WHERE id = $2 AND company_id = $3 RETURNING *',
+        [body.status, pickupDropId, companyId]
+      );
+      
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Pickup/Drop not found' }, { status: 404 });
+      }
+      
+      return NextResponse.json({ pickupDrop: result.rows[0] });
+    }
+    
+    // Full update for other cases
     const { service_type, customer_search, mobile, device_type, address, assignee_id, schedule_date, status } = body;
 
     const pickupDropCheck = await pool.query(

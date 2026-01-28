@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Plus, CheckCircle, Edit, Trash2, AlertCircle, XCircle, X } from 'lucide-react';
+import { Search, Plus, CheckCircle, Edit, Trash2, AlertCircle, XCircle, X, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -27,6 +27,11 @@ interface PickupDrop {
   created_at: string;
 }
 
+interface StatusUpdateModal {
+  show: boolean;
+  item: PickupDrop | null;
+}
+
 export default function PickupDropsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -38,6 +43,9 @@ export default function PickupDropsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, item: PickupDrop | null}>({show: false, item: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [statusModal, setStatusModal] = useState<StatusUpdateModal>({show: false, item: null});
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -106,6 +114,44 @@ export default function PickupDropsPage() {
       case 'scheduled': return 'bg-yellow-100 text-yellow-800';
       case 'cancelled': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const handleUpdateStatus = async () => {
+    if (!statusModal.item || !newStatus) {
+      showToast('Please select a status', 'warning');
+      return;
+    }
+
+    if (newStatus === statusModal.item.status) {
+      showToast('Status is already set to this value', 'warning');
+      return;
+    }
+
+    setUpdatingStatus(true);
+    try {
+      const response = await fetch(`/api/admin/pickupdrop/${statusModal.item.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: newStatus
+        })
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        showToast('Pickup/Drop status updated successfully!', 'success');
+        setStatusModal({show: false, item: null});
+        fetchPickupDrops();
+      } else {
+        showToast(data.error || 'Failed to update status', 'error');
+      }
+    } catch (error) {
+      console.error('Error updating status:', error);
+      showToast('Failed to update status', 'error');
+    } finally {
+      setUpdatingStatus(false);
     }
   };
 
@@ -265,6 +311,16 @@ export default function PickupDropsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
                       <div className="flex items-center gap-2">
+                        <button 
+                          onClick={() => {
+                            setStatusModal({show: true, item});
+                            setNewStatus(item.status);
+                          }}
+                          className="p-1 text-green-600 hover:text-green-800 transition-colors" 
+                          title="Update Status"
+                        >
+                          <RefreshCw className="w-4 h-4" />
+                        </button>
                         <Link href={`/admin/pickupdrop/edit/${item.id}`}>
                           <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                             <Edit className="w-4 h-4" />
@@ -287,6 +343,85 @@ export default function PickupDropsPage() {
           </table>
         </div>
         
+        {/* Status Update Modal */}
+        {statusModal.show && statusModal.item && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-semibold text-gray-900">Update Pickup/Drop Status</h3>
+                  <button
+                    onClick={() => setStatusModal({show: false, item: null})}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                
+                <div className="bg-gray-50 rounded-lg p-4 mb-6">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-gray-600">ID:</span>
+                      <span className="ml-2 font-medium">{statusModal.item.pickup_drop_id}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Customer:</span>
+                      <span className="ml-2 font-medium">{statusModal.item.customer_name}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Current Status:</span>
+                      <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(statusModal.item.status)}`}>
+                        {statusModal.item.status.replace('_', ' ').toUpperCase()}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Service:</span>
+                      <span className="ml-2 font-medium capitalize">{statusModal.item.service_type}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">New Status</label>
+                  <select
+                    value={newStatus}
+                    onChange={(e) => setNewStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                  >
+                    <option value="scheduled">Scheduled</option>
+                    <option value="in_progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setStatusModal({show: false, item: null})}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleUpdateStatus}
+                    disabled={updatingStatus}
+                    className="flex-1 px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5c8a] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {updatingStatus ? (
+                      <>
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Updating...
+                      </>
+                    ) : (
+                      'Update'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Delete Confirmation Modal */}
         {deleteModal.show && deleteModal.item && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
