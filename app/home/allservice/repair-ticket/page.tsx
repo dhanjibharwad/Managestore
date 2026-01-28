@@ -209,13 +209,13 @@ export default function RepairTicketManagement() {
           <div className="flex flex-col lg:flex-row items-center gap-12">
             <div className="lg:w-1/2 space-y-6">
               <h2 className="text-3xl font-bold text-gray-900">
-                Effortless Ticket Creation & Tracking
+                Effortless Job Creation & Tracking
               </h2>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Create detailed repair tickets in seconds. Capture device details, issue descriptions, and customer information in a clean interface. Track the lifecycle of every repair from intake to invoice without missing a beat.
               </p>
               <ul className="space-y-3">
-                {['One-click status updates', 'Printable barcode labels', 'History logs'].map((item, i) => (
+                {['One-click status updates', 'Printable Invoices', 'History logs'].map((item, i) => (
                   <li key={i} className="flex items-center text-gray-700">
                     <span className="bg-green-100 text-green-600 p-1 rounded-full mr-3"><Icons.Plus /></span>
                     {item}
@@ -227,7 +227,7 @@ export default function RepairTicketManagement() {
               <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
                 {/* Placeholder for your Table Image */}
                 <Image 
-                  src="https://www.slideteam.net/media/catalog/product/cache/1280x720/s/m/smart_meters_dashboard_for_effective_comprehensive_guide_on_iot_enabled_iot_ss_slide01.jpg" // Replace with your actual image path
+                  src="/images/job.png" // Replace with your actual image path
                   alt="Repair Ticket Dashboard Table"
                   width={800}
                   height={600}
@@ -245,7 +245,7 @@ export default function RepairTicketManagement() {
                <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
                 {/* Placeholder for your Technician Workflow Image */}
                 <Image 
-                  src="https://images.ctfassets.net/fevtq3bap7tj/4Z3xdca3bymwimUoa408Ck/8c3bf8a8d2335a9613131d03c650131b/Energy_Dashboard_2x.jpg.png" // Replace with your actual image path
+                  src="/images/job1.png" // Replace with your actual image path
                   alt="Technician Assignment Workflow"
                   width={800}
                   height={600}
@@ -290,7 +290,7 @@ export default function RepairTicketManagement() {
               <div className="rounded-2xl overflow-hidden shadow-xl border border-gray-100">
                 {/* Placeholder for your Notifications/Chat Image */}
                 <Image 
-                  src="https://klipboard.io/wp-content/uploads/2019/07/OO01.3_stat_cards.png" // Replace with your actual image path
+                  src="/images/customer.png" // Replace with your actual image path
                   alt="Customer Notifications Interface"
                   width={800}
                   height={600}
