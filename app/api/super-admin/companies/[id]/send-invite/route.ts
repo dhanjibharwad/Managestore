@@ -36,10 +36,10 @@ export async function POST(
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await pool.query(
-      `INSERT INTO company_invites (company_id, email, token, expires_at) 
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO company_invites (company_id, email, token, expires_at, used_at) 
+       VALUES ($1, $2, $3, $4, NULL)
        ON CONFLICT (email) DO UPDATE SET 
-       token = $3, expires_at = $4, created_at = NOW()`,
+       token = $3, expires_at = $4, used_at = NULL, created_at = NOW()`,
       [companyId, company.email, inviteToken, expiresAt]
     );
 
