@@ -159,7 +159,7 @@ export default function PickupDropsPage() {
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
-                  ID & Type
+                  Type
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
                   Customer & Mobile
