@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/lib/db';
 import crypto from 'crypto';
+import { sendInviteEmail } from '@/lib/email';
 
 export async function POST(
   req: NextRequest,
@@ -43,6 +44,13 @@ export async function POST(
     );
 
     const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/company-register?token=${inviteToken}`;
+
+    await sendInviteEmail(
+      company.email,
+      company.company_name,
+      company.company_owner_name || 'Admin',
+      inviteLink
+    );
 
     return NextResponse.json({
       message: 'Invitation sent successfully',
