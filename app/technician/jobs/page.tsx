@@ -95,11 +95,25 @@ const JobPage: React.FC = () => {
       if (jobStatus) params.append('status', jobStatus);
       if (assigneeFilter) params.append('assignee', assigneeFilter);
       
+      // Add tab-specific filtering
+      if (activeTab === 'Open Jobs') {
+        params.append('tabFilter', 'open');
+      }
+      
       const response = await fetch(`/api/admin/jobs?${params}`);
       const data = await response.json();
       
       if (response.ok) {
-        setJobs(data.jobs || []);
+        let jobsData = data.jobs || [];
+        
+        // Client-side filtering for Open Jobs tab
+        if (activeTab === 'Open Jobs') {
+          jobsData = jobsData.filter((job: Job) => 
+            job.status === 'Pending' || job.status === 'In Progress'
+          );
+        }
+        
+        setJobs(jobsData);
       }
     } catch (error) {
       console.error('Error fetching jobs:', error);
@@ -151,6 +165,12 @@ const JobPage: React.FC = () => {
       if (response.ok) {
         showToast('Job status updated successfully!', 'success');
         setStatusModal({show: false, job: null});
+        
+        // Switch to All Jobs tab if status is Completed or Cancelled
+        if ((selectedStatus === 'Completed' || selectedStatus === 'Cancelled') && activeTab === 'Open Jobs') {
+          setActiveTab('All Jobs');
+        }
+        
         fetchJobs();
       } else {
         const error = await response.json();
@@ -167,7 +187,7 @@ const JobPage: React.FC = () => {
   useEffect(() => {
     fetchEmployees();
     fetchJobs();
-  }, [searchQuery, jobStatus, assigneeFilter]);
+  }, [searchQuery, jobStatus, assigneeFilter, activeTab]);
 
   useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);

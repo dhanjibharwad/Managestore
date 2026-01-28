@@ -31,12 +31,13 @@ export default function JobsPage() {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       
-      // Handle tab-based filtering
+      // Add tab-specific filtering
       if (activeTab === 'open') {
-        // For open jobs tab, show jobs with 'Pending' status (newly created jobs)
-        params.append('status', 'Pending');
-      } else if (statusFilter) {
-        // For all jobs tab, apply status filter if selected
+        params.append('tabFilter', 'open');
+      }
+      
+      // For all jobs tab, apply status filter if selected
+      if (activeTab === 'all' && statusFilter) {
         params.append('status', statusFilter);
       }
       
@@ -44,7 +45,16 @@ export default function JobsPage() {
       const data = await response.json();
       
       if (response.ok) {
-        setJobs(data.jobs || []);
+        let jobsData = data.jobs || [];
+        
+        // Client-side filtering for Open Jobs tab
+        if (activeTab === 'open') {
+          jobsData = jobsData.filter((job: Job) => 
+            job.status === 'Pending' || job.status === 'In Progress'
+          );
+        }
+        
+        setJobs(jobsData);
         setError('');
       } else {
         setError(data.error || 'Failed to fetch jobs');
