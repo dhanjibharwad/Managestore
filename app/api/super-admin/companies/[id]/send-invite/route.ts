@@ -31,13 +31,18 @@ export async function POST(
       );
     }
 
-    const invitationToken = crypto.randomBytes(32).toString('hex');
-    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/company-register?token=${invitationToken}`;
+    const inviteToken = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     await pool.query(
-      'UPDATE companies SET invitation_token = $1, invited_at = NOW() WHERE id = $2',
-      [invitationToken, companyId]
+      `INSERT INTO company_invites (company_id, email, token, expires_at) 
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT (email) DO UPDATE SET 
+       token = $3, expires_at = $4, created_at = NOW()`,
+      [companyId, company.email, inviteToken, expiresAt]
     );
+
+    const inviteLink = `${process.env.NEXT_PUBLIC_APP_URL}/auth/company-register?token=${inviteToken}`;
 
     return NextResponse.json({
       message: 'Invitation sent successfully',

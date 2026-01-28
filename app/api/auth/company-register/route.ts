@@ -25,27 +25,33 @@ export async function POST(req: NextRequest) {
 
     // If token is provided, verify it and update existing company
     if (token) {
-      const companyResult = await pool.query(
-        'SELECT id FROM companies WHERE invitation_token = $1',
+      const inviteResult = await pool.query(
+        'SELECT company_id FROM company_invites WHERE token = $1',
         [token]
       );
 
-      if (companyResult.rows.length === 0) {
+      if (inviteResult.rows.length === 0) {
         return NextResponse.json(
           { error: 'Invalid invitation token' },
           { status: 404 }
         );
       }
 
-      const companyId = companyResult.rows[0].id;
+      const companyId = inviteResult.rows[0].company_id;
 
       // Update company with registration details
       const result = await pool.query(
         `UPDATE companies 
-         SET company_owner_name = $1, status = $2, invitation_token = NULL, invited_at = NULL
+         SET company_owner_name = $1, status = $2
          WHERE id = $3 
          RETURNING *`,
         [companyOwnerName, 'active', companyId]
+      );
+
+      // Delete the used invite token
+      await pool.query(
+        'DELETE FROM company_invites WHERE token = $1',
+        [token]
       );
 
       return NextResponse.json({
@@ -71,7 +77,7 @@ export async function POST(req: NextRequest) {
     let subscriptionEndDate = null;
     if (subscriptionPlan !== 'free') {
       const endDate = new Date();
-      endDate.setFullYear(endDate.getFullYear() + 1); // 1 year from now
+      endDate.setFullYear(endDate.getFullYear() + 1);
       subscriptionEndDate = endDate;
     }
 

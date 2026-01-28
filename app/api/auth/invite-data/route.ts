@@ -14,15 +14,16 @@ export async function GET(req: NextRequest) {
     }
 
     // Check company invites
-    const companyResult = await pool.query(
-      `SELECT id, company_name, email, phone, country
-       FROM companies 
-       WHERE invitation_token = $1`,
+    const companyInviteResult = await pool.query(
+      `SELECT c.id, c.company_name, c.email, c.phone, c.country
+       FROM company_invites ci
+       JOIN companies c ON ci.company_id = c.id
+       WHERE ci.token = $1`,
       [token]
     );
 
-    if (companyResult.rows.length > 0) {
-      const company = companyResult.rows[0];
+    if (companyInviteResult.rows.length > 0) {
+      const company = companyInviteResult.rows[0];
       return NextResponse.json({
         type: 'company',
         company: {
