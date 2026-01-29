@@ -173,7 +173,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 p-3 sm:p-4 lg:p-6">
         {/* Assigned Jobs Card */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="text-4xl font-bold text-gray-800 mb-2">
@@ -236,48 +236,55 @@ export default function DashboardPage() {
       </div>
 
       {/* Tabs Section */}
-      <div className="bg-white mx-6 rounded-t-lg shadow-sm border border-gray-200">
-        <div className="flex border-b border-gray-200">
-          {tabs.map((tab) => {
-            const IconComponent = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors relative ${
-                  activeTab === tab.id
-                    ? 'text-[#4A70A9] border-b-2 border-[#4A70A9]'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
-              >
-                <IconComponent className="w-5 h-5" />
-                <span>{tab.label}</span>
-              </button>
-            );
-          })}
+      <div className="bg-white mx-3 sm:mx-4 lg:mx-6 rounded-t-lg shadow-sm border border-gray-200">
+        <div className="flex border-b border-gray-200 overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 min-w-max">
+            {tabs.map((tab) => {
+              const IconComponent = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveTab(tab.id);
+                  }}
+                  className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-4 lg:px-6 py-2 sm:py-3 lg:py-4 font-medium transition-colors relative whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'text-[#4A70A9] border-b-2 border-[#4A70A9]'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  <IconComponent className="w-4 sm:w-5 h-4 sm:h-5" />
+                  <span className="hidden sm:inline text-sm">{tab.label}</span>
+                  <span className="sm:hidden text-xs">{tab.label.split(' ')[1] || tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       {/* Content Section */}
-      <div className="bg-white mx-6 rounded-b-lg shadow-sm border border-t-0 border-gray-200">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
+      <div className="bg-white mx-3 sm:mx-4 lg:mx-6 rounded-b-lg shadow-sm border border-t-0 border-gray-200">
+        <div className="p-3 sm:p-4 lg:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">
               {activeTab === 'assigned-jobs' && 'Jobs'}
               {activeTab === 'assigned-leads' && 'Leads'}
               {activeTab === 'assigned-task' && 'Tasks'}
               {activeTab === 'assigned-scheduled' && 'Scheduled Pickups'}
             </h2>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
               {/* Search Input */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <div className="relative flex-1 sm:flex-initial">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 sm:w-5 h-4 sm:h-5" />
                 <input
                   type="text"
                   placeholder="Job sheet, customer, serial ..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-64"
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64"
                 />
               </div>
 
@@ -286,7 +293,7 @@ export default function DashboardPage() {
                 <select
                   value={jobStatus}
                   onChange={(e) => setJobStatus(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600"
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600 flex-1 sm:flex-initial"
                 >
                   <option value="">Select job status</option>
                   <option value="Pending">Pending</option>
@@ -296,10 +303,9 @@ export default function DashboardPage() {
                 </select>
               )}
 
-
               {/* Add Button */}
-              <button className="bg-[#4A70A9] hover:bg-[#3A5F99] text-white p-2 rounded-md transition-colors">
-                <Plus className="w-5 h-5" />
+              <button className="bg-[#4A70A9] hover:bg-[#3A5F99] text-white p-2 rounded-md transition-colors flex-shrink-0">
+                <Plus className="w-4 sm:w-5 h-4 sm:h-5" />
               </button>
             </div>
           </div>

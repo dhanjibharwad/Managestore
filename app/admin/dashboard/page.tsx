@@ -136,7 +136,11 @@ const JobsSection: React.FC = () => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActiveTab(tab.id);
+              }}
               className={`flex items-center gap-1 sm:gap-1.5 lg:gap-2 px-2 sm:px-3 lg:px-5 py-2 sm:py-2.5 lg:py-3.5 text-xs sm:text-sm font-medium rounded-md transition-colors whitespace-nowrap min-w-0 ${
                 activeTab === tab.id
                   ? 'bg-zinc-100 text-zinc-900'
@@ -291,7 +295,7 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-3 sm:p-4 lg:p-6 xl:p-8">
+    <div className="min-h-screen bg-zinc-50">
       <div className="max-w-[1600px] mx-auto">
         {/* Stats Grid - Responsive layout */}
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-10">
