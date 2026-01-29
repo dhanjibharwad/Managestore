@@ -213,7 +213,9 @@ export default function LeadsPage() {
     
     const matchesAssignee = selectedAssignee === '' || lead.assignee_id.toString() === selectedAssignee;
     
-    return matchesSearch && matchesAssignee;
+    const matchesStatus = selectedStatus === '' || (lead.status || 'new').toLowerCase() === selectedStatus.toLowerCase();
+    
+    return matchesSearch && matchesAssignee && matchesStatus;
   });
 
   return (
