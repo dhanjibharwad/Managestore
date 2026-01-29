@@ -77,12 +77,16 @@ export default function JobsPage() {
     <div className="bg-white">
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200">
-        <div className="flex overflow-x-auto">
+        <div className="flex overflow-x-auto scrollbar-hide">
           {tabs.map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab === 'Open Jobs' ? 'open' : 'all')}
-              className={`px-6 py-4 text-sm font-medium whitespace-nowrap transition-colors relative ${
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActiveTab(tab === 'Open Jobs' ? 'open' : 'all');
+              }}
+              className={`px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors relative ${
                 (tab === 'Open Jobs' && activeTab === 'open') || (tab === 'All Jobs' && activeTab === 'all')
                   ? 'text-gray-900 border-b-2 border-[#4A70A9]'
                   : 'text-gray-500 hover:text-gray-700'
@@ -95,17 +99,17 @@ export default function JobsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="p-3 sm:p-4 lg:p-6">
         {/* Filters */}
-        <div className="flex gap-4 mb-6 justify-end">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6 sm:justify-end">
+          <div className="relative flex-1 sm:flex-initial sm:w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 sm:w-5 h-4 sm:h-5" />
             <input
               type="text"
               placeholder="Job sheet, customer, serial..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
             />
           </div>
           
@@ -113,7 +117,7 @@ export default function JobsPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             disabled={activeTab === 'open'}
-            className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700 ${
+            className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700 text-sm flex-1 sm:flex-initial ${
               activeTab === 'open' ? 'bg-gray-100 cursor-not-allowed' : ''
             }`}
           >

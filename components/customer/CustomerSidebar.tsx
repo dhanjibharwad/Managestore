@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -30,50 +30,41 @@ const navItems = [
 
 export default function CustomerSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
 
-  const toggleSidebar = () => {
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+      // Auto-collapse on mobile like admin and technician
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true);
+      }
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  const toggleSidebar = (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     setIsCollapsed(!isCollapsed);
   };
 
-  const toggleMobileSidebar = () => {
-    setIsMobileOpen(!isMobileOpen);
-  };
-
   return (
-    <>
-      {/* Mobile Menu Button */}
-      <button
-        onClick={toggleMobileSidebar}
-        className="lg:hidden fixed top-4 left-4 z-50 bg-[#4A70A9] text-white p-2 rounded-lg shadow-lg"
-        aria-label="Toggle menu"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
-
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={toggleMobileSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col sticky top-0 h-screen overflow-hidden
-          ${isCollapsed ? 'w-16' : 'w-64'}
-          lg:relative lg:translate-x-0
-          ${isMobileOpen ? 'fixed inset-y-0 left-0 z-50 translate-x-0' : 'fixed -translate-x-full lg:translate-x-0'}
-        `}
-      >
-      {/* Toggle Button - Desktop Only */}
+    <aside
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col sticky top-0 h-screen overflow-hidden ${
+        isCollapsed ? 'w-16' : 'w-64'
+      }`}
+    >
+      {/* Toggle Button */}
       <button
         onClick={toggleSidebar}
-        className={`hidden lg:block absolute top-6 bg-white shadow-md rounded-full p-2 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-10 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:ring-opacity-50 ${
+        className={`absolute top-6 bg-white shadow-md rounded-full p-2 border border-gray-200 hover:bg-gray-100 hover:shadow-lg transition-all duration-200 z-20 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:ring-opacity-50 ${
           isCollapsed ? 'left-1/2 transform -translate-x-1/2' : 'right-2'
         }`}
         aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -85,20 +76,9 @@ export default function CustomerSidebar() {
         )}
       </button>
 
-      {/* Mobile Close Button */}
-      <button
-        onClick={toggleMobileSidebar}
-        className="lg:hidden absolute top-4 right-4 text-gray-600 hover:text-gray-900"
-        aria-label="Close menu"
-      >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-
       {/* Logo Section - Fixed */}
       {!isCollapsed && (
-        <div className="border-b border-gray-100 flex justify-center items-center p-4 mt-4 lg:mt-0">
+        <div className="border-b border-gray-100 flex justify-center items-center p-4">
           <img
             src="/images/lg1.png"
             alt="Storremanager Logo"
@@ -126,7 +106,6 @@ export default function CustomerSidebar() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      onClick={() => setIsMobileOpen(false)}
                       className={`flex items-center font-medium transition-all duration-200 group relative ${
                         isActive
                           ? 'bg-[#4A70A9] text-white shadow-md'
@@ -176,6 +155,5 @@ export default function CustomerSidebar() {
         )}
       </div>
     </aside>
-    </>
   );
 }

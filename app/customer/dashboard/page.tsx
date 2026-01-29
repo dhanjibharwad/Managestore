@@ -47,12 +47,12 @@ export default function CustomerDashboard() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Dashboard</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-white rounded-lg shadow-sm p-6 animate-pulse">
+            <div key={i} className="bg-white rounded-lg shadow-sm p-4 sm:p-6 animate-pulse">
               <div className="h-4 bg-gray-200 rounded mb-2"></div>
-              <div className="h-8 bg-gray-200 rounded"></div>
+              <div className="h-6 sm:h-8 bg-gray-200 rounded"></div>
             </div>
           ))}
         </div>
@@ -62,24 +62,24 @@ export default function CustomerDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
+      <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">Dashboard</h1>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
         {statsConfig.map((item, i) => {
           const IconComponent = item.icon;
           return (
-            <div key={i} className="bg-white rounded-lg shadow-sm p-6 relative overflow-hidden">
+            <div key={i} className="bg-white rounded-lg shadow-sm p-4 sm:p-6 relative overflow-hidden">
               {/* Content */}
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-600 text-sm font-medium flex items-center gap-2">
-                    <IconComponent className="w-5 h-5" />
-                    {item.title}
+                  <span className="text-gray-600 text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+                    <IconComponent className="w-4 sm:w-5 h-4 sm:h-5" />
+                    <span className="truncate">{item.title}</span>
                   </span>
                   <span className="text-cyan-500 text-xs font-medium">{item.change}</span>
                 </div>
-                <div className="text-3xl font-bold text-gray-900">{item.value}</div>
+                <div className="text-2xl sm:text-3xl font-bold text-gray-900">{item.value}</div>
               </div>
             </div>
           );
