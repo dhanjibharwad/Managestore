@@ -91,6 +91,13 @@ export default function DashboardPage() {
     fetchTabData();
   }, [activeTab, searchQuery, jobStatus]);
 
+  useEffect(() => {
+    // Reset status filter when switching tabs
+    if (activeTab !== 'assigned-jobs') {
+      setJobStatus('');
+    }
+  }, [activeTab]);
+
   const fetchDashboardStats = async () => {
     try {
       const response = await fetch('/api/technician/dashboard-stats');
@@ -110,7 +117,7 @@ export default function DashboardPage() {
       setDataLoading(true);
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
-      if (jobStatus) params.append('status', jobStatus);
+      if (jobStatus && activeTab === 'assigned-jobs') params.append('status', jobStatus);
       
       let endpoint = '';
       switch (activeTab) {
@@ -274,17 +281,20 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Status Dropdown */}
-              <select
-                value={jobStatus}
-                onChange={(e) => setJobStatus(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600"
-              >
-                <option value="">Select job status</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-              </select>
+              {/* Status Dropdown - Only show for jobs tab */}
+              {activeTab === 'assigned-jobs' && (
+                <select
+                  value={jobStatus}
+                  onChange={(e) => setJobStatus(e.target.value)}
+                  className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-600"
+                >
+                  <option value="">Select job status</option>
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Completed">Completed</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              )}
 
 
               {/* Add Button */}
