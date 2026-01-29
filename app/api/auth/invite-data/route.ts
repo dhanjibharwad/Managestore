@@ -13,27 +13,6 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check company admin invites first
-    const companyInviteResult = await pool.query(
-      `SELECT ci.company_id, ci.email, c.company_name, c.owner_name 
-       FROM company_invites ci
-       JOIN companies c ON ci.company_id = c.id
-       WHERE ci.token = $1 AND ci.expires_at > NOW()`,
-      [token]
-    );
-
-    if (companyInviteResult.rows.length > 0) {
-      const invite = companyInviteResult.rows[0];
-      return NextResponse.json({
-        customer: {
-          customer_name: invite.owner_name,
-          email_id: invite.email,
-          mobile_number: ''
-        },
-        isCompanyAdmin: true
-      });
-    }
-
     // Check customer invites
     const customerResult = await pool.query(
       `SELECT id, customer_name, email_id, mobile_number, company_id 
