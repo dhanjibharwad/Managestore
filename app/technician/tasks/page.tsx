@@ -212,7 +212,7 @@
     };
 
     return (
-      <div className="bg-white p-8">
+      <div className="bg-gray p-8">
         <div className="max-w-[1600px] mx-auto">
           {/* Header */}
           {/* <div className="mb-6">
@@ -273,7 +273,7 @@
           </div>
 
           {/* Table */}
-          <div className="border border-gray-200 rounded-lg overflow-hidden">
+          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
