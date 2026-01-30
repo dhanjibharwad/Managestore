@@ -74,7 +74,7 @@ export default function JobsPage() {
   const tabs = ['Open Jobs', 'All Jobs'];
 
   return (
-    <div className="bg-white">
+    <div className="bg-gray">
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto scrollbar-hide">

@@ -242,7 +242,7 @@ const JobPage: React.FC = () => {
   ];
 
   return (
-    <div className="bg-white">
+    <div className="bg-gray">
       {/* Tabs Navigation */}
       <div className="border-b border-gray-200">
         <div className="flex overflow-x-auto">
