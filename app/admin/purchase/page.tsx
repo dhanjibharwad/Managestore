@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronUp, Search, Plus, Trash2, CheckCircle, AlertCircle, XCircle, X } from 'lucide-react';
+import { ChevronUp, Search, Plus, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -281,13 +281,20 @@ export default function PurchasePage() {
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.purchasedOn}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.dueDate}</td>
                       <td className="px-6 py-4">
-                        <button
-                          onClick={() => setDeleteModal({ show: true, purchase })}
-                          className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
-                          title="Delete purchase"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <Link href={`/admin/purchase/edit/${purchase.id}`}>
+                            <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          </Link>
+                          <button
+                            onClick={() => setDeleteModal({ show: true, purchase })}
+                            className="text-red-600 hover:text-red-800 p-1 rounded transition-colors"
+                            title="Delete purchase"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
