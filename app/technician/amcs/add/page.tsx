@@ -176,7 +176,7 @@ const ContractFormPage = () => {
       const data = await response.json();
       if (data.success) {
         showToast('Contract created successfully!', 'success');
-        setTimeout(() => window.location.href = '/admin/amcs', 2000);
+        setTimeout(() => window.location.href = '/technician/amcs', 2000);
       } else {
         showToast(data.error || 'Failed to create contract', 'error');
       }
@@ -285,7 +285,7 @@ const ContractFormPage = () => {
                       </option>
                     ))}
                   </select>
-                  <Link href="/admin/customers/add/">
+                  <Link href="/technician/customers/add/">
                   <button className="bg-[#4A70A9] text-white p-2 rounded-md hover:bg-[#3d5c8c] transition-colors">
                     <Plus size={22} />
                   </button>
