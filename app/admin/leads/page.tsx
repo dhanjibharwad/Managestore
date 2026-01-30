@@ -225,7 +225,7 @@ export default function LeadsPage() {
   });
 
   return (
-    <div className="bg-white p-6">
+    <div className="bg-gray p-6">
       {/* Header Section */}
       <div className="mb-6">
         {/* <h1 className="text-2xl font-semibold text-gray-900 mb-6">Leads</h1> */}
@@ -286,7 +286,7 @@ export default function LeadsPage() {
       </div>
 
       {/* Table */}
-      <div className="border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
