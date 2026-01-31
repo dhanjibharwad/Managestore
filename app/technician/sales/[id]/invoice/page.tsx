@@ -302,20 +302,58 @@ export default function TechnicianSaleInvoice() {
       {/* Print Styles */}
       <style jsx global>{`
         @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          
           .no-print {
             display: none !important;
           }
-          body {
+          
+          html, body {
             margin: 0 !important;
             padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: white !important;
           }
+          
+          body * {
+            visibility: hidden;
+          }
+          
+          .invoice-container, .invoice-container * {
+            visibility: visible;
+          }
+          
           .invoice-container {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
             max-width: none !important;
             margin: 0 !important;
-            padding: 20px !important;
+            padding: 15mm !important;
+            background: white !important;
+            box-shadow: none !important;
           }
+          
           @page {
-            margin: 0.5in;
+            size: A4;
+            margin: 0;
+          }
+          
+          table {
+            border-collapse: collapse !important;
+          }
+          
+          .bg-gray-100 {
+            background-color: #f3f4f6 !important;
+          }
+          
+          .bg-gray-50 {
+            background-color: #f9fafb !important;
           }
         }
       `}</style>

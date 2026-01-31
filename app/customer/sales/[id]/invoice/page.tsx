@@ -103,7 +103,7 @@ export default function CustomerSaleInvoice() {
   });
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
       {/* Print Button - Hidden in print */}
       <div className="no-print fixed top-4 right-4 z-10">
         <button
@@ -116,7 +116,7 @@ export default function CustomerSaleInvoice() {
       </div>
 
       {/* Invoice Content */}
-      <div className="max-w-4xl mx-auto p-8">
+      <div className="invoice-container max-w-4xl mx-auto p-8 bg-white">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
@@ -302,19 +302,61 @@ export default function CustomerSaleInvoice() {
       {/* Print Styles */}
       <style jsx global>{`
         @media print {
+          * {
+            -webkit-print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          
           .no-print {
             display: none !important;
           }
-          body {
-            margin: 0;
-            padding: 0;
+          
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: white !important;
           }
-          .max-w-4xl {
-            max-width: none;
+          
+          body * {
+            visibility: hidden;
+          }
+          
+          .invoice-container, .invoice-container * {
+            visibility: visible;
+          }
+          
+          .invoice-container {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 15mm !important;
+            background: white !important;
+            box-shadow: none !important;
+          }
+          
+          @page {
+            size: A4;
             margin: 0;
+          }
+          
+          table {
+            border-collapse: collapse !important;
+          }
+          
+          .bg-gray-100 {
+            background-color: #f3f4f6 !important;
+          }
+          
+          .bg-gray-50 {
+            background-color: #f9fafb !important;
           }
         }
       `}</style>
-    </div>
+    </>
   );
 }
