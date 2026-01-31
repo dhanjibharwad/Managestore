@@ -287,7 +287,7 @@ export default function CustomerSaleInvoice() {
         </div>
 
         {/* Signature Section */}
-        <div className="grid grid-cols-2 gap-8">
+        {/* <div className="grid grid-cols-2 gap-8">
           <div>
             <div className="border-2 border-blue-300 rounded h-32 mb-2"></div>
             <div className="text-center mt-2 font-medium">Customer Signature</div>
@@ -296,7 +296,7 @@ export default function CustomerSaleInvoice() {
             <div className="border-2 border-blue-300 rounded h-32 mb-2"></div>
             <div className="text-center mt-2 font-medium">Employee Signature</div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Print Styles */}
