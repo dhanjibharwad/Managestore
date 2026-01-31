@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
         q.total_amount,
         q.created_at,
         q.created_by,
+        COALESCE(q.status, 'pending') as status,
+        COALESCE(q.approved_rejected_by, '') as approved_rejected_by,
         COALESCE(
           (SELECT SUM(qs.tax_amount) FROM quotation_services qs WHERE qs.quotation_id = q.id), 0
         ) + COALESCE(
