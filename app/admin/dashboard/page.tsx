@@ -39,8 +39,98 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, percentage, icon, dat
   );
 };
 
+interface Job {
+  id: number;
+  job_number: string;
+  customer_name: string;
+  device_brand: string;
+  device_model: string;
+  device_brand_name?: string;
+  device_model_name?: string;
+  assignee: string;
+  status: string;
+  priority: string;
+  services: string;
+  created_at: string;
+}
+
+interface Employee {
+  id: number;
+  employee_name: string;
+  employee_role: string;
+  email: string;
+}
+
+interface Task {
+  id: number;
+  task_id: string;
+  task_title: string;
+  task_description: string;
+  assignee_id: number;
+  assignee_name?: string;
+  task_status: string;
+  priority: string;
+  due_date: string;
+  customer_id: number;
+  customer_name?: string;
+  attachments: string[];
+  created_at: string;
+}
+
+interface Customer {
+  id: number;
+  customer_name: string;
+  customer_id: string;
+}
+
+interface Lead {
+  id: number;
+  lead_name: string;
+  mobile_number: string;
+  assignee_id: number;
+  assignee_name?: string;
+  lead_source: string;
+  next_follow_up: string;
+  comment: string;
+  status: string;
+  created_at: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+interface PickupDrop {
+  id: number;
+  pickup_drop_id: string;
+  service_type: string;
+  customer_search: string;
+  customer_name: string;
+  mobile: string;
+  device_type: string;
+  device_type_name: string;
+  address: string;
+  assignee_id: number;
+  assignee_name: string;
+  schedule_date: string;
+  status: string;
+  created_at: string;
+}
+
 const JobsSection: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'jobs' | 'tasks' | 'leads' | 'pickups'>('jobs');
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [pickups, setPickups] = useState<PickupDrop[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const tabs = [
     { id: 'jobs' as const, label: 'Assigned Jobs', icon: <ClipboardList className="w-4 h-4" /> },
@@ -126,6 +216,167 @@ const JobsSection: React.FC = () => {
     }
   };
 
+  const fetchJobs = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/jobs');
+      const data = await response.json();
+      
+      if (response.ok) {
+        const jobsData = data.jobs || [];
+        const filteredJobs = jobsData.filter((job: Job) => 
+          job.status === 'Pending' || job.status === 'In Progress'
+        );
+        setJobs(filteredJobs);
+      }
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTasks = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/tasks');
+      const data = await response.json();
+      
+      if (response.ok) {
+        const tasksData = data.tasks || [];
+        const filteredTasks = tasksData.filter((task: Task) => 
+          task.task_status === 'Pending' || task.task_status === 'In Progress'
+        );
+        setTasks(filteredTasks);
+      }
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchLeads = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/leads');
+      const data = await response.json();
+      
+      if (response.ok) {
+        const leadsData = data || [];
+        const filteredLeads = leadsData.filter((lead: Lead) => 
+          lead.status === 'new' || lead.status === 'contacted'
+        );
+        setLeads(filteredLeads);
+      }
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPickups = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/admin/pickupdrop');
+      const data = await response.json();
+      
+      if (response.ok) {
+        const pickupsData = data.pickupDrops || [];
+        const filteredPickups = pickupsData.filter((pickup: PickupDrop) => 
+          pickup.status === 'scheduled' || pickup.status === 'in_progress'
+        );
+        setPickups(filteredPickups);
+      }
+    } catch (error) {
+      console.error('Error fetching pickups:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
+  const getAssigneeName = (assigneeId: number) => {
+    const user = users.find(u => u.id === assigneeId);
+    return user ? `${user.name} (${user.role})` : assigneeId.toString();
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch('/api/admin/customers');
+      if (response.ok) {
+        const data = await response.json();
+        setCustomers(data.customers || []);
+      }
+    } catch (error) {
+      console.error('Error fetching customers:', error);
+    }
+  };
+
+  const getCustomerName = (customerId: number) => {
+    const customer = customers.find(c => c.id === customerId);
+    return customer ? customer.customer_name : `Customer ${customerId}`;
+  };
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('/api/admin/employees');
+      const data = await response.json();
+      if (response.ok && data.employees) {
+        setEmployees(data.employees);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  const getEmployeeByName = (name: string) => {
+    return employees.find(emp => emp.employee_name === name);
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  useEffect(() => {
+    if (activeTab === 'jobs') {
+      fetchJobs();
+    } else if (activeTab === 'tasks') {
+      fetchTasks();
+    } else if (activeTab === 'leads') {
+      fetchLeads();
+    } else if (activeTab === 'pickups') {
+      fetchPickups();
+    }
+    fetchEmployees();
+    fetchCustomers();
+    fetchUsers();
+  }, [activeTab]);
+
   const config = getTableConfig();
 
   return (
@@ -166,6 +417,8 @@ const JobsSection: React.FC = () => {
               <input
                 type="text"
                 placeholder={config.searchPlaceholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10 sm:pl-11 pr-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent w-full sm:w-64 lg:w-80"
               />
             </div>
@@ -216,11 +469,277 @@ const JobsSection: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
-                No data
-              </td>
-            </tr>
+            {activeTab === 'jobs' ? (
+              loading ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    Loading...
+                  </td>
+                </tr>
+              ) : jobs.length === 0 ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    No pending or in-progress jobs
+                  </td>
+                </tr>
+              ) : (
+                jobs.filter(job => 
+                  job.job_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  job.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (job.device_brand && job.device_brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                  (job.device_model && job.device_model.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map((job) => {
+                  const employee = getEmployeeByName(job.assignee);
+                  return (
+                    <tr key={job.id} className="border-b border-zinc-200 hover:bg-zinc-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm font-medium text-[#4A70A9]">
+                        {job.job_number}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {job.customer_name}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        ₹0
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        ₹0
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          Pending
+                        </span>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {job.device_brand_name || job.device_brand}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {job.device_model_name || job.device_model || '-'}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {employee ? (
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                              {getInitials(employee.employee_name)}
+                            </div>
+                            <div className="hidden sm:block">
+                              <div className="text-zinc-900 font-medium text-xs">{employee.employee_name}</div>
+                              <div className="text-zinc-500 text-xs">{employee.employee_role}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-900">{job.assignee}</span>
+                        )}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {employee ? (
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
+                              {getInitials(employee.employee_name)}
+                            </div>
+                            <div className="hidden sm:block">
+                              <div className="text-zinc-900 font-medium text-xs">{employee.employee_name}</div>
+                              <div className="text-zinc-500 text-xs">{employee.employee_role}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-900">{job.assignee}</span>
+                        )}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                          job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {job.status}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ) : activeTab === 'tasks' ? (
+              loading ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    Loading...
+                  </td>
+                </tr>
+              ) : tasks.length === 0 ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    No pending or in-progress tasks
+                  </td>
+                </tr>
+              ) : (
+                tasks.filter(task => 
+                  task.task_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (task.task_description && task.task_description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                  (task.assignee_name && task.assignee_name.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map((task) => {
+                  const employee = employees.find(emp => emp.id === task.assignee_id);
+                  return (
+                    <tr key={task.id} className="border-b border-zinc-200 hover:bg-zinc-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        <div className="font-medium">{task.task_title}</div>
+                        <div className="text-xs text-zinc-500">{task.task_id}</div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-900">
+                        <div className="max-w-xs truncate">
+                          {task.task_description || '-'}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {employee ? (
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                              {getInitials(employee.employee_name)}
+                            </div>
+                            <div className="hidden sm:block">
+                              <div className="text-zinc-900 font-medium text-xs">{employee.employee_name}</div>
+                              <div className="text-zinc-500 text-xs">{employee.employee_role}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-900">{task.assignee_name || task.assignee_id}</span>
+                        )}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          task.task_status === 'Pending' ? 'bg-orange-100 text-orange-800' :
+                          task.task_status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {task.task_status}
+                        </span>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {formatDateTime(task.due_date)}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {task.customer_id ? getCustomerName(task.customer_id) : '-'}
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ) : activeTab === 'leads' ? (
+              loading ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    Loading...
+                  </td>
+                </tr>
+              ) : leads.length === 0 ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    No new or contacted leads
+                  </td>
+                </tr>
+              ) : (
+                leads.filter(lead => 
+                  lead.lead_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  (lead.mobile_number && lead.mobile_number.includes(searchQuery)) ||
+                  (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).map((lead) => {
+                  return (
+                    <tr key={lead.id} className="border-b border-zinc-200 hover:bg-zinc-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {lead.lead_name}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {lead.mobile_number || '-'}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {getAssigneeName(lead.assignee_id)}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {lead.lead_source || '-'}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {lead.next_follow_up ? formatDateTime(lead.next_follow_up) : '-'}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-900">
+                        <div className="max-w-xs truncate">
+                          {lead.comment || '-'}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                          lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {lead.status || 'new'}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ) : activeTab === 'pickups' ? (
+              loading ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    Loading...
+                  </td>
+                </tr>
+              ) : pickups.length === 0 ? (
+                <tr>
+                  <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                    No scheduled or in-progress pickups
+                  </td>
+                </tr>
+              ) : (
+                pickups.filter(pickup => 
+                  (pickup.pickup_drop_id && pickup.pickup_drop_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                  (pickup.customer_name && pickup.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                  (pickup.mobile && pickup.mobile.includes(searchQuery))
+                ).map((pickup) => {
+                  return (
+                    <tr key={pickup.id} className="border-b border-zinc-200 hover:bg-zinc-50">
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        <div className="font-medium">{pickup.pickup_drop_id}</div>
+                        <div className="text-xs text-zinc-500 capitalize">{pickup.service_type}</div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        <div className="font-medium">{pickup.customer_name || 'Unknown Customer'}</div>
+                        <div className="text-xs text-zinc-500">+91 {pickup.mobile}</div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {pickup.device_type_name || pickup.device_type}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-900">
+                        <div className="max-w-xs truncate">
+                          {pickup.address}
+                        </div>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {pickup.assignee_name || (pickup.assignee_id ? `User ${pickup.assignee_id}` : '-')}
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          pickup.status === 'scheduled' ? 'bg-yellow-100 text-yellow-800' :
+                          pickup.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {pickup.status.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
+                        {formatDateTime(pickup.schedule_date)}
+                      </td>
+                    </tr>
+                  );
+                })
+              )
+            ) : (
+              <tr>
+                <td colSpan={config.headers.length} className="px-3 sm:px-4 lg:px-6 py-12 sm:py-16 lg:py-20 text-center text-zinc-400 text-sm sm:text-base">
+                  No data
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
