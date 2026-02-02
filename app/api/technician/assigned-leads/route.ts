@@ -5,8 +5,10 @@ import pool from '@/lib/db';
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
+    console.log('Session:', session);
     
     if (!session || session.user.role !== 'technician') {
+      console.log('Unauthorized access attempt:', session?.user?.role);
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -16,22 +18,25 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
     
-    const technicianId = session.user.id;
+    const technicianName = session.user.name;
     const companyId = session.company.id;
+    console.log('Technician Name:', technicianName, 'Company ID:', companyId);
 
     let query = `
       SELECT l.*, 
              dt.name as device_type_name,
              db.name as device_brand_name, 
-             dm.name as device_model_name 
+             dm.name as device_model_name,
+             e.employee_name as assignee_name
       FROM leads l 
       LEFT JOIN device_types dt ON l.device_type_id = dt.id
       LEFT JOIN device_brands db ON l.device_brand_id = db.id 
       LEFT JOIN device_models dm ON l.device_model_id = dm.id
-      WHERE l.company_id = $1 AND l.assignee_id = $2
+      LEFT JOIN employees e ON l.assignee_id = e.id
+      WHERE l.company_id = $1 AND e.employee_name = $2
     `;
     
-    const params: any[] = [companyId, technicianId];
+    const params: any[] = [companyId, technicianName];
     let paramCount = 2;
 
     if (search) {
@@ -41,8 +46,12 @@ export async function GET(req: NextRequest) {
     }
 
     query += ' ORDER BY l.created_at DESC';
+    console.log('Query:', query);
+    console.log('Params:', params);
 
     const result = await pool.query(query, params);
+    console.log('Query result rows:', result.rows.length);
+    console.log('Sample lead:', result.rows[0]);
 
     return NextResponse.json({ leads: result.rows });
   } catch (error) {

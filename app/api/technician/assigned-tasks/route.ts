@@ -5,8 +5,10 @@ import pool from '@/lib/db';
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
+    console.log('Session:', session);
     
     if (!session || session.user.role !== 'technician') {
+      console.log('Unauthorized access attempt:', session?.user?.role);
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -17,8 +19,9 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search');
     const status = searchParams.get('status');
     
-    const technicianId = session.user.id;
+    const technicianName = session.user.name;
     const companyId = session.company.id;
+    console.log('Technician Name:', technicianName, 'Company ID:', companyId);
 
     let query = `
       SELECT t.*, 
@@ -27,10 +30,10 @@ export async function GET(req: NextRequest) {
       FROM tasks t 
       LEFT JOIN customers c ON t.customer_id = c.id
       LEFT JOIN employees e ON t.assignee_id = e.id
-      WHERE t.company_id = $1 AND t.assignee_id = $2
+      WHERE t.company_id = $1 AND e.employee_name = $2
     `;
     
-    const params: any[] = [companyId, technicianId];
+    const params: any[] = [companyId, technicianName];
     let paramCount = 2;
 
     if (status) {
@@ -46,8 +49,12 @@ export async function GET(req: NextRequest) {
     }
 
     query += ' ORDER BY t.created_at DESC';
+    console.log('Query:', query);
+    console.log('Params:', params);
 
     const result = await pool.query(query, params);
+    console.log('Query result rows:', result.rows.length);
+    console.log('Sample task:', result.rows[0]);
 
     return NextResponse.json({ tasks: result.rows });
   } catch (error) {
