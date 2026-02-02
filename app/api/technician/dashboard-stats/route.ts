@@ -25,16 +25,18 @@ export async function GET() {
 
     // Get assigned leads count
     const assignedLeadsResult = await pool.query(
-      `SELECT COUNT(*) as count FROM leads 
-       WHERE company_id = $1 AND assignee_id = $2`,
-      [companyId, session.user.id]
+      `SELECT COUNT(*) as count FROM leads l
+       JOIN employees e ON l.assignee_id = e.id
+       WHERE l.company_id = $1 AND e.employee_name = $2`,
+      [companyId, technicianName]
     );
 
     // Get assigned tasks count
     const assignedTasksResult = await pool.query(
-      `SELECT COUNT(*) as count FROM tasks 
-       WHERE company_id = $1 AND assignee_id = $2`,
-      [companyId, session.user.id]
+      `SELECT COUNT(*) as count FROM tasks t
+       JOIN employees e ON t.assignee_id = e.id
+       WHERE t.company_id = $1 AND e.employee_name = $2`,
+      [companyId, technicianName]
     );
 
     // Get delayed jobs count (jobs past due date)
