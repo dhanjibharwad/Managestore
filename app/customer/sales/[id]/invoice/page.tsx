@@ -278,11 +278,11 @@ export default function CustomerSaleInvoice() {
                 </span>
               </div>
             </div>
-            <div>
+            {/* <div>
               <div>
                 <span className="font-medium">Payment Received:</span> ₹ {(0).toFixed(2)}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 

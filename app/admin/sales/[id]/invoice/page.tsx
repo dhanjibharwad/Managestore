@@ -176,8 +176,8 @@ export default function SaleInvoice() {
             </thead>
             <tbody>
               {sale.items && sale.items.length > 0 ? (
-                sale.items.map((item, index) => (
-                  <tr key={index}>
+                sale.items.map((item) => (
+                  <tr key={item.id || `item-${Math.random()}`}>
                     <td className="border border-gray-300 px-3 py-2">
                       <div className="font-medium">{item.description}</div>
                     </td>
@@ -278,11 +278,11 @@ export default function SaleInvoice() {
                 </span>
               </div>
             </div>
-            <div>
+            {/* <div>
               <div>
                 <span className="font-medium">Payment Received:</span> ₹ {(0).toFixed(2)}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
