@@ -131,6 +131,7 @@ const JobsSection: React.FC = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState<string>('');
 
   const tabs = [
     { id: 'jobs' as const, label: 'Assigned Jobs', icon: <ClipboardList className="w-4 h-4" /> },
@@ -148,6 +149,7 @@ const JobsSection: React.FC = () => {
           selectPlaceholder: 'Select job status',
           buttonText: 'New Job',
           buttonLink: '/admin/jobs/add',
+          statusOptions: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
           headers: [
             'Job Sheet',
             'Customer',
@@ -168,6 +170,7 @@ const JobsSection: React.FC = () => {
           selectPlaceholder: 'Select status',
           buttonText: 'New Task',
           buttonLink: '/admin/tasks/add',
+          statusOptions: ['Pending', 'In Progress', 'Completed', 'Cancelled'],
           headers: [
             'Title',
             'Description',
@@ -186,6 +189,7 @@ const JobsSection: React.FC = () => {
           buttonLink: '/admin/leads/add',
           showAllFilters: true,
           showExtraButtons: true,
+          statusOptions: ['new', 'contacted', 'qualified', 'lost'],
           headers: [
             'Lead Name',
             'Mobile Number',
@@ -203,6 +207,7 @@ const JobsSection: React.FC = () => {
           selectPlaceholder: 'Select status',
           buttonText: 'New Pickup',
           buttonLink: '/admin/pickupdrop/add',
+          statusOptions: ['scheduled', 'in_progress', 'completed', 'cancelled'],
           headers: [
             'Job Number',
             'Customer',
@@ -363,6 +368,7 @@ const JobsSection: React.FC = () => {
   };
 
   useEffect(() => {
+    setSelectedStatus('');
     if (activeTab === 'jobs') {
       fetchJobs();
     } else if (activeTab === 'tasks') {
@@ -425,8 +431,14 @@ const JobsSection: React.FC = () => {
             
             {/* Controls Row */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <select className="px-3 sm:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent flex-1 sm:flex-initial sm:min-w-[140px] lg:min-w-[180px]">
-                <option>{config.selectPlaceholder}</option>
+              <select 
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                className="px-3 sm:px-4 py-2 sm:py-2.5 border border-zinc-300 rounded-md text-xs sm:text-sm text-zinc-600 focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent flex-1 sm:flex-initial sm:min-w-[140px] lg:min-w-[180px]">
+                <option value="">{config.selectPlaceholder}</option>
+                {config.statusOptions?.map((status) => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
               </select>
               
               {/* {config.showAllFilters && (
@@ -483,12 +495,14 @@ const JobsSection: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                jobs.filter(job => 
-                  job.job_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  job.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (job.device_brand && job.device_brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                  (job.device_model && job.device_model.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).map((job) => {
+                jobs.filter(job => {
+                  const matchesSearch = job.job_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    job.customer_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (job.device_brand && job.device_brand.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (job.device_model && job.device_model.toLowerCase().includes(searchQuery.toLowerCase()));
+                  const matchesStatus = !selectedStatus || job.status === selectedStatus;
+                  return matchesSearch && matchesStatus;
+                }).map((job) => {
                   const employee = getEmployeeByName(job.assignee);
                   return (
                     <tr key={job.id} className="border-b border-zinc-200 hover:bg-zinc-50">
@@ -572,11 +586,13 @@ const JobsSection: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                tasks.filter(task => 
-                  task.task_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (task.task_description && task.task_description.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                  (task.assignee_name && task.assignee_name.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).map((task) => {
+                tasks.filter(task => {
+                  const matchesSearch = task.task_title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (task.task_description && task.task_description.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (task.assignee_name && task.assignee_name.toLowerCase().includes(searchQuery.toLowerCase()));
+                  const matchesStatus = !selectedStatus || task.task_status === selectedStatus;
+                  return matchesSearch && matchesStatus;
+                }).map((task) => {
                   const employee = employees.find(emp => emp.id === task.assignee_id);
                   return (
                     <tr key={task.id} className="border-b border-zinc-200 hover:bg-zinc-50">
@@ -637,11 +653,13 @@ const JobsSection: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                leads.filter(lead => 
-                  lead.lead_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  (lead.mobile_number && lead.mobile_number.includes(searchQuery)) ||
-                  (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).map((lead) => {
+                leads.filter(lead => {
+                  const matchesSearch = lead.lead_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (lead.mobile_number && lead.mobile_number.includes(searchQuery)) ||
+                    (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()));
+                  const matchesStatus = !selectedStatus || lead.status === selectedStatus;
+                  return matchesSearch && matchesStatus;
+                }).map((lead) => {
                   return (
                     <tr key={lead.id} className="border-b border-zinc-200 hover:bg-zinc-50">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
@@ -691,11 +709,13 @@ const JobsSection: React.FC = () => {
                   </td>
                 </tr>
               ) : (
-                pickups.filter(pickup => 
-                  (pickup.pickup_drop_id && pickup.pickup_drop_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                  (pickup.customer_name && pickup.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                  (pickup.mobile && pickup.mobile.includes(searchQuery))
-                ).map((pickup) => {
+                pickups.filter(pickup => {
+                  const matchesSearch = (pickup.pickup_drop_id && pickup.pickup_drop_id.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (pickup.customer_name && pickup.customer_name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                    (pickup.mobile && pickup.mobile.includes(searchQuery));
+                  const matchesStatus = !selectedStatus || pickup.status === selectedStatus;
+                  return matchesSearch && matchesStatus;
+                }).map((pickup) => {
                   return (
                     <tr key={pickup.id} className="border-b border-zinc-200 hover:bg-zinc-50">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
