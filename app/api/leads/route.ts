@@ -84,15 +84,24 @@ export async function GET(request: NextRequest) {
     }
 
     const companyId = session.company.id;
+    const userEmail = session.user.email;
+    const userRole = session.user.role;
     
-    const result = await pool.query(
-      `SELECT l.*, e.employee_name as assignee_name 
-       FROM leads l 
-       LEFT JOIN employees e ON l.assignee_id = e.id 
-       WHERE l.company_id = $1 
-       ORDER BY l.created_at DESC`,
-      [companyId]
-    );
+    let query = `SELECT l.*, e.employee_name as assignee_name 
+                 FROM leads l 
+                 LEFT JOIN employees e ON l.assignee_id = e.id 
+                 WHERE l.company_id = $1`;
+    const params: any[] = [companyId];
+    
+    // If user is technician, only show leads assigned to them
+    if (userRole === 'technician') {
+      query += ` AND l.assignee_id = (SELECT id FROM employees WHERE email_id = $2 AND company_id = $1 LIMIT 1)`;
+      params.push(userEmail);
+    }
+    
+    query += ` ORDER BY l.created_at DESC`;
+    
+    const result = await pool.query(query, params);
     
     return NextResponse.json(result.rows);
   } catch (error) {
