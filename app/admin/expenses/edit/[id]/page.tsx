@@ -125,11 +125,12 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                   required
                 >
                   <option value="">Select category</option>
-                  <option value="office">Office</option>
-                  <option value="travel">Travel</option>
-                  <option value="meals">Meals</option>
-                  <option value="supplies">Supplies</option>
-                  <option value="other">Other</option>
+                  <option value="food">Food</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="transportation">Transportation</option>
+                    <option value="salaries">Salaries</option>
+                    <option value="rent">Rent</option>
+                    <option value="other">Other</option>
                 </select>
               </div>
 
@@ -159,8 +160,8 @@ export default function EditExpensePage({ params }: { params: Promise<{ id: stri
                 >
                   <option value="">Select payment mode</option>
                   <option value="cash">Cash</option>
-                  <option value="card">Card</option>
-                  <option value="bank_transfer">Bank Transfer</option>
+                  <option value="online">Online</option>
+                  <option value="card">Card</option>                 
                   <option value="cheque">Cheque</option>
                 </select>
               </div>

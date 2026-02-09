@@ -274,7 +274,7 @@ export default function ExpensePage() {
                     <option value="cash">Cash</option>
                     <option value="online">Online</option>
                     <option value="card">Card</option>
-                    <option value="phonepay">Phone Pay</option>
+                    {/* <option value="phonepay">Phone Pay</option> */}
                     <option value="cheque">Cheque</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
