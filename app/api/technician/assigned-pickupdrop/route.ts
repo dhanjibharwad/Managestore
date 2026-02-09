@@ -26,9 +26,14 @@ export async function GET(req: NextRequest) {
 
     let query = `
       SELECT pd.*, 
-             e.employee_name as assignee_name
+             e.employee_name as assignee_name,
+             COALESCE(c.customer_name, u2.name) as customer_name,
+             dt.name as device_type_name
       FROM pickup_drop pd 
       LEFT JOIN employees e ON pd.assignee_id = e.id
+      LEFT JOIN users u2 ON pd.customer_search = u2.id::text
+      LEFT JOIN customers c ON pd.customer_search = c.id::text
+      LEFT JOIN device_types dt ON pd.device_type = dt.id::text
       WHERE pd.company_id = $1 AND e.employee_name = $2
     `;
     
