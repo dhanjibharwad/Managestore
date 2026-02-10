@@ -58,6 +58,7 @@ const JobPage: React.FC = () => {
   const [assigneeFilter, setAssigneeFilter] = useState('');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [selfCheckins, setSelfCheckins] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -66,6 +67,8 @@ const JobPage: React.FC = () => {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedAssignee, setSelectedAssignee] = useState('');
+  const [selfCheckinModal, setSelfCheckinModal] = useState<{show: boolean, request: any}>({show: false, request: null});
+  const [viewModal, setViewModal] = useState<{show: boolean, request: any}>({show: false, request: null});
 
   const fetchEmployees = async () => {
     try {
@@ -90,6 +93,23 @@ const JobPage: React.FC = () => {
   const fetchJobs = async () => {
     try {
       setLoading(true);
+      
+      if (activeTab === 'Self Check-In') {
+        const params = new URLSearchParams();
+        if (searchQuery) params.append('search', searchQuery);
+        if (jobStatus) params.append('status', jobStatus);
+        
+        const response = await fetch(`/api/technician/assigned-selfcheckin?${params}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+          setSelfCheckins(data.requests || []);
+        } else {
+          showToast(data.error || 'Failed to fetch self check-in requests', 'error');
+        }
+        return;
+      }
+      
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       if (jobStatus) params.append('status', jobStatus);
@@ -122,7 +142,7 @@ const JobPage: React.FC = () => {
     }
   };
 
-  const leads: CheckInLead[] = [];
+
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -146,6 +166,36 @@ const JobPage: React.FC = () => {
       minute: '2-digit',
       hour12: true
     });
+  };
+
+  const handleUpdateSelfCheckin = async () => {
+    if (!selfCheckinModal.request) return;
+
+    setUpdatingStatus(true);
+    try {
+      const response = await fetch(`/api/technician/assigned-selfcheckin/${selfCheckinModal.request.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: selectedStatus,
+          assignee: selectedAssignee
+        })
+      });
+
+      if (response.ok) {
+        showToast('Status updated successfully!', 'success');
+        setSelfCheckinModal({show: false, request: null});
+        fetchJobs();
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to update', 'error');
+      }
+    } catch (error) {
+      console.error('Error updating:', error);
+      showToast('Failed to update', 'error');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
   const handleUpdateStatus = async () => {
@@ -201,7 +251,7 @@ const JobPage: React.FC = () => {
     'Open Jobs',
     'All Jobs',
     // 'Outsourced Jobs',
-    // 'Self Check-In'
+    'Self Check-In'
   ];
 
   return (
@@ -251,12 +301,13 @@ const JobPage: React.FC = () => {
                   className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700"
                 >
                   <option value="">Select status</option>
-                  <option value="Open">Open</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Pending">Pending</option>
+                 <option value="pending">Pending</option>
+                    <option value="in progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
                 </select>
 
-                <div className="flex items-center gap-1 border border-gray-300 rounded-md p-1">
+                {/* <div className="flex items-center gap-1 border border-gray-300 rounded-md p-1">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded ${viewMode === 'grid' ? 'bg-gray-200' : 'hover:bg-gray-100'}`}
@@ -269,7 +320,7 @@ const JobPage: React.FC = () => {
                   >
                     <List className="w-5 h-5 text-gray-600" />
                   </button>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -292,64 +343,117 @@ const JobPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {leads.length === 0 ? (
+                    {loading ? (
                       <tr>
-                        <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
-                          No data
-                        </td>
+                        <td colSpan={9} className="px-6 py-12 text-center text-gray-500">Loading...</td>
+                      </tr>
+                    ) : selfCheckins.length === 0 ? (
+                      <tr>
+                        <td colSpan={9} className="px-6 py-12 text-center text-gray-500">No self check-in requests found</td>
                       </tr>
                     ) : (
-                      leads.map((lead) => (
-                        <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.openLead}</td>
+                      selfCheckins.map((request, index) => (
+                        <tr key={request.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.customer_name}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4A70A9]">{request.mobile_number}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.email}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="text-[#4A70A9] hover:underline cursor-pointer">{lead.mobile}</span>
-                              <button className="text-gray-400 hover:text-gray-600">
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                              </button>
-                            </div>
+                            {(() => {
+                              if (!request.assignee) return <span className="text-gray-500">-</span>;
+                              const employee = getEmployeeByName(request.assignee);
+                              return employee ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                    {getInitials(employee.employee_name)}
+                                  </div>
+                                  <div>
+                                    <div className="text-gray-900 font-medium">{employee.employee_name}</div>
+                                    <div className="text-gray-500 text-xs">{employee.employee_role}</div>
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-gray-900">{request.assignee}</span>
+                              );
+                            })()}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.email}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <div className="flex items-center gap-2">
-                              <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium">
-                                {lead.assignee.initials}
-                              </div>
-                              <span className="text-gray-900">{lead.assignee.name}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-cyan-400 text-white">
-                              {lead.status}
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                              request.status === 'completed' ? 'bg-green-100 text-green-800' :
+                              request.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                              request.status === 'in progress' ? 'bg-blue-100 text-blue-800' :
+                              'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {request.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.deviceType}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.services}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{lead.comment}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.device_type} - {request.brand}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.model}</td>
+                          <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{request.device_issue || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <Settings className="w-5 h-5" />
-                            </button>
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenDropdown(openDropdown === index ? null : index);
+                                }}
+                                className="text-gray-400 hover:text-gray-600"
+                              >
+                                <Settings className="w-5 h-5" />
+                              </button>
+                              {openDropdown === index && (
+                                <div className="fixed mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]" style={{transform: 'translateX(-100%)', marginLeft: '-1rem'}}>
+                                  <div className="py-1">
+                                    <button
+                                      onClick={() => {
+                                        setViewModal({show: true, request});
+                                        setOpenDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                      </svg>
+                                      View
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setSelfCheckinModal({show: true, request});
+                                        setSelectedStatus(request.status);
+                                        setSelectedAssignee(request.assignee || '');
+                                        setOpenDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                      </svg>
+                                      Update Status
+                                    </button>
+                                    <button
+                                      onClick={() => {
+                                        setSelfCheckinModal({show: true, request});
+                                        setSelectedStatus(request.status);
+                                        setSelectedAssignee(request.assignee || '');
+                                        setOpenDropdown(null);
+                                      }}
+                                      className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                      </svg>
+                                      Assigned To
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
-              </div>
-            </div>
-          </>
-        ) : activeTab === 'Outsourced Jobs' ? (
-          <>
-            {/* Outsourced Jobs - Currently under development */}
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="text-center">
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">Outsourced Jobs</h2>
-                <p className="text-gray-500">This feature is currently under development.</p>
-                <p className="text-gray-400 text-sm mt-1">Coming soon...</p>
               </div>
             </div>
           </>
@@ -670,6 +774,111 @@ const JobPage: React.FC = () => {
           </div>
         ))}
       </div>
+
+      {/* View Self Check-In Modal */}
+      {viewModal.show && viewModal.request && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Self Check-In Preview</h3>
+                <button onClick={() => setViewModal({show: false, request: null})} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                  <h4 className="text-lg font-semibold text-blue-600">Customer Detail</h4>
+                </div>
+                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div><p className="text-sm text-gray-600 mb-1">Name</p><p className="text-sm font-medium text-gray-900">{viewModal.request.customer_name}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Email</p><p className="text-sm font-medium text-gray-900">{viewModal.request.email}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Mobile</p><p className="text-sm font-medium text-gray-900">{viewModal.request.mobile_number}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Status</p><span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{viewModal.request.status}</span></div>
+                  <div className="col-span-2"><p className="text-sm text-gray-600 mb-1">Address</p><p className="text-sm font-medium text-gray-900">{viewModal.request.address_line || 'Not Provided'}</p></div>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                  <h4 className="text-lg font-semibold text-blue-600">Device Detail</h4>
+                </div>
+                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg">
+                  <div><p className="text-sm text-gray-600 mb-1">Type</p><p className="text-sm font-medium text-gray-900">{viewModal.request.device_type}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Brand</p><p className="text-sm font-medium text-gray-900">{viewModal.request.brand}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Model</p><p className="text-sm font-medium text-gray-900">{viewModal.request.model}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Serial</p><p className="text-sm font-medium text-gray-900">{viewModal.request.serial_number || 'N/A'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Password</p><p className="text-sm font-medium text-gray-900">{viewModal.request.device_password || 'N/A'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Accessories</p><p className="text-sm font-medium text-gray-900">{viewModal.request.accessories || 'None'}</p></div>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  <h4 className="text-lg font-semibold text-blue-600">Service Info</h4>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="mb-4"><p className="text-sm text-gray-600 mb-1">Services</p><p className="text-sm font-medium text-gray-900">{viewModal.request.services || 'None'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Comment</p><p className="text-sm font-medium text-gray-900">{viewModal.request.device_issue || 'No comment'}</p></div>
+                </div>
+              </div>
+              {viewModal.request.device_images && viewModal.request.device_images.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <h4 className="text-lg font-semibold text-blue-600">Device Images</h4>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    {viewModal.request.device_images.map((image: string, idx: number) => (
+                      <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => { const w = window.open(); if (w) w.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`); }}>
+                        <img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" />
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                          <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Self Check-in Status Modal */}
+      {selfCheckinModal.show && selfCheckinModal.request && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-gray-900">Update Self Check-In</h3>
+                <button onClick={() => setSelfCheckinModal({show: false, request: null})} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                  <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="pending">Pending</option>
+                    <option value="in progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Assignee</label>
+                  <select value={selectedAssignee} onChange={(e) => setSelectedAssignee(e.target.value)} className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="">Select assignee</option>
+                    {employees.map(emp => (<option key={emp.id} value={emp.employee_name}>{emp.employee_name}</option>))}
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setSelfCheckinModal({show: false, request: null})} className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors">Cancel</button>
+                <button onClick={handleUpdateSelfCheckin} disabled={updatingStatus} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50">{updatingStatus ? 'Saving...' : 'Save'}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

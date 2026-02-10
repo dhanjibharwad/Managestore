@@ -1,657 +1,1028 @@
-"use client"
-import React, { useState } from 'react';
-import { ChevronRight, Search, Wrench, Check } from 'lucide-react';
+'use client';
 
-type DeviceType = 'All In One' | 'Camera' | 'CD/DVD' | 'CF Card' | 'Desktop' | 'HDD (2.5 Inch)' | 
-  'HDD (3.5 Inch)' | 'Laptop' | 'Micro SD Card' | 'Mobile' | 'Monitor' | 'Motherboard' | 
-  'NAS Box' | 'Pen Drive' | 'SD Card' | 'Server Hard Drives' | 'SSD' | 'Tablet';
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, Check, Upload, User, Mail, Phone, MapPin, Package, ShieldCheck, Eye, EyeOff, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { State, City } from 'country-state-city';
 
-const deviceTypes: DeviceType[] = [
-  'All In One', 'Camera', 'CD/DVD', 'CF Card', 'Desktop', 'HDD (2.5 Inch)',
-  'HDD (3.5 Inch)', 'Laptop', 'Micro SD Card', 'Mobile', 'Monitor', 'Motherboard',
-  'NAS Box', 'Pen Drive', 'SD Card', 'Server Hard Drives', 'SSD', 'Tablet'
-];
+interface DeviceType {
+  id: number;
+  name: string;
+}
 
-const deviceBrands: Partial<Record<DeviceType, string[]>> = {
-  'Mobile': ['Apple', 'Samsung', 'OnePlus', 'Xiaomi', 'Google', 'Oppo', 'Vivo', 'Realme'],
-  'Camera': ['Sony', 'Canon', 'Nikon', 'Fujifilm', 'Panasonic', 'Olympus'],
-  'Laptop': ['Acer', 'Apple', 'Asus', 'Benq', 'Compaq', 'Custom Build', 'Dell', 'Fujitsu', 'Gateway', 'Google', 'HCL', 'HP', 'Huawei', 'IBM', 'Lenovo', 'LG', 'Microsoft', 'MSI'],
-  'Desktop': ['Dell', 'HP', 'Lenovo', 'Apple', 'Custom Build'],
-  'HDD (2.5 Inch)': ['Seagate', 'Western Digital', 'Toshiba', 'HGST'],
-  'HDD (3.5 Inch)': ['Seagate', 'Western Digital', 'Toshiba', 'HGST'],
-  'SSD': ['Samsung', 'Crucial', 'Western Digital', 'Kingston', 'SanDisk'],
-};
+interface Brand {
+  id: number;
+  name: string;
+  device_type_id: number;
+}
 
-const deviceModels: Record<string, string[]> = {
-  'Sony': ['DCR-SR68', 'DCR-SR88', 'HDR-CX405', 'FDR-AX33', 'A7 III', 'A6400'],
-  'Apple': ['iPhone 15 Pro', 'iPhone 15', 'iPhone 14 Pro', 'iPhone 14', 'iPhone 13', 'MacBook Pro'],
-  'Samsung': ['Galaxy S24 Ultra', 'Galaxy S24', 'Galaxy S23', 'Galaxy A54', 'Galaxy Z Fold 5'],
-  'Canon': ['EOS R5', 'EOS R6', '5D Mark IV', 'PowerShot G7X', 'VIXIA HF R800'],
-  'Google': ['Google Pixelbook Go', 'Pixelbook', 'Chromebook Pixel'],
-};
+interface Model {
+  id: number;
+  name: string;
+  device_brand_id: number;
+}
 
-const services: Record<string, string[]> = {
-  'Laptop': [
-    'Bad hard disk',
-    'Bad keyboard',
-    'Battery does not charge properly',
-    'Camera not working',
-    "Can't connect to wireless network",
-    "Dead - Won't Start",
-    'Dim Display',
-    'Display Cracked',
-    'Display flickering',
-    'Drivers issue',
-    'Hinges broken',
-    'Laptop shuts down unexpectedly',
-  ],
-  'Mobile': [
-    'Battery replacement',
-    'Screen replacement',
-    'Water damage',
-    'Charging port issue',
-  ],
-};
+interface FormData {
+  companyId: string;
+  deviceType: string;
+  deviceTypeId: number | null;
+  brand: string;
+  brandId: number | null;
+  model: string;
+  modelId: number | null;
+  serialNumber: string;
+  password: string;
+  accessories: string[];
+  deviceImages: File[];
+  deviceIssue: string;
+  name: string;
+  mobile: string;
+  email: string;
+  termsAccepted: boolean;
+  addressLine: string;
+  region: string;
+  city: string;
+  postalCode: string;
+  pickupDateTime: string;
+}
 
-const accessories = ['Bag', 'Charger', 'Mouse', 'Keyboard', 'Cable', 'Manual', 'Box'];
+interface Toast {
+  id: number;
+  message: string;
+  type: 'success' | 'error' | 'warning';
+}
+
+
 
 export default function SelfCheckIn() {
-  const [currentStep, setCurrentStep] = useState<number>(1);
-  const [selectedDevice, setSelectedDevice] = useState<DeviceType | ''>('');
-  const [selectedBrand, setSelectedBrand] = useState<string>('');
-  const [selectedModel, setSelectedModel] = useState<string>('');
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [serialNumber, setSerialNumber] = useState<string>('');
-  const [devicePassword, setDevicePassword] = useState<string>('');
-  const [selectedAccessories, setSelectedAccessories] = useState<string[]>([]);
-  const [searchDevice, setSearchDevice] = useState<string>('');
-  const [searchBrand, setSearchBrand] = useState<string>('');
-  const [searchModel, setSearchModel] = useState<string>('');
-  const [searchService, setSearchService] = useState<string>('');
-  
-  // Basic Information
-  const [yourName, setYourName] = useState<string>('');
-  const [mobileNumber, setMobileNumber] = useState<string>('');
-  const [emailId, setEmailId] = useState<string>('');
-  const [agreeTerms, setAgreeTerms] = useState<boolean>(false);
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState<FormData>({
+    companyId: '',
+    deviceType: '',
+    deviceTypeId: null,
+    brand: '',
+    brandId: null,
+    model: '',
+    modelId: null,
+    serialNumber: '',
+    password: '',
+    accessories: [],
+    deviceImages: [],
+    deviceIssue: '',
+    name: '',
+    mobile: '',
+    email: '',
+    termsAccepted: false,
+    addressLine: '',
+    region: '',
+    city: '',
+    postalCode: '',
+    pickupDateTime: '',
+  });
 
-  const filteredDevices = deviceTypes.filter(device =>
-    device.toLowerCase().includes(searchDevice.toLowerCase())
-  );
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [states, setStates] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  const [loadingBrands, setLoadingBrands] = useState(false);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [nextToastId, setNextToastId] = useState(1);
 
-  const filteredBrands = selectedDevice && deviceBrands[selectedDevice] 
-    ? deviceBrands[selectedDevice]!.filter(brand =>
-        brand.toLowerCase().includes(searchBrand.toLowerCase())
-      )
-    : [];
-
-  const filteredModels = selectedBrand && deviceModels[selectedBrand]
-    ? deviceModels[selectedBrand].filter(model =>
-        model.toLowerCase().includes(searchModel.toLowerCase())
-      )
-    : [];
-
-  const availableServices = selectedDevice && services[selectedDevice]
-    ? services[selectedDevice].filter(service =>
-        service.toLowerCase().includes(searchService.toLowerCase())
-      )
-    : [];
-
-  const handleDeviceSelect = (device: DeviceType) => {
-    setSelectedDevice(device);
-    setSelectedBrand('');
-    setSelectedModel('');
-    setSelectedServices([]);
+  const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
+    const toast: Toast = { id: nextToastId, message, type };
+    setToasts(prev => [...prev, toast]);
+    setNextToastId(prev => prev + 1);
+    setTimeout(() => removeToast(toast.id), 5000);
   };
 
-  const handleBrandSelect = (brand: string) => {
-    setSelectedBrand(brand);
-    setSelectedModel('');
-    setSelectedServices([]);
-  };
-
-  const handleModelSelect = (model: string) => {
-    setSelectedModel(model);
-    setSelectedServices([]);
-  };
-
-  const toggleService = (service: string) => {
-    setSelectedServices(prev =>
-      prev.includes(service)
-        ? prev.filter(s => s !== service)
-        : [...prev, service]
-    );
-  };
-
-  const toggleAccessory = (accessory: string) => {
-    setSelectedAccessories(prev =>
-      prev.includes(accessory)
-        ? prev.filter(a => a !== accessory)
-        : [...prev, accessory]
-    );
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+  const removeToast = (id: number) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
   const handleNext = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+    if (step === 1 && !formData.model) {
+      showToast('Please select a device model', 'warning');
+      return;
+    }
+    if (step === 2 && !formData.name) {
+      showToast('Name is required', 'warning');
+      return;
+    }
+    if (step === 2 && !formData.termsAccepted) {
+      showToast('Please accept terms and conditions', 'warning');
+      return;
+    }
+    if (step < 3) setStep(step + 1);
+  };
+
+  const handlePrevious = () => {
+    if (step === 1) {
+      // Handle navigation within Step 1 device selection
+      if (formData.model) {
+        updateFormData('model', '');
+      } else if (formData.brand) {
+        updateFormData('brand', '');
+      } else if (formData.deviceType) {
+        updateFormData('deviceType', '');
+      }
+    } else if (step > 1) {
+      setStep(step - 1);
     }
   };
 
-  const breadcrumbs = () => {
-    const items = ['Device Information'];
-    if (selectedDevice) items.push(selectedDevice);
-    if (selectedBrand) items.push(selectedBrand);
-    if (selectedModel) items.push(selectedModel);
-    if (currentStep === 2 && selectedModel) items.push('Step 4');
-    return items;
+  const handleSubmit = async (skipPickup = false) => {
+    if (!skipPickup) {
+      if (!formData.addressLine || !formData.region || !formData.city) {
+        showToast('Please complete all required address fields or skip pickup', 'warning');
+        return;
+      }
+      if (!formData.pickupDateTime) {
+        showToast('Please select pickup date and time or skip pickup', 'warning');
+        return;
+      }
+    }
+
+    try {
+      const requestData = {
+        deviceType: formData.deviceType,
+        brand: formData.brand,
+        model: formData.model,
+        serialNumber: formData.serialNumber,
+        password: formData.password,
+        deviceIssue: formData.deviceIssue,
+        accessories: formData.accessories.join(', '),
+        deviceImages: (window as any).deviceImagesBase64 || [],
+        name: formData.name,
+        mobile: formData.mobile,
+        email: formData.email,
+        termsAccepted: formData.termsAccepted,
+        addressLine: skipPickup ? '' : formData.addressLine,
+        region: skipPickup ? '' : formData.region,
+        city: skipPickup ? '' : formData.city,
+        postalCode: skipPickup ? '' : formData.postalCode,
+        pickupDateTime: skipPickup ? '' : formData.pickupDateTime,
+        skipPickup: skipPickup
+      };
+
+      const response = await fetch('/api/customer/selfcheck', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      });
+
+      if (response.ok) {
+        showToast('Request submitted successfully!', 'success');
+        setShowSuccess(true);
+      } else {
+        const error = await response.json();
+        showToast(error.error || 'Failed to submit request', 'error');
+      }
+    } catch (error) {
+      console.error('Submit error:', error);
+      showToast('Failed to submit request', 'error');
+    }
   };
 
-  const showSummary = selectedDevice || currentStep >= 2;
+  const updateFormData = (field: keyof FormData, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    try {
+      // Convert files to base64
+      const base64Images = await Promise.all(
+        files.map(file => {
+          return new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        })
+      );
+
+      updateFormData('deviceImages', [...formData.deviceImages, ...files]);
+      // Store base64 images separately
+      if (!(window as any).deviceImagesBase64) {
+        (window as any).deviceImagesBase64 = [];
+      }
+      (window as any).deviceImagesBase64.push(...base64Images);
+      showToast('Images uploaded successfully', 'success');
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast('Upload failed', 'error');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = formData.deviceImages.filter((_, i) => i !== index);
+    updateFormData('deviceImages', newImages);
+  };
+
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      updateFormData('mobile', value);
+    }
+  };
+
+  const handlePostalCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 6) {
+      updateFormData('postalCode', value);
+    }
+  };
+
+  useEffect(() => {
+    // Load Indian states
+    const indianStates = State.getStatesOfCountry('IN');
+    setStates(indianStates);
+    
+    // Load device types and profile
+    fetchDeviceTypes();
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    console.log('fetchProfile called');
+    try {
+      console.log('Fetching from /api/profile');
+      const response = await fetch('/api/profile');
+      console.log('Response status:', response.status);
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Profile data received:', data);
+        const profileData = {
+          name: data.user?.name || '',
+          mobile: data.user?.phone || '',
+          email: data.user?.email || '',
+          addressLine: data.user?.profile?.addressLine || '',
+          region: data.user?.profile?.state || '',
+          city: data.user?.profile?.city || '',
+          postalCode: data.user?.profile?.postalCode || ''
+        };
+        
+        setFormData(prev => ({
+          ...prev,
+          ...profileData
+        }));
+        
+        // Load cities for the profile's state
+        if (profileData.region) {
+          const stateCities = City.getCitiesOfState('IN', profileData.region);
+          setCities(stateCities);
+        }
+      } else {
+        const errorText = await response.text();
+        console.error('Profile fetch failed:', response.status, errorText);
+      }
+    } catch (error) {
+      console.error('Failed to fetch profile:', error);
+    } finally {
+      console.log('Setting loadingProfile to false');
+      setLoadingProfile(false);
+    }
+  };
+
+  const fetchDeviceTypes = async () => {
+    try {
+      const response = await fetch('/api/devices/types');
+      if (response.ok) {
+        const data = await response.json();
+        setDeviceTypes(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch device types:', error);
+    }
+  };
+
+  const fetchBrands = async (deviceTypeId: number) => {
+    setLoadingBrands(true);
+    try {
+      const response = await fetch(`/api/devices/brands?device_type_id=${deviceTypeId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setBrands(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch brands:', error);
+    } finally {
+      setLoadingBrands(false);
+    }
+  };
+
+  const fetchModels = async (brandId: number) => {
+    setLoadingModels(true);
+    try {
+      const response = await fetch(`/api/devices/models?device_brand_id=${brandId}`);
+      if (response.ok) {
+        const data = await response.json();
+        setModels(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch models:', error);
+    } finally {
+      setLoadingModels(false);
+    }
+  };
+
+  useEffect(() => {
+    if (formData.deviceTypeId) {
+      fetchBrands(formData.deviceTypeId);
+      // Reset brand and model when device type changes
+      setFormData(prev => ({ ...prev, brand: '', brandId: null, model: '', modelId: null }));
+      setBrands([]);
+      setModels([]);
+    }
+  }, [formData.deviceTypeId]);
+
+  useEffect(() => {
+    if (formData.brandId) {
+      fetchModels(formData.brandId);
+      // Reset model when brand changes
+      setFormData(prev => ({ ...prev, model: '', modelId: null }));
+      setModels([]);
+    }
+  }, [formData.brandId]);
+
+  useEffect(() => {
+    // Load cities when state changes
+    if (formData.region) {
+      const stateCities = City.getCitiesOfState('IN', formData.region);
+      setCities(stateCities);
+    }
+  }, [formData.region]);
+
+  const filteredDeviceTypes = deviceTypes.filter(type =>
+    type.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (showSuccess) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-8 max-w-2xl w-full">
+          <div className="flex flex-col items-center text-center">
+            <div className="w-20 h-20 bg-[#4A70A9] rounded-full flex items-center justify-center mb-6">
+              <Check className="w-12 h-12 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-3">
+              Thank you for booking an Appointment with us.
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Your appointment has been confirmed: we're excited to fix your device and it brand new
+            </p>
+            <div className="w-full bg-gray-50 rounded-lg p-6 mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Information</h3>
+              <div className="grid grid-cols-2 gap-4 text-left">
+                <div>
+                  <p className="text-sm text-gray-600">Brand</p>
+                  <p className="text-base font-medium text-gray-800">{formData.brand}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Model</p>
+                  <p className="text-base font-medium text-gray-800">{formData.model}</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-4 w-full">
+              <button
+                onClick={() => setShowSuccess(false)}
+                className="flex-1 px-6 py-3 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors"
+              >
+                Back
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="flex-1 px-6 py-3 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5d8f] transition-colors"
+              >
+                Submit Another Self Check-In
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+          <Check className="w-5 h-5" />
+          <div>
+            <p className="font-semibold">Success</p>
+            <p className="text-sm">Response Saved successfully</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header Progress Bar */}
+      {/* Toast Container */}
+      <div className="fixed top-4 right-4 z-50 space-y-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border max-w-md animate-in slide-in-from-right duration-300 ${
+              toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-800' :
+              toast.type === 'error' ? 'bg-red-50 border-red-200 text-red-800' :
+              'bg-yellow-50 border-yellow-200 text-yellow-800'
+            }`}
+          >
+            {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-600" />}
+            {toast.type === 'error' && <AlertCircle className="w-5 h-5 text-red-600" />}
+            {toast.type === 'warning' && <AlertCircle className="w-5 h-5 text-yellow-600" />}
+            <span className="text-sm font-medium flex-1">{toast.message}</span>
+            <button
+              onClick={() => removeToast(toast.id)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
+      </div>
+      {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-2">
-            {/* Step 1 */}
-            <div className="flex flex-col items-center flex-1">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                currentStep >= 1 ? 'bg-[#4A70A9]' : 'bg-gray-300'
-              }`}>
-                {currentStep > 1 ? (
-                  <Check className="w-8 h-8 text-white" />
-                ) : (
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
-                  </svg>
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-[#4A70A9] rounded flex items-center justify-center">
+                <Package className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-xl font-bold text-gray-800">Store Manager</span>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="flex items-center justify-between">
+            {[
+              { num: 1, label: 'Device Information', icon: Package },
+              { num: 2, label: 'Basic Information', icon: User },
+              { num: 3, label: 'Save Or Book Pickup', icon: MapPin }
+            ].map((item, idx) => (
+              <React.Fragment key={item.num}>
+                <div className="flex flex-col items-center">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    step > item.num ? 'bg-[#4A70A9]' :
+                    step === item.num ? 'bg-[#4A70A9]' : 'bg-gray-300'
+                  }`}>
+                    {step > item.num ? (
+                      <Check className="w-6 h-6 text-white" />
+                    ) : (
+                      <item.icon className="w-6 h-6 text-white" />
+                    )}
+                  </div>
+                  <span className={`text-xs mt-2 text-center ${
+                    step === item.num ? 'text-[#4A70A9] font-medium' : 'text-gray-500'
+                  }`}>
+                    {item.label}
+                  </span>
+                </div>
+                {idx < 2 && (
+                  <div className={`flex-1 h-1 mx-2 ${
+                    step > item.num ? 'bg-[#4A70A9]' : 'bg-gray-300'
+                  }`} />
                 )}
-              </div>
-              <span className={`mt-2 text-sm font-medium ${
-                currentStep >= 1 ? 'text-[#4A70A9]' : 'text-gray-400'
-              }`}>
-                Device Information
-              </span>
-            </div>
-
-            <div className={`flex-1 h-0.5 ${currentStep >= 2 ? 'bg-[#4A70A9]' : 'bg-gray-300'}`} />
-
-            {/* Step 2 */}
-            <div className="flex flex-col items-center flex-1">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                currentStep >= 2 ? 'bg-[#4A70A9]' : 'bg-gray-300'
-              }`}>
-                {currentStep > 2 ? (
-                  <Check className="w-8 h-8 text-white" />
-                ) : (
-                  <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </div>
-              <span className={`mt-2 text-sm font-medium ${
-                currentStep >= 2 ? 'text-[#4A70A9]' : 'text-gray-400'
-              }`}>
-                Basic Information
-              </span>
-            </div>
-
-            <div className={`flex-1 h-0.5 ${currentStep >= 3 ? 'bg-[#4A70A9]' : 'bg-gray-300'}`} />
-
-            {/* Step 3 */}
-            <div className="flex flex-col items-center flex-1">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                currentStep >= 3 ? 'bg-[#4A70A9]' : 'bg-gray-300'
-              }`}>
-                <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                  <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <span className={`mt-2 text-sm font-medium ${
-                currentStep >= 3 ? 'text-[#4A70A9]' : 'text-gray-400'
-              }`}>
-                Save Or Book Pickup
-              </span>
-            </div>
+              </React.Fragment>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex gap-6">
-          {/* Summary Sidebar */}
-          {showSummary && (
-            <div className="w-72 flex-shrink-0">
-              <div className="bg-white rounded-lg shadow p-6 sticky top-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">Summary</h3>
-                
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Device Information</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {selectedDevice && (
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                        {selectedDevice}
-                      </span>
+          {/* Sidebar Summary */}
+          {step > 1 && (
+            <div className="w-64 bg-white rounded-lg shadow p-6 h-fit">
+              <h3 className="font-semibold text-gray-800 mb-4">Summary</h3>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sm text-gray-600 mb-2">Device Information</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {formData.deviceType && (
+                      <span className="px-3 py-1 bg-gray-100 rounded text-sm">{formData.deviceType}</span>
                     )}
-                    {selectedBrand && (
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                        {selectedBrand}
-                      </span>
+                    {formData.brand && (
+                      <span className="px-3 py-1 bg-gray-100 rounded text-sm">{formData.brand}</span>
                     )}
-                    {selectedModel && (
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full">
-                        {selectedModel}
-                      </span>
+                    {formData.model && (
+                      <span className="px-3 py-1 bg-gray-100 rounded text-sm">{formData.model}</span>
                     )}
                   </div>
                 </div>
-
-                {selectedServices.length > 0 && (
-                  <div className="mb-6">
-                    <h4 className="text-sm font-semibold text-gray-900 mb-2">Service Information</h4>
-                    <p className="text-sm text-gray-600 mb-1">
-                      <span className="font-medium">Services:</span> {selectedServices.join(', ')}
-                    </p>
-                    {serialNumber && (
-                      <p className="text-sm text-gray-600 mb-1">
-                        <span className="font-medium">Serial Number:</span> {serialNumber}
-                      </p>
-                    )}
-                    {selectedAccessories.length > 0 && (
-                      <p className="text-sm text-gray-600">
-                        <span className="font-medium">Accessories:</span> {selectedAccessories.join(', ')}
-                      </p>
-                    )}
+                {formData.serialNumber && (
+                  <div>
+                    <p className="text-sm text-gray-600">Serial Number</p>
+                    <p className="text-sm font-medium">{formData.serialNumber}</p>
+                  </div>
+                )}
+                {step > 2 && formData.name && (
+                  <div>
+                    <p className="text-sm text-gray-600 mb-1">Basic Information</p>
+                    <p className="text-sm"><span className="font-medium">Name:</span> {formData.name}</p>
+                    <p className="text-sm"><span className="font-medium">Mobile Number:</span> {formData.mobile}</p>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          {/* Main Form */}
-          <div className="flex-1">
-            <div className="bg-white rounded-lg shadow">
-              <div className="border-b border-gray-200 px-6 py-4">
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {currentStep === 1 && 'Device Information'}
-                  {currentStep === 2 && 'Basic Information'}
-                  {currentStep === 3 && 'Save Or Book Pickup'}
-                </h2>
-              </div>
+          {/* Form Content */}
+          <div className="flex-1 bg-white rounded-lg shadow p-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              {step === 1 && 'Device Information'}
+              {step === 2 && 'Basic Information'}
+              {step === 3 && 'Schedule A Pickup'}
+            </h2>
 
-              <div className="p-6">
-                {/* Breadcrumb */}
-                {currentStep === 1 && (
-                  <div className="flex items-center space-x-2 text-sm mb-6">
-                    {breadcrumbs().map((item, index) => (
-                      <React.Fragment key={index}>
-                        {index > 0 && <ChevronRight className="w-4 h-4 text-gray-400" />}
-                        <span className={index === breadcrumbs().length - 1 ? 'text-gray-900 font-medium' : 'text-[#4A70A9]'}>
-                          {item}
-                        </span>
-                      </React.Fragment>
-                    ))}
-                  </div>
-                )}
-
-                {/* Step 1: Device Selection */}
-                {currentStep === 1 && !selectedDevice && (
-                  <div>
-                    <div className="mb-6">
-                      <h3 className="text-base font-medium text-gray-900 mb-4">Select device type</h3>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          placeholder="Type or search for device type"
-                          value={searchDevice}
-                          onChange={(e) => setSearchDevice(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
+            {/* Step 1: Device Selection */}
+            {step === 1 && (
+              <div className="space-y-6">
+                {!formData.deviceType && (
+                  <>
+                    <div className="text-blue-600 mb-4">Device Information</div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select device type
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type or search for device type"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                      />
                     </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                      {filteredDevices.map((device) => (
+                    <div className="grid grid-cols-5 gap-4">
+                      {filteredDeviceTypes.map(type => (
                         <button
-                          key={device}
-                          onClick={() => handleDeviceSelect(device)}
-                          className="p-6 border-2 border-gray-200 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center font-medium text-gray-700 hover:text-[#4A70A9]"
+                          key={type.id}
+                          onClick={() => {
+                            updateFormData('deviceType', type.name);
+                            updateFormData('deviceTypeId', type.id);
+                          }}
+                          className="p-4 border-2 border-gray-300 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center"
                         >
-                          {device}
+                          <span className="text-sm">{type.name}</span>
                         </button>
                       ))}
                     </div>
-                  </div>
+                  </>
                 )}
 
-                {/* Brand Selection */}
-                {currentStep === 1 && selectedDevice && !selectedBrand && (
-                  <div>
-                    <div className="mb-6">
-                      <h3 className="text-base font-medium text-gray-900 mb-4">Select device brand</h3>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          placeholder="Type or search for device brand"
-                          value={searchBrand}
-                          onChange={(e) => setSearchBrand(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
+                {formData.deviceType && !formData.brand && (
+                  <>
+                    <div className="text-blue-600 mb-4">
+                      Device Information &gt; {formData.deviceType}
                     </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                      {filteredBrands.map((brand) => (
-                        <button
-                          key={brand}
-                          onClick={() => handleBrandSelect(brand)}
-                          className="p-6 border-2 border-gray-200 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center font-medium text-gray-700 hover:text-[#4A70A9]"
-                        >
-                          {brand}
-                        </button>
-                      ))}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select device brand
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type or search for device brand"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                      />
                     </div>
-                  </div>
-                )}
-
-                {/* Model Selection */}
-                {currentStep === 1 && selectedBrand && !selectedModel && (
-                  <div>
-                    <div className="mb-6">
-                      <h3 className="text-base font-medium text-gray-900 mb-4">Select model</h3>
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          placeholder="Type or search for device model"
-                          value={searchModel}
-                          onChange={(e) => setSearchModel(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                      {filteredModels.map((model) => (
-                        <button
-                          key={model}
-                          onClick={() => handleModelSelect(model)}
-                          className="p-6 border-2 border-gray-200 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center font-medium text-gray-700 hover:text-[#4A70A9]"
-                        >
-                          {model}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Service Selection & Details */}
-                {currentStep === 1 && selectedModel && (
-                  <div>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                      <h3 className="text-lg font-semibold text-gray-900">{selectedModel}</h3>
-                      <p className="text-sm text-gray-600 mt-1">Brand: {selectedBrand}</p>
-                    </div>
-
-                    <div className="mb-6">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <input
-                          type="text"
-                          placeholder="Type or search for service type"
-                          value={searchService}
-                          onChange={(e) => setSearchService(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    {availableServices.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-                        {availableServices.map((service) => (
+                    <div className="grid grid-cols-5 gap-4">
+                      {loadingBrands ? (
+                        <div className="col-span-5 text-center py-8">
+                          <div className="animate-spin w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full mx-auto"></div>
+                          <p className="text-gray-600 mt-2">Loading brands...</p>
+                        </div>
+                      ) : brands.length > 0 ? (
+                        brands.map(brand => (
                           <button
-                            key={service}
-                            onClick={() => toggleService(service)}
-                            className={`p-4 border-2 rounded-lg flex items-center justify-between transition-all ${
-                              selectedServices.includes(service)
-                                ? 'border-[#4A70A9] bg-blue-50'
-                                : 'border-gray-200 hover:border-[#4A70A9] hover:bg-blue-50'
-                            }`}
+                            key={brand.id}
+                            onClick={() => {
+                              updateFormData('brand', brand.name);
+                              updateFormData('brandId', brand.id);
+                            }}
+                            className="p-4 border-2 border-gray-300 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center"
                           >
-                            <div className="flex items-center space-x-3">
-                              <Wrench className="w-5 h-5 text-gray-500" />
-                              <span className="text-sm font-medium text-gray-700">{service}</span>
-                            </div>
-                            <div
-                              className={`w-6 h-6 rounded border-2 flex items-center justify-center ${
-                                selectedServices.includes(service)
-                                  ? 'bg-[#4A70A9] border-[#4A70A9]'
-                                  : 'border-gray-300'
-                              }`}
-                            >
-                              {selectedServices.includes(service) && (
-                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                              )}
-                            </div>
+                            <span className="text-sm">{brand.name}</span>
                           </button>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-500 mb-8">
-                        No services available
-                      </div>
-                    )}
+                        ))
+                      ) : (
+                        <div className="col-span-5 text-center py-8 text-gray-500">
+                          No brands available for this device type
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
 
-                    {/* Serial Number & Password */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                {formData.brand && !formData.model && (
+                  <>
+                    <div className="text-blue-600 mb-4">
+                      Device Information &gt; {formData.deviceType} &gt; {formData.brand}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Select model
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type or search for device model"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                      />
+                    </div>
+                    <div className="grid grid-cols-5 gap-4">
+                      {loadingModels ? (
+                        <div className="col-span-5 text-center py-8">
+                          <div className="animate-spin w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full mx-auto"></div>
+                          <p className="text-gray-600 mt-2">Loading models...</p>
+                        </div>
+                      ) : models.length > 0 ? (
+                        models.map(model => (
+                          <button
+                            key={model.id}
+                            onClick={() => {
+                              updateFormData('model', model.name);
+                              updateFormData('modelId', model.id);
+                            }}
+                            className="p-4 border-2 border-gray-300 rounded-lg hover:border-[#4A70A9] hover:bg-blue-50 transition-all text-center"
+                          >
+                            <span className="text-sm">{model.name}</span>
+                          </button>
+                        ))
+                      ) : (
+                        <div className="col-span-5 text-center py-8 text-gray-500">
+                          No models available for this brand
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {formData.model && (
+                  <>
+                    <div className="text-blue-600 mb-4">
+                      Device Information &gt; {formData.deviceType} &gt; {formData.brand} &gt; {formData.model}
+                    </div>
+                    
+                    <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 mb-6">
+                      <p className="text-sm text-cyan-800">No repair services are available for this device</p>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Type or search for service type
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type or search for service type"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Device Detailed Issue
+                      </label>
+                      <div className="border border-gray-300 rounded-lg">
+                        <div className="flex items-center gap-2 px-4 py-2 border-b border-gray-300">
+                          {/* <button className="p-1 hover:bg-gray-100 rounded">↶</button>
+                          <button className="p-1 hover:bg-gray-100 rounded">↷</button> */}
+                          <div className="px-2 py-1 border border-gray-300 rounded text-sm">
+                            <option>Normal text</option>
+                          </div>
+                          {/* <button className="p-1 hover:bg-gray-100 rounded font-bold">B</button>
+                          <button className="p-1 hover:bg-gray-100 rounded italic">I</button>
+                          <button className="p-1 hover:bg-gray-100 rounded line-through">S</button>
+                          <button className="p-1 hover:bg-gray-100 rounded underline">U</button>
+                          <button className="p-1 hover:bg-gray-100 rounded">≡</button> */}
+                        </div>
+                        <textarea
+                          value={formData.deviceIssue}
+                          onChange={(e) => updateFormData('deviceIssue', e.target.value)}
+                          className="w-full px-4 py-3 min-h-[200px] focus:outline-none"
+                          placeholder="Describe the issue..."
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Max Allowed Characters: 50000</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           Serial / IMEI Number
                         </label>
-                        <input
-                          type="text"
-                          placeholder="Type device serial number"
-                          value={serialNumber}
-                          onChange={(e) => setSerialNumber(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Device password
-                        </label>
-                        <input
-                          type="password"
-                          placeholder="Device password"
-                          value={devicePassword}
-                          onChange={(e) => setDevicePassword(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Accessories */}
-                    <div className="mb-6">
-                      <label className="block text-sm font-medium text-gray-900 mb-3">
-                        Accessories
-                      </label>
-                      <div className="relative">
-                        <select
-                          multiple
-                          value={selectedAccessories}
-                          onChange={(e) => {
-                            const options = Array.from(e.target.selectedOptions, option => option.value);
-                            setSelectedAccessories(options);
-                          }}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        >
-                          {accessories.map((accessory) => (
-                            <option key={accessory} value={accessory}>
-                              {accessory}
-                            </option>
-                          ))}
-                        </select>
-                        <p className="text-xs text-gray-500 mt-2">Hold Ctrl/Cmd to select multiple items</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Step 2: Basic Information */}
-                {currentStep === 2 && (
-                  <div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Your Name <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="Eg: John Smith"
-                          value={yourName}
-                          onChange={(e) => setYourName(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
-                        {yourName === '' && (
-                          <p className="text-xs text-red-500 mt-1">Name is a required field.</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Mobile Number
-                        </label>
-                        <div className="flex">
-                          <span className="inline-flex items-center px-3 border border-r-0 border-gray-300 bg-gray-50 text-gray-500 rounded-l-lg text-sm">
-                            +91
-                          </span>
+                        <div className="relative">
                           <input
-                            type="tel"
-                            placeholder="Eg: 99XXXXXXXX"
-                            value={mobileNumber}
-                            onChange={(e) => setMobileNumber(e.target.value)}
-                            className="w-full px-4 py-3 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                            type="text"
+                            value={formData.serialNumber}
+                            onChange={(e) => updateFormData('serialNumber', e.target.value)}
+                            placeholder="Type device serial number"
+                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Email ID
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Device password
                         </label>
-                        <input
-                          type="email"
-                          placeholder="Eg: example@example.com"
-                          value={emailId}
-                          onChange={(e) => setEmailId(e.target.value)}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            value={formData.password}
+                            onChange={(e) => updateFormData('password', e.target.value)}
+                            placeholder="Device password"
+                            className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                          >
+                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="border-t border-gray-200 pt-6">
-                      <h3 className="text-base font-semibold text-gray-900 mb-4">Terms and Conditions</h3>
-                      <div className="flex items-start space-x-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Accessories
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Select or search for accessories"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Upload Device Images
+                      </label>
+                      <div className="border-2 border-dashed border-[#4A70A9] rounded-lg p-8 text-center bg-blue-50 relative">
                         <input
-                          type="checkbox"
-                          id="terms"
-                          checked={agreeTerms}
-                          onChange={(e) => setAgreeTerms(e.target.checked)}
-                          className="mt-1 w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
+                          type="file"
+                          accept="image/jpeg,image/png,image/bmp,image/webp,application/pdf"
+                          onChange={handleFileUpload}
+                          multiple
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          disabled={uploading}
                         />
-                        <label htmlFor="terms" className="text-sm text-gray-700">
-                          I agree to your terms and conditions mentioned above
-                        </label>
+                        {uploading ? (
+                          <div className="text-[#4A70A9]">
+                            <div className="animate-spin w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full mx-auto mb-2"></div>
+                            <p className="font-medium">Uploading...</p>
+                          </div>
+                        ) : (
+                          <>
+                            <Upload className="w-8 h-8 text-[#4A70A9] mx-auto mb-2" />
+                            <p className="text-[#4A70A9] font-medium mb-1">
+                              Choose Multiple Files or Take Photos
+                            </p>
+                            <p className="text-sm text-gray-500">JPEG, PNG, BMP, WEBP, AND PDF FILES</p>
+                          </>
+                        )}
                       </div>
+                      {formData.deviceImages.length > 0 && (
+                        <div className="mt-4">
+                          <p className="text-sm font-medium text-gray-700 mb-2">
+                            Uploaded Images ({formData.deviceImages.length})
+                          </p>
+                          <div className="grid grid-cols-3 gap-3">
+                            {formData.deviceImages.map((file, index) => (
+                              <div key={index} className="relative bg-gray-100 rounded-lg p-3">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium text-gray-900 truncate">
+                                      {file.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {(file.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                  <button
+                                    onClick={() => removeImage(index)}
+                                    className="ml-2 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {/* Step 2: Basic Information */}
+            {step === 2 && (
+              <div className="space-y-6">
+                <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+                  <p className="text-sm text-cyan-800">
+                    Your profile information has been auto-filled from your account.
+                  </p>
+                </div>
+
+                {loadingProfile ? (
+                  <div className="text-center py-8">
+                    <div className="animate-spin w-8 h-8 border-4 border-[#4A70A9] border-t-transparent rounded-full mx-auto"></div>
+                    <p className="text-gray-600 mt-2">Loading profile...</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Your Name <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        readOnly
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Mobile Number
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value="+91"
+                          disabled
+                          className="w-16 px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                        />
+                        <input
+                          type="tel"
+                          value={formData.mobile}
+                          readOnly
+                          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email ID
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        readOnly
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                      />
                     </div>
                   </div>
                 )}
 
-                {/* Step 3: Save Or Book Pickup */}
-                {currentStep === 3 && (
-                  <div>
-                    <div className="text-center py-12">
-                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Check className="w-8 h-8 text-green-600" />
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Request Submitted Successfully!</h3>
-                      <p className="text-gray-600 mb-8">Your device information has been saved. Choose an option below:</p>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                        <button className="p-6 border-2 border-[#4A70A9] rounded-lg hover:bg-blue-50 transition-all">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-[#4A70A9] rounded-full flex items-center justify-center mx-auto mb-3">
-                              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3a4 4 0 118 0v4m-4 8a2 2 0 100-4 2 2 0 000 4zm6 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                              </svg>
-                            </div>
-                            <h4 className="text-lg font-semibold text-gray-900 mb-2">Save for Later</h4>
-                            <p className="text-sm text-gray-600">Save your information and complete the process later</p>
-                          </div>
-                        </button>
-                        
-                        <button className="p-6 border-2 border-[#4A70A9] bg-[#4A70A9] text-white rounded-lg hover:bg-[#3d5c8a] transition-all">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-3">
-                              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            </div>
-                            <h4 className="text-lg font-semibold mb-2">Book Pickup</h4>
-                            <p className="text-sm opacity-90">Schedule a pickup for your device repair</p>
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Navigation Buttons */}
-                <div className="flex justify-between pt-6 border-t border-gray-200">
-                  <button
-                    onClick={handlePrevious}
-                    disabled={currentStep === 1}
-                    className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                      currentStep === 1
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  
-                  {currentStep < 3 ? (
-                    <button
-                      onClick={handleNext}
-                      disabled={currentStep === 1 && !selectedModel}
-                      className={`px-6 py-3 rounded-lg font-medium transition-colors ${
-                        (currentStep === 1 && !selectedModel) || (currentStep === 2 && (!yourName || !agreeTerms))
-                          ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                          : 'bg-[#4A70A9] text-white hover:bg-[#3d5c8a]'
-                      }`}
-                    >
-                      {currentStep === 2 ? 'Complete' : 'Next'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => window.location.href = '/customer/dashboard'}
-                      className="px-6 py-3 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5c8a] transition-colors"
-                    >
-                      Go to Dashboard
-                    </button>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Terms and Conditions</h3>
+                  <label className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={formData.termsAccepted}
+                      onChange={(e) => updateFormData('termsAccepted', e.target.checked)}
+                      className="mt-1 w-4 h-4 text-[#4A70A9] border-gray-300 rounded focus:ring-[#4A70A9]"
+                    />
+                    <span className="text-sm text-gray-700">
+                      I agree to your terms and conditions mentioned above
+                    </span>
+                  </label>
+                  {!formData.termsAccepted && (
+                    <p className="text-xs text-red-500 mt-2">
+                      Please agree to the Terms and Conditions to proceed.
+                    </p>
                   )}
                 </div>
               </div>
+            )}
+
+            {/* Step 3: Pickup Schedule */}
+            {step === 3 && (
+              <div className="space-y-6">
+                <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4">
+                  <p className="text-sm text-cyan-800">
+                    Device pickup will be scheduled only after your request is approved. Address details have been auto-filled from your profile.
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Address Details</h3>
+                  <div className="grid gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Address Line <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.addressLine}
+                        readOnly
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Region/State <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={states.find(s => s.isoCode === formData.region)?.name || formData.region}
+                          readOnly
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          City/Town <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.city}
+                          readOnly
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Postal Code/ Zip Code <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.postalCode}
+                          readOnly
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Preferred Pickup Date/Time <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="datetime-local"
+                          value={formData.pickupDateTime}
+                          onChange={(e) => updateFormData('pickupDateTime', e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+{/* Navigation Buttons */}
+            <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">
+              <button
+                onClick={handlePrevious}
+                disabled={step === 1 && !formData.deviceType && !formData.brand && !formData.model}
+                className="flex items-center gap-2 px-6 py-2 border-2 border-[#4A70A9] text-[#4A70A9] rounded-lg font-medium hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-5 h-5" />
+                Previous
+              </button>
+              {step < 3 ? (
+                <button
+                  onClick={handleNext}
+                  disabled={
+                    (step === 1 && !formData.model) ||
+                    (step === 2 && (!formData.name || !formData.termsAccepted))
+                  }
+                  className="flex items-center gap-2 px-6 py-2 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5d8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => handleSubmit(true)}
+                    className="px-6 py-2 border-2 border-gray-400 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Skip Pickup
+                  </button>
+                  <button
+                    onClick={() => handleSubmit(false)}
+                    disabled={!formData.addressLine || !formData.region || !formData.city || !formData.pickupDateTime}
+                    className="px-6 py-2 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5d8f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Submit with Pickup
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

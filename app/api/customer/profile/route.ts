@@ -6,6 +6,8 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
     
+    console.log('Session:', session);
+    
     if (!session || session.user.role !== 'customer') {
       return NextResponse.json(
         { error: 'Unauthorized' },
@@ -19,24 +21,38 @@ export async function GET(req: NextRequest) {
       [session.user.id, session.company.id]
     );
 
-    if (customerResult.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Customer profile not found' },
-        { status: 404 }
-      );
+    console.log('Customer query result:', customerResult.rows);
+
+    // If customer profile exists, return it
+    if (customerResult.rows.length > 0) {
+      const customer = customerResult.rows[0];
+
+      return NextResponse.json({
+        customer: {
+          customer_name: customer.customer_name,
+          mobile_number: customer.mobile_number,
+          phone_number: customer.phone_number,
+          email: session.user.email,
+          address_line: customer.address_line,
+          region_state: customer.region_state,
+          city_town: customer.city_town,
+          postal_code: customer.postal_code
+        }
+      });
     }
 
-    const customer = customerResult.rows[0];
-
+    // If no customer profile, return user session data
+    console.log('No customer found, returning session data');
     return NextResponse.json({
       customer: {
-        customer_name: customer.customer_name,
-        mobile_number: customer.mobile_number,
-        phone_number: customer.phone_number,
-        address_line: customer.address_line,
-        region_state: customer.region_state,
-        city_town: customer.city_town,
-        postal_code: customer.postal_code
+        customer_name: session.user.name,
+        mobile_number: session.user.phone || '',
+        phone_number: session.user.phone || '',
+        email: session.user.email,
+        address_line: '',
+        region_state: '',
+        city_town: '',
+        postal_code: ''
       }
     });
 

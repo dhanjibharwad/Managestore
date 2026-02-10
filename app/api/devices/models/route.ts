@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSession } from '@/lib/auth';
 import pool from '@/lib/db';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getSession();
     
@@ -10,12 +10,21 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const deviceBrandId = searchParams.get('device_brand_id');
     const companyId = session.company.id;
     
-    const result = await pool.query(
-      'SELECT * FROM device_models WHERE company_id = $1 ORDER BY name',
-      [companyId]
-    );
+    let query = 'SELECT * FROM device_models WHERE company_id = $1';
+    const params: any[] = [companyId];
+    
+    if (deviceBrandId) {
+      query += ' AND device_brand_id = $2';
+      params.push(deviceBrandId);
+    }
+    
+    query += ' ORDER BY name';
+    
+    const result = await pool.query(query, params);
 
     return NextResponse.json(result.rows);
   } catch (error) {

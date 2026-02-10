@@ -23,7 +23,7 @@ const navItems = [
   { label: "Sales", href: "/customer/sales", icon: LineChart },
   { label: "Quotations", href: "/customer/quotations", icon: FileText },
   { label: "Pickup Drops", href: "/customer/pickupdrop", icon: Truck },
-  // { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck },
+  { label: "Self Check-In", href: "/customer/selfcheck", icon: UserCheck },
   { label: "Profile", href: "/customer/profile", icon: User }
 
 ];
