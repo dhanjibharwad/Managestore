@@ -101,6 +101,7 @@ const JobPage: React.FC = () => {
         if (response.ok) {
           setSelfCheckins(data.requests || []);
         } else {
+          console.error('Self check-in fetch error:', data);
           showToast(data.error || 'Failed to fetch self check-in requests', 'error');
         }
         return;
@@ -132,8 +133,12 @@ const JobPage: React.FC = () => {
         showToast(data.error || 'Failed to fetch jobs', 'error');
       }
     } catch (error) {
-      console.error('Error fetching jobs:', error);
-      showToast('Failed to fetch jobs. Please try again.', 'error');
+      console.error('Error fetching data:', error);
+      if (activeTab === 'Self Check-In') {
+        showToast('Failed to fetch self check-in requests. Please try again.', 'error');
+      } else {
+        showToast('Failed to fetch jobs. Please try again.', 'error');
+      }
     } finally {
       setLoading(false);
     }

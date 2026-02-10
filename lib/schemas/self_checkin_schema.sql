@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS self_checkin_requests (
   device_issue TEXT,
   accessories TEXT,
   device_images TEXT[],
+  services TEXT,
   
   -- Customer Information
   customer_name VARCHAR(255) NOT NULL,
