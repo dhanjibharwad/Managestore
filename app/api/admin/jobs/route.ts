@@ -79,9 +79,10 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Generate sequential job number
+    // Generate sequential job number per company
     const jobNumberResult = await pool.query(
-      "SELECT COALESCE(MAX(CAST(SUBSTRING(job_number FROM 4) AS INTEGER)), 0) + 1 as next_number FROM jobs WHERE job_number ~ 'JOB[0-9]+'"
+      "SELECT COALESCE(MAX(CAST(SUBSTRING(job_number FROM 4) AS INTEGER)), 0) + 1 as next_number FROM jobs WHERE job_number ~ 'JOB[0-9]+' AND company_id = $1",
+      [session.company.id]
     );
     const jobNumber = `JOB${jobNumberResult.rows[0].next_number.toString().padStart(4, '0')}`;
 

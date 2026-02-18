@@ -33,9 +33,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate customer ID
+    // Generate customer ID per company
     const customerIdResult = await pool.query(
-      "SELECT COALESCE(MAX(CAST(SUBSTRING(customer_id FROM 5) AS INTEGER)), 0) + 1 as next_number FROM customers WHERE customer_id ~ 'CUST[0-9]+'"
+      "SELECT COALESCE(MAX(CAST(SUBSTRING(customer_id FROM 5) AS INTEGER)), 0) + 1 as next_number FROM customers WHERE customer_id ~ 'CUST[0-9]+' AND company_id = $1",
+      [session.company.id]
     );
     const customerId = `CUST${customerIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
 

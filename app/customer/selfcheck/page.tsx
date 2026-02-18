@@ -398,12 +398,12 @@ export default function SelfCheckIn() {
               </div>
             </div>
             <div className="flex gap-4 w-full">
-              <button
+              {/* <button
                 onClick={() => setShowSuccess(false)}
                 className="flex-1 px-6 py-3 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors"
               >
                 Back
-              </button>
+              </button> */}
               <button
                 onClick={() => window.location.reload()}
                 className="flex-1 px-6 py-3 bg-[#4A70A9] text-white rounded-lg font-medium hover:bg-[#3d5d8f] transition-colors"
@@ -453,14 +453,14 @@ export default function SelfCheckIn() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 rounded-xl">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-[#4A70A9] rounded flex items-center justify-center">
                 <Package className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold text-gray-800">Store Manager</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Progress Bar */}
           <div className="flex items-center justify-between">
