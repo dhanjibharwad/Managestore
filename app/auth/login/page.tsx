@@ -40,14 +40,14 @@ export default function LoginPage() {
 
       const { companyId } = await userRes.json();
 
-      // Then login with the found company
+      // Then login with the found company (NULL for superadmin)
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          companyId,
+          companyId: companyId, // Can be null for superadmin
         }),
       });
 

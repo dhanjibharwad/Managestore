@@ -135,7 +135,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const userId = session.user.id;
-    const companyId = session.company.id;
+    const companyId = session.company?.id || null; // NULL for superadmin
 
     const body = await request.json();
     const {

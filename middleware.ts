@@ -39,9 +39,9 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // 3. Validate required JWT fields
-  if (!payload.userId || !payload.companyId) {
-    console.log('Invalid JWT payload - missing userId or companyId');
+  // 3. Validate required JWT fields (companyId can be NULL for superadmin)
+  if (!payload.userId) {
+    console.log('Invalid JWT payload - missing userId');
     const response = NextResponse.redirect(new URL('/auth/login', request.url));
     response.cookies.delete('session');
     return response;

@@ -12,12 +12,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find user's company by email
+    // Find user by email (handle superadmin with NULL company_id)
     const result = await pool.query(
-      `SELECT u.company_id, c.company_name, c.status as company_status
+      `SELECT u.company_id, u.role, c.company_name, c.status as company_status
        FROM users u
-       JOIN companies c ON u.company_id = c.id
-       WHERE u.email = $1 AND c.status = 'active'
+       LEFT JOIN companies c ON u.company_id = c.id
+       WHERE u.email = $1
        LIMIT 1`,
       [email.toLowerCase().trim()]
     );
@@ -30,6 +30,22 @@ export async function POST(req: NextRequest) {
     }
 
     const user = result.rows[0];
+
+    // For superadmin, company_id is NULL
+    if (user.role === 'superadmin') {
+      return NextResponse.json({
+        companyId: null,
+        companyName: 'Super Admin',
+      });
+    }
+
+    // For other users, check company status
+    if (user.company_status !== 'active') {
+      return NextResponse.json(
+        { error: 'Company account is not active' },
+        { status: 403 }
+      );
+    }
 
     return NextResponse.json({
       companyId: user.company_id,

@@ -1,6 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, Plus, Edit2, Trash2, Settings2, Box, Wrench, Smartphone, Layers, CheckSquare, Package, MessageSquare, Palette, FileText, Grid } from 'lucide-react';
+import DeviceTypesPage from './devicetypes/page';
 
 interface Brand {
   id: number;
@@ -12,10 +14,13 @@ interface Brand {
 }
 
 const JobSettingsPage = () => {
-  const [activePanel, setActivePanel] = useState('Brands');
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [activePanel, setActivePanel] = useState(searchParams.get('tab') || 'Brands');
   const [searchQuery, setSearchQuery] = useState('');
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState(false);
+  const [addModal, setAddModal] = useState(false);
 
   const sidebarItems = [
     { label: 'Default Job Creation Settings', icon: Settings2 },
@@ -73,7 +78,10 @@ const JobSettingsPage = () => {
             return (
               <button
                 key={item.label}
-                onClick={() => setActivePanel(item.label)}
+                onClick={() => {
+                  setActivePanel(item.label);
+                  router.push(`/admin/jobs/jobsettings?tab=${item.label.toLowerCase().replace(/\s+/g, '')}`, { scroll: false });
+                }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 ${
                   isActive
                     ? 'bg-[#4A70A9] text-white'
@@ -117,7 +125,10 @@ const JobSettingsPage = () => {
               <button className="p-2 border border-gray-300 rounded-md hover:bg-gray-50">
                 <Grid className="w-5 h-5 text-gray-600" />
               </button> */}
-              <button className="px-4 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors flex items-center gap-2">
+              <button 
+                onClick={() => setAddModal(true)}
+                className="px-4 py-2 bg-[#4A70A9] text-white rounded-md hover:bg-[#3d5d8f] transition-colors flex items-center gap-2"
+              >
                 <Plus className="w-5 h-5" />
               </button>
             </div>
@@ -193,11 +204,7 @@ const JobSettingsPage = () => {
           )}
 
           {activePanel === 'Device Types' && (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <Smartphone className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Device Types</h3>
-              <p className="text-gray-500">Manage device types for your repair jobs</p>
-            </div>
+            <DeviceTypesPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
           {activePanel === 'Models' && (

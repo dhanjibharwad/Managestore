@@ -16,7 +16,7 @@ export async function verifyPassword(password: string, hashedPassword: string): 
 }
 
 // Create session with company context
-export async function createSession(userId: number, companyId: number, role: string) {
+export async function createSession(userId: number, companyId: number | null, role: string) {
   const token = await new SignJWT({ userId, companyId, role })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
@@ -25,7 +25,7 @@ export async function createSession(userId: number, companyId: number, role: str
 
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  // Store session in database with company_id
+  // Store session in database with company_id (NULL for superadmin)
   await pool.query(
     'INSERT INTO sessions (user_id, company_id, session_token, expires_at) VALUES ($1, $2, $3, $4)',
     [userId, companyId, token, expiresAt]
@@ -57,7 +57,7 @@ export async function getSession() {
     // Verify JWT token
     const { payload } = await jwtVerify(token, JWT_SECRET);
     
-    // Get session, user, and company data from database
+    // Get session, user, and company data from database (LEFT JOIN for superadmin)
     const result = await pool.query(
       `SELECT 
         s.id as session_id,
@@ -83,7 +83,7 @@ export async function getSession() {
         c.subscription_end_date
        FROM sessions s 
        JOIN users u ON s.user_id = u.id 
-       JOIN companies c ON s.company_id = c.id
+       LEFT JOIN companies c ON s.company_id = c.id
        WHERE s.session_token = $1 AND s.expires_at > NOW()`,
       [token]
     );
@@ -94,8 +94,8 @@ export async function getSession() {
 
     const sessionData = result.rows[0];
 
-    // Check if company is active
-    if (sessionData.company_status !== 'active') {
+    // Check if company is active (skip for superadmin)
+    if (sessionData.role !== 'superadmin' && sessionData.company_status !== 'active') {
       return null;
     }
 
@@ -116,7 +116,7 @@ export async function getSession() {
         lastLoginAt: sessionData.last_login_at,
         createdAt: sessionData.created_at,
       },
-      company: {
+       company: sessionData.company_id ? {
         id: sessionData.company_id,
         name: sessionData.company_name,
         ownerName: sessionData.company_owner_name,
@@ -127,7 +127,7 @@ export async function getSession() {
         status: sessionData.company_status,
         subscriptionStartDate: sessionData.subscription_start_date,
         subscriptionEndDate: sessionData.subscription_end_date,
-      },
+      } : null,
       sessionId: sessionData.session_id,
       expiresAt: sessionData.expires_at,
     };

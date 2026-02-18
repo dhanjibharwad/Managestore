@@ -7,21 +7,29 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password, companyId } = await req.json();
 
-    if (!email || !password || !companyId) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: 'Email, password, and company ID are required' },
+        { error: 'Email and password are required' },
         { status: 400 }
       );
     }
 
-    // Find user in specific company
-    const result = await pool.query(
-      `SELECT u.*, c.company_name, c.status as company_status
-       FROM users u
-       JOIN companies c ON u.company_id = c.id
-       WHERE u.email = $1 AND u.company_id = $2`,
-      [email.toLowerCase().trim(), companyId]
-    );
+    // Find user (handle superadmin with NULL company_id)
+    const query = companyId === null 
+      ? `SELECT u.*, c.company_name, c.status as company_status
+         FROM users u
+         LEFT JOIN companies c ON u.company_id = c.id
+         WHERE u.email = $1 AND u.role = 'superadmin'`
+      : `SELECT u.*, c.company_name, c.status as company_status
+         FROM users u
+         JOIN companies c ON u.company_id = c.id
+         WHERE u.email = $1 AND u.company_id = $2`;
+    
+    const params = companyId === null 
+      ? [email.toLowerCase().trim()]
+      : [email.toLowerCase().trim(), companyId];
+
+    const result = await pool.query(query, params);
 
     if (result.rows.length === 0) {
       return NextResponse.json(
@@ -32,8 +40,8 @@ export async function POST(req: NextRequest) {
 
     const user = result.rows[0];
 
-    // Check company status
-    if (user.company_status !== 'active') {
+    // Check company status (skip for superadmin)
+    if (user.role !== 'superadmin' && user.company_status !== 'active') {
       return NextResponse.json(
         { error: 'Company account is not active' },
         { status: 403 }
@@ -65,8 +73,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create session with company context
-    await createSession(user.id, user.company_id, user.role);
+    // Create session with company context (NULL for superadmin)
+    const sessionCompanyId = user.company_id; // Keep NULL for superadmin
+    await createSession(user.id, sessionCompanyId, user.role);
 
     // Update last login
     await updateLastLogin(user.id);
@@ -80,8 +89,8 @@ export async function POST(req: NextRequest) {
         role: user.role,
       },
       company: {
-        id: user.company_id,
-        name: user.company_name,
+        id: user.company_id || 0,
+        name: user.company_name || 'Super Admin',
       },
     });
   } catch (error) {
