@@ -5,17 +5,39 @@ import Link from 'next/link';
 
 interface Job {
   id: number;
+  job_id: string;
   job_number: string;
   customer_name: string;
+  customer_id?: number;
+  source?: string;
+  referred_by?: string;
+  service_type?: string;
+  job_type?: string;
+  device_type: string;
   device_brand: string;
   device_model: string;
+  device_type_name?: string;
   device_brand_name?: string;
   device_model_name?: string;
+  serial_number?: string;
+  accessories?: string;
+  storage_location?: string;
+  device_color?: string;
+  device_password?: string;
+  services: string;
+  tags?: string;
+  hardware_config?: string;
+  service_assessment?: string;
   assignee: string;
   status: string;
   priority: string;
-  services: string;
+  initial_quotation?: string;
+  due_date?: string;
+  dealer_job_id?: string;
+  terms_conditions?: string;
+  images?: string[];
   created_at: string;
+  updated_at?: string;
 }
 
 interface Employee {
@@ -69,6 +91,7 @@ const JobPage: React.FC = () => {
   const [selectedAssignee, setSelectedAssignee] = useState('');
   const [selfCheckinModal, setSelfCheckinModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewModal, setViewModal] = useState<{show: boolean, request: any}>({show: false, request: null});
+  const [viewJobModal, setViewJobModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
 
   const fetchEmployees = async () => {
     try {
@@ -597,6 +620,19 @@ const JobPage: React.FC = () => {
                                 <div className="py-1">
                                   <button 
                                     onClick={() => {
+                                      setViewJobModal({show: true, job});
+                                      setOpenDropdown(null);
+                                    }}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                    View
+                                  </button>
+                                  <button 
+                                    onClick={() => {
                                       setStatusModal({show: true, job});
                                       setSelectedStatus(job.status);
                                       setSelectedAssignee(job.assignee);
@@ -639,6 +675,27 @@ const JobPage: React.FC = () => {
         ) : null}
       </div>
       
+      {/* View Job Modal */}
+      {viewJobModal.show && viewJobModal.job && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">Job Details</h3>
+                <button onClick={() => setViewJobModal({show: false, job: null})} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
+              </div>
+              <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Job Information</h4></div><div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg"><div><p className="text-sm text-gray-600 mb-1">Job Number</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.job_number}</p></div><div><p className="text-sm text-gray-600 mb-1">Status</p><span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${viewJobModal.job.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' : viewJobModal.job.status === 'In Progress' ? 'bg-blue-100 text-blue-800' : viewJobModal.job.status === 'Completed' ? 'bg-green-100 text-green-800' : viewJobModal.job.status === 'Cancelled' ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'}`}>{viewJobModal.job.status}</span></div><div><p className="text-sm text-gray-600 mb-1">Priority</p><span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${viewJobModal.job.priority === 'High' ? 'bg-red-100 text-red-800' : viewJobModal.job.priority === 'Urgent' ? 'bg-orange-100 text-orange-800' : viewJobModal.job.priority === 'Low' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'}`}>{viewJobModal.job.priority}</span></div><div><p className="text-sm text-gray-600 mb-1">Source</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.source || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Referred By</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.referred_by || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Service Type</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.service_type || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Job Type</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.job_type || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Created On</p><p className="text-sm font-medium text-gray-900">{formatDateTime(viewJobModal.job.created_at)}</p></div><div><p className="text-sm text-gray-600 mb-1">Due Date</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.due_date ? formatDateTime(viewJobModal.job.due_date) : 'N/A'}</p></div>{viewJobModal.job.dealer_job_id && (<div className="col-span-2"><p className="text-sm text-gray-600 mb-1">Dealer Job ID</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.dealer_job_id}</p></div>)}</div></div>
+              <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg><h4 className="text-lg font-semibold text-blue-600">Customer Detail</h4></div><div className="bg-gray-50 p-4 rounded-lg"><div><p className="text-sm text-gray-600 mb-1">Customer Name</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.customer_name}</p></div></div></div>
+              <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Device Detail</h4></div><div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg"><div><p className="text-sm text-gray-600 mb-1">Device Type</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.device_type_name || viewJobModal.job.device_type}</p></div><div><p className="text-sm text-gray-600 mb-1">Device Brand</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.device_brand_name || viewJobModal.job.device_brand}</p></div><div><p className="text-sm text-gray-600 mb-1">Device Model</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.device_model_name || viewJobModal.job.device_model || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Serial Number</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.serial_number || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Device Color</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.device_color || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Device Password</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.device_password || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Storage Location</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.storage_location || 'N/A'}</p></div><div><p className="text-sm text-gray-600 mb-1">Accessories</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.accessories || 'None'}</p></div>{viewJobModal.job.hardware_config && (<div className="col-span-2"><p className="text-sm text-gray-600 mb-1">Hardware Configuration</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.hardware_config}</p></div>)}</div></div>
+              <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><h4 className="text-lg font-semibold text-blue-600">Service Information</h4></div><div className="bg-gray-50 p-4 rounded-lg space-y-4"><div><p className="text-sm text-gray-600 mb-1">Services</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.services}</p></div>{viewJobModal.job.service_assessment && (<div><p className="text-sm text-gray-600 mb-1">Service Assessment</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.service_assessment}</p></div>)}{viewJobModal.job.tags && (<div><p className="text-sm text-gray-600 mb-1">Tags</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.tags}</p></div>)}{viewJobModal.job.initial_quotation && (<div><p className="text-sm text-gray-600 mb-1">Initial Quotation</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.initial_quotation}</p></div>)}</div></div>
+              <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg><h4 className="text-lg font-semibold text-blue-600">Assignment</h4></div><div className="bg-gray-50 p-4 rounded-lg"><div><p className="text-sm text-gray-600 mb-1">Assigned To</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.assignee}</p></div></div></div>
+              {viewJobModal.job.terms_conditions && (<div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Terms & Conditions</h4></div><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm font-medium text-gray-900 whitespace-pre-wrap">{viewJobModal.job.terms_conditions}</p></div></div>)}
+              {viewJobModal.job.images && viewJobModal.job.images.length > 0 && (<div><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Device Images</h4></div><div className="grid grid-cols-3 gap-4">{viewJobModal.job.images.map((image: string, idx: number) => (<div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => { const w = window.open(); if (w) w.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`); }}><img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center"><svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>))}</div></div>)}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Status Update Modal */}
       {statusModal.show && statusModal.job && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
