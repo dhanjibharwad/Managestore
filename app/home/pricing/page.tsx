@@ -172,7 +172,7 @@ const PlansPage = () => {
                       {plan.description}
                     </p>
                     <div className="flex items-baseline justify-center mb-2">
-                      <span className={`text-lg font-semibold ${plan.popular ? 'text-gray-100' : 'text-slate-500'}`}>$</span>
+                      <span className={`text-lg font-semibold ${plan.popular ? 'text-gray-100' : 'text-slate-500'}`}>₹</span>
                       <span className={`text-6xl font-bold ${plan.popular ? 'text-white' : 'text-slate-900'}`}>
                         {plan.price}
                       </span>
@@ -182,7 +182,7 @@ const PlansPage = () => {
                     </div>
                     {billingPeriod === 'yearly' && plan.price > 0 && (
                       <p className={`text-sm ${plan.popular ? 'text-gray-200' : 'text-slate-400'}`}>
-                        ${Math.round(plan.price / 12)}/month billed annually
+                        ₹{Math.round(plan.price / 12)}/month billed annually
                       </p>
                     )}
                   </div>
