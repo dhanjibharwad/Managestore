@@ -6,6 +6,7 @@ import { Building2, User, Mail, Phone, Globe, CreditCard, CheckCircle2 } from 'l
 export default function CompanyRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     companyName: '',
     companyOwnerName: '',
@@ -39,20 +40,21 @@ export default function CompanyRegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     
     // Validation
     if (!formData.companyName || !formData.companyOwnerName || !formData.email || !formData.phone || !formData.country) {
-      alert('Please fill in all required fields');
+      setError('Please fill in all required fields');
       return;
     }
     
     if (formData.phone.length !== 10) {
-      alert('Phone number must be exactly 10 digits');
+      setError('Phone number must be exactly 10 digits');
       return;
     }
     
     if (!/^[a-zA-Z\s]+$/.test(formData.country)) {
-      alert('Country name can only contain letters and spaces');
+      setError('Country name can only contain letters and spaces');
       return;
     }
 
@@ -72,11 +74,11 @@ export default function CompanyRegisterPage() {
       if (response.ok) {
         setShowSuccess(true);
       } else {
-        alert(result.error || 'Failed to register company');
+        setError(result.error || 'Failed to register company');
       }
     } catch (error) {
       console.error('Error registering company:', error);
-      alert('An error occurred while registering the company');
+      setError('An error occurred while registering the company');
     } finally {
       setIsSubmitting(false);
     }
@@ -162,6 +164,16 @@ export default function CompanyRegisterPage() {
             {/* Form Card */}
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-10">
               <form onSubmit={handleSubmit} className="space-y-5">
+                
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl flex items-start">
+                    <svg className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">{error}</span>
+                  </div>
+                )}
                 
                 {/* Company Name */}
                 <div className="group">
