@@ -13,6 +13,27 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    // Check company invites
+    const companyResult = await pool.query(
+      `SELECT ci.company_id, ci.email, c.company_name, c.company_owner_name, c.phone
+       FROM company_invites ci
+       JOIN companies c ON ci.company_id = c.id
+       WHERE ci.token = $1 AND ci.expires_at > NOW()`,
+      [token]
+    );
+
+    if (companyResult.rows.length > 0) {
+      const company = companyResult.rows[0];
+      return NextResponse.json({
+        customer: {
+          customer_name: company.company_owner_name,
+          email_id: company.email,
+          mobile_number: company.phone
+        },
+        isCompanyInvite: true
+      });
+    }
+
     // Check customer invites
     const customerResult = await pool.query(
       `SELECT id, customer_name, email_id, mobile_number, company_id 

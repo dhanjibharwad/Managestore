@@ -21,6 +21,7 @@ function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [loadingInvite, setLoadingInvite] = useState(false);
   const [isCustomerInvite, setIsCustomerInvite] = useState(false);
+  const [isCompanyInvite, setIsCompanyInvite] = useState(false);
   const [passwordStrength, setPasswordStrength] = useState<{
     score: number;
     feedback: string[];
@@ -51,7 +52,12 @@ function RegisterForm() {
           email: data.customer.email_id || '',
           phone: data.customer.mobile_number || ''
         }));
-        setIsCustomerInvite(true);
+        
+        if (data.isCompanyInvite) {
+          setIsCompanyInvite(true);
+        } else {
+          setIsCustomerInvite(true);
+        }
       }
     } catch (error) {
       console.error('Error fetching invite data:', error);
@@ -283,9 +289,9 @@ function RegisterForm() {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                readOnly={isCustomerInvite}
+                readOnly={isCustomerInvite || isCompanyInvite}
                 className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
-                  isCustomerInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
+                  (isCustomerInvite || isCompanyInvite) ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
                 }`}
                 placeholder="User Name"
               />
@@ -302,9 +308,9 @@ function RegisterForm() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                readOnly={isCustomerInvite}
+                readOnly={isCustomerInvite || isCompanyInvite}
                 className={`w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-1 focus:ring-[#4A70A9] focus:border-[#4A70A9] outline-none transition text-gray-900 ${
-                  isCustomerInvite ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
+                  (isCustomerInvite || isCompanyInvite) ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
                 }`}
                 placeholder="you@example.com"
               />
