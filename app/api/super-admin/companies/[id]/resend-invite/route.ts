@@ -43,7 +43,7 @@ export async function POST(
     // Send invitation email
     try {
       const { sendInviteEmail } = require('@/lib/email');
-      await sendInviteEmail(company.email, company.company_name, company.owner_name, inviteLink);
+      await sendInviteEmail(company.email, company.company_name, company.company_owner_name, inviteLink);
       console.log(`Invitation resent successfully to ${company.email}`);
     } catch (emailError) {
       console.error('Failed to resend invitation email:', emailError);

@@ -52,7 +52,7 @@ export async function PATCH(
       
       try {
         const { sendInviteEmail } = require('@/lib/email');
-        await sendInviteEmail(company.email, company.company_name, company.owner_name, inviteLink);
+        await sendInviteEmail(company.email, company.company_name, company.company_owner_name, inviteLink);
         console.log(`Invite email sent successfully to ${company.email}`);
       } catch (emailError) {
         console.error('Failed to send invite email:', emailError);
