@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         "SELECT COALESCE(MAX(CAST(SUBSTRING(employee_id FROM 4) AS INTEGER)), 0) + 1 as next_number FROM employees WHERE employee_id ~ 'EMP[0-9]+' AND company_id = $1",
         [company.id]
       );
-      const employeeId = `EMP${employeeIdResult.rows[0].next_number.toString().padStart(3, '0')}`;
+      const employeeId = `EMP${employeeIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
 
       const result = await client.query(
         `INSERT INTO employees (
