@@ -284,7 +284,7 @@ export default function JobSheetForm() {
           fileFormData.append('files', file);
         });
         
-        const uploadResponse = await fetch('/api/admin/jobs/upload', {
+        const uploadResponse = await fetch('/api/admin/upload', {
           method: 'POST',
           body: fileFormData,
         });

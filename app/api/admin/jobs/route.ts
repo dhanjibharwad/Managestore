@@ -3,8 +3,14 @@ import pool from '@/lib/db';
 import { randomBytes } from 'crypto';
 import { getSession } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
   try {
+    // Test database connection first
+    await pool.query('SELECT 1');
+    
     // Get session to extract company_id
     const session = await getSession();
     if (!session || !session.company) {
@@ -129,7 +135,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Create job error:', error);
     return NextResponse.json(
-      { error: 'Failed to create job', details: error instanceof Error ? error.message : 'Unknown error' },
+      { error: 'Failed to create job' },
       { status: 500 }
     );
   }
@@ -137,6 +143,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
+    // Test database connection first
+    await pool.query('SELECT 1');
+    
     // Get session to extract company_id
     const session = await getSession();
     if (!session || !session.company) {
