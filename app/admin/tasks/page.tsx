@@ -255,7 +255,7 @@ export default function TasksPage() {
 
   return (
     <div className="bg-gray p-8">
-      <div className="max-w-[1600px] mx-auto">
+      <div className="max-w-full mx-auto">
         {/* Header */}
         {/* <div className="mb-6">
           <h1 className="text-3xl font-semibold text-zinc-800">Tasks</h1>
