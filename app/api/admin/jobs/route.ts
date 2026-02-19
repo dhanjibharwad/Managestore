@@ -80,25 +80,26 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Generate sequential job number per company with uniqueness check
+    // Generate sequential job number per company with company prefix
+    const client = await pool.connect();
     let jobNumber = '';
-    let jobNumberUnique = false;
-    
-    while (!jobNumberUnique) {
-      const jobNumberResult = await pool.query(
-        "SELECT COALESCE(MAX(CAST(SUBSTRING(job_number FROM 4) AS INTEGER)), 0) + 1 as next_number FROM jobs WHERE job_number ~ 'JOB[0-9]+' AND company_id = $1",
-        [session.company.id]
-      );
-      jobNumber = `JOB${jobNumberResult.rows[0].next_number.toString().padStart(4, '0')}`;
+    try {
+      await client.query('BEGIN');
+      await client.query('LOCK TABLE jobs IN EXCLUSIVE MODE');
       
-      const existingJobNumber = await pool.query(
-        'SELECT id FROM jobs WHERE job_number = $1',
-        [jobNumber]
+      const jobNumberResult = await client.query(
+        "SELECT COALESCE(MAX(CAST(SUBSTRING(job_number FROM LENGTH($1) + 1) AS INTEGER)), 0) + 1 as next_number FROM jobs WHERE job_number ~ $2 AND company_id = $3",
+        [`C${session.company.id}JOB`, `^C${session.company.id}JOB[0-9]+$`, session.company.id]
       );
+      jobNumber = `C${session.company.id}JOB${jobNumberResult.rows[0].next_number.toString().padStart(4, '0')}`;
       
-      if (existingJobNumber.rows.length === 0) {
-        jobNumberUnique = true;
-      }
+      await client.query('COMMIT');
+
+    } catch (transactionError) {
+      await client.query('ROLLBACK');
+      throw transactionError;
+    } finally {
+      client.release();
     }
 
     // Ensure images is a proper JSON array
