@@ -65,13 +65,13 @@ export async function POST(req: NextRequest) {
         );
       }
       
-      // Generate employee ID per company with table-level locking
+      // Generate employee ID per company with company prefix
       await client.query('LOCK TABLE employees IN EXCLUSIVE MODE');
       const employeeIdResult = await client.query(
-        "SELECT COALESCE(MAX(CAST(SUBSTRING(employee_id FROM 4) AS INTEGER)), 0) + 1 as next_number FROM employees WHERE employee_id ~ 'EMP[0-9]+' AND company_id = $1",
-        [company.id]
+        "SELECT COALESCE(MAX(CAST(SUBSTRING(employee_id FROM LENGTH($1) + 1) AS INTEGER)), 0) + 1 as next_number FROM employees WHERE employee_id ~ $2 AND company_id = $3",
+        [`C${company.id}EMP`, `^C${company.id}EMP[0-9]+$`, company.id]
       );
-      const employeeId = `EMP${employeeIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+      const employeeId = `C${company.id}EMP${employeeIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
 
       const result = await client.query(
         `INSERT INTO employees (
