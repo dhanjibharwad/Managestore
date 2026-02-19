@@ -16,18 +16,57 @@ interface Contract {
   auto_renew: boolean;
 }
 
+interface Employee {
+  id: number;
+  employee_name: string;
+  employee_role: string;
+  email: string;
+}
+
 export default function AMCContractsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [contracts, setContracts] = useState<Contract[]>([]);
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetchEmployees();
     const timeoutId = setTimeout(() => {
       fetchContracts();
     }, 300); // Debounce search by 300ms
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch('/api/admin/employees');
+      const data = await response.json();
+      if (response.ok && data.employees) {
+        setEmployees(data.employees);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+
+  const getEmployeeByName = (nameOrId: string | number) => {
+    // Try to find by name first
+    const byName = employees.find(emp => emp.employee_name === nameOrId);
+    if (byName) return byName;
+    
+    // If not found and it's a number or numeric string, try to find by ID
+    const id = typeof nameOrId === 'number' ? nameOrId : parseInt(nameOrId);
+    if (!isNaN(id)) {
+      return employees.find(emp => emp.id === id);
+    }
+    
+    return undefined;
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
 
   const fetchContracts = async () => {
     try {
@@ -175,8 +214,24 @@ export default function AMCContractsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {contract.customer_display_name || contract.customer_name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.assignee_display_name || contract.assignee}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        {(() => {
+                          if (!contract.assignee) return <span className="text-gray-500">-</span>;
+                          const employee = getEmployeeByName(contract.assignee);
+                          return employee ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                {getInitials(employee.employee_name)}
+                              </div>
+                              <div>
+                                <div className="text-gray-900 font-medium">{employee.employee_name}</div>
+                                <div className="text-gray-500 text-xs">{employee.employee_role}</div>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-900">{contract.assignee_display_name || contract.assignee}</span>
+                          );
+                        })()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {contract.amc_type}

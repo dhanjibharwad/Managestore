@@ -78,6 +78,24 @@ export default function LeadsPage() {
     }
   };
 
+  const getUserById = (idOrName: string | number) => {
+    // Try to find by name first
+    const byName = users.find(user => user.name === idOrName);
+    if (byName) return byName;
+    
+    // If not found and it's a number or numeric string, try to find by ID
+    const id = typeof idOrName === 'number' ? idOrName : parseInt(idOrName.toString());
+    if (!isNaN(id)) {
+      return users.find(user => user.id === id);
+    }
+    
+    return undefined;
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
   const fetchLeads = async () => {
     try {
       const response = await fetch('/api/leads');
@@ -321,7 +339,25 @@ export default function LeadsPage() {
                 <tr key={lead.id} className="border-b border-gray-200 hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_name}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.mobile_number || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{getAssigneeName(lead.assignee_id)}</td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {(() => {
+                      if (!lead.assignee_id) return <span className="text-gray-500">-</span>;
+                      const user = getUserById(lead.assignee_id);
+                      return user ? (
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                            {getInitials(user.name)}
+                          </div>
+                          <div>
+                            <div className="text-gray-900 font-medium">{user.name}</div>
+                            <div className="text-gray-500 text-xs">{user.role}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-gray-900">{lead.assignee_name || lead.assignee_id}</span>
+                      );
+                    })()}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_source || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     {lead.next_follow_up ? new Date(lead.next_follow_up).toLocaleDateString() : '-'}

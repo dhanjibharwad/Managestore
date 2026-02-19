@@ -96,6 +96,24 @@
       }
     };
 
+    const getUserById = (idOrName: string | number) => {
+      // Try to find by name first
+      const byName = users.find(user => user.name === idOrName);
+      if (byName) return byName;
+      
+      // If not found and it's a number or numeric string, try to find by ID
+      const id = typeof idOrName === 'number' ? idOrName : parseInt(idOrName.toString());
+      if (!isNaN(id)) {
+        return users.find(user => user.id === id);
+      }
+      
+      return undefined;
+    };
+
+    const getInitials = (name: string) => {
+      return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    };
+
     const fetchCustomers = async () => {
       try {
         const response = await fetch('/api/admin/customers');
@@ -349,7 +367,23 @@
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
-                        {task.assignee_name || task.assignee_id || '-'}
+                        {(() => {
+                          if (!task.assignee_id) return <span className="text-gray-500">-</span>;
+                          const user = getUserById(task.assignee_id);
+                          return user ? (
+                            <div className="flex items-center gap-2">
+                              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                {getInitials(user.name)}
+                              </div>
+                              <div>
+                                <div className="text-gray-900 font-medium">{user.name}</div>
+                                <div className="text-gray-500 text-xs">{user.role}</div>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-gray-900">{task.assignee_name || task.assignee_id}</span>
+                          );
+                        })()}
                       </td>
                       <td className="px-6 py-4 text-sm text-zinc-700">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(task.task_status)}`}>
