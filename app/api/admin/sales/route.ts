@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth';
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
