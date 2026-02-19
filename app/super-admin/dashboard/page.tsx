@@ -27,7 +27,7 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  DollarSign
+  IndianRupee
 } from "lucide-react";
 
 interface Company {
@@ -111,7 +111,7 @@ export default function SuperAdminDashboard() {
       title: "Monthly Revenue", 
       value: `₹${monthlyRevenue.toLocaleString()}`, 
       color: "from-purple-500 to-purple-600",
-      icon: DollarSign
+      icon: IndianRupee
     },
     { 
       title: "Inactive Companies", 

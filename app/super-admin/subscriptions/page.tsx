@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Users, DollarSign, Calendar, Search, Filter, MoreVertical, Eye, Edit, Trash2, Download } from 'lucide-react';
+import { TrendingUp, Users, IndianRupee, Calendar, Search, Filter, MoreVertical, Eye, Edit, Trash2, Download } from 'lucide-react';
 
 interface SubscriptionStats {
   plan: string;
@@ -132,9 +132,9 @@ export default function SubscriptionsPage() {
                 {stat.percentage}% of total companies
               </p>
               <div className="flex items-center mt-2">
-                <DollarSign className="h-3 w-3 text-green-600 mr-1" />
+                <IndianRupee className="h-3 w-3 text-green-600 mr-1" />
                 <span className="text-sm text-green-600">
-                  ${stat.revenue.toLocaleString()}/mo
+                  ₹{stat.revenue.toLocaleString()}/mo
                 </span>
               </div>
             </CardContent>
