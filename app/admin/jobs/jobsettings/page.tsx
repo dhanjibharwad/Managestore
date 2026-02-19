@@ -5,6 +5,7 @@ import { Search, Plus, Edit2, Trash2, Settings2, Box, Wrench, Smartphone, Layers
 import DeviceTypesPage from './devicetypes/page';
 import BrandsPage from './brands/page';
 import ModelsPage from './models/page';
+import StorageLocationsPage from './storagelocations/page';
 
 interface Brand {
   id: number;
@@ -34,7 +35,7 @@ const JobSettingsPage = () => {
     // { label: 'Services', icon: Wrench },
     // { label: 'Statuses', icon: Grid },
     // { label: 'Quick Reply', icon: MessageSquare },
-    // { label: 'Storage Locations', icon: Box },
+    { label: 'Storage Locations', icon: Box },
     // { label: 'Device Colors', icon: Palette },
     // { label: 'Sources', icon: FileText },
     // { label: 'Job Types', icon: FileText }
@@ -158,7 +159,11 @@ const JobSettingsPage = () => {
             </div>
           )}
 
-          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Services' && (
+          {activePanel === 'Storage Locations' && (
+            <StorageLocationsPage addModal={addModal} setAddModal={setAddModal} />
+          )}
+
+          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Services' && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Settings2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">{activePanel}</h3>

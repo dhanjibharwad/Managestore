@@ -38,6 +38,11 @@ interface Customer {
   customer_type: string;
 }
 
+interface StorageLocation {
+  id: number;
+  name: string;
+}
+
 
 
 interface FormData {
@@ -83,6 +88,7 @@ export default function JobSheetForm() {
   const [newModelName, setNewModelName] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
+  const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
@@ -142,6 +148,16 @@ export default function JobSheetForm() {
         }
       })
       .catch(error => console.error('Error fetching employees:', error));
+    
+    // Fetch storage locations
+    fetch('/api/admin/storage-locations')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setStorageLocations(data);
+        }
+      })
+      .catch(error => console.error('Error fetching storage locations:', error));
   }, []);
 
   useEffect(() => {
@@ -587,10 +603,9 @@ export default function JobSheetForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select storage location</option>
-                  <option>Warehouse A</option>
-                  <option>Warehouse B</option>
-                  <option>Service Center</option>
-                  <option>Workshop</option>
+                  {storageLocations.map(location => (
+                    <option key={location.id} value={location.name}>{location.name}</option>
+                  ))}
                 </select>
               </div>
 
