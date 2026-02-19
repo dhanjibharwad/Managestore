@@ -5,7 +5,7 @@ import { getSession } from '@/lib/auth';
 export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -33,12 +33,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate customer ID per company
-    const customerIdResult = await pool.query(
-      "SELECT COALESCE(MAX(CAST(SUBSTRING(customer_id FROM 5) AS INTEGER)), 0) + 1 as next_number FROM customers WHERE customer_id ~ 'CUST[0-9]+' AND company_id = $1",
-      [session.company.id]
-    );
-    const customerId = `CUST${customerIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+    // Generate customer ID per company with company prefix
+    const client = await pool.connect();
+    let customerId = '';
+    try {
+      await client.query('BEGIN');
+      await client.query('LOCK TABLE customers IN EXCLUSIVE MODE');
+      
+      const customerIdResult = await client.query(
+        "SELECT COALESCE(MAX(CAST(SUBSTRING(customer_id FROM LENGTH($1) + 1) AS INTEGER)), 0) + 1 as next_number FROM customers WHERE customer_id ~ $2 AND company_id = $3",
+        [`C${session.company.id}CUST`, `^C${session.company.id}CUST[0-9]+$`, session.company.id]
+      );
+      customerId = `C${session.company.id}CUST${customerIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+      
+      await client.query('COMMIT');
+
+    } catch (transactionError) {
+      await client.query('ROLLBACK');
+      throw transactionError;
+    } finally {
+      client.release();
+    }
 
     const result = await pool.query(
       `INSERT INTO customers (
@@ -70,7 +85,7 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
