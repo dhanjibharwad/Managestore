@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     // Get session for authentication
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
@@ -58,26 +58,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate employee ID per company
-    const employeeIdResult = await pool.query(
-      "SELECT COALESCE(MAX(CAST(SUBSTRING(employee_id FROM 4) AS INTEGER)), 0) + 1 as next_number FROM employees WHERE employee_id ~ 'EMP[0-9]+' AND company_id = $1",
-      [company.id]
-    );
-    const employeeId = `EMP${employeeIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
-
     const result = await pool.query(
       `INSERT INTO employees (
-        employee_id, employee_role, employee_name, display_name, email_id, mobile_number,
+        employee_role, employee_name, display_name, email_id, mobile_number,
         phone_number, aadhaar_number, gender, pan_card, date_of_birth,
         address_line, region_state, city_town, postal_code,
         account_name, bank_name, branch, account_number, ifsc_code,
         company_id, created_by
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
+        $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21
       ) RETURNING *`,
       [
-        employeeId, employeeRole, employeeName, displayName, emailId, mobileNumber,
+        employeeRole, employeeName, displayName, emailId, mobileNumber,
         phoneNumber, aadhaarNumber, gender, panCard, dateOfBirth || null,
         addressLine, regionState, cityTown, postalCode,
         accountName, bankName, branch, accountNumber, ifscCode,
@@ -104,7 +97,7 @@ export async function GET(req: NextRequest) {
     // Get session for authentication
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
