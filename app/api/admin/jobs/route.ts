@@ -7,16 +7,11 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
-  const timeout = setTimeout(() => {
-    throw new Error('Request timeout');
-  }, 25000); // 25 second timeout
-  
   try {
     await pool.query('SELECT 1');
     
     const session = await getSession();
     if (!session?.company) {
-      clearTimeout(timeout);
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
@@ -130,14 +125,12 @@ export async function POST(req: NextRequest) {
       ]
     );
 
-    clearTimeout(timeout);
     return NextResponse.json({
       message: 'Job created successfully',
       job: result.rows[0]
     }, { status: 201 });
 
   } catch (error) {
-    clearTimeout(timeout);
     console.error('Create job error:', error);
     return NextResponse.json(
       { error: 'Failed to create job' },
