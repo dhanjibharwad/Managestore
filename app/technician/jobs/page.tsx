@@ -92,6 +92,11 @@ const JobPage: React.FC = () => {
   const [selfCheckinModal, setSelfCheckinModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewModal, setViewModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewJobModal, setViewJobModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
+  const [imageModal, setImageModal] = useState<{show: boolean, image: string, title: string}>({show: false, image: '', title: ''});
+
+  const openFileModal = (file: string, title: string) => {
+    setImageModal({show: true, image: file, title});
+  };
 
   const fetchEmployees = async () => {
     try {
@@ -690,7 +695,7 @@ const JobPage: React.FC = () => {
               <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg><h4 className="text-lg font-semibold text-blue-600">Service Information</h4></div><div className="bg-gray-50 p-4 rounded-lg space-y-4"><div><p className="text-sm text-gray-600 mb-1">Services</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.services}</p></div>{viewJobModal.job.service_assessment && (<div><p className="text-sm text-gray-600 mb-1">Service Assessment</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.service_assessment}</p></div>)}{viewJobModal.job.tags && (<div><p className="text-sm text-gray-600 mb-1">Tags</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.tags}</p></div>)}{viewJobModal.job.initial_quotation && (<div><p className="text-sm text-gray-600 mb-1">Initial Quotation</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.initial_quotation}</p></div>)}</div></div>
               <div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg><h4 className="text-lg font-semibold text-blue-600">Assignment</h4></div><div className="bg-gray-50 p-4 rounded-lg"><div><p className="text-sm text-gray-600 mb-1">Assigned To</p><p className="text-sm font-medium text-gray-900">{viewJobModal.job.assignee}</p></div></div></div>
               {viewJobModal.job.terms_conditions && (<div className="mb-6"><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Terms & Conditions</h4></div><div className="bg-gray-50 p-4 rounded-lg"><p className="text-sm font-medium text-gray-900 whitespace-pre-wrap">{viewJobModal.job.terms_conditions}</p></div></div>)}
-              {viewJobModal.job.images && viewJobModal.job.images.length > 0 && (<div><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Device Images</h4></div><div className="grid grid-cols-3 gap-4">{viewJobModal.job.images.map((image: string, idx: number) => (<div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => { const w = window.open(); if (w) w.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`); }}><img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center"><svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>))}</div></div>)}
+              {viewJobModal.job.images && viewJobModal.job.images.length > 0 && (<div><div className="flex items-center gap-2 mb-4"><svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg><h4 className="text-lg font-semibold text-blue-600">Device Images</h4></div><div className="grid grid-cols-3 gap-4">{viewJobModal.job.images.map((image: string, idx: number) => (<div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => openFileModal(image, `Job Image ${idx + 1}`)}><img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center"><svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg></div></div>))}</div></div>)}
             </div>
           </div>
         </div>
@@ -797,6 +802,70 @@ const JobPage: React.FC = () => {
         </div>
       )}
       
+      {/* Image Modal */}
+      {imageModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button 
+              onClick={() => setImageModal({show: false, image: '', title: ''})}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
+              <div className="p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">{imageModal.title}</h3>
+              </div>
+              <div className="p-4 flex items-center justify-center bg-gray-50">
+                <img 
+                  src={imageModal.image} 
+                  alt={imageModal.title}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm"
+                  style={{minHeight: '200px'}}
+                />
+              </div>
+              <div className="p-4 border-t border-gray-200 flex justify-between items-center">
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = imageModal.image;
+                    link.download = `${imageModal.title}.jpg`;
+                    link.click();
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Download
+                </button>
+                <button
+                  onClick={() => {
+                    const newWindow = window.open();
+                    if (newWindow) {
+                      newWindow.document.write(`
+                        <html>
+                          <head><title>${imageModal.title}</title></head>
+                          <body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f3f4f6;">
+                            <img src="${imageModal.image}" style="max-width:100%; max-height:100vh; object-fit:contain;" />
+                          </body>
+                        </html>
+                      `);
+                    }
+                  }}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Open in New Tab
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Toast Notifications */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
@@ -886,7 +955,7 @@ const JobPage: React.FC = () => {
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     {viewModal.request.device_images.map((image: string, idx: number) => (
-                      <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => { const w = window.open(); if (w) w.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`); }}>
+                      <div key={idx} className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group" onClick={() => openFileModal(image, `Self Check-In Image ${idx + 1}`)}>
                         <img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
                           <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>

@@ -95,6 +95,7 @@ const JobPage: React.FC = () => {
   const [deleteSelfCheckinModal, setDeleteSelfCheckinModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewModal, setViewModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewJobModal, setViewJobModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
+  const [imageModal, setImageModal] = useState<{show: boolean, image: string, title: string}>({show: false, image: '', title: ''});
 
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -937,12 +938,7 @@ const JobPage: React.FC = () => {
                       <div 
                         key={idx} 
                         className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group"
-                        onClick={() => {
-                          const newWindow = window.open();
-                          if (newWindow) {
-                            newWindow.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`);
-                          }
-                        }}
+                        onClick={() => setImageModal({show: true, image, title: `Self Check-In Image ${idx + 1}`})}
                       >
                         <img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
@@ -1302,12 +1298,7 @@ const JobPage: React.FC = () => {
                       <div 
                         key={idx} 
                         className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-500 transition-all cursor-pointer group"
-                        onClick={() => {
-                          const newWindow = window.open();
-                          if (newWindow) {
-                            newWindow.document.write(`<img src="${image}" style="max-width:100%; height:auto;" />`);
-                          }
-                        }}
+                        onClick={() => setImageModal({show: true, image, title: `Job Image ${idx + 1}`})}
                       >
                         <img src={image} alt={`Device ${idx + 1}`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
@@ -1426,6 +1417,70 @@ const JobPage: React.FC = () => {
         </div>
       )}
       
+      {/* Image Modal */}
+      {imageModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[60] p-4">
+          <div className="relative max-w-4xl max-h-[90vh] w-full">
+            <button 
+              onClick={() => setImageModal({show: false, image: '', title: ''})}
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white rounded-full flex items-center justify-center text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors shadow-lg"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="bg-white rounded-lg overflow-hidden shadow-2xl">
+              <div className="p-4 border-b border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900">{imageModal.title}</h3>
+              </div>
+              <div className="p-4 flex items-center justify-center bg-gray-50">
+                <img 
+                  src={imageModal.image} 
+                  alt={imageModal.title}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg shadow-sm"
+                  style={{minHeight: '200px'}}
+                />
+              </div>
+              <div className="p-4 border-t border-gray-200 flex justify-between items-center">
+                <button
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = imageModal.image;
+                    link.download = `${imageModal.title}.jpg`;
+                    link.click();
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Download
+                </button>
+                <button
+                  onClick={() => {
+                    const newWindow = window.open();
+                    if (newWindow) {
+                      newWindow.document.write(`
+                        <html>
+                          <head><title>${imageModal.title}</title></head>
+                          <body style="margin:0; display:flex; justify-content:center; align-items:center; min-height:100vh; background:#f3f4f6;">
+                            <img src="${imageModal.image}" style="max-width:100%; max-height:100vh; object-fit:contain;" />
+                          </body>
+                        </html>
+                      `);
+                    }
+                  }}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  Open in New Tab
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Toast Notifications */}
       <div className="fixed top-4 right-4 z-50 space-y-2">
         {toasts.map((toast) => (
