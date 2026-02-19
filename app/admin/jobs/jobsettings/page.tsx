@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Search, Plus, Edit2, Trash2, Settings2, Box, Wrench, Smartphone, Layers, CheckSquare, Package, MessageSquare, Palette, FileText, Grid } from 'lucide-react';
 import DeviceTypesPage from './devicetypes/page';
+import BrandsPage from './brands/page';
+import ModelsPage from './models/page';
 
 interface Brand {
   id: number;
@@ -23,19 +25,19 @@ const JobSettingsPage = () => {
   const [addModal, setAddModal] = useState(false);
 
   const sidebarItems = [
-    { label: 'Default Job Creation Settings', icon: Settings2 },
+    // { label: 'Default Job Creation Settings', icon: Settings2 },
     { label: 'Device Types', icon: Smartphone },
     { label: 'Brands', icon: Box },
     { label: 'Models', icon: Layers },
-    { label: 'Pre Post Conditions', icon: CheckSquare },
-    { label: 'Accessories', icon: Package },
-    { label: 'Services', icon: Wrench },
-    { label: 'Statuses', icon: Grid },
-    { label: 'Quick Reply', icon: MessageSquare },
+    // { label: 'Pre Post Conditions', icon: CheckSquare },
+    // { label: 'Accessories', icon: Package },
+    // { label: 'Services', icon: Wrench },
+    // { label: 'Statuses', icon: Grid },
+    // { label: 'Quick Reply', icon: MessageSquare },
     { label: 'Storage Locations', icon: Box },
-    { label: 'Device Colors', icon: Palette },
-    { label: 'Sources', icon: FileText },
-    { label: 'Job Types', icon: FileText }
+    // { label: 'Device Colors', icon: Palette },
+    // { label: 'Sources', icon: FileText },
+    // { label: 'Job Types', icon: FileText }
   ];
 
   useEffect(() => {
@@ -65,7 +67,7 @@ const JobSettingsPage = () => {
   );
 
   return (
-    <div className="flex h-[calc(100vh-120px)] bg-gray-50">
+    <div className="flex h-[calc(100vh-180px)]">
       {/* Sub-Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
         <div className="p-4 border-b border-gray-200">
@@ -80,7 +82,6 @@ const JobSettingsPage = () => {
                 key={item.label}
                 onClick={() => {
                   setActivePanel(item.label);
-                  router.push(`/admin/jobs/jobsettings?tab=${item.label.toLowerCase().replace(/\s+/g, '')}`, { scroll: false });
                 }}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors mb-1 ${
                   isActive
@@ -138,69 +139,7 @@ const JobSettingsPage = () => {
         {/* Content */}
         <div className="flex-1 overflow-auto p-6">
           {activePanel === 'Brands' && (
-            <div className="bg-white rounded-lg border border-gray-200">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Brand</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Type</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Jobs</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Updated On</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Created On</th>
-                    <th className="px-6 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {loading ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">Loading...</td>
-                    </tr>
-                  ) : filteredBrands.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">No brands found</td>
-                    </tr>
-                  ) : (
-                    filteredBrands.map((brand) => (
-                      <tr key={brand.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-[#4A70A9] font-medium">{brand.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{brand.type}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{brand.jobs || 0}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {new Date(brand.updated_on).toLocaleDateString('en-US', { 
-                            day: 'numeric', 
-                            month: 'short', 
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                          })}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {new Date(brand.created_on).toLocaleDateString('en-US', { 
-                            day: 'numeric', 
-                            month: 'short', 
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                            hour12: true
-                          })}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button className="p-1 text-gray-400 hover:text-[#4A70A9]">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button className="p-1 text-gray-400 hover:text-red-600">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <BrandsPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
           {activePanel === 'Device Types' && (
@@ -208,11 +147,7 @@ const JobSettingsPage = () => {
           )}
 
           {activePanel === 'Models' && (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <Layers className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Models</h3>
-              <p className="text-gray-500">Manage device models for your repair jobs</p>
-            </div>
+            <ModelsPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
           {activePanel === 'Services' && (

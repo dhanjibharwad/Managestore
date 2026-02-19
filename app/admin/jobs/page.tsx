@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Settings, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
 import Link from 'next/link';
+import JobSettingsPage from './jobsettings/page';
 
 interface Job {
   id: number;
@@ -333,7 +334,7 @@ const JobPage: React.FC = () => {
     // 'Outsourced Jobs',
     'Self Check-In',
     // 'Basic/Workflow Settings',
-    // 'Job Settings',
+    'Job Settings',
     // 'Technician Print Options',
     // 'Print Option Settings',
     // 'Job Service Option',
@@ -601,6 +602,8 @@ const JobPage: React.FC = () => {
               </div>
             </div>
           </>
+        ) : activeTab === 'Job Settings' ? (
+          <JobSettingsPage />
         ) : (activeTab === 'Open Jobs' || activeTab === 'All Jobs') ? (
           <>
             <div className="flex gap-4 mb-6 justify-end">
