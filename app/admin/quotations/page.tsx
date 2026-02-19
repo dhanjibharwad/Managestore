@@ -227,8 +227,8 @@ export default function QuotationsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-zinc-700">{quotation.createdBy}</td>
-                    <td className="px-6 py-4 text-sm text-zinc-700">${quotation.taxAmount.toFixed(2)}</td>
-                    <td className="px-6 py-4 text-sm text-zinc-700">${quotation.totalAmount.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">₹{quotation.taxAmount.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">₹{quotation.totalAmount.toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-zinc-700">
                       <div className="flex items-center gap-2">
                         <Link href={`/admin/quotations/edit/${quotation.id}`}>

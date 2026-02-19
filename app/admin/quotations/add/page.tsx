@@ -558,7 +558,7 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">{service.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{service.taxCode}</td>
                         <td className="px-4 py-2 text-sm">{service.tax}</td>
-                        <td className="px-4 py-2 text-sm">{service.taxAmt.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">₹{service.taxAmt.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{service.total.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">
                           <button
@@ -588,7 +588,7 @@ export default function QuotationPage() {
                     <td className="px-4 py-3"></td>
                     <td className="px-4 py-3"></td>
                     <td className="px-4 py-3 text-sm font-medium">
-                      {serviceTotals.taxAmt.toFixed(2)}
+                      ₹{serviceTotals.taxAmt.toFixed(2)}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium">
                       {serviceTotals.total.toFixed(2)}
@@ -655,7 +655,7 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">{part.price.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.disc.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.tax}</td>
-                        <td className="px-4 py-2 text-sm">{part.taxAmt.toFixed(2)}</td>
+                        <td className="px-4 py-2 text-sm">₹{part.taxAmt.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.total.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">
@@ -684,7 +684,7 @@ export default function QuotationPage() {
                     </td>
                     <td className="px-4 py-3"></td>
                     <td className="px-4 py-3 text-sm font-medium">
-                      {partTotals.taxAmt.toFixed(2)}
+                      ₹{partTotals.taxAmt.toFixed(2)}
                     </td>
                     <td className="px-4 py-3 text-sm font-medium">
                       {partTotals.subTotal.toFixed(2)}
