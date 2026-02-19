@@ -7,17 +7,17 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
+  const timeout = setTimeout(() => {
+    throw new Error('Request timeout');
+  }, 25000); // 25 second timeout
+  
   try {
-    // Test database connection first
     await pool.query('SELECT 1');
     
-    // Get session to extract company_id
     const session = await getSession();
-    if (!session || !session.company) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      );
+    if (!session?.company) {
+      clearTimeout(timeout);
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
     const body = await req.json();
@@ -106,6 +106,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // Ensure images is a proper JSON array
+    const imagesJson = Array.isArray(images) ? JSON.stringify(images) : JSON.stringify([]);
+
     const result = await pool.query(
       `INSERT INTO jobs (
         job_id, job_number, company_id, customer_id, customer_name, source, referred_by, service_type, job_type,
@@ -123,16 +126,18 @@ export async function POST(req: NextRequest) {
         deviceType, deviceBrand, deviceModel, serialNumber, accessories,
         storageLocation, deviceColor, devicePassword, services, tags,
         hardwareConfig, serviceAssessment, priority, assignee,
-        initialQuotation, dueDate || null, dealerJobId, termsConditions, images
+        initialQuotation, dueDate || null, dealerJobId, termsConditions, imagesJson
       ]
     );
 
+    clearTimeout(timeout);
     return NextResponse.json({
       message: 'Job created successfully',
       job: result.rows[0]
     }, { status: 201 });
 
   } catch (error) {
+    clearTimeout(timeout);
     console.error('Create job error:', error);
     return NextResponse.json(
       { error: 'Failed to create job' },

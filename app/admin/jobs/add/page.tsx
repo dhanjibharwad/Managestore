@@ -309,7 +309,16 @@ export default function JobSheetForm() {
         body: JSON.stringify(jobData),
       });
 
-      const result = await response.json();
+      let result;
+      const contentType = response.headers.get('content-type');
+      
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error('Server returned invalid response');
+      }
 
       if (response.ok) {
         showToast(`Job created successfully! Job Number: ${result.job.job_number}`, 'success');
