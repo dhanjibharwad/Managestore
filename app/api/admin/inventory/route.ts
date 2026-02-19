@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     // Get session to ensure user is authenticated and get company_id
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -45,10 +45,27 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Generate part_id manually if trigger doesn't work
-    const partIdResult = await pool.query('SELECT COALESCE(MAX(CAST(SUBSTRING(part_id FROM 5) AS INTEGER)), 0) + 1 as next_id FROM inventory_parts WHERE part_id ~ \'PART[0-9]+\' AND company_id = $1', [session.company.id]);
-    const nextId = partIdResult.rows[0]?.next_id || 1;
-    const generatedPartId = `PART${String(nextId).padStart(4, '0')}`;
+    // Generate part ID per company with company prefix
+    const client = await pool.connect();
+    let generatedPartId = '';
+    try {
+      await client.query('BEGIN');
+      await client.query('LOCK TABLE inventory_parts IN EXCLUSIVE MODE');
+      
+      const partIdResult = await client.query(
+        "SELECT COALESCE(MAX(CAST(SUBSTRING(part_id FROM LENGTH($1) + 1) AS INTEGER)), 0) + 1 as next_number FROM inventory_parts WHERE part_id ~ $2 AND company_id = $3",
+        [`C${session.company.id}PART`, `^C${session.company.id}PART[0-9]+$`, session.company.id]
+      );
+      generatedPartId = `C${session.company.id}PART${partIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+      
+      await client.query('COMMIT');
+
+    } catch (transactionError) {
+      await client.query('ROLLBACK');
+      throw transactionError;
+    } finally {
+      client.release();
+    }
 
     const result = await pool.query(
       `INSERT INTO inventory_parts (
@@ -87,7 +104,7 @@ export async function GET(req: NextRequest) {
   try {
     // Get session to ensure user is authenticated and get company_id
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

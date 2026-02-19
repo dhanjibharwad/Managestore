@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -56,15 +56,37 @@ export async function POST(req: NextRequest) {
     const assigneeId = assignee ? parseInt(assignee) || null : null;
     const customerId = customer ? parseInt(customer) || null : null;
 
+    // Generate task ID per company with company prefix
+    const client = await pool.connect();
+    let taskId = '';
+    try {
+      await client.query('BEGIN');
+      await client.query('LOCK TABLE tasks IN EXCLUSIVE MODE');
+      
+      const taskIdResult = await client.query(
+        "SELECT COALESCE(MAX(CAST(SUBSTRING(task_id FROM LENGTH($1) + 1) AS INTEGER)), 0) + 1 as next_number FROM tasks WHERE task_id ~ $2 AND company_id = $3",
+        [`C${session.company.id}TSK`, `^C${session.company.id}TSK[0-9]+$`, session.company.id]
+      );
+      taskId = `C${session.company.id}TSK${taskIdResult.rows[0].next_number.toString().padStart(4, '0')}`;
+      
+      await client.query('COMMIT');
+
+    } catch (transactionError) {
+      await client.query('ROLLBACK');
+      throw transactionError;
+    } finally {
+      client.release();
+    }
+
     const result = await pool.query(
       `INSERT INTO tasks (
-        task_title, task_description, assignee_id, due_date,
+        task_id, task_title, task_description, assignee_id, due_date,
         task_status, priority, customer_id, company_id, attachments, send_alert
       ) VALUES (
-        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
       ) RETURNING *`,
       [
-        taskTitle, taskDescription, assigneeId, parsedDueDate,
+        taskId, taskTitle, taskDescription, assigneeId, parsedDueDate,
         taskStatus, priority, customerId, companyId, JSON.stringify(attachments),
         JSON.stringify(sendAlert)
       ]
@@ -88,7 +110,7 @@ export async function GET(req: NextRequest) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
