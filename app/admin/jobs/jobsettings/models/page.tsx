@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, X } from 'lucide-react';
 
 interface Model {
   id: number;
@@ -33,6 +33,8 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [internalAddModal, setInternalAddModal] = useState(false);
+  const [editModal, setEditModal] = useState<{show: boolean, model: Model | null}>({show: false, model: null});
+  const [deleteModal, setDeleteModal] = useState<{show: boolean, model: Model | null}>({show: false, model: null});
   const [formName, setFormName] = useState('');
   const [formDeviceTypeId, setFormDeviceTypeId] = useState('');
   const [formBrandId, setFormBrandId] = useState('');
@@ -100,6 +102,45 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
         setFormName('');
         setFormDeviceTypeId('');
         setFormBrandId('');
+        fetchModels();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleEdit = async () => {
+    if (!editModal.model || !formName.trim() || !formBrandId) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/devices/models', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id: editModal.model.id, 
+          name: formName.trim(),
+          device_brand_id: parseInt(formBrandId)
+        })
+      });
+      if (response.ok) {
+        setEditModal({show: false, model: null});
+        setFormName('');
+        setFormDeviceTypeId('');
+        setFormBrandId('');
+        fetchModels();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.model) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch(`/api/devices/models?id=${deleteModal.model.id}`, { method: 'DELETE' });
+      if (response.ok) {
+        setDeleteModal({show: false, model: null});
         fetchModels();
       }
     } finally {
@@ -181,6 +222,23 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
                       <Edit2 className="w-4 h-4 inline mr-2" />
                       <Trash2 className="w-4 h-4 inline" />
                     </button>
+                    {openDropdown === index && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <button onClick={() => { 
+                          const brand = brands.find(b => b.id === model.device_brand_id);
+                          setEditModal({show: true, model}); 
+                          setFormName(model.name); 
+                          setFormDeviceTypeId(brand?.device_type_id.toString() || '');
+                          setFormBrandId(model.device_brand_id.toString()); 
+                          setOpenDropdown(null); 
+                        }} className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                          <Edit2 className="w-4 h-4" />Edit
+                        </button>
+                        <button onClick={() => { setDeleteModal({show: true, model}); setOpenDropdown(null); }} className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                          <Trash2 className="w-4 h-4" />Delete
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
@@ -229,6 +287,63 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
             <div className="flex gap-3 mt-4">
               <button onClick={() => handleSetAddModal(false)} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
               <button onClick={handleAdd} disabled={submitting} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md">{submitting ? 'Adding...' : 'Add'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Edit Model</h3>
+            <div className="space-y-4">
+              <input 
+                type="text" 
+                value={formName} 
+                onChange={(e) => setFormName(e.target.value)} 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md" 
+              />
+              <select 
+                value={formDeviceTypeId} 
+                onChange={(e) => {
+                  setFormDeviceTypeId(e.target.value);
+                  setFormBrandId('');
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select Device Type</option>
+                {deviceTypes.map(type => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
+              </select>
+              <select 
+                value={formBrandId} 
+                onChange={(e) => setFormBrandId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                disabled={!formDeviceTypeId}
+              >
+                <option value="">Select Brand</option>
+                {getFilteredBrands().map(brand => (
+                  <option key={brand.id} value={brand.id}>{brand.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => setEditModal({show: false, model: null})} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+              <button onClick={handleEdit} disabled={submitting} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md">{submitting ? 'Updating...' : 'Update'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Delete Model</h3>
+            <p className="mb-4">Are you sure you want to delete <strong>{deleteModal.model?.name}</strong>?</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteModal({show: false, model: null})} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+              <button onClick={handleDelete} disabled={submitting} className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md">{submitting ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, X } from 'lucide-react';
 
 interface Brand {
   id: number;
@@ -89,6 +89,44 @@ const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => 
     }
   };
 
+  const handleEdit = async () => {
+    if (!editModal.brand || !formName.trim() || !formDeviceTypeId) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/devices/brands', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          id: editModal.brand.id, 
+          name: formName.trim(),
+          device_type_id: parseInt(formDeviceTypeId)
+        })
+      });
+      if (response.ok) {
+        setEditModal({show: false, brand: null});
+        setFormName('');
+        setFormDeviceTypeId('');
+        fetchBrands();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.brand) return;
+    setSubmitting(true);
+    try {
+      const response = await fetch(`/api/devices/brands?id=${deleteModal.brand.id}`, { method: 'DELETE' });
+      if (response.ok) {
+        setDeleteModal({show: false, brand: null});
+        fetchBrands();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const getDeviceTypeName = (deviceTypeId: number) => {
     const deviceType = deviceTypes.find(dt => dt.id === deviceTypeId);
     return deviceType?.name || 'Unknown';
@@ -148,6 +186,16 @@ const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => 
                       <Edit2 className="w-4 h-4 inline mr-2" />
                       <Trash2 className="w-4 h-4 inline" />
                     </button>
+                    {openDropdown === index && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <button onClick={() => { setEditModal({show: true, brand}); setFormName(brand.name); setFormDeviceTypeId(brand.device_type_id.toString()); setOpenDropdown(null); }} className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                          <Edit2 className="w-4 h-4" />Edit
+                        </button>
+                        <button onClick={() => { setDeleteModal({show: true, brand}); setOpenDropdown(null); }} className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                          <Trash2 className="w-4 h-4" />Delete
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))
@@ -182,6 +230,49 @@ const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => 
             <div className="flex gap-3 mt-4">
               <button onClick={() => handleSetAddModal(false)} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
               <button onClick={handleAdd} disabled={submitting} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md">{submitting ? 'Adding...' : 'Add'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {editModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Edit Brand</h3>
+            <div className="space-y-4">
+              <input 
+                type="text" 
+                value={formName} 
+                onChange={(e) => setFormName(e.target.value)} 
+                className="w-full px-3 py-2 border border-gray-300 rounded-md" 
+              />
+              <select 
+                value={formDeviceTypeId} 
+                onChange={(e) => setFormDeviceTypeId(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select Device Type</option>
+                {deviceTypes.map(type => (
+                  <option key={type.id} value={type.id}>{type.name}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button onClick={() => setEditModal({show: false, brand: null})} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+              <button onClick={handleEdit} disabled={submitting} className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md">{submitting ? 'Updating...' : 'Update'}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg w-full max-w-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Delete Brand</h3>
+            <p className="mb-4">Are you sure you want to delete <strong>{deleteModal.brand?.name}</strong>?</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteModal({show: false, brand: null})} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+              <button onClick={handleDelete} disabled={submitting} className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md">{submitting ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>
         </div>

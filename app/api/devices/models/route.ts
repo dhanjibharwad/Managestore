@@ -55,3 +55,50 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Failed to create model' }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id, name, device_brand_id } = await request.json();
+    const companyId = session.company.id;
+    
+    const result = await pool.query(
+      'UPDATE device_models SET name = $1, device_brand_id = $2, updated_at = NOW() WHERE id = $3 AND company_id = $4 RETURNING *',
+      [name, device_brand_id, id, companyId]
+    );
+    
+    return NextResponse.json(result.rows[0]);
+  } catch (error) {
+    console.error('Update model error:', error);
+    return NextResponse.json({ error: 'Failed to update model' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = await getSession();
+    
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    const companyId = session.company.id;
+    
+    await pool.query(
+      'DELETE FROM device_models WHERE id = $1 AND company_id = $2',
+      [id, companyId]
+    );
+    
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete model error:', error);
+    return NextResponse.json({ error: 'Failed to delete model' }, { status: 500 });
+  }
+}
