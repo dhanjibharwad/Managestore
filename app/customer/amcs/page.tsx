@@ -43,6 +43,11 @@ export default function AMCContractsPage() {
     }
   };
 
+  const getInitials = (name: string) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+  };
+
   const filteredContracts = contracts.filter(contract =>
     (contract.customer_display_name || contract.customer_name).toLowerCase().includes(searchQuery.toLowerCase()) ||
     contract.contract_number.toLowerCase().includes(searchQuery.toLowerCase())
@@ -51,7 +56,7 @@ export default function AMCContractsPage() {
   return (
     <div className="bg-gray-50">
       {/* Header Tabs */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="border-b border-gray-200">
         <div className="mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex space-x-8">
             <Link
@@ -167,7 +172,20 @@ export default function AMCContractsPage() {
                         {contract.customer_display_name || contract.customer_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {contract.assignee_display_name || contract.assignee}
+                        {(() => {
+                          const assigneeName = contract.assignee_display_name || contract.assignee;
+                          if (assigneeName) {
+                            return (
+                              <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                                  {getInitials(assigneeName)}
+                                </div>
+                                <div className="text-gray-900 font-medium">{assigneeName}</div>
+                              </div>
+                            );
+                          }
+                          return '-';
+                        })()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {contract.amc_type}
