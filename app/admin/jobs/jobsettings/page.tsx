@@ -34,7 +34,7 @@ const JobSettingsPage = () => {
     // { label: 'Services', icon: Wrench },
     // { label: 'Statuses', icon: Grid },
     // { label: 'Quick Reply', icon: MessageSquare },
-    { label: 'Storage Locations', icon: Box },
+    // { label: 'Storage Locations', icon: Box },
     // { label: 'Device Colors', icon: Palette },
     // { label: 'Sources', icon: FileText },
     // { label: 'Job Types', icon: FileText }
