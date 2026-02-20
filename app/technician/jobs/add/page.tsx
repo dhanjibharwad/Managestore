@@ -43,6 +43,12 @@ interface StorageLocation {
   name: string;
 }
 
+interface DeviceColor {
+  id: number;
+  name: string;
+  color_code: string;
+}
+
 
 
 interface FormData {
@@ -89,6 +95,7 @@ export default function JobSheetForm() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [employees, setEmployees] = useState<any[]>([]);
   const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
+  const [deviceColors, setDeviceColors] = useState<DeviceColor[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
@@ -158,6 +165,16 @@ export default function JobSheetForm() {
         }
       })
       .catch(error => console.error('Error fetching storage locations:', error));
+    
+    // Fetch device colors
+    fetch('/api/devices/colors')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setDeviceColors(data);
+        }
+      })
+      .catch(error => console.error('Error fetching device colors:', error));
   }, []);
 
   useEffect(() => {
@@ -618,12 +635,9 @@ export default function JobSheetForm() {
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
                   <option value="">Select device color</option>
-                  <option>Black</option>
-                  <option>White</option>
-                  <option>Silver</option>
-                  <option>Gold</option>
-                  <option>Blue</option>
-                  <option>Red</option>
+                  {deviceColors.map(color => (
+                    <option key={color.id} value={color.name}>{color.name}</option>
+                  ))}
                 </select>
               </div>
 
