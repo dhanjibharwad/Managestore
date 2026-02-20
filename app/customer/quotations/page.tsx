@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, CheckCircle, XCircle, AlertCircle, X } from 'lucide-react';
+import { Search, CheckCircle, XCircle, AlertCircle, X, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 interface Quotation {
   id: string;
@@ -197,28 +198,34 @@ export default function QuotationsPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.tax_amount.toString()).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.total_amount.toString()).toFixed(2)}</td>
                   <td className="px-6 py-4 text-sm">
-                    {(!quotation.status || quotation.status === 'pending') ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleQuotationAction(quotation.id, 'approved')}
-                          disabled={processingQuotation === quotation.id}
-                          className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <CheckCircle className="w-4 h-4" />
-                          {processingQuotation === quotation.id ? 'Processing...' : 'Approve'}
+                    <div className="flex items-center gap-2">
+                      <Link href={`/customer/quotations/${quotation.id}/invoice`}>
+                        <button className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
+                          <FileText className="w-4 h-4" />
+                          View
                         </button>
-                        <button
-                          onClick={() => handleQuotationAction(quotation.id, 'rejected')}
-                          disabled={processingQuotation === quotation.id}
-                          className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <XCircle className="w-4 h-4" />
-                          {processingQuotation === quotation.id ? 'Processing...' : 'Reject'}
-                        </button>
-                      </div>
-                    ) : (
-                      <span className="text-gray-500 text-sm">-</span>
-                    )}
+                      </Link>
+                      {(!quotation.status || quotation.status === 'pending') && (
+                        <>
+                          <button
+                            onClick={() => handleQuotationAction(quotation.id, 'approved')}
+                            disabled={processingQuotation === quotation.id}
+                            className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <CheckCircle className="w-4 h-4" />
+                            {processingQuotation === quotation.id ? 'Processing...' : 'Approve'}
+                          </button>
+                          <button
+                            onClick={() => handleQuotationAction(quotation.id, 'rejected')}
+                            disabled={processingQuotation === quotation.id}
+                            className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            {processingQuotation === quotation.id ? 'Processing...' : 'Reject'}
+                          </button>
+                        </>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))

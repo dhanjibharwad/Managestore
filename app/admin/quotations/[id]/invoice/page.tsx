@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { Printer } from 'lucide-react';
 
-interface SaleItem {
+interface QuotationItem {
   id: string;
   description: string;
   taxCode: string;
@@ -17,44 +17,72 @@ interface SaleItem {
   total: number;
 }
 
-interface Sale {
+interface Quotation {
   id: number;
-  sale_number: string;
+  quotation_number: string;
   customer_name: string;
-  sale_date: string;
-  payment_status: string;
-  grand_total: number;
-  subtotal: number;
-  total_tax: number;
-  items: SaleItem[];
+  expired_on: string;
+  total_amount: number;
+  items: QuotationItem[];
   customer_phone?: string;
   customer_email?: string;
-  customer_address?: string;
-  customer_tax_no?: string;
+  note?: string;
+  terms_conditions?: string;
   company_name?: string;
 }
 
-export default function CustomerSaleInvoice() {
+export default function QuotationInvoice() {
   const params = useParams();
-  const [sale, setSale] = useState<Sale | null>(null);
+  const [quotation, setQuotation] = useState<Quotation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchSaleDetails = useCallback(async () => {
+  const fetchQuotationDetails = useCallback(async () => {
     try {
       setError(null);
-      const response = await fetch(`/api/admin/sales/${params.id}`);
+      const response = await fetch(`/api/admin/quotations/${params.id}`);
       if (!response.ok) {
-        throw new Error(`Failed to fetch sale: ${response.status}`);
+        throw new Error(`Failed to fetch quotation: ${response.status}`);
       }
       const data = await response.json();
-      if (data.sale) {
-        setSale(data.sale);
+      if (data.quotation) {
+        const services = data.services?.map((s: any) => ({
+          id: s.id.toString(),
+          description: s.service_name,
+          taxCode: s.tax_code || '',
+          qty: 1,
+          price: parseFloat(s.price) || 0,
+          disc: parseFloat(s.discount) || 0,
+          tax: parseFloat(s.tax_rate) || 0,
+          taxAmt: parseFloat(s.tax_amount) || 0,
+          subTotal: parseFloat(s.subtotal) || 0,
+          total: parseFloat(s.total) || 0
+        })) || [];
+        
+        const parts = data.parts?.map((p: any) => ({
+          id: p.id.toString(),
+          description: p.part_name || p.description,
+          taxCode: p.tax_code || '',
+          qty: parseInt(p.quantity) || 0,
+          price: parseFloat(p.price) || 0,
+          disc: parseFloat(p.discount) || 0,
+          tax: parseFloat(p.tax_rate) || 0,
+          taxAmt: parseFloat(p.tax_amount) || 0,
+          subTotal: parseFloat(p.subtotal) || 0,
+          total: parseFloat(p.total) || 0
+        })) || [];
+
+        setQuotation({
+          ...data.quotation,
+          total_amount: parseFloat(data.quotation.total_amount) || 0,
+          company_name: data.quotation.company_name,
+          items: [...services, ...parts]
+        });
       } else {
-        setError('Sale not found');
+        setError('Quotation not found');
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to load sale');
+      setError(error instanceof Error ? error.message : 'Failed to load quotation');
     } finally {
       setLoading(false);
     }
@@ -62,9 +90,9 @@ export default function CustomerSaleInvoice() {
 
   useEffect(() => {
     if (params.id) {
-      fetchSaleDetails();
+      fetchQuotationDetails();
     }
-  }, [params.id, fetchSaleDetails]);
+  }, [params.id, fetchQuotationDetails]);
 
   const handlePrint = () => {
     window.print();
@@ -73,7 +101,7 @@ export default function CustomerSaleInvoice() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-gray-500">Loading invoice...</div>
+        <div className="text-gray-500">Loading quotation...</div>
       </div>
     );
   }
@@ -86,10 +114,10 @@ export default function CustomerSaleInvoice() {
     );
   }
 
-  if (!sale) {
+  if (!quotation) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-red-500">Sale not found</div>
+        <div className="text-red-500">Quotation not found</div>
       </div>
     );
   }
@@ -104,30 +132,26 @@ export default function CustomerSaleInvoice() {
 
   return (
     <>
-      {/* Invoice Content */}
       <div className="invoice-container max-w-4xl mx-auto p-8 bg-white">
-        {/* Print Button - Hidden in print */}
         <div className="no-print flex justify-end mb-4">
           <button
             onClick={handlePrint}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
           >
             <Printer className="w-4 h-4" />
-            Print Invoice
+            Print Quotation
           </button>
         </div>
-        {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">{sale.company_name || 'Company Name'}</h2>
-            <h1 className="text-2xl font-bold text-gray-800">Tax Invoice {sale.sale_number}</h1>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">{quotation.company_name || 'Company Name'}</h2>
+            <h1 className="text-2xl font-bold text-gray-800">Quotation {quotation.quotation_number}</h1>
           </div>
           <div className="text-right text-sm text-gray-600">
             {currentDate}
           </div>
         </div>
 
-        {/* Customer Details */}
         <div className="mb-8">
           <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
             <h2 className="font-semibold text-gray-800">Customer Details</h2>
@@ -135,34 +159,27 @@ export default function CustomerSaleInvoice() {
           <div className="grid grid-cols-3 gap-8 p-4 border border-gray-300 border-t-0">
             <div>
               <div className="mb-2">
-                <span className="font-medium">Name:</span> {sale.customer_name}
-              </div>
-              <div>
-                <span className="font-medium">Tax No:</span> {sale.customer_tax_no || 'N/A'}
+                <span className="font-medium">Name:</span> {quotation.customer_name}
               </div>
             </div>
             <div>
               <div className="mb-2">
-                <span className="font-medium">Phone:</span> {sale.customer_phone || 'N/A'}
-              </div>
-              <div>
-                <span className="font-medium">Address:</span> {sale.customer_address || 'N/A'}
+                <span className="font-medium">Phone:</span> {quotation.customer_phone || 'N/A'}
               </div>
             </div>
             <div>
               <div>
-                <span className="font-medium">Email:</span> {sale.customer_email || 'N/A'}
+                <span className="font-medium">Email:</span> {quotation.customer_email || 'N/A'}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Part Description Table */}
         <div className="mb-8">
           <table className="w-full border border-gray-300">
             <thead>
               <tr className="bg-gray-100">
-                <th className="border border-gray-300 px-3 py-2 text-left font-medium">Part Description</th>
+                <th className="border border-gray-300 px-3 py-2 text-left font-medium">Description</th>
                 <th className="border border-gray-300 px-3 py-2 text-left font-medium">Tax Code</th>
                 <th className="border border-gray-300 px-3 py-2 text-left font-medium">Qty</th>
                 <th className="border border-gray-300 px-3 py-2 text-left font-medium">Price</th>
@@ -174,9 +191,9 @@ export default function CustomerSaleInvoice() {
               </tr>
             </thead>
             <tbody>
-              {sale.items && sale.items.length > 0 ? (
-                sale.items.map((item, index) => (
-                  <tr key={index}>
+              {quotation.items && quotation.items.length > 0 ? (
+                quotation.items.map((item) => (
+                  <tr key={item.id}>
                     <td className="border border-gray-300 px-3 py-2">
                       <div className="font-medium">{item.description}</div>
                     </td>
@@ -204,51 +221,41 @@ export default function CustomerSaleInvoice() {
                 </tr>
               )}
               
-              {/* Totals Row */}
               <tr className="bg-gray-50 font-medium">
                 <td className="border border-gray-300 px-3 py-2"></td>
                 <td className="border border-gray-300 px-3 py-2"></td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.qty, 0) || 0}
+                  {quotation.items?.reduce((sum, item) => sum + item.qty, 0) || 0}
                 </td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.price, 0).toFixed(2) || '0.00'}
+                  {quotation.items?.reduce((sum, item) => sum + item.price, 0).toFixed(2) || '0.00'}
                 </td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.disc, 0).toFixed(2) || '0.00'}
+                  {quotation.items?.reduce((sum, item) => sum + item.disc, 0).toFixed(2) || '0.00'}
                 </td>
                 <td className="border border-gray-300 px-3 py-2"></td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.taxAmt, 0).toFixed(2) || '0.00'}
+                  {quotation.items?.reduce((sum, item) => sum + item.taxAmt, 0).toFixed(2) || '0.00'}
                 </td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.subTotal, 0).toFixed(2) || '0.00'}
+                  {quotation.items?.reduce((sum, item) => sum + item.subTotal, 0).toFixed(2) || '0.00'}
                 </td>
                 <td className="border border-gray-300 px-3 py-2">
-                  {sale.items?.reduce((sum, item) => sum + item.total, 0).toFixed(2) || '0.00'}
+                  {quotation.items?.reduce((sum, item) => sum + item.total, 0).toFixed(2) || '0.00'}
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        {/* Summary */}
         <div className="mb-8">
           <div className="flex justify-end">
             <div className="w-80">
               <table className="w-full border border-gray-300">
                 <tbody>
                   <tr>
-                    <td className="border border-gray-300 px-4 py-2 bg-gray-100 font-medium">Total Amount</td>
-                    <td className="border border-gray-300 px-4 py-2 text-right">₹ {sale.subtotal.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-gray-300 px-4 py-2 bg-gray-100 font-medium">Total Tax Amount</td>
-                    <td className="border border-gray-300 px-4 py-2 text-right">₹ {sale.total_tax.toFixed(2)}</td>
-                  </tr>
-                  <tr>
                     <td className="border border-gray-300 px-4 py-2 bg-gray-100 font-medium">Grand Total</td>
-                    <td className="border border-gray-300 px-4 py-2 text-right font-bold">₹ {sale.grand_total.toFixed(2)}</td>
+                    <td className="border border-gray-300 px-4 py-2 text-right font-bold">₹ {(quotation.total_amount || 0).toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -256,49 +263,29 @@ export default function CustomerSaleInvoice() {
           </div>
         </div>
 
-        {/* Payment Information */}
-        <div className="mb-8">
-          <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
-            <h2 className="font-semibold text-gray-800">Payment Information</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-8 p-4 border border-gray-300 border-t-0">
-            <div>
-              <div className="mb-2">
-                <span className="font-medium">Payable Amount:</span> ₹ {sale.grand_total.toFixed(2)}
-              </div>
-              <div>
-                <span className="font-medium">Payment Status:</span> 
-                <span className={`ml-2 px-2 py-1 text-xs font-medium rounded ${
-                  sale.payment_status === 'paid' ? 'bg-green-100 text-green-800' :
-                  sale.payment_status === 'partially-paid' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-red-100 text-red-800'
-                }`}>
-                  {sale.payment_status}
-                </span>
-              </div>
+        {quotation.note && (
+          <div className="mb-8">
+            <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
+              <h2 className="font-semibold text-gray-800">Note</h2>
             </div>
-            {/* <div>
-              <div>
-                <span className="font-medium">Payment Received:</span> ₹ {(0).toFixed(2)}
-              </div>
-            </div> */}
+            <div className="p-4 border border-gray-300 border-t-0">
+              {quotation.note}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Signature Section */}
-        {/* <div className="grid grid-cols-2 gap-8">
-          <div>
-            <div className="border-2 border-blue-300 rounded h-32 mb-2"></div>
-            <div className="text-center mt-2 font-medium">Customer Signature</div>
+        {quotation.terms_conditions && (
+          <div className="mb-8">
+            <div className="bg-gray-100 px-4 py-2 border-b border-gray-300">
+              <h2 className="font-semibold text-gray-800">Terms and Conditions</h2>
+            </div>
+            <div className="p-4 border border-gray-300 border-t-0">
+              {quotation.terms_conditions}
+            </div>
           </div>
-          <div>
-            <div className="border-2 border-blue-300 rounded h-32 mb-2"></div>
-            <div className="text-center mt-2 font-medium">Employee Signature</div>
-          </div>
-        </div> */}
+        )}
       </div>
 
-      {/* Print Styles */}
       <style jsx global>{`
         @media print {
           * {

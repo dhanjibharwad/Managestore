@@ -22,9 +22,17 @@ export async function GET(
 
     const companyId = session.company.id;
 
-    // Get the quotation
+    // Get the quotation with customer details
     const quotationResult = await pool.query(
-      'SELECT * FROM quotations WHERE id = $1 AND company_id = $2',
+      `SELECT q.*, 
+              c.customer_name as customer_full_name,
+              c.mobile_number as customer_phone,
+              c.email_id as customer_email,
+              comp.company_name
+       FROM quotations q
+       LEFT JOIN customers c ON c.id::text = q.customer_name OR c.customer_name = q.customer_name
+       LEFT JOIN companies comp ON comp.id = q.company_id
+       WHERE q.id = $1 AND q.company_id = $2`,
       [quotationId, companyId]
     );
 
@@ -47,7 +55,13 @@ export async function GET(
     );
 
     return NextResponse.json({
-      quotation,
+      quotation: {
+        ...quotation,
+        customer_name: quotation.customer_full_name || quotation.customer_name,
+        customer_phone: quotation.customer_phone,
+        customer_email: quotation.customer_email,
+        company_name: quotation.company_name
+      },
       services: servicesResult.rows,
       parts: partsResult.rows
     });

@@ -104,19 +104,18 @@ export default function TechnicianSaleInvoice() {
 
   return (
     <>
-      {/* Print Button - Hidden in print */}
-      <div className="no-print fixed top-4 right-4 z-10">
-        <button
-          onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          <Printer className="w-4 h-4" />
-          Print Invoice
-        </button>
-      </div>
-
       {/* Invoice Content */}
       <div className="invoice-container max-w-4xl mx-auto p-8 bg-white">
+        {/* Print Button - Hidden in print */}
+        <div className="no-print flex justify-end mb-4">
+          <button
+            onClick={handlePrint}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+          >
+            <Printer className="w-4 h-4" />
+            Print Invoice
+          </button>
+        </div>
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>

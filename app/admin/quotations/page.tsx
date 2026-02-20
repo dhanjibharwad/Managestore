@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit, ChevronDown, Plus } from 'lucide-react';
+import { Search, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit, ChevronDown, Plus, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -231,6 +231,11 @@ export default function QuotationsPage() {
                     <td className="px-6 py-4 text-sm text-zinc-700">₹{quotation.totalAmount.toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-zinc-700">
                       <div className="flex items-center gap-2">
+                        <Link href={`/admin/quotations/${quotation.id}/invoice`}>
+                          <button className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
+                            <FileText className="w-4 h-4" />
+                          </button>
+                        </Link>
                         <Link href={`/admin/quotations/edit/${quotation.id}`}>
                           <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                             <Edit className="w-4 h-4" />
