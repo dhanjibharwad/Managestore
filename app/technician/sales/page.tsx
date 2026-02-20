@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, Plus, Settings, CreditCard, DollarSign, FileText, Smartphone, X } from 'lucide-react';
+import { Search, ChevronDown, Plus, Settings, CreditCard, DollarSign, FileText, Smartphone, X, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Sale {
@@ -219,35 +219,18 @@ export default function SalesPage() {
                                  right: `${dropdownPosition.right}px`
                                }}>
                             <div className="py-1">
-                              {/* <button 
-                                onClick={() => {
-                                  setSelectedSale(sale);
-                                  setShowPaymentModal(true);
-                                  setOpenDropdown(null);
-                                }}
-                                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
-                              >
-                                <CreditCard className="w-4 h-4" />
-                                Add Payment
-                              </button> */}
-                              {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                <DollarSign className="w-4 h-4" />
-                                Collect Payment
-                              </button> */}
+                              <Link href={`/technician/sales/edit/${sale.id}`}>
+                                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                  <Edit className="w-4 h-4" />
+                                  Edit Sale
+                                </button>
+                              </Link>
                               <Link href={`/technician/sales/${sale.id}/invoice`}>
                                 <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                   <FileText className="w-4 h-4" />
                                   Sale Invoice
                                 </button>
                               </Link>
-                              {/* <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                                <Smartphone className="w-4 h-4" />
-                                Send UPI Link
-                              </button> */}
-                              {/* <button className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
-                                <Trash2 className="w-4 h-4" />
-                                Delete Sale
-                              </button> */}
                             </div>
                           </div>
                         )}

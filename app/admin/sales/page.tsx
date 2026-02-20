@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, ChevronUp, Plus, Info, Settings, CreditCard, DollarSign, FileText, Smartphone, Trash2, X, Calendar, CheckCircle, AlertCircle, XCircle } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, Plus, Info, Settings, CreditCard, DollarSign, FileText, Smartphone, Trash2, X, Calendar, CheckCircle, AlertCircle, XCircle, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Sale {
@@ -339,6 +339,12 @@ export default function SalesPage() {
                                 <DollarSign className="w-4 h-4" />
                                 Collect Payment
                               </button> */}
+                              <Link href={`/admin/sales/edit/${sale.id}`}>
+                                <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                                  <Edit className="w-4 h-4" />
+                                  Edit Sale
+                                </button>
+                              </Link>
                               <Link href={`/admin/sales/${sale.id}/invoice`}>
                                 <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
                                   <FileText className="w-4 h-4" />

@@ -84,6 +84,89 @@ export async function GET(
   }
 }
 
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const client = await pool.connect();
+  try {
+    const saleId = parseInt(id);
+    if (isNaN(saleId)) {
+      return NextResponse.json({ error: 'Invalid sale ID' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const { customerName, saleDate, paymentStatus, termsConditions, items } = body;
+
+    if (!customerName || !saleDate || !items || items.length === 0) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    await client.query('BEGIN');
+
+    // Calculate totals
+    let subtotal = 0;
+    let totalTax = 0;
+    let grandTotal = 0;
+
+    items.forEach((item: any) => {
+      subtotal += parseFloat(item.subTotal) || 0;
+      totalTax += parseFloat(item.taxAmt) || 0;
+      grandTotal += parseFloat(item.total) || 0;
+    });
+
+    // Update sale
+    await client.query(
+      `UPDATE sales SET 
+        customer_name = $1, 
+        sale_date = $2, 
+        payment_status = $3, 
+        terms_conditions = $4,
+        subtotal = $5,
+        total_tax = $6,
+        grand_total = $7,
+        updated_at = NOW()
+      WHERE id = $8`,
+      [customerName, saleDate, paymentStatus, termsConditions, subtotal, totalTax, grandTotal, saleId]
+    );
+
+    // Delete existing items
+    await client.query('DELETE FROM sale_items WHERE sale_id = $1', [saleId]);
+
+    // Insert updated items
+    for (const item of items) {
+      await client.query(
+        `INSERT INTO sale_items (
+          sale_id, description, tax_code, quantity, price, discount, 
+          tax_rate, tax_amount, subtotal, total
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+        [
+          saleId,
+          item.description,
+          item.taxCode || null,
+          item.qty,
+          item.price,
+          item.disc,
+          item.tax,
+          item.taxAmt,
+          item.subTotal,
+          item.total
+        ]
+      );
+    }
+
+    await client.query('COMMIT');
+    return NextResponse.json({ success: true, message: 'Sale updated successfully' });
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error updating sale:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } finally {
+    client.release();
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
