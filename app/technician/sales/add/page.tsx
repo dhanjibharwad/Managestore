@@ -20,7 +20,7 @@ interface SaleItem {
 }
 
 interface Toast {
-  id: number;
+  id: string;
   message: string;
   type: 'success' | 'error' | 'warning';
 }
@@ -58,7 +58,6 @@ export default function SalesForm() {
   const [submitting, setSubmitting] = useState(false);
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [nextToastId, setNextToastId] = useState(1);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [parts, setParts] = useState<Part[]>([]);
 
@@ -89,13 +88,12 @@ export default function SalesForm() {
   }, [showAddPartModal]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
-    const toast: Toast = { id: nextToastId, message, type };
+    const toast: Toast = { id: crypto.randomUUID(), message, type };
     setToasts(prev => [...prev, toast]);
-    setNextToastId(prev => prev + 1);
     setTimeout(() => removeToast(toast.id), 5000);
   };
 
-  const removeToast = (id: number) => {
+  const removeToast = (id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
