@@ -49,7 +49,17 @@ interface DeviceColor {
   color_code: string;
 }
 
+interface JobType {
+  id: number;
+  name: string;
+}
 
+interface Service {
+  id: number;
+  name: string;
+  description?: string;
+  price?: number;
+}
 
 interface FormData {
   customerName: string;
@@ -96,13 +106,15 @@ export default function JobSheetForm() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
   const [deviceColors, setDeviceColors] = useState<DeviceColor[]>([]);
+  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
     source: 'Google',
     referredBy: '',
     serviceType: 'Carried By User',
-    jobType: 'No Warranty',
+    jobType: '',
     deviceType: '',
     deviceBrand: '',
     deviceModel: '',
@@ -175,16 +187,37 @@ export default function JobSheetForm() {
         }
       })
       .catch(error => console.error('Error fetching device colors:', error));
+    
+    // Fetch job types
+    fetch('/api/admin/job-types')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setJobTypes(data);
+        }
+      })
+      .catch(error => console.error('Error fetching job types:', error));
   }, []);
 
   useEffect(() => {
     if (formData.deviceType) {
       const filtered = deviceBrands.filter(brand => brand.device_type_id === parseInt(formData.deviceType));
       setFilteredBrands(filtered);
+      
+      // Fetch services for selected device type
+      fetch(`/api/admin/services?device_type_id=${formData.deviceType}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setServices(data);
+          }
+        })
+        .catch(error => console.error('Error fetching services:', error));
     } else {
       setFilteredBrands([]);
+      setServices([]);
     }
-    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '' }));
+    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '', services: '' }));
     setFilteredModels([]);
   }, [formData.deviceType, deviceBrands]);
 
@@ -504,10 +537,10 @@ export default function JobSheetForm() {
                 onChange={handleInputChange}
                 className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
               >
-                <option>No Warranty</option>
-                <option>Free</option>
-                <option>Under Warranty</option>
-                <option>AMC</option>
+                <option value="">Select job type</option>
+                {jobTypes.map(type => (
+                  <option key={type.id} value={type.name}>{type.name}</option>
+                ))}
               </select>
             </div>
           </section>
@@ -672,14 +705,18 @@ export default function JobSheetForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Services <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   name="services"
                   value={formData.services}
                   onChange={handleInputChange}
-                  placeholder="Select or search for services"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
-                />
+                  disabled={!formData.deviceType}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select service</option>
+                  {services.map(service => (
+                    <option key={service.id} value={service.name}>{service.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
