@@ -8,6 +8,7 @@ import ModelsPage from './models/page';
 import StorageLocationsPage from './storagelocations/page';
 import ColorsPage from './colors/page';
 import JobTypesPage from './jobtypes/page';
+import ServicesPage from './services/page';
 
 interface Brand {
   id: number;
@@ -34,7 +35,7 @@ const JobSettingsPage = () => {
     { label: 'Models', icon: Layers },
     // { label: 'Pre Post Conditions', icon: CheckSquare },
     // { label: 'Accessories', icon: Package },
-    // { label: 'Services', icon: Wrench },
+    { label: 'Services', icon: Wrench },
     // { label: 'Statuses', icon: Grid },
     // { label: 'Quick Reply', icon: MessageSquare },
     { label: 'Storage Locations', icon: Box },
@@ -154,11 +155,7 @@ const JobSettingsPage = () => {
           )}
 
           {activePanel === 'Services' && (
-            <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-              <Wrench className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Services</h3>
-              <p className="text-gray-500">Manage services offered for repair jobs</p>
-            </div>
+            <ServicesPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
           {activePanel === 'Storage Locations' && (

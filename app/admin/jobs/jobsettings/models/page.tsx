@@ -39,6 +39,7 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
   const [formDeviceTypeId, setFormDeviceTypeId] = useState('');
   const [formBrandId, setFormBrandId] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const showAddModal = setAddModal ? addModal : internalAddModal;
   const handleSetAddModal = (value: boolean) => {
@@ -137,12 +138,18 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
   const handleDelete = async () => {
     if (!deleteModal.model) return;
     setSubmitting(true);
+    setError('');
     try {
       const response = await fetch(`/api/devices/models?id=${deleteModal.model.id}`, { method: 'DELETE' });
       if (response.ok) {
         setDeleteModal({show: false, model: null});
         fetchModels();
+      } else {
+        const data = await response.json();
+        setError(data.error || 'Failed to delete model');
       }
+    } catch (err) {
+      setError('Failed to delete model');
     } finally {
       setSubmitting(false);
     }
@@ -341,8 +348,9 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
           <div className="bg-white rounded-lg w-full max-w-md p-6">
             <h3 className="text-lg font-semibold mb-4">Delete Model</h3>
             <p className="mb-4">Are you sure you want to delete <strong>{deleteModal.model?.name}</strong>?</p>
+            {error && <p className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded">{error}</p>}
             <div className="flex gap-3">
-              <button onClick={() => setDeleteModal({show: false, model: null})} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
+              <button onClick={() => { setDeleteModal({show: false, model: null}); setError(''); }} className="flex-1 px-4 py-2 border border-gray-300 rounded-md">Cancel</button>
               <button onClick={handleDelete} disabled={submitting} className="flex-1 px-4 py-2 bg-red-600 text-white rounded-md">{submitting ? 'Deleting...' : 'Delete'}</button>
             </div>
           </div>

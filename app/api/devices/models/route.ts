@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -60,7 +60,7 @@ export async function PUT(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -83,7 +83,7 @@ export async function DELETE(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -91,10 +91,30 @@ export async function DELETE(request: Request) {
     const id = searchParams.get('id');
     const companyId = session.company.id;
     
-    await pool.query(
-      'DELETE FROM device_models WHERE id = $1 AND company_id = $2',
+    if (!id) {
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+    }
+
+    // Check if model is referenced in jobs
+    const jobsCheck = await pool.query(
+      "SELECT COUNT(*) FROM jobs WHERE device_model = $1 AND company_id = $2",
+      [id.toString(), companyId]
+    );
+    
+    if (parseInt(jobsCheck.rows[0].count) > 0) {
+      return NextResponse.json({ 
+        error: 'Cannot delete model with associated jobs' 
+      }, { status: 400 });
+    }
+    
+    const result = await pool.query(
+      'DELETE FROM device_models WHERE id = $1 AND company_id = $2 RETURNING *',
       [id, companyId]
     );
+    
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: 'Model not found' }, { status: 404 });
+    }
     
     return NextResponse.json({ success: true });
   } catch (error) {

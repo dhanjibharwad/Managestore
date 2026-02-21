@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -60,7 +60,7 @@ export async function PUT(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -83,13 +83,25 @@ export async function DELETE(request: Request) {
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const companyId = session.company.id;
+    
+    // Check if brand has associated models
+    const modelsCheck = await pool.query(
+      'SELECT COUNT(*) FROM device_models WHERE device_brand_id = $1 AND company_id = $2',
+      [id, companyId]
+    );
+    
+    if (parseInt(modelsCheck.rows[0].count) > 0) {
+      return NextResponse.json({ 
+        error: 'Cannot delete brand with associated models' 
+      }, { status: 400 });
+    }
     
     await pool.query(
       'DELETE FROM device_brands WHERE id = $1 AND company_id = $2',

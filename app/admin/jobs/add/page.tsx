@@ -54,6 +54,13 @@ interface JobType {
   name: string;
 }
 
+interface Service {
+  id: number;
+  name: string;
+  description?: string;
+  price?: number;
+}
+
 interface FormData {
   customerName: string;
   source: string;
@@ -101,6 +108,7 @@ export default function JobSheetForm() {
   const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
   const [deviceColors, setDeviceColors] = useState<DeviceColor[]>([]);
   const [jobTypes, setJobTypes] = useState<JobType[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
@@ -196,10 +204,21 @@ export default function JobSheetForm() {
     if (formData.deviceType) {
       const filtered = deviceBrands.filter(brand => brand.device_type_id === parseInt(formData.deviceType));
       setFilteredBrands(filtered);
+      
+      // Fetch services for selected device type
+      fetch(`/api/admin/services?device_type_id=${formData.deviceType}`)
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setServices(data);
+          }
+        })
+        .catch(error => console.error('Error fetching services:', error));
     } else {
       setFilteredBrands([]);
+      setServices([]);
     }
-    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '' }));
+    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '', services: '' }));
     setFilteredModels([]);
   }, [formData.deviceType, deviceBrands]);
 
@@ -675,14 +694,18 @@ export default function JobSheetForm() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Services <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   name="services"
                   value={formData.services}
                   onChange={handleInputChange}
-                  placeholder="Select or search for services"
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
-                />
+                  disabled={!formData.deviceType}
+                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select service</option>
+                  {services.map(service => (
+                    <option key={service.id} value={service.name}>{service.name}</option>
+                  ))}
+                </select>
               </div>
 
               <div>
