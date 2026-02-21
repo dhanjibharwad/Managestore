@@ -75,7 +75,7 @@ interface FormData {
   storageLocation: string;
   deviceColor: string;
   devicePassword: string;
-  services: string;
+  services: string[];
   tags: string;
   hardwareConfig: string;
   serviceAssessment: string;
@@ -101,6 +101,7 @@ export default function JobSheetForm() {
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newModelName, setNewModelName] = useState('');
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -124,7 +125,7 @@ export default function JobSheetForm() {
     storageLocation: '',
     deviceColor: '',
     devicePassword: '',
-    services: '',
+    services: [],
     tags: '',
     hardwareConfig: '',
     serviceAssessment: '',
@@ -201,6 +202,18 @@ export default function JobSheetForm() {
   }, []);
 
   useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (showServicesDropdown && !target.closest('.services-dropdown-container')) {
+        setShowServicesDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showServicesDropdown]);
+
+  useEffect(() => {
     if (formData.deviceType) {
       const filtered = deviceBrands.filter(brand => brand.device_type_id === parseInt(formData.deviceType));
       setFilteredBrands(filtered);
@@ -218,7 +231,7 @@ export default function JobSheetForm() {
       setFilteredBrands([]);
       setServices([]);
     }
-    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '', services: '' }));
+    setFormData(prev => ({ ...prev, deviceBrand: '', deviceModel: '', services: [] }));
     setFilteredModels([]);
   }, [formData.deviceType, deviceBrands]);
 
@@ -231,6 +244,15 @@ export default function JobSheetForm() {
     }
     setFormData(prev => ({ ...prev, deviceModel: '' }));
   }, [formData.deviceBrand, deviceModels]);
+
+  const handleServiceToggle = (serviceName: string) => {
+    setFormData(prev => ({
+      ...prev,
+      services: prev.services.includes(serviceName)
+        ? prev.services.filter(s => s !== serviceName)
+        : [...prev.services, serviceName]
+    }));
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -333,7 +355,7 @@ export default function JobSheetForm() {
 
 
   const handleSubmit = async () => {
-    if (!formData.customerName || !formData.deviceType || !formData.deviceBrand || !formData.services || !formData.assignee) {
+    if (!formData.customerName || !formData.deviceType || !formData.deviceBrand || formData.services.length === 0 || !formData.assignee) {
       showToast('Please fill in all required fields: Customer Name, Device Type, Device Brand, Services, and Assignee', 'error');
       return;
     }
@@ -364,6 +386,7 @@ export default function JobSheetForm() {
       // Create job with file URLs
       const jobData = {
         ...formData,
+        services: formData.services.join(', '),
         images: uploadedFileUrls
       };
       
@@ -690,22 +713,59 @@ export default function JobSheetForm() {
           <section className="mb-6">
             <h2 className="text-base font-semibold text-gray-800 mb-3">Service Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-              <div>
+              <div className="relative services-dropdown-container">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Services <span className="text-red-500">*</span>
                 </label>
-                <select
-                  name="services"
-                  value={formData.services}
-                  onChange={handleInputChange}
-                  disabled={!formData.deviceType}
-                  className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] disabled:bg-gray-100 disabled:cursor-not-allowed"
+                <div 
+                  onClick={() => formData.deviceType && setShowServicesDropdown(!showServicesDropdown)}
+                  className="border border-gray-300 rounded p-2 min-h-[42px] bg-white cursor-pointer"
                 >
-                  <option value="">Select service</option>
-                  {services.map(service => (
-                    <option key={service.id} value={service.name}>{service.name}</option>
-                  ))}
-                </select>
+                  {formData.services.length === 0 ? (
+                    <span className="text-gray-400 text-sm">Select services</span>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {formData.services.map((service, index) => (
+                        <span key={index} className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded">
+                          {service}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleServiceToggle(service);
+                            }}
+                            className="hover:text-blue-600"
+                          >
+                            <X size={14} />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {showServicesDropdown && formData.deviceType && (
+                  <div className="absolute z-10 mt-1 w-full border border-gray-200 rounded bg-white shadow-lg max-h-60 overflow-y-auto">
+                    {services.map(service => (
+                      <div
+                        key={service.id}
+                        onClick={() => handleServiceToggle(service.name)}
+                        className={`px-3 py-2 cursor-pointer hover:bg-gray-50 ${
+                          formData.services.includes(service.name) ? 'bg-blue-50' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={formData.services.includes(service.name)}
+                            onChange={() => {}}
+                            className="rounded"
+                          />
+                          <span className="text-sm">{service.name}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
