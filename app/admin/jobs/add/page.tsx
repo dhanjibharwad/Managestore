@@ -61,6 +61,11 @@ interface Service {
   price?: number;
 }
 
+interface Source {
+  id: number;
+  name: string;
+}
+
 interface FormData {
   customerName: string;
   source: string;
@@ -110,10 +115,11 @@ export default function JobSheetForm() {
   const [deviceColors, setDeviceColors] = useState<DeviceColor[]>([]);
   const [jobTypes, setJobTypes] = useState<JobType[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [sources, setSources] = useState<Source[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
-    source: 'Google',
+    source: '',
     referredBy: '',
     serviceType: 'Carried By User',
     jobType: '',
@@ -199,6 +205,16 @@ export default function JobSheetForm() {
         }
       })
       .catch(error => console.error('Error fetching job types:', error));
+    
+    // Fetch sources
+    fetch('/api/admin/sources')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setSources(data);
+        }
+      })
+      .catch(error => console.error('Error fetching sources:', error));
   }, []);
 
   useEffect(() => {
@@ -497,10 +513,10 @@ export default function JobSheetForm() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
-                  <option>Google</option>
-                  <option>Just Dial</option>
-                  <option>Referral</option>
-                  <option>Walk-in</option>
+                  <option value="">Select source</option>
+                  {sources.map(source => (
+                    <option key={source.id} value={source.name}>{source.name}</option>
+                  ))}
                 </select>
               </div>
 

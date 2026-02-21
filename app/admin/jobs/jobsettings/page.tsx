@@ -9,6 +9,7 @@ import StorageLocationsPage from './storagelocations/page';
 import ColorsPage from './colors/page';
 import JobTypesPage from './jobtypes/page';
 import ServicesPage from './services/page';
+import SourcesPage from './sources/page';
 
 interface Brand {
   id: number;
@@ -40,7 +41,7 @@ const JobSettingsPage = () => {
     // { label: 'Quick Reply', icon: MessageSquare },
     { label: 'Storage Locations', icon: Box },
     { label: 'Device Colors', icon: Palette },
-    // { label: 'Sources', icon: FileText },
+    { label: 'Sources', icon: FileText },
     { label: 'Job Types', icon: FileText }
   ];
 
@@ -166,11 +167,15 @@ const JobSettingsPage = () => {
             <ColorsPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
+          {activePanel === 'Sources' && (
+            <SourcesPage addModal={addModal} setAddModal={setAddModal} />
+          )}
+
           {activePanel === 'Job Types' && (
             <JobTypesPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
-          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Device Colors' && activePanel !== 'Job Types' && activePanel !== 'Services' && (
+          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Device Colors' && activePanel !== 'Sources' && activePanel !== 'Job Types' && activePanel !== 'Services' && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Settings2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">{activePanel}</h3>
