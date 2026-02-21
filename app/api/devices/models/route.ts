@@ -97,8 +97,8 @@ export async function DELETE(request: Request) {
 
     // Check if model is referenced in jobs
     const jobsCheck = await pool.query(
-      "SELECT COUNT(*) FROM jobs WHERE device_model = $1 AND company_id = $2",
-      [id.toString(), companyId]
+      "SELECT COUNT(*) FROM jobs WHERE device_model = $1::text AND company_id = $2",
+      [id, companyId]
     );
     
     if (parseInt(jobsCheck.rows[0].count) > 0) {
