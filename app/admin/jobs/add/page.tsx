@@ -49,7 +49,10 @@ interface DeviceColor {
   color_code: string;
 }
 
-
+interface JobType {
+  id: number;
+  name: string;
+}
 
 interface FormData {
   customerName: string;
@@ -97,13 +100,14 @@ export default function JobSheetForm() {
   const [employees, setEmployees] = useState<any[]>([]);
   const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
   const [deviceColors, setDeviceColors] = useState<DeviceColor[]>([]);
+  const [jobTypes, setJobTypes] = useState<JobType[]>([]);
 
   const [formData, setFormData] = useState<FormData>({
     customerName: '',
     source: 'Google',
     referredBy: '',
     serviceType: 'Carried By User',
-    jobType: 'No Warranty',
+    jobType: '',
     deviceType: '',
     deviceBrand: '',
     deviceModel: '',
@@ -176,6 +180,16 @@ export default function JobSheetForm() {
         }
       })
       .catch(error => console.error('Error fetching device colors:', error));
+    
+    // Fetch job types
+    fetch('/api/admin/job-types')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setJobTypes(data);
+        }
+      })
+      .catch(error => console.error('Error fetching job types:', error));
   }, []);
 
   useEffect(() => {
@@ -493,10 +507,10 @@ export default function JobSheetForm() {
                 onChange={handleInputChange}
                 className="w-full lg:w-1/4 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
               >
-                <option>No Warranty</option>
-                <option>Free</option>
-                <option>Under Warranty</option>
-                <option>AMC</option>
+                <option value="">Select job type</option>
+                {jobTypes.map(type => (
+                  <option key={type.id} value={type.name}>{type.name}</option>
+                ))}
               </select>
             </div>
           </section>

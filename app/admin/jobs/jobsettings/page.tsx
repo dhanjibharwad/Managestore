@@ -7,6 +7,7 @@ import BrandsPage from './brands/page';
 import ModelsPage from './models/page';
 import StorageLocationsPage from './storagelocations/page';
 import ColorsPage from './colors/page';
+import JobTypesPage from './jobtypes/page';
 
 interface Brand {
   id: number;
@@ -39,7 +40,7 @@ const JobSettingsPage = () => {
     { label: 'Storage Locations', icon: Box },
     { label: 'Device Colors', icon: Palette },
     // { label: 'Sources', icon: FileText },
-    // { label: 'Job Types', icon: FileText }
+    { label: 'Job Types', icon: FileText }
   ];
 
   useEffect(() => {
@@ -168,7 +169,11 @@ const JobSettingsPage = () => {
             <ColorsPage addModal={addModal} setAddModal={setAddModal} />
           )}
 
-          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Device Colors' && activePanel !== 'Services' && (
+          {activePanel === 'Job Types' && (
+            <JobTypesPage addModal={addModal} setAddModal={setAddModal} />
+          )}
+
+          {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Device Colors' && activePanel !== 'Job Types' && activePanel !== 'Services' && (
             <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
               <Settings2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">{activePanel}</h3>
