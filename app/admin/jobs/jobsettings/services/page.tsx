@@ -19,9 +19,10 @@ interface DeviceType {
 interface ServicesPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const ServicesPage = ({ addModal = false, setAddModal }: ServicesPageProps = {}) => {
+const ServicesPage = ({ addModal = false, setAddModal, searchQuery = '' }: ServicesPageProps = {}) => {
   const [services, setServices] = useState<Service[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [selectedDeviceType, setSelectedDeviceType] = useState<number | null>(null);
@@ -91,6 +92,12 @@ const ServicesPage = ({ addModal = false, setAddModal }: ServicesPageProps = {})
       hour12: true
     });
   };
+
+  const filteredServices = services.filter(service => {
+    const query = searchQuery.toLowerCase();
+    return service.name.toLowerCase().includes(query) ||
+           service.device_type_name.toLowerCase().includes(query);
+  });
 
   const handleAdd = async () => {
     if (!formData.name.trim() || !formData.device_type_id) return;
@@ -196,10 +203,10 @@ const ServicesPage = ({ addModal = false, setAddModal }: ServicesPageProps = {})
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : services.length === 0 ? (
+            ) : filteredServices.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">No services found</td></tr>
             ) : (
-              services.map((service, index) => (
+              filteredServices.map((service, index) => (
                 <tr key={service.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{service.name}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">{service.device_type_name}</td>

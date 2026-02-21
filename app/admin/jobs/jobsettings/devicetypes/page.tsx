@@ -13,9 +13,10 @@ interface DeviceType {
 interface DeviceTypesPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const DeviceTypesPage = ({ addModal = false, setAddModal }: DeviceTypesPageProps = {}) => {
+const DeviceTypesPage = ({ addModal = false, setAddModal, searchQuery = '' }: DeviceTypesPageProps = {}) => {
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -114,6 +115,10 @@ const DeviceTypesPage = ({ addModal = false, setAddModal }: DeviceTypesPageProps
     });
   };
 
+  const filteredDeviceTypes = deviceTypes.filter(type => 
+    type.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     fetchDeviceTypes();
   }, []);
@@ -141,10 +146,10 @@ const DeviceTypesPage = ({ addModal = false, setAddModal }: DeviceTypesPageProps
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : deviceTypes.length === 0 ? (
+            ) : filteredDeviceTypes.length === 0 ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">No device types found</td></tr>
             ) : (
-              deviceTypes.map((type, index) => (
+              filteredDeviceTypes.map((type, index) => (
                 <tr key={type.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{type.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{formatDate(type.updated_at || type.created_at)}</td>

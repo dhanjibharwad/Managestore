@@ -144,35 +144,35 @@ const JobSettingsPage = () => {
         {/* Content */}
         <div className="flex-1 overflow-auto p-6">
           {activePanel === 'Brands' && (
-            <BrandsPage addModal={addModal} setAddModal={setAddModal} />
+            <BrandsPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Device Types' && (
-            <DeviceTypesPage addModal={addModal} setAddModal={setAddModal} />
+            <DeviceTypesPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Models' && (
-            <ModelsPage addModal={addModal} setAddModal={setAddModal} />
+            <ModelsPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Services' && (
-            <ServicesPage addModal={addModal} setAddModal={setAddModal} />
+            <ServicesPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Storage Locations' && (
-            <StorageLocationsPage addModal={addModal} setAddModal={setAddModal} />
+            <StorageLocationsPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Device Colors' && (
-            <ColorsPage addModal={addModal} setAddModal={setAddModal} />
+            <ColorsPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Sources' && (
-            <SourcesPage addModal={addModal} setAddModal={setAddModal} />
+            <SourcesPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel === 'Job Types' && (
-            <JobTypesPage addModal={addModal} setAddModal={setAddModal} />
+            <JobTypesPage addModal={addModal} setAddModal={setAddModal} searchQuery={searchQuery} />
           )}
 
           {activePanel !== 'Brands' && activePanel !== 'Device Types' && activePanel !== 'Models' && activePanel !== 'Storage Locations' && activePanel !== 'Device Colors' && activePanel !== 'Sources' && activePanel !== 'Job Types' && activePanel !== 'Services' && (

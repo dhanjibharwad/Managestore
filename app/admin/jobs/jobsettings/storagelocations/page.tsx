@@ -13,9 +13,10 @@ interface StorageLocation {
 interface StorageLocationsPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const StorageLocationsPage = ({ addModal = false, setAddModal }: StorageLocationsPageProps = {}) => {
+const StorageLocationsPage = ({ addModal = false, setAddModal, searchQuery = '' }: StorageLocationsPageProps = {}) => {
   const [storageLocations, setStorageLocations] = useState<StorageLocation[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -109,6 +110,10 @@ const StorageLocationsPage = ({ addModal = false, setAddModal }: StorageLocation
     });
   };
 
+  const filteredStorageLocations = storageLocations.filter(location =>
+    location.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     fetchStorageLocations();
   }, []);
@@ -136,10 +141,10 @@ const StorageLocationsPage = ({ addModal = false, setAddModal }: StorageLocation
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : storageLocations.length === 0 ? (
+            ) : filteredStorageLocations.length === 0 ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">No storage locations found</td></tr>
             ) : (
-              storageLocations.map((location, index) => (
+              filteredStorageLocations.map((location, index) => (
                 <tr key={location.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{location.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{formatDate(location.updated_at || location.created_at)}</td>

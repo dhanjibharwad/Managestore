@@ -12,9 +12,10 @@ interface JobType {
 interface JobTypesPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const JobTypesPage = ({ addModal = false, setAddModal }: JobTypesPageProps = {}) => {
+const JobTypesPage = ({ addModal = false, setAddModal, searchQuery = '' }: JobTypesPageProps = {}) => {
   const [jobTypes, setJobTypes] = useState<JobType[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -55,6 +56,10 @@ const JobTypesPage = ({ addModal = false, setAddModal }: JobTypesPageProps = {})
       hour12: true
     });
   };
+
+  const filteredJobTypes = jobTypes.filter(type =>
+    type.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAdd = async () => {
     if (!formName.trim()) return;
@@ -135,10 +140,10 @@ const JobTypesPage = ({ addModal = false, setAddModal }: JobTypesPageProps = {})
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : jobTypes.length === 0 ? (
+            ) : filteredJobTypes.length === 0 ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">No job types found</td></tr>
             ) : (
-              jobTypes.map((type, index) => (
+              filteredJobTypes.map((type, index) => (
                 <tr key={type.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{type.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{formatDate(type.updated_at || type.created_at)}</td>

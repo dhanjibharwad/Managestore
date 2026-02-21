@@ -24,9 +24,10 @@ interface DeviceType {
 interface ModelsPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => {
+const ModelsPage = ({ addModal = false, setAddModal, searchQuery = '' }: ModelsPageProps = {}) => {
   const [models, setModels] = useState<Model[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
@@ -183,6 +184,13 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
     });
   };
 
+  const filteredModels = models.filter(model => {
+    const query = searchQuery.toLowerCase();
+    return model.name.toLowerCase().includes(query) ||
+           getBrandName(model.device_brand_id).toLowerCase().includes(query) ||
+           getDeviceTypeName(model.device_brand_id).toLowerCase().includes(query);
+  });
+
   useEffect(() => {
     fetchModels();
     fetchBrands();
@@ -214,10 +222,10 @@ const ModelsPage = ({ addModal = false, setAddModal }: ModelsPageProps = {}) => 
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : models.length === 0 ? (
+            ) : filteredModels.length === 0 ? (
               <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">No models found</td></tr>
             ) : (
-              models.map((model, index) => (
+              filteredModels.map((model, index) => (
                 <tr key={model.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{model.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{getBrandName(model.device_brand_id)}</td>

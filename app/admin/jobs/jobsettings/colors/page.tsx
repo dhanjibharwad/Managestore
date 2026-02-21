@@ -13,9 +13,10 @@ interface Color {
 interface ColorsPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const ColorsPage = ({ addModal = false, setAddModal }: ColorsPageProps = {}) => {
+const ColorsPage = ({ addModal = false, setAddModal, searchQuery = '' }: ColorsPageProps = {}) => {
   const [colors, setColors] = useState<Color[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -119,6 +120,10 @@ const ColorsPage = ({ addModal = false, setAddModal }: ColorsPageProps = {}) => 
     });
   };
 
+  const filteredColors = colors.filter(color =>
+    color.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   useEffect(() => {
     fetchColors();
   }, []);
@@ -147,10 +152,10 @@ const ColorsPage = ({ addModal = false, setAddModal }: ColorsPageProps = {}) => 
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : colors.length === 0 ? (
+            ) : filteredColors.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">No colors found</td></tr>
             ) : (
-              colors.map((color, index) => (
+              filteredColors.map((color, index) => (
                 <tr key={color.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{color.name}</td>
                   <td className="px-6 py-4 text-sm">

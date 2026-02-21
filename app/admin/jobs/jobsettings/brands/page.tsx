@@ -19,9 +19,10 @@ interface DeviceType {
 interface BrandsPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => {
+const BrandsPage = ({ addModal = false, setAddModal, searchQuery = '' }: BrandsPageProps = {}) => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [deviceTypes, setDeviceTypes] = useState<DeviceType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -148,6 +149,12 @@ const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => 
     });
   };
 
+  const filteredBrands = brands.filter(brand => {
+    const query = searchQuery.toLowerCase();
+    return brand.name.toLowerCase().includes(query) || 
+           getDeviceTypeName(brand.device_type_id).toLowerCase().includes(query);
+  });
+
   useEffect(() => {
     fetchBrands();
     fetchDeviceTypes();
@@ -177,10 +184,10 @@ const BrandsPage = ({ addModal = false, setAddModal }: BrandsPageProps = {}) => 
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : brands.length === 0 ? (
+            ) : filteredBrands.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-12 text-center text-gray-500">No brands found</td></tr>
             ) : (
-              brands.map((brand, index) => (
+              filteredBrands.map((brand, index) => (
                 <tr key={brand.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{brand.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{getDeviceTypeName(brand.device_type_id)}</td>

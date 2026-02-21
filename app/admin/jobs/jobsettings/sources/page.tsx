@@ -12,9 +12,10 @@ interface Source {
 interface SourcesPageProps {
   addModal?: boolean;
   setAddModal?: (value: boolean) => void;
+  searchQuery?: string;
 }
 
-const SourcesPage = ({ addModal = false, setAddModal }: SourcesPageProps = {}) => {
+const SourcesPage = ({ addModal = false, setAddModal, searchQuery = '' }: SourcesPageProps = {}) => {
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(true);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
@@ -55,6 +56,10 @@ const SourcesPage = ({ addModal = false, setAddModal }: SourcesPageProps = {}) =
       hour12: true
     });
   };
+
+  const filteredSources = sources.filter(source =>
+    source.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleAdd = async () => {
     if (!formName.trim()) return;
@@ -135,10 +140,10 @@ const SourcesPage = ({ addModal = false, setAddModal }: SourcesPageProps = {}) =
           <tbody className="divide-y divide-gray-200">
             {loading ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">Loading...</td></tr>
-            ) : sources.length === 0 ? (
+            ) : filteredSources.length === 0 ? (
               <tr><td colSpan={4} className="px-6 py-12 text-center text-gray-500">No sources found</td></tr>
             ) : (
-              sources.map((source, index) => (
+              filteredSources.map((source, index) => (
                 <tr key={source.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">{source.name}</td>
                   <td className="px-6 py-4 text-sm text-blue-600">{formatDate(source.updated_at || source.created_at)}</td>
