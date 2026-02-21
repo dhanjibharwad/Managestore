@@ -75,7 +75,7 @@ export default function AdminHeader() {
         </button> */}
 
         {/* Company name */}
-        <div className="text-sm font-semibold text-gray-800 mr-4 px-3 py-1 bg-gray-50 rounded-md">
+        <div className="text-sm font-semibold text-white mr-4 px-3 py-1 bg-[#4A70A9] rounded-md">
           {user.company || 'Your Company Name'}
         </div>
 
