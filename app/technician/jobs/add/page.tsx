@@ -524,10 +524,10 @@ export default function JobSheetForm() {
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9]"
                 >
-                  <option>Google</option>
-                  <option>Just Dial</option>
-                  <option>Referral</option>
-                  <option>Walk-in</option>
+                  <option value="">Select source</option>
+                  {sources.map(source => (
+                    <option key={source.id} value={source.name}>{source.name}</option>
+                  ))}
                 </select>
               </div>
 
