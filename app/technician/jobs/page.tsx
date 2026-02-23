@@ -148,7 +148,7 @@ const JobPage: React.FC = () => {
         params.append('tabFilter', 'open');
       }
       
-      const response = await fetch(`/api/admin/jobs?${params}`);
+      const response = await fetch(`/api/technician/assigned-jobs?${params}`);
       const data = await response.json();
       
       if (response.ok) {
@@ -240,7 +240,7 @@ const JobPage: React.FC = () => {
 
     setUpdatingStatus(true);
     try {
-      const response = await fetch(`/api/admin/jobs/${statusModal.job.id}`, {
+      const response = await fetch(`/api/technician/assigned-jobs/${statusModal.job.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
