@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronUp, Search, Plus, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit } from 'lucide-react';
+import { ChevronUp, Search, Plus, Trash2, CheckCircle, AlertCircle, XCircle, X, Edit, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 interface Toast {
@@ -282,6 +282,11 @@ export default function PurchasePage() {
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.dueDate}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
+                          <Link href={`/admin/purchase/${purchase.id}/invoice`}>
+                            <button className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
+                              <FileText className="w-4 h-4" />
+                            </button>
+                          </Link>
                           <Link href={`/admin/purchase/edit/${purchase.id}`}>
                             <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
                               <Edit className="w-4 h-4" />

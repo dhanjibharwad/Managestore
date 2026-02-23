@@ -5,11 +5,38 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const companyId = searchParams.get('companyId');
+    const purchaseId = searchParams.get('purchaseId');
 
     if (!companyId) {
       return NextResponse.json({ error: 'Company ID required' }, { status: 400 });
     }
 
+    // If purchaseId is provided, return single purchase with items
+    if (purchaseId) {
+      const purchaseResult = await pool.query(
+        `SELECT p.*, comp.company_name 
+         FROM purchases p
+         LEFT JOIN companies comp ON comp.id = p.company_id
+         WHERE p.id = $1 AND p.company_id = $2`,
+        [purchaseId, companyId]
+      );
+
+      if (purchaseResult.rows.length === 0) {
+        return NextResponse.json({ error: 'Purchase not found' }, { status: 404 });
+      }
+
+      const itemsResult = await pool.query(
+        'SELECT * FROM purchase_items WHERE purchase_id = $1 AND company_id = $2',
+        [purchaseId, companyId]
+      );
+
+      return NextResponse.json({
+        purchase: purchaseResult.rows[0],
+        items: itemsResult.rows
+      });
+    }
+
+    // Otherwise return all purchases
     const result = await pool.query(
       `SELECT 
         p.id,

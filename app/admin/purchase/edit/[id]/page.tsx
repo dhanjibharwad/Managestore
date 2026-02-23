@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface Part {
@@ -50,6 +50,7 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+  const [editingPartId, setEditingPartId] = useState<string | null>(null);
 
   // Modal form state
   const [modalPart, setModalPart] = useState('');
@@ -158,15 +159,14 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
     if (!companyId) return;
     
     try {
-      const response = await fetch(`/api/admin/purchases?companyId=${companyId}`);
+      const response = await fetch(`/api/admin/purchases?companyId=${companyId}&purchaseId=${id}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       const data = await response.json();
-      const purchases = data.purchases || [];
-      const purchase = purchases.find((p: any) => p.id.toString() === id);
+      const { purchase, items } = data;
       
       if (!purchase) {
         throw new Error('Purchase not found');
@@ -179,11 +179,34 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
       setDueDate(purchase.due_date ? purchase.due_date.split('T')[0] : '');
       setPaymentStatus(purchase.payment_status || 'unpaid');
       setPaymentMode(purchase.payment_mode || 'Cash');
-      setAmount(purchase.total_amount?.toString() || '');
+      setAmount(purchase.amount?.toString() || '');
       setTerms(purchase.terms_conditions || '');
       
-      setParts([]);
-      setUploadedFiles([]);
+      // Load purchase items
+      const formattedParts = items.map((item: any) => ({
+        id: item.id.toString(),
+        description: item.part_name || item.description,
+        taxCode: item.tax_code || '',
+        qty: parseFloat(item.quantity) || 0,
+        price: parseFloat(item.price) || 0,
+        disc: parseFloat(item.discount) || 0,
+        tax: parseFloat(item.tax_rate) || 0,
+        taxAmt: parseFloat(item.tax_amount) || 0,
+        subTotal: parseFloat(item.subtotal) || 0,
+        total: parseFloat(item.total) || 0,
+      }));
+      setParts(formattedParts);
+      
+      if (purchase.attachments) {
+        try {
+          const attachments = typeof purchase.attachments === 'string' 
+            ? JSON.parse(purchase.attachments) 
+            : purchase.attachments;
+          setUploadedFiles(Array.isArray(attachments) ? attachments : []);
+        } catch {
+          setUploadedFiles([]);
+        }
+      }
       
     } catch (error) {
       console.error('Error fetching purchase:', error);
@@ -194,11 +217,26 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
   };
 
   const handleAddPart = () => {
+    setEditingPartId(null);
+    setShowModal(true);
+  };
+
+  const handleEditPart = (part: Part) => {
+    setEditingPartId(part.id);
+    setModalPartName(part.description);
+    setModalTaxCode(part.taxCode);
+    setModalQuantity(part.qty.toString());
+    setModalPrice(part.price.toString());
+    setModalDiscount(part.disc.toString());
+    if (part.tax === 18) setModalTax('gst');
+    else if (part.tax === 5) setModalTax('gst5');
+    else setModalTax('');
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingPartId(null);
     setModalPart('');
     setModalPartName('');
     setModalWarranty('');
@@ -229,8 +267,8 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
     if (modalTax === 'gst' || modalTax === 'igst') taxRate = 18;
     else if (modalTax === 'gst5') taxRate = 5;
 
-    const newPart: Part = {
-      id: Date.now().toString(),
+    const partData: Part = {
+      id: editingPartId || Date.now().toString(),
       description: modalPartName || modalDescription,
       taxCode: modalTaxCode,
       qty: parseFloat(modalQuantity) || 0,
@@ -242,13 +280,13 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
       total: parseFloat(modalTotalAmount) || 0,
     };
     
-    console.log('Adding part:', newPart);
-    setParts(prev => {
-      const updated = [...prev, newPart];
-      console.log('Updated parts:', updated);
-      return updated;
-    });
-    showToast('Part added successfully', 'success');
+    if (editingPartId) {
+      setParts(parts.map(p => p.id === editingPartId ? partData : p));
+      showToast('Part updated successfully', 'success');
+    } else {
+      setParts([...parts, partData]);
+      showToast('Part added successfully', 'success');
+    }
     handleCloseModal();
   };
 
@@ -532,12 +570,20 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
                         <td className="px-4 py-3 text-sm text-gray-700">{part.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-3 text-sm text-gray-700">{part.total.toFixed(2)}</td>
                         <td className="px-4 py-3">
-                          <button
-                            onClick={() => handleRemovePart(part.id)}
-                            className="text-gray-400 hover:text-red-500"
-                          >
-                            <X size={18} />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditPart(part)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleRemovePart(part.id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -711,7 +757,7 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">Add New Part</h2>
+              <h2 className="text-xl font-semibold text-gray-900">{editingPartId ? 'Edit Part' : 'Add New Part'}</h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -937,7 +983,7 @@ export default function EditPurchasePage({ params }: { params: Promise<{ id: str
                 onClick={handleSavePart}
                 className="flex-1 px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors"
               >
-                Save Part
+                {editingPartId ? 'Update Part' : 'Save Part'}
               </button>
             </div>
           </div>

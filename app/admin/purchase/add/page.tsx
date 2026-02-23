@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle } from 'lucide-react';
+import { Plus, X, Calendar, Upload, Info, CheckCircle, AlertCircle, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -34,7 +34,7 @@ interface Supplier {
 export default function PurchasePage() {
   const router = useRouter();
   const [supplierName, setSupplierName] = useState('');
-  const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('IN-001');
+  const [partyInvoiceNumber, setPartyInvoiceNumber] = useState('');
   const [purchaseDate, setPurchaseDate] = useState('06-Dec-2025');
   const [dueDate, setDueDate] = useState('11-Dec-2025 04:21 PM');
   const [paymentStatus, setPaymentStatus] = useState('paid');
@@ -52,12 +52,23 @@ export default function PurchasePage() {
   const [nextToastId, setNextToastId] = useState(1);
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [loadingSuppliers, setLoadingSuppliers] = useState(false);
+  const [savedParts, setSavedParts] = useState<any[]>([]);
+  const [loadingParts, setLoadingParts] = useState(false);
+  const [editingPartId, setEditingPartId] = useState<string | null>(null);
 
   React.useEffect(() => {
     fetchUserSession();
     generatePurchaseNumber();
     fetchSuppliers();
   }, []);
+
+  React.useEffect(() => {
+    if (companyId && supplierName) {
+      fetchSavedParts();
+    } else {
+      setSavedParts([]);
+    }
+  }, [companyId, supplierName]);
 
   // Prevent background scroll when modal is open
   React.useEffect(() => {
@@ -116,6 +127,24 @@ export default function PurchasePage() {
     }
   };
 
+  const fetchSavedParts = async () => {
+    setLoadingParts(true);
+    try {
+      const response = await fetch(`/api/admin/purchase-parts?companyId=${companyId}&supplierName=${encodeURIComponent(supplierName)}`);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched saved parts:', data);
+        setSavedParts(data);
+      } else {
+        console.error('Failed to fetch parts:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching saved parts:', error);
+    } finally {
+      setLoadingParts(false);
+    }
+  };
+
   // Modal form state
   const [modalPart, setModalPart] = useState('');
   const [modalPartName, setModalPartName] = useState('');
@@ -155,11 +184,30 @@ export default function PurchasePage() {
   }, [modalPrice, modalQuantity, modalDiscount, modalTax]);
 
   const handleAddPart = () => {
+    if (!supplierName) {
+      showToast('Please select a supplier first', 'warning');
+      return;
+    }
+    setEditingPartId(null);
+    setShowModal(true);
+  };
+
+  const handleEditPart = (part: Part) => {
+    setEditingPartId(part.id);
+    setModalPartName(part.description);
+    setModalTaxCode(part.taxCode);
+    setModalQuantity(part.qty.toString());
+    setModalPrice(part.price.toString());
+    setModalDiscount(part.disc.toString());
+    if (part.tax === 18) setModalTax('gst');
+    else if (part.tax === 5) setModalTax('gst5');
+    else setModalTax('');
     setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingPartId(null);
     // Reset form
     setModalPart('');
     setModalPartName('');
@@ -181,8 +229,8 @@ export default function PurchasePage() {
     if (modalTax === 'gst' || modalTax === 'igst') taxRate = 18;
     else if (modalTax === 'gst5') taxRate = 5;
 
-    const newPart: Part = {
-      id: Date.now().toString(),
+    const partData: Part = {
+      id: editingPartId || Date.now().toString(),
       description: modalPartName || modalDescription,
       taxCode: modalTaxCode,
       qty: parseFloat(modalQuantity) || 0,
@@ -193,7 +241,14 @@ export default function PurchasePage() {
       subTotal: parseFloat(modalSubTotal) || 0,
       total: parseFloat(modalTotalAmount) || 0,
     };
-    setParts([...parts, newPart]);
+
+    if (editingPartId) {
+      setParts(parts.map(p => p.id === editingPartId ? partData : p));
+      showToast('Part updated successfully', 'success');
+    } else {
+      setParts([...parts, partData]);
+      showToast('Part added successfully', 'success');
+    }
     handleCloseModal();
   };
 
@@ -388,6 +443,7 @@ export default function PurchasePage() {
                 type="text"
                 value={partyInvoiceNumber}
                 onChange={(e) => setPartyInvoiceNumber(e.target.value)}
+                placeholder="Enter party invoice number"
                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
               />
             </div>
@@ -469,12 +525,20 @@ export default function PurchasePage() {
                         <td className="px-4 py-3 text-sm text-gray-700">{part.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-3 text-sm text-gray-700">{part.total.toFixed(2)}</td>
                         <td className="px-4 py-3">
-                          <button
-                            onClick={() => handleRemovePart(part.id)}
-                            className="text-gray-400 hover:text-red-500"
-                          >
-                            <X size={18} />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditPart(part)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleRemovePart(part.id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -670,7 +734,7 @@ export default function PurchasePage() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-xl font-semibold text-gray-900">Add New Part</h2>
+              <h2 className="text-xl font-semibold text-gray-900">{editingPartId ? 'Edit Part' : 'Add New Part'}</h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -686,10 +750,29 @@ export default function PurchasePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Part</label>
                 <select
                   value={modalPart}
-                  onChange={(e) => setModalPart(e.target.value)}
+                  onChange={(e) => {
+                    const selectedPart = savedParts.find(p => p.part_name === e.target.value);
+                    if (selectedPart) {
+                      setModalPartName(selectedPart.part_name);
+                      setModalDescription(selectedPart.description || '');
+                      setModalWarranty(selectedPart.warranty || '');
+                      setModalPrice(selectedPart.price?.toString() || '');
+                      setModalTaxCode(selectedPart.tax_code || '');
+                      const taxRate = selectedPart.tax_rate || 0;
+                      if (taxRate === 18) setModalTax('gst');
+                      else if (taxRate === 5) setModalTax('gst5');
+                    }
+                    setModalPart(e.target.value);
+                  }}
                   className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                  disabled={loadingParts || !supplierName}
                 >
-                  <option value="">Search and select existing part or create new below</option>
+                  <option value="">{loadingParts ? 'Loading parts...' : !supplierName ? 'Select supplier first' : 'Search and select existing part or create new below'}</option>
+                  {savedParts.map((part, idx) => (
+                    <option key={idx} value={part.part_name}>
+                      {part.part_name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
