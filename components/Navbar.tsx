@@ -152,19 +152,19 @@ export default function Navbar() {
         // Operations & Tasks
         { name: "Task Management", href: "/home/allservice/repair-ticket", icon: MdTask },
         { name: "Work Scheduler", href: "/home/allservice/repair-ticket", icon: MdSchedule },
-        { name: "Employee Permissions", href: "/home/allservice/repair-ticket", icon: MdPeople },
-        { name: "Show / Hide Modules", href: "/home/allservice/repair-ticket", icon: MdVisibility },
+        { name: "Employee Management", href: "/home/allservice/repair-ticket", icon: MdPeople },
+        // { name: "Show / Hide Modules", href: "/home/allservice/repair-ticket", icon: MdVisibility },
         // CRM & Leads
         { name: "Lead Management", href: "/home/allservice/repair-ticket", icon: MdLeaderboard },
         { name: "Pickup Drop Management", href: "/home/allservice/repair-ticket", icon: MdLocalShipping },
-        { name: "Outsource Management", href: "/home/allservice/repair-ticket", icon: MdBusinessCenter },
+        // { name: "Outsource Management", href: "/home/allservice/repair-ticket", icon: MdBusinessCenter },
         // Inventory & Finance
         { name: "Inventory Management", href: "/home/allservice/repair-ticket", icon: MdInventory },
         { name: "Purchase Management", href: "/home/allservice/repair-ticket", icon: MdShoppingCart },
         { name: "Expense Management", href: "//home/allservice/repair-ticket", icon: MdAccountBalanceWallet },
-        { name: "Point of Sale (POS)", href: "/home/allservice/repair-ticket", icon: MdPointOfSale },
+        { name: "Sales Management", href: "/home/allservice/repair-ticket", icon: MdPointOfSale },
         // Security & Verification
-        { name: "OTP for Delivery", href: "/home/allservice/repair-ticket", icon: MdSecurity },
+        // { name: "OTP for Delivery", href: "/home/allservice/repair-ticket", icon: MdSecurity },
         // { name: "Device Image Gallery", href: "/user/services/device-gallery", icon: MdPhotoLibrary },
         // { name: "Data Recovery Management", href: "/user/services/data-recovery", icon: MdStorage },
         // UI & System

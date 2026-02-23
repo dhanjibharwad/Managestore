@@ -111,36 +111,36 @@ const Footer: React.FC = () => {
             <div className="p-6 mb-8 lg:mb-0 max-w-sm w-full" style={{ background: `linear-gradient(to right, #ffffff, rgba(251, 191, 36, 0.1))`, border: '1px solid #FCD34D' }}>
                 <p className="text-base font-semibold mb-3">Download Store Manager App</p>
                 <p className="text-sm mb-4">Manage orders, track repairs & get instant support on the go</p>
-                <div className="flex space-x-3">
+                {/* <div className="flex space-x-3">
                     <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="Download on the App Store" className="h-10" /></a>
                     <a href="#"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" className="h-10" /></a>
-                </div>
+                </div> */}
             </div>
             
             {/* Find Us On & Payment Methods */}
             <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-12 w-full lg:w-auto justify-between">
                 
                 {/* Social Media Icons */}
-                <div className="flex items-center space-x-4">
+                {/* <div className="flex items-center space-x-4">
                     <p className="text-sm font-semibold">Find Us On</p>
                     <div className="flex space-x-2">
-                        {/* Use simple circles with a deep amber background for the icons */}
+                       
                         {['Insta', 'FB', 'LinkedIn', 'Pinterest', 'X'].map((platform) => (
                             <a key={platform} href="#" className="w-8 h-8 rounded-full bg-amber-800 flex items-center justify-center text-white hover:bg-black transition-colors duration-200 text-xs font-bold">
                                 {platform[0]}
                             </a>
                         ))}
                     </div>
-                </div>
+                </div> */}
                 
                 {/* Payment Icons (Text placeholder) */}
-                <div className="text-xs text-gray-500 flex space-x-4">
+                {/* <div className="text-xs text-gray-500 flex space-x-4">
                     <span>VISA</span>
                     <span>PayPal</span>
                     <span>AMEX</span>
                     <span>Amazon</span>
                     <span>Rupay</span>
-                </div>
+                </div> */}
             </div>
         </div>
       </div>

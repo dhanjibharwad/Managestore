@@ -29,8 +29,8 @@ const PlansPage = () => {
       buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
     },
     {
-      name: 'PRO',
-      price: billingPeriod === 'monthly' ? 49 : 490,
+      name: 'BASIC',
+      price: billingPeriod === 'monthly' ? 249 : 2490,
       period: billingPeriod === 'monthly' ? '/month' : '/year',
       popular: true,
       description: 'Best for growing teams and businesses',
@@ -47,8 +47,8 @@ const PlansPage = () => {
       buttonStyle: 'bg-gradient-to-r from-sky-400 to-sky-500 text-white hover:from-sky-500 hover:to-sky-600 shadow-lg hover:shadow-xl',
     },
     {
-      name: 'ULTRA',
-      price: billingPeriod === 'monthly' ? 99 : 990,
+      name: 'Enterprise',
+      price: billingPeriod === 'monthly' ? 499 : 4990,
       period: billingPeriod === 'monthly' ? '/month' : '/year',
       popular: false,
       description: 'Advanced features for large enterprises',
@@ -61,7 +61,7 @@ const PlansPage = () => {
         { name: 'Developer support', included: true },
         { name: 'A/B Testing', included: true },
       ],
-      buttonText: 'Contact Sales',
+      buttonText: 'Get Started',
       buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
     },
   ];
