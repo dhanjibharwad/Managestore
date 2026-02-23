@@ -60,6 +60,8 @@ export default function QuotationPage() {
   const [showCustomerSearch, setShowCustomerSearch] = useState(false);
   const [showServiceModal, setShowServiceModal] = useState(false);
   const [showPartModal, setShowPartModal] = useState(false);
+  const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
+  const [editingPartId, setEditingPartId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [currentUser, setCurrentUser] = useState<string>('Admin');
@@ -161,6 +163,7 @@ export default function QuotationPage() {
   });
 
   const openServiceModal = () => {
+    setEditingServiceId(null);
     setShowServiceModal(true);
     setServiceForm({
       repairService: '',
@@ -176,8 +179,26 @@ export default function QuotationPage() {
     });
   };
 
+  const handleEditService = (service: Service) => {
+    setEditingServiceId(service.id);
+    setServiceForm({
+      repairService: service.serviceName,
+      description: service.description,
+      price: service.price.toString(),
+      discount: service.disc.toString(),
+      subTotal: service.subTotal.toString(),
+      tax: service.tax === 18 ? 'gst' : service.tax === 5 ? 'gst5' : '',
+      taxAmount: service.taxAmt.toString(),
+      taxCode: service.taxCode,
+      totalAmount: service.total.toString(),
+      rateIncludingTax: service.rateIncludingTax,
+    });
+    setShowServiceModal(true);
+  };
+
   const closeServiceModal = () => {
     setShowServiceModal(false);
+    setEditingServiceId(null);
   };
 
   const handleServiceFormChange = (field: string, value: any) => {
@@ -241,8 +262,8 @@ export default function QuotationPage() {
     if (serviceForm.tax === 'gst' || serviceForm.tax === 'igst') taxRate = 18;
     else if (serviceForm.tax === 'gst5') taxRate = 5;
 
-    const newService: Service = {
-      id: Date.now().toString(),
+    const serviceData: Service = {
+      id: editingServiceId || Date.now().toString(),
       serviceName: serviceForm.repairService,
       description: serviceForm.description,
       price: parseFloat(serviceForm.price) || 0,
@@ -254,7 +275,14 @@ export default function QuotationPage() {
       total: parseFloat(serviceForm.totalAmount) || 0,
       rateIncludingTax: serviceForm.rateIncludingTax,
     };
-    setServices([...services, newService]);
+
+    if (editingServiceId) {
+      setServices(services.map(s => s.id === editingServiceId ? serviceData : s));
+      showToast('Service updated successfully', 'success');
+    } else {
+      setServices([...services, serviceData]);
+      showToast('Service added successfully', 'success');
+    }
     closeServiceModal();
   };
 
@@ -264,6 +292,7 @@ export default function QuotationPage() {
   };
 
   const openPartModal = () => {
+    setEditingPartId(null);
     setShowPartModal(true);
     setPartForm({
       part: '',
@@ -283,8 +312,30 @@ export default function QuotationPage() {
     });
   };
 
+  const handleEditPart = (part: Part) => {
+    setEditingPartId(part.id);
+    setPartForm({
+      part: '',
+      partName: part.description,
+      serialNumber: part.serialNumber || '',
+      description: '',
+      warranty: part.warranty || '',
+      price: part.price.toString(),
+      quantity: part.qty.toString(),
+      rateIncludingTax: part.rateIncludingTax || false,
+      discount: part.disc.toString(),
+      subTotal: part.subTotal.toString(),
+      tax: part.tax === 18 ? 'gst' : part.tax === 5 ? 'gst5' : '',
+      taxAmount: part.taxAmt.toString(),
+      taxCode: part.taxCode,
+      totalAmount: part.total.toString(),
+    });
+    setShowPartModal(true);
+  };
+
   const closePartModal = () => {
     setShowPartModal(false);
+    setEditingPartId(null);
   };
 
   const savePart = () => {
@@ -292,8 +343,8 @@ export default function QuotationPage() {
     if (partForm.tax === 'gst' || partForm.tax === 'igst') taxRate = 18;
     else if (partForm.tax === 'gst5') taxRate = 5;
 
-    const newPart: Part = {
-      id: Date.now().toString(),
+    const partData: Part = {
+      id: editingPartId || Date.now().toString(),
       description: partForm.partName || partForm.part,
       taxCode: partForm.taxCode,
       qty: parseFloat(partForm.quantity) || 0,
@@ -307,7 +358,14 @@ export default function QuotationPage() {
       warranty: partForm.warranty,
       rateIncludingTax: partForm.rateIncludingTax
     };
-    setParts([...parts, newPart]);
+
+    if (editingPartId) {
+      setParts(parts.map(p => p.id === editingPartId ? partData : p));
+      showToast('Part updated successfully', 'success');
+    } else {
+      setParts([...parts, partData]);
+      showToast('Part added successfully', 'success');
+    }
     closePartModal();
   };
 
@@ -561,13 +619,21 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">₹{service.taxAmt.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{service.total.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">
-                          <button
-                            onClick={() => deleteService(service.id)}
-                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                            title="Remove service"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditService(service)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deleteService(service.id)}
+                              className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                              title="Remove service"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -659,13 +725,21 @@ export default function QuotationPage() {
                         <td className="px-4 py-2 text-sm">{part.subTotal.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">{part.total.toFixed(2)}</td>
                         <td className="px-4 py-2 text-sm">
-                          <button
-                            onClick={() => deletePart(part.id)}
-                            className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                            title="Remove part"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleEditPart(part)}
+                              className="text-blue-600 hover:text-blue-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => deletePart(part.id)}
+                              className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                              title="Remove part"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))
@@ -774,7 +848,7 @@ export default function QuotationPage() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-800">Add New Service</h2>
+              <h2 className="text-lg font-semibold text-gray-800">{editingServiceId ? 'Edit Service' : 'Add New Service'}</h2>
               <button
                 onClick={closeServiceModal}
                 className="text-gray-400 hover:text-gray-600"
@@ -962,7 +1036,7 @@ export default function QuotationPage() {
           <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-800">Add New Part</h2>
+              <h2 className="text-lg font-semibold text-gray-800">{editingPartId ? 'Edit Part' : 'Add New Part'}</h2>
               <button
                 onClick={closePartModal}
                 className="text-gray-400 hover:text-gray-600"
