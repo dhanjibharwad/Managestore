@@ -197,6 +197,15 @@ const JobPage: React.FC = () => {
     });
   };
 
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
   const getInitials = (name: string) => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
@@ -1144,7 +1153,7 @@ const JobPage: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600 mb-1">Due Date</p>
-                    <p className="text-sm font-medium text-gray-900">{viewJobModal.job.due_date ? formatDateTime(viewJobModal.job.due_date) : 'N/A'}</p>
+                    <p className="text-sm font-medium text-gray-900">{viewJobModal.job.due_date ? formatDate(viewJobModal.job.due_date) : 'N/A'}</p>
                   </div>
                   {viewJobModal.job.dealer_job_id && (
                     <div className="col-span-2">
