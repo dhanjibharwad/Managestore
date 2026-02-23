@@ -44,6 +44,7 @@ export default function AddPartPage() {
   const [selectedCategoryForSub, setSelectedCategoryForSub] = useState('');
   const [categories, setCategories] = useState<any[]>([]);
   const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [storageLocations, setStorageLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -179,8 +180,21 @@ export default function AddPartPage() {
     }
   };
 
+  const loadStorageLocations = async () => {
+    try {
+      const response = await fetch('/api/admin/storage-locations');
+      const result = await response.json();
+      if (response.ok && Array.isArray(result)) {
+        setStorageLocations(result);
+      }
+    } catch (error) {
+      console.error('Error loading storage locations:', error);
+    }
+  };
+
   useEffect(() => {
     loadCategories();
+    loadStorageLocations();
   }, []);
 
   // Prevent background scroll when modals are open
@@ -404,8 +418,9 @@ export default function AddPartPage() {
                   className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
                 >
                   <option value="">Select storage location</option>
-                  <option value="warehouse-a">Warehouse A</option>
-                  <option value="warehouse-b">Warehouse B</option>
+                  {storageLocations.map(location => (
+                    <option key={location.id} value={location.name}>{location.name}</option>
+                  ))}
                 </select>
               </div>
             </div>
