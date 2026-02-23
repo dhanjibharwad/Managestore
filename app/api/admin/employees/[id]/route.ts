@@ -9,7 +9,7 @@ export async function DELETE(
   try {
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -33,14 +33,28 @@ export async function DELETE(
     }
 
     // Check if employee is referenced in other tables
-    const leadsCheck = await pool.query(
-      'SELECT COUNT(*) as count FROM leads WHERE assignee_id = $1',
-      [employeeId]
-    );
+    const checks = await Promise.all([
+      pool.query('SELECT COUNT(*) as count FROM leads WHERE assignee_id = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM jobs WHERE assigned_technician_id = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM tasks WHERE assignee_id = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM amcs WHERE assigned_technician_id = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM pickup_drop WHERE assigned_to = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM self_checkin WHERE assigned_technician_id = $1', [employeeId])
+    ]);
 
-    if (parseInt(leadsCheck.rows[0].count) > 0) {
+    const [leads, jobs, tasks, amcs, pickupDrop, selfCheckin] = checks.map(r => parseInt(r.rows[0].count));
+
+    if (leads > 0 || jobs > 0 || tasks > 0 || amcs > 0 || pickupDrop > 0 || selfCheckin > 0) {
+      const references = [];
+      if (leads > 0) references.push(`${leads} lead(s)`);
+      if (jobs > 0) references.push(`${jobs} job(s)`);
+      if (tasks > 0) references.push(`${tasks} task(s)`);
+      if (amcs > 0) references.push(`${amcs} AMC(s)`);
+      if (pickupDrop > 0) references.push(`${pickupDrop} pickup/drop(s)`);
+      if (selfCheckin > 0) references.push(`${selfCheckin} self check-in(s)`);
+      
       return NextResponse.json({ 
-        error: 'Cannot delete employee. Employee is assigned to existing leads. Please reassign the leads first.' 
+        error: `Cannot delete employee. Employee is assigned to: ${references.join(', ')}. Please reassign first.` 
       }, { status: 400 });
     }
 
