@@ -68,11 +68,13 @@ export default function QuotationPage() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [nextToastId, setNextToastId] = useState(1);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [companyServices, setCompanyServices] = useState<any[]>([]);
 
   React.useEffect(() => {
     fetchUserSession();
     generateQuotationNumber();
     fetchCustomers();
+    fetchCompanyServices();
   }, []);
 
   // Prevent background scroll when modals are open
@@ -121,6 +123,20 @@ export default function QuotationPage() {
       }
     } catch (error) {
       console.error('Error fetching customers:', error);
+    }
+  };
+
+  const fetchCompanyServices = async () => {
+    try {
+      const response = await fetch('/api/admin/services/all');
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          setCompanyServices(data);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching company services:', error);
     }
   };
 
@@ -202,6 +218,18 @@ export default function QuotationPage() {
   };
 
   const handleServiceFormChange = (field: string, value: any) => {
+    if (field === 'repairService' && value) {
+      const selectedService = companyServices.find(s => s.name === value);
+      if (selectedService) {
+        setServiceForm(prev => ({
+          ...prev,
+          repairService: selectedService.name,
+          description: selectedService.description || '',
+          price: selectedService.price?.toString() || ''
+        }));
+        return;
+      }
+    }
     setServiceForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -870,10 +898,12 @@ export default function QuotationPage() {
                     onChange={(e) => handleServiceFormChange('repairService', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                   >
-                    <option value="">Eg: virus or malware attack, broken di...</option>
-                    <option value="Virus Removal">Virus Removal</option>
-                    <option value="Screen Repair">Screen Repair</option>
-                    <option value="Battery Replacement">Battery Replacement</option>
+                    <option value="">Select repair service</option>
+                    {companyServices.map(service => (
+                      <option key={service.id} value={service.name}>
+                        {service.name}
+                      </option>
+                    ))}
                   </select>
                   <label className="flex items-center gap-2 text-sm text-gray-700">
                     <input
