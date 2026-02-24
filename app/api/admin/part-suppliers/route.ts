@@ -85,6 +85,72 @@ export async function GET() {
   }
 }
 
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session || !session.company) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Supplier ID is required' }, { status: 400 });
+    }
+
+    const body = await request.json();
+    const {
+      supplierName,
+      mobileNumber,
+      phoneNumber,
+      taxNumber,
+      emailId,
+      addressLine,
+      regionState,
+      cityTown,
+      postalCode
+    } = body;
+
+    if (!supplierName?.trim()) {
+      return NextResponse.json({ error: 'Supplier name is required' }, { status: 400 });
+    }
+    
+    if (!mobileNumber?.trim() || !/^[6-9]\d{9}$/.test(mobileNumber)) {
+      return NextResponse.json({ error: 'Valid mobile number is required' }, { status: 400 });
+    }
+
+    if (emailId && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailId)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
+
+    const client = await pool.connect();
+    
+    try {
+      const result = await client.query(
+        `UPDATE part_suppliers 
+         SET supplier_name = $1, mobile_number = $2, phone_number = $3, tax_number = $4, 
+             email_id = $5, address_line = $6, region_state = $7, city_town = $8, postal_code = $9
+         WHERE id = $10 AND company_id = $11
+         RETURNING *`,
+        [supplierName, mobileNumber, phoneNumber, taxNumber, emailId, 
+         addressLine, regionState, cityTown, postalCode, id, session.company.id]
+      );
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Supplier not found' }, { status: 404 });
+      }
+
+      return NextResponse.json(result.rows[0]);
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Database error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getSession();

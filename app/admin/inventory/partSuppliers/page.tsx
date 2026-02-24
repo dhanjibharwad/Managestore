@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, List, Plus, Trash2, AlertCircle, CheckCircle, XCircle, X } from 'lucide-react';
+import { Search, Filter, List, Plus, Trash2, AlertCircle, CheckCircle, XCircle, X, Edit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Supplier {
@@ -212,6 +212,11 @@ export default function PartSuppliersPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800">
                         <div className="flex items-center gap-2">
+                          <Link href={`/admin/inventory/partSuppliers/edit/${supplier.id}`}>
+                            <button className="p-1 text-blue-600 hover:text-blue-800 transition-colors">
+                              <Edit className="w-4 h-4" />
+                            </button>
+                          </Link>
                           <button 
                             onClick={() => setDeleteModal({show: true, supplier})}
                             className="p-1 text-red-600 hover:text-red-800 transition-colors"
