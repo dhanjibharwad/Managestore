@@ -114,12 +114,15 @@ export default function PartSuppliersPage() {
                   <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
                     City
                   </th>
+                  <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
+                    Created On
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-16">
+                    <td colSpan={7} className="text-center py-16">
                       <div className="flex flex-col items-center justify-center text-gray-400">
                         <p className="text-sm">Loading...</p>
                       </div>
@@ -127,7 +130,7 @@ export default function PartSuppliersPage() {
                   </tr>
                 ) : filteredSuppliers.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-16">
+                    <td colSpan={7} className="text-center py-16">
                       <div className="flex flex-col items-center justify-center text-gray-400">
                         <p className="text-sm">No suppliers found</p>
                       </div>
@@ -156,6 +159,9 @@ export default function PartSuppliersPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {supplier.city_town || '-'}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {new Date(supplier.created_at).toLocaleString()}
                       </td>
                     </tr>
                   ))

@@ -115,7 +115,7 @@ export default function SalesPage() {
                 className="cursor-pointer p-2 border-2 rounded-md text-sm font-medium transition-colors"
                 style={{ borderColor: '#4A70A9', color: '#4A70A9' }}
               >
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4" />
               </button>
               </Link>
             </div>

@@ -373,7 +373,7 @@ export default function SalesForm() {
           </h1>
           <div className="flex gap-3">
             <button 
-              onClick={() => router.push('/admin/sales')}
+              onClick={() => router.push('/technician/sales')}
               className="px-6 py-2 border border-red-500 text-red-500 rounded hover:bg-red-50 transition-colors"
             >
               Cancel
