@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     // Get session using the same method as /api/auth/me
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
     // Get session using the same method as /api/auth/me
     const session = await getSession();
     
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   try {
     // Verify user is authenticated
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
   try {
     // Verify user is authenticated
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

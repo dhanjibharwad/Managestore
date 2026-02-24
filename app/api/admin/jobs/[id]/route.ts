@@ -11,7 +11,7 @@ export async function DELETE(
     
     // Get session to extract company_id for security
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -54,7 +54,7 @@ export async function PUT(
     
     // Get session to extract company_id for security
     const session = await getSession();
-    if (!session) {
+    if (!session || !session.company) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }

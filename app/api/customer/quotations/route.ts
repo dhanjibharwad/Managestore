@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const session = await getSession();
     
-    if (!session || session.user.role !== 'customer') {
+    if (!session || !session.company || session.user.role !== 'customer') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -68,7 +68,7 @@ export async function PUT(req: NextRequest) {
   try {
     const session = await getSession();
     
-    if (!session || session.user.role !== 'customer') {
+    if (!session || !session.company || session.user.role !== 'customer') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -99,6 +99,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const customer = customerResult.rows[0];
+    const companyId = session.company.id;
 
     // Update quotation status
     const result = await pool.query(
@@ -106,7 +107,7 @@ export async function PUT(req: NextRequest) {
        SET status = $1, approved_rejected_by = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3 AND company_id = $4 AND (customer_name = $5 OR customer_name = $6)
        RETURNING id`,
-      [action, customer.customer_name, quotationId, session.company.id, customer.id.toString(), customer.customer_name]
+      [action, customer.customer_name, quotationId, companyId, customer.id.toString(), customer.customer_name]
     ).catch(async (error) => {
       // If columns don't exist, try to add them first
       if (error.code === '42703') {
@@ -121,7 +122,7 @@ export async function PUT(req: NextRequest) {
            SET status = $1, approved_rejected_by = $2, updated_at = CURRENT_TIMESTAMP
            WHERE id = $3 AND company_id = $4 AND (customer_name = $5 OR customer_name = $6)
            RETURNING id`,
-          [action, customer.customer_name, quotationId, session.company.id, customer.id.toString(), customer.customer_name]
+          [action, customer.customer_name, quotationId, companyId, customer.id.toString(), customer.customer_name]
         );
       }
       throw error;

@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
     const session = await getSession();
     console.log('Session:', session);
     
-    if (!session || session.user.role !== 'technician') {
+    if (!session || !session.company || session.user.role !== 'technician') {
       console.log('Unauthorized access attempt:', session?.user?.role);
       return NextResponse.json(
         { error: 'Unauthorized' },

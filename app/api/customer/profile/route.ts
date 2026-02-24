@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     
     console.log('Session:', session);
     
-    if (!session || session.user.role !== 'customer') {
+    if (!session || !session.company || session.user.role !== 'customer') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }

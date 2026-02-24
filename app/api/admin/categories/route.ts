@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     const session = await getSession();
     console.log('Session data:', session); // Debug log
     
-    if (!session) {
+    if (!session || !session.company) {
       console.log('No session found'); // Debug log
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     const session = await getSession();
     console.log('POST Session data:', session); // Debug log
     
-    if (!session) {
+    if (!session || !session.company) {
       console.log('POST No session found'); // Debug log
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
