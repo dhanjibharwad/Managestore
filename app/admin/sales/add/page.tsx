@@ -55,6 +55,7 @@ export default function SalesForm() {
   const [sendMail, setSendMail] = useState(false);
   const [items, setItems] = useState<SaleItem[]>([]);
   const [showAddPartModal, setShowAddPartModal] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -201,6 +202,19 @@ export default function SalesForm() {
   };
 
   const addItem = () => {
+    setEditingItemId(null);
+    setShowAddPartModal(true);
+  };
+
+  const editItem = (item: SaleItem) => {
+    setEditingItemId(item.id);
+    setPartName(item.description);
+    setDescription(item.description);
+    setPrice(item.price.toString());
+    setQuantity(item.qty.toString());
+    setDiscount(item.disc.toString());
+    setTax(item.tax.toString());
+    setTaxCode(item.taxCode);
     setShowAddPartModal(true);
   };
 
@@ -212,7 +226,7 @@ export default function SalesForm() {
 
     // If this is a new part (not selected from existing), save it to database first
     let partId = null;
-    if (!partSearch && companyId) {
+    if (!partSearch && companyId && !editingItemId) {
       try {
         const partResponse = await fetch('/api/admin/parts', {
           method: 'POST',
@@ -232,7 +246,6 @@ export default function SalesForm() {
         if (partData.success) {
           partId = partData.part.id;
           showToast('New part saved to database', 'success');
-          // Refresh parts list
           fetchParts();
         }
       } catch (error) {
@@ -241,8 +254,8 @@ export default function SalesForm() {
       }
     }
 
-    const newItem: SaleItem = {
-      id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+    const itemData: SaleItem = {
+      id: editingItemId || `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       description: description || partName,
       taxCode: taxCode,
       qty: parseFloat(quantity) || 0,
@@ -253,9 +266,15 @@ export default function SalesForm() {
       subTotal: parseFloat(subTotal) || 0,
       total: parseFloat(totalAmount) || 0
     };
-    setItems([...items, newItem]);
+
+    if (editingItemId) {
+      setItems(items.map(item => item.id === editingItemId ? itemData : item));
+      showToast('Item updated successfully', 'success');
+    } else {
+      setItems([...items, itemData]);
+      showToast('Item added to sale', 'success');
+    }
     handleCloseModal();
-    showToast('Item added to sale', 'success');
   };
 
   const handleSubmitSale = async () => {
@@ -304,7 +323,7 @@ export default function SalesForm() {
 
   const handleCloseModal = () => {
     setShowAddPartModal(false);
-    // Reset form
+    setEditingItemId(null);
     setPartSearch('');
     setPartName('');
     setSerialNumber('');
@@ -539,13 +558,21 @@ export default function SalesForm() {
                             {item.total.toFixed(2)}
                           </td>
                           <td className="px-4 py-2 text-sm text-gray-700">
-                            <button
-                              onClick={() => removeItem(item.id)}
-                              className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                              title="Remove item"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => editItem(item)}
+                                className="text-blue-600 hover:text-blue-800"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => removeItem(item.id)}
+                                className="p-1 text-red-600 hover:text-red-800 transition-colors"
+                                title="Remove item"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -697,7 +724,7 @@ export default function SalesForm() {
           <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             {/* Modal Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-800">Add New Part</h2>
+              <h2 className="text-xl font-semibold text-gray-800">{editingItemId ? 'Edit Part' : 'Add New Part'}</h2>
               <button
                 onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -980,7 +1007,7 @@ export default function SalesForm() {
                 onClick={handleSavePart}
                 className="flex-1 px-6 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3d5d8f] transition-colors"
               >
-                Save Part
+                {editingItemId ? 'Update Part' : 'Save Part'}
               </button>
             </div>
           </div>

@@ -979,6 +979,7 @@ export default function QuotationPage() {
                     value={serviceForm.price}
                     onChange={(e) => handleServiceFormChange('price', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    min="0"
                     required
                   />
                 </div>
@@ -992,6 +993,7 @@ export default function QuotationPage() {
                     value={serviceForm.discount}
                     onChange={(e) => handleServiceFormChange('discount', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    min="0"
                   />
                 </div>
               </div>
@@ -1208,6 +1210,7 @@ export default function QuotationPage() {
                     value={partForm.price}
                     onChange={(e) => handlePartFormChange('price', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    min="0"
                   />
                 </div>
               </div>
@@ -1234,6 +1237,7 @@ export default function QuotationPage() {
                     value={partForm.quantity}
                     onChange={(e) => handlePartFormChange('quantity', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    min="1"
                   />
                 </div>
               </div>
@@ -1250,6 +1254,7 @@ export default function QuotationPage() {
                     value={partForm.discount}
                     onChange={(e) => handlePartFormChange('discount', e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    min="0"
                   />
                 </div>
                 <div>
