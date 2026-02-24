@@ -371,6 +371,9 @@ export default function TasksPage() {
                   </div>
                 </th>
                 <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Created On
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
                   Actions
                 </th>
               </tr>
@@ -378,13 +381,13 @@ export default function TasksPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : tasks.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     No data
                   </td>
                 </tr>
@@ -457,6 +460,9 @@ export default function TasksPage() {
                           </div>
                         )}
                       </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">
+                      {formatDate(task.created_at)}
                     </td>
                     <td className="px-6 py-4 text-sm text-zinc-700">
                       <div className="flex items-center gap-2">
