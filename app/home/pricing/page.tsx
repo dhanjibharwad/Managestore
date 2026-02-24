@@ -16,14 +16,14 @@ const PlansPage = () => {
       popular: false,
       description: 'Perfect for individuals getting started',
       features: [
-        { name: '1 User Account', included: true },
-        { name: '10 Team Members', included: true },
-        { name: 'Unlimited Emails Accounts', included: true },
-        { name: 'Set And Manage Permissions', included: true },
-        { name: 'API & extension support', included: false },
-        { name: 'Developer support', included: false },
-        { name: 'A/B Testing', included: false },
-        { name: 'A/B Testing', included: false },
+        { name: '10 Jobs Records', included: true },
+        { name: 'Up to 1 Employees', included: true },
+        { name: 'Jobs & Sales Records', included: true },
+        { name: 'Upload Device Images', included: true },
+        { name: 'Individual Dashboards', included: false },
+        // { name: 'Developer support', included: false },
+        // { name: 'A/B Testing', included: false },
+        // { name: 'A/B Testing', included: false },
       ],
       buttonText: 'Get Started',
       buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
@@ -35,15 +35,16 @@ const PlansPage = () => {
       popular: true,
       description: 'Best for growing teams and businesses',
       features: [
-        { name: '50 User Account', included: true },
-        { name: '500 Team Members', included: true },
-        { name: 'Unlimited Emails Accounts', included: true },
-        { name: 'Set And Manage Permissions', included: true },
-        { name: 'API & extension support', included: true },
-        { name: 'Developer support', included: true },
-        { name: 'A/B Testing', included: false },
+        { name: '1000 Jobs & Sales Records', included: true },
+        { name: 'Up to 6 Employees', included: true },
+        { name: 'Unlimited Jobs & Sales Records', included: true },
+        { name: 'Upload Device Images', included: true },
+        { name: 'Individual Dashboards', included: true },
+        { name: 'Role-Based Access Rights', included: true },
+        { name: 'Attachments', included: true },
+        { name: 'AMC(Annual Maintenance Contract)', included: false },
       ],
-      buttonText: 'Start Free Trial',
+      buttonText: 'Start Here',
       buttonStyle: 'bg-gradient-to-r from-sky-400 to-sky-500 text-white hover:from-sky-500 hover:to-sky-600 shadow-lg hover:shadow-xl',
     },
     {
@@ -53,13 +54,16 @@ const PlansPage = () => {
       popular: false,
       description: 'Advanced features for large enterprises',
       features: [
-        { name: 'Unlimited User Account', included: true },
-        { name: 'Unlimited Team Members', included: true },
+        { name: 'Unlimited Jobs & Sales Records', included: true },
+        { name: 'Unlimited Employees', included: true },
         { name: 'Unlimited Emails Accounts', included: true },
-        { name: 'Set And Manage Permissions', included: true },
-        { name: 'API & extension support', included: true },
-        { name: 'Developer support', included: true },
-        { name: 'A/B Testing', included: true },
+        { name: 'Upload Device Images', included: true },
+        { name: 'Individual Dashboards', included: true },
+        { name: 'Attachments', included: true },
+        { name: 'AMC(Annual Maintenance Contract)', included: true },
+        { name: 'Inventory Module', included: true },
+        { name: 'Purchase Management', included: true },
+        { name: 'Pickup Drop', included: true },
       ],
       buttonText: 'Get Started',
       buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
@@ -162,7 +166,7 @@ const PlansPage = () => {
                   </div>
                 )}
 
-                <div className="p-8 lg:p-10">
+                  <div className="p-8 lg:p-10 flex flex-col h-full">
                   {/* Plan Header */}
                   <div className="text-center mb-8">
                     <h3 className={`text-2xl font-bold mb-2 ${plan.popular ? 'text-white' : 'text-slate-900'}`}>
@@ -188,7 +192,7 @@ const PlansPage = () => {
                   </div>
 
                   {/* Features List */}
-                  <div className="space-y-4 mb-10">
+                  <div className="space-y-4 mb-10 flex-grow">
                     {plan.features.map((feature, featureIndex) => (
                       <div key={featureIndex} className="flex items-start">
                         <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center mt-0.5 mr-4 transition-all duration-300 ${

@@ -55,9 +55,9 @@ const Footer: React.FC = () => {
           <div className="col-span-1 md:col-span-1">
             <h3 className={titleClasses}>Company</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className={linkClasses}>About Us</a></li>
+              <li><a href="/home/about" className={linkClasses}>About Us</a></li>
               {/* <li><a href="#" className={linkClasses}>Careers</a></li> */}
-              <li><a href="#" className={linkClasses}>Blog</a></li>
+              <li><a href="/home/blog" className={linkClasses}>Blog</a></li>
               {/* <li><a href="#" className={linkClasses}>Partners</a></li> */}
             </ul>
           </div>
