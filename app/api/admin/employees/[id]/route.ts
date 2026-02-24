@@ -35,26 +35,20 @@ export async function DELETE(
     // Check if employee is referenced in other tables
     const checks = await Promise.all([
       pool.query('SELECT COUNT(*) as count FROM leads WHERE assignee_id = $1', [employeeId]),
-      pool.query('SELECT COUNT(*) as count FROM jobs WHERE assigned_technician_id = $1', [employeeId]),
+      pool.query('SELECT COUNT(*) as count FROM jobs WHERE assignee = $1::text', [employeeId.toString()]),
       pool.query('SELECT COUNT(*) as count FROM tasks WHERE assignee_id = $1', [employeeId]),
-      pool.query('SELECT COUNT(*) as count FROM amcs WHERE assigned_technician_id = $1', [employeeId]),
-      pool.query('SELECT COUNT(*) as count FROM pickup_drop WHERE assigned_to = $1', [employeeId]),
-      pool.query('SELECT COUNT(*) as count FROM self_checkin WHERE assigned_technician_id = $1', [employeeId])
     ]);
 
-    const [leads, jobs, tasks, amcs, pickupDrop, selfCheckin] = checks.map(r => parseInt(r.rows[0].count));
+    const [leads, jobs, tasks] = checks.map(r => parseInt(r.rows[0].count));
 
-    if (leads > 0 || jobs > 0 || tasks > 0 || amcs > 0 || pickupDrop > 0 || selfCheckin > 0) {
+    if (leads > 0 || jobs > 0 || tasks > 0) {
       const references = [];
       if (leads > 0) references.push(`${leads} lead(s)`);
       if (jobs > 0) references.push(`${jobs} job(s)`);
       if (tasks > 0) references.push(`${tasks} task(s)`);
-      if (amcs > 0) references.push(`${amcs} AMC(s)`);
-      if (pickupDrop > 0) references.push(`${pickupDrop} pickup/drop(s)`);
-      if (selfCheckin > 0) references.push(`${selfCheckin} self check-in(s)`);
       
       return NextResponse.json({ 
-        error: `Cannot delete employee. Employee is assigned to: ${references.join(', ')}. Please reassign first.` 
+        error: `Cannot delete employee. Employee is assigned to: ${references.join(', ')}. Please reassign these items first.` 
       }, { status: 400 });
     }
 

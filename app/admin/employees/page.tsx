@@ -393,10 +393,24 @@ const EmployeeTable = () => {
                   <p className="text-sm text-gray-500">This action cannot be undone</p>
                 </div>
               </div>
-              <p className="text-gray-700 mb-6">
-                Are you sure you want to delete <strong>{deleteModal.employee.employee_name}</strong>? 
-                All associated data will be permanently removed.
+              <p className="text-gray-700 mb-4">
+                Are you sure you want to delete <strong>{deleteModal.employee.employee_name}</strong>?
               </p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <div className="flex gap-2">
+                  <AlertCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm text-yellow-800">
+                    <p className="font-semibold mb-2">Warning: This action will:</p>
+                    <ul className="list-disc list-inside space-y-1 ml-2">
+                      <li>Permanently remove all employee data</li>
+                      <li>Remove access to the system</li>
+                      <li>Delete associated tasks and assignments</li>
+                      <li>Remove employee from all quotations and sales records</li>
+                      <li>Cannot be undone</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
               <div className="flex gap-3">
                 <button
                   onClick={() => setDeleteModal({show: false, employee: null})}
