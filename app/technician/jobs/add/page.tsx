@@ -105,6 +105,7 @@ export default function JobSheetForm() {
   const [filteredModels, setFilteredModels] = useState<DeviceModel[]>([]);
   const [showBrandModal, setShowBrandModal] = useState(false);
   const [showModelModal, setShowModelModal] = useState(false);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [showServicesDropdown, setShowServicesDropdown] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
   const [newModelName, setNewModelName] = useState('');
@@ -430,33 +431,12 @@ export default function JobSheetForm() {
   };
 
   const handleCancel = () => {
-    if (confirm('Are you sure you want to cancel? All data will be lost.')) {
-      setFormData({
-        customerName: '',
-        source: '',
-        referredBy: '',
-        serviceType: 'Carried By User',
-        jobType: '',
-        deviceType: '',
-        deviceBrand: '',
-        deviceModel: '',
-        serialNumber: '',
-        accessories: '',
-        storageLocation: '',
-        deviceColor: '',
-        devicePassword: '',
-        services: [],
-        tags: '',
-        hardwareConfig: '',
-        serviceAssessment: '',
-        priority: 'Regular',
-        assignee: '',
-        initialQuotation: '',
-        dueDate: '',
-        dealerJobId: '',
-        termsConditions: ''
-      });
-    }
+    setShowCancelModal(true);
+  };
+
+  const confirmCancel = () => {
+    setShowCancelModal(false);
+    router.push('/technician/jobs');
   };
 
   return (
@@ -1096,6 +1076,40 @@ export default function JobSheetForm() {
                 className="px-4 py-2 bg-[#4A70A9] text-white rounded hover:bg-[#3a5a89] disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
                 Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Confirmation Modal */}
+      {showCancelModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Cancel Job Creation</h3>
+                <p className="text-sm text-gray-500">This action cannot be undone</p>
+              </div>
+            </div>
+            <p className="text-gray-700 mb-6">
+              Are you sure you want to cancel? All entered data will be lost.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCancelModal(false)}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors"
+              >
+                Continue Editing
+              </button>
+              <button
+                onClick={confirmCancel}
+                className="flex-1 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              >
+                Yes, Cancel
               </button>
             </div>
           </div>
