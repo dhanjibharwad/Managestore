@@ -69,6 +69,7 @@ export default function QuotationPage() {
   const [nextToastId, setNextToastId] = useState(1);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [companyServices, setCompanyServices] = useState<any[]>([]);
+  const [quotationParts, setQuotationParts] = useState<any[]>([]);
 
   React.useEffect(() => {
     fetchUserSession();
@@ -76,6 +77,12 @@ export default function QuotationPage() {
     fetchCustomers();
     fetchCompanyServices();
   }, []);
+
+  React.useEffect(() => {
+    if (companyId) {
+      fetchQuotationParts();
+    }
+  }, [companyId]);
 
   // Prevent background scroll when modals are open
   React.useEffect(() => {
@@ -137,6 +144,20 @@ export default function QuotationPage() {
       }
     } catch (error) {
       console.error('Error fetching company services:', error);
+    }
+  };
+
+  const fetchQuotationParts = async () => {
+    try {
+      const response = await fetch(`/api/admin/quotations/parts?companyId=${companyId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.parts) {
+          setQuotationParts(data.parts);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching quotation parts:', error);
     }
   };
 
@@ -255,6 +276,21 @@ export default function QuotationPage() {
   }, [serviceForm.price, serviceForm.discount, serviceForm.tax]);
 
   const handlePartFormChange = (field: string, value: any) => {
+    if (field === 'part' && value) {
+      const selectedPart = quotationParts.find(p => p.part_name === value);
+      if (selectedPart) {
+        setPartForm(prev => ({
+          ...prev,
+          part: selectedPart.part_name,
+          partName: selectedPart.part_name,
+          description: selectedPart.description || '',
+          price: selectedPart.price?.toString() || '',
+          warranty: selectedPart.warranty || '',
+          taxCode: selectedPart.tax_code || ''
+        }));
+        return;
+      }
+    }
     setPartForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -1088,9 +1124,11 @@ export default function QuotationPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Search and select existing part or create new below</option>
-                  <option value="RAM">RAM</option>
-                  <option value="HDD">HDD</option>
-                  <option value="SSD">SSD</option>
+                  {quotationParts.map((part, index) => (
+                    <option key={index} value={part.part_name}>
+                      {part.part_name}
+                    </option>
+                  ))}
                 </select>
               </div>
 

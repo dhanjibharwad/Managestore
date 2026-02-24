@@ -67,17 +67,26 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [editingPart, setEditingPart] = useState<Part | null>(null);
   const [companyServices, setCompanyServices] = useState<any[]>([]);
+  const [quotationParts, setQuotationParts] = useState<any[]>([]);
+  const [companyId, setCompanyId] = useState<number | null>(null);
 
   useEffect(() => {
     const getParams = async () => {
       const resolvedParams = await params;
       setQuotationId(resolvedParams.id);
+      fetchUserSession();
       fetchQuotation(resolvedParams.id);
       fetchCustomers();
       fetchCompanyServices();
     };
     getParams();
   }, [params]);
+
+  useEffect(() => {
+    if (companyId) {
+      fetchQuotationParts();
+    }
+  }, [companyId]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: Date.now(), message, type };
@@ -132,6 +141,18 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  const fetchUserSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user) {
+        setCompanyId(data.user.companyId);
+      }
+    } catch (error) {
+      console.error('Failed to fetch session:', error);
+    }
+  };
+
   const fetchCompanyServices = async () => {
     try {
       const response = await fetch('/api/admin/services/all');
@@ -143,6 +164,20 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
       }
     } catch (error) {
       console.error('Error fetching company services:', error);
+    }
+  };
+
+  const fetchQuotationParts = async () => {
+    try {
+      const response = await fetch(`/api/admin/quotations/parts?companyId=${companyId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.parts) {
+          setQuotationParts(data.parts);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching quotation parts:', error);
     }
   };
 
@@ -360,6 +395,21 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
   };
 
   const handlePartFormChange = (field: string, value: any) => {
+    if (field === 'part' && value) {
+      const selectedPart = quotationParts.find(p => p.part_name === value);
+      if (selectedPart) {
+        setPartForm(prev => ({
+          ...prev,
+          part: selectedPart.part_name,
+          partName: selectedPart.part_name,
+          description: selectedPart.description || '',
+          price: selectedPart.price?.toString() || '',
+          warranty: selectedPart.warranty || '',
+          taxCode: selectedPart.tax_code || ''
+        }));
+        return;
+      }
+    }
     setPartForm(prev => ({ ...prev, [field]: value }));
   };
 
@@ -956,9 +1006,11 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
                   className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Search and select existing part or create new below</option>
-                  <option value="RAM">RAM</option>
-                  <option value="HDD">HDD</option>
-                  <option value="SSD">SSD</option>
+                  {quotationParts.map((part, index) => (
+                    <option key={index} value={part.part_name}>
+                      {part.part_name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4 mb-4">
