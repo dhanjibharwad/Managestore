@@ -176,7 +176,6 @@ export default function CustomersPage() {
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Payment Remaining</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Phone Number</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Email</th>
-              <th className="px-4 py-3 text-left font-medium text-zinc-700">Last Login</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Created On</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Active</th>
               <th className="px-4 py-3"></th>
@@ -186,13 +185,13 @@ export default function CustomersPage() {
           <tbody>
             {loading ? (
               <tr>
-                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                <td colSpan={9} className="px-4 py-16 text-center text-zinc-500">
                   Loading...
                 </td>
               </tr>
             ) : customers.length === 0 ? (
               <tr>
-                <td colSpan={10} className="px-4 py-16 text-center text-zinc-500">
+                <td colSpan={9} className="px-4 py-16 text-center text-zinc-500">
                   No customers found
                 </td>
               </tr>
@@ -232,7 +231,6 @@ export default function CustomersPage() {
                       <span className="text-[#4A70A9]">{customer.email_id}</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">-</td>
                   <td className="px-4 py-3 text-zinc-600">{new Date(customer.created_at).toLocaleString()}</td>
                   <td className="px-4 py-3">
                     {customer.status === 'Active' && (

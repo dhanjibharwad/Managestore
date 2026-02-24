@@ -179,7 +179,7 @@ const EmployeeTable = () => {
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Email</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Gender</th>
               <th className="px-4 py-3 text-left font-medium text-zinc-700">Active</th>
-              <th className="px-4 py-3 text-left font-medium text-zinc-700">Last Login</th>
+              <th className="px-4 py-3 text-left font-medium text-zinc-700">Created On</th>
               <th className="px-4 py-3"></th>
             </tr>
           </thead>
