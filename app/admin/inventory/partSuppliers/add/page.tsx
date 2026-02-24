@@ -96,6 +96,14 @@ export default function PartSupplierPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    
+    // Restrict mobile and phone numbers to only digits and max 10 digits
+    if (name === 'mobileNumber' || name === 'phoneNumber') {
+      if (!/^\d*$/.test(value) || value.length > 10) {
+        return;
+      }
+    }
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
