@@ -33,6 +33,7 @@ interface FormData {
   password: string;
   accessories: string[];
   deviceImages: File[];
+  serviceType: string;
   deviceIssue: string;
   name: string;
   mobile: string;
@@ -67,6 +68,7 @@ export default function SelfCheckIn() {
     password: '',
     accessories: [],
     deviceImages: [],
+    serviceType: '',
     deviceIssue: '',
     name: '',
     mobile: '',
@@ -155,6 +157,7 @@ export default function SelfCheckIn() {
         model: formData.model,
         serialNumber: formData.serialNumber,
         password: formData.password,
+        serviceType: formData.serviceType,
         deviceIssue: formData.deviceIssue,
         accessories: formData.accessories.join(', '),
         deviceImages: (window as any).deviceImagesBase64 || [],
@@ -682,6 +685,8 @@ export default function SelfCheckIn() {
                       </label>
                       <input
                         type="text"
+                        value={formData.serviceType}
+                        onChange={(e) => updateFormData('serviceType', e.target.value)}
                         placeholder="Type or search for service type"
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                       />
