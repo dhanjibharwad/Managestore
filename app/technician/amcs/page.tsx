@@ -88,7 +88,7 @@ export default function AMCContractsPage() {
       const params = new URLSearchParams();
       if (searchQuery) params.append('search', searchQuery);
       
-      const response = await fetch(`/api/admin/amcs?${params}`);
+      const response = await fetch(`/api/technician/amcs?${params}`);
       const data = await response.json();
       if (data.contracts) {
         setContracts(data.contracts);
