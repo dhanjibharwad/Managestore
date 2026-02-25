@@ -97,141 +97,136 @@ export default function QuotationsPage() {
   });
 
   return (
-    <div className="bg-white">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">Quotations</h1>
-          
-          <div className="flex items-center gap-4">
-            {/* Search Input */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Quotation number"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-64 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-gray-700"
-              />
-            </div>
-
-            {/* Status Dropdown */}
-            <select
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent text-gray-700 bg-white min-w-[160px]"
-            >
-              <option value="">Select status</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
+    <div className="bg-gray p-8">
+      <div className="max-w-full mx-auto">
+        {/* Filters Bar */}
+        <div className="flex items-center justify-end gap-4 mb-6">
+          {/* Search Input */}
+          <div className="relative w-72">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Quotation number"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+            />
           </div>
-        </div>
-      </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-zinc-50 border-b border-gray-200">
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Quotations
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Quotation For
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Customer Name
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Approved/Rejected By
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Created By
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Tax Amt
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Amount
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-gray-700">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
+          {/* Status Filter */}
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent bg-white text-gray-700 min-w-[180px]"
+          >
+            <option value="">Select status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+
+        {/* Table */}
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <td colSpan={9} className="px-6 py-16 text-center">
-                  <div className="text-gray-400 text-base">Loading...</div>
-                </td>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Quotations
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Quotation For
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Customer Name
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Approved/Rejected By
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Status
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Created By
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Tax Amt
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Amount
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Actions
+                </th>
               </tr>
-            ) : filteredQuotations.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="px-6 py-16 text-center">
-                  <div className="text-gray-400 text-base">No data</div>
-                </td>
-              </tr>
-            ) : (
-              filteredQuotations.map((quotation) => (
-                <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.quotation_number}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.note || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.customer_display_name}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.approved_rejected_by || '-'}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      quotation.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      quotation.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {quotation.status || 'pending'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">{quotation.created_by}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.tax_amount.toString()).toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">₹{parseFloat(quotation.total_amount.toString()).toFixed(2)}</td>
-                  <td className="px-6 py-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Link href={`/customer/quotations/${quotation.id}/invoice`}>
-                        <button className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors">
-                          <FileText className="w-4 h-4" />
-                          View
-                        </button>
-                      </Link>
-                      {(!quotation.status || quotation.status === 'pending') && (
-                        <>
-                          <button
-                            onClick={() => handleQuotationAction(quotation.id, 'approved')}
-                            disabled={processingQuotation === quotation.id}
-                            className="flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <CheckCircle className="w-4 h-4" />
-                            {processingQuotation === quotation.id ? 'Processing...' : 'Approve'}
-                          </button>
-                          <button
-                            onClick={() => handleQuotationAction(quotation.id, 'rejected')}
-                            disabled={processingQuotation === quotation.id}
-                            className="flex items-center gap-1 px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <XCircle className="w-4 h-4" />
-                            {processingQuotation === quotation.id ? 'Processing...' : 'Reject'}
-                          </button>
-                        </>
-                      )}
-                    </div>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
+                    Loading...
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : filteredQuotations.length === 0 ? (
+                <tr>
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
+                    No data
+                  </td>
+                </tr>
+              ) : (
+                filteredQuotations.map((quotation) => (
+                  <tr key={quotation.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-zinc-700">{quotation.quotation_number}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">{quotation.note || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">{quotation.customer_display_name}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">{quotation.approved_rejected_by || '-'}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        quotation.status === 'approved' ? 'bg-green-100 text-green-800' :
+                        quotation.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                        'bg-orange-100 text-orange-800'
+                      }`}>
+                        {quotation.status || 'pending'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">{quotation.created_by}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">₹{parseFloat(quotation.tax_amount.toString()).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">₹{parseFloat(quotation.total_amount.toString()).toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">
+                      <div className="flex items-center gap-2">
+                        <Link href={`/customer/quotations/${quotation.id}/invoice`}>
+                          <button className="p-1 text-gray-600 hover:text-gray-800 transition-colors">
+                            <FileText className="w-4 h-4" />
+                          </button>
+                        </Link>
+                        {(!quotation.status || quotation.status === 'pending') && (
+                          <>
+                            <button
+                              onClick={() => handleQuotationAction(quotation.id, 'approved')}
+                              disabled={processingQuotation === quotation.id}
+                              className="p-1 text-green-600 hover:text-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Approve"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleQuotationAction(quotation.id, 'rejected')}
+                              disabled={processingQuotation === quotation.id}
+                              className="p-1 text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Reject"
+                            >
+                              <XCircle className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Toast Notifications */}

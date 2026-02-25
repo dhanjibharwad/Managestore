@@ -113,20 +113,19 @@ export default function JobsPage() {
             />
           </div>
           
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            disabled={activeTab === 'open'}
-            className={`px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700 text-sm flex-1 sm:flex-initial ${
-              activeTab === 'open' ? 'bg-gray-100 cursor-not-allowed' : ''
-            }`}
-          >
-            <option value="">Select job status</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
+          {activeTab === 'all' && (
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-gray-700 text-sm flex-1 sm:flex-initial"
+            >
+              <option value="">Select job status</option>
+              <option value="Pending">Pending</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          )}
         </div>
 
         {/* Table */}

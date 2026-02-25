@@ -46,6 +46,18 @@ export default function QuotationsPage() {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   React.useEffect(() => {
     fetchUserSession();
   }, []);
@@ -84,7 +96,7 @@ export default function QuotationsPage() {
           status: q.status || 'Pending',
           approvedRejectedBy: q.approved_rejected_by || '-',
           createdBy: q.created_by || 'Admin',
-          createdAt: new Date(q.created_at).toLocaleDateString()
+          createdAt: q.created_at
         }));
         setQuotations(formattedQuotations);
       }
@@ -186,6 +198,9 @@ export default function QuotationsPage() {
                   Amount
                 </th>
                 <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
+                  Created On
+                </th>
+                <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
                   Actions
                 </th>
               </tr>
@@ -193,13 +208,13 @@ export default function QuotationsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : quotations.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     No data
                   </td>
                 </tr>
@@ -229,6 +244,7 @@ export default function QuotationsPage() {
                     <td className="px-6 py-4 text-sm text-zinc-700">{quotation.createdBy}</td>
                     <td className="px-6 py-4 text-sm text-zinc-700">₹{quotation.taxAmount.toFixed(2)}</td>
                     <td className="px-6 py-4 text-sm text-zinc-700">₹{quotation.totalAmount.toFixed(2)}</td>
+                    <td className="px-6 py-4 text-sm text-zinc-700">{formatDateTime(quotation.createdAt)}</td>
                     <td className="px-6 py-4 text-sm text-zinc-700">
                       <div className="flex items-center gap-2">
                         <Link href={`/admin/quotations/${quotation.id}/invoice`}>
