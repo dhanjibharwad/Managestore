@@ -94,7 +94,7 @@ export default function PickupDropsPage() {
 
   const fetchPickupDrops = async () => {
     try {
-      const response = await fetch('/api/admin/pickupdrop');
+      const response = await fetch('/api/technician/assigned-pickupdrop');
       const result = await response.json();
       if (response.ok) {
         setData(result.pickupDrops || []);
