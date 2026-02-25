@@ -46,6 +46,18 @@ const EmployeeTable = () => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   const fetchEmployees = async () => {
     try {
       setLoading(true);
@@ -240,7 +252,7 @@ const EmployeeTable = () => {
                       </svg>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">{new Date(employee.created_at).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-zinc-600">{formatDateTime(employee.created_at)}</td>
                   <td className="px-4 py-3">
                     <div className="relative">
                       <button 

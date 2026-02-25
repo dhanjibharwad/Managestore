@@ -46,6 +46,18 @@ export default function CustomersPage() {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   const fetchCustomers = async () => {
     try {
       setLoading(true);
@@ -231,7 +243,7 @@ export default function CustomersPage() {
                       <span className="text-[#4A70A9]">{customer.email_id}</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-zinc-600">{new Date(customer.created_at).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-zinc-600">{formatDateTime(customer.created_at)}</td>
                   <td className="px-4 py-3">
                     {customer.status === 'Active' && (
                       <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

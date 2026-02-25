@@ -131,6 +131,18 @@ export default function LeadsPage() {
     }
   };
 
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   const handleUpdateStatus = async () => {
     if (!statusModal.lead || !newStatus) {
       setSuccessMessage('Please select a status');
@@ -308,13 +320,13 @@ export default function LeadsPage() {
                 Lead Source
               </th>
               <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
-                Next Follow Up
-              </th>
-              <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
-                Last Followup Comment
+                Followup Comment
               </th>
               <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
                 Status
+              </th>
+              <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
+                Created On
               </th>
               <th className="px-6 py-3.5 text-left text-sm font-medium text-gray-700">
                 Actions
@@ -359,12 +371,12 @@ export default function LeadsPage() {
                     })()}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.lead_source || '-'}</td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {lead.next_follow_up ? new Date(lead.next_follow_up).toLocaleDateString() : '-'}
-                  </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{lead.comment || '-'}</td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <span className={getStatusStyle(lead.status || 'new')}>{lead.status || 'new'}</span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    {formatDateTime(lead.created_at)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">
                     <div className="flex items-center gap-2">
