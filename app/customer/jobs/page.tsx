@@ -24,6 +24,8 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchJobs = async () => {
     try {
@@ -68,6 +70,7 @@ export default function JobsPage() {
   };
 
   useEffect(() => {
+    setCurrentPage(1);
     fetchJobs();
   }, [searchQuery, statusFilter, activeTab]);
 
@@ -176,8 +179,10 @@ export default function JobsPage() {
                   <tr>
                     <td colSpan={9} className="px-6 py-16 text-center text-gray-500">No jobs found</td>
                   </tr>
-                ) : (
-                  jobs.map((job) => (
+                ) : (() => {
+                  const startIndex = (currentPage - 1) * itemsPerPage;
+                  const paginatedJobs = jobs.slice(startIndex, startIndex + itemsPerPage);
+                  return paginatedJobs.map((job) => (
                     <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
                         {job.jobSheet}
@@ -220,12 +225,85 @@ export default function JobsPage() {
                         </span>
                       </td>
                     </tr>
-                  ))
-                )}
+                  ));
+                })()}
               </tbody>
             </table>
           </div>
         </div>
+        
+        {/* Pagination */}
+        {!loading && !error && jobs.length > 0 && (() => {
+          const totalPages = Math.ceil(jobs.length / itemsPerPage);
+          if (totalPages <= 1) return null;
+          
+          const getPageNumbers = () => {
+            const pages = [];
+            const maxVisible = 5;
+            
+            if (totalPages <= maxVisible) {
+              for (let i = 1; i <= totalPages; i++) pages.push(i);
+            } else {
+              if (currentPage <= 3) {
+                for (let i = 1; i <= 4; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+              } else if (currentPage >= totalPages - 2) {
+                pages.push(1);
+                pages.push('...');
+                for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+              } else {
+                pages.push(1);
+                pages.push('...');
+                for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+                pages.push('...');
+                pages.push(totalPages);
+              }
+            }
+            return pages;
+          };
+          
+          return (
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between mt-0">
+              <div className="text-sm text-gray-700">
+                Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, jobs.length)} of {jobs.length} jobs
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Previous
+                </button>
+                {getPageNumbers().map((page, idx) => (
+                  page === '...' ? (
+                    <span key={`ellipsis-${idx}`} className="px-2 text-gray-500">...</span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page as number)}
+                      className={`px-3 py-1 border rounded-md text-sm ${
+                        currentPage === page
+                          ? 'bg-[#4A70A9] text-white border-[#4A70A9]'
+                          : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                ))}
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

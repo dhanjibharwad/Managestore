@@ -192,8 +192,7 @@ const JobsSection: React.FC = () => {
             'Mobile Number',
             'Assignee',
             'Lead Source',
-            'Next Follow Up',
-            'Last Followup Comment',
+            'Followup Comment',
             'Status'
           ]
         };
@@ -227,7 +226,10 @@ const JobsSection: React.FC = () => {
         const data = await response.json();
         console.log('Jobs data received:', data);
         console.log('Jobs array:', data.jobs);
-        setJobs(data.jobs || []);
+        const sortedJobs = (data.jobs || [])
+          .sort((a: Job, b: Job) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 5);
+        setJobs(sortedJobs);
       } else {
         console.error('Failed to fetch jobs:', response.status);
         const errorData = await response.text();
@@ -250,7 +252,10 @@ const JobsSection: React.FC = () => {
         const data = await response.json();
         console.log('Tasks data received:', data);
         console.log('Tasks array:', data.tasks);
-        setTasks(data.tasks || []);
+        const sortedTasks = (data.tasks || [])
+          .sort((a: Task, b: Task) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 5);
+        setTasks(sortedTasks);
       } else {
         console.error('Failed to fetch tasks:', response.status);
         const errorData = await response.text();
@@ -269,7 +274,10 @@ const JobsSection: React.FC = () => {
       const response = await fetch('/api/technician/assigned-leads');
       if (response.ok) {
         const data = await response.json();
-        setLeads(data.leads || []);
+        const sortedLeads = (data.leads || [])
+          .sort((a: Lead, b: Lead) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 5);
+        setLeads(sortedLeads);
       } else {
         console.error('Failed to fetch leads:', response.status);
       }
@@ -286,7 +294,10 @@ const JobsSection: React.FC = () => {
       const response = await fetch('/api/technician/assigned-pickupdrop');
       if (response.ok) {
         const data = await response.json();
-        setPickups(data.pickupDrops || []);
+        const sortedPickups = (data.pickupDrops || [])
+          .sort((a: PickupDrop, b: PickupDrop) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+          .slice(0, 5);
+        setPickups(sortedPickups);
       } else {
         console.error('Failed to fetch pickups:', response.status);
       }
@@ -688,6 +699,7 @@ const JobsSection: React.FC = () => {
                     (lead.comment && lead.comment.toLowerCase().includes(searchQuery.toLowerCase()));
                   return matchesStatus && matchesSearch;
                 }).map((lead) => {
+                  const employee = employees.find(emp => emp.id === lead.assignee_id);
                   return (
                     <tr key={lead.id} className="border-b border-zinc-200 hover:bg-zinc-50">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
@@ -696,14 +708,23 @@ const JobsSection: React.FC = () => {
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
                         {lead.mobile_number || '-'}
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
-                        {getAssigneeName(lead.assignee_id)}
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {employee ? (
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                              {getInitials(employee.employee_name)}
+                            </div>
+                            <div className="hidden sm:block">
+                              <div className="text-zinc-900 font-medium text-xs">{employee.employee_name}</div>
+                              <div className="text-zinc-500 text-xs">{employee.employee_role}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-900">{lead.assignee_name || lead.assignee_id}</span>
+                        )}
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
                         {lead.lead_source || '-'}
-                      </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
-                        {lead.next_follow_up ? formatDateTime(lead.next_follow_up) : '-'}
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 text-xs sm:text-sm text-zinc-900">
                         <div className="max-w-xs truncate">
@@ -744,6 +765,7 @@ const JobsSection: React.FC = () => {
                     (pickup.mobile && pickup.mobile.includes(searchQuery));
                   return matchesStatus && matchesSearch;
                 }).map((pickup) => {
+                  const employee = employees.find(emp => emp.id === pickup.assignee_id);
                   return (
                     <tr key={pickup.id} className="border-b border-zinc-200 hover:bg-zinc-50">
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
@@ -762,8 +784,20 @@ const JobsSection: React.FC = () => {
                           {pickup.address}
                         </div>
                       </td>
-                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-zinc-900">
-                        {pickup.assignee_name || (pickup.assignee_id ? `User ${pickup.assignee_id}` : '-')}
+                      <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
+                        {employee ? (
+                          <div className="flex items-center gap-1 sm:gap-2">
+                            <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium">
+                              {getInitials(employee.employee_name)}
+                            </div>
+                            <div className="hidden sm:block">
+                              <div className="text-zinc-900 font-medium text-xs">{employee.employee_name}</div>
+                              <div className="text-zinc-500 text-xs">{employee.employee_role}</div>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-zinc-900">{pickup.assignee_name || (pickup.assignee_id ? `User ${pickup.assignee_id}` : '-')}</span>
+                        )}
                       </td>
                       <td className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${

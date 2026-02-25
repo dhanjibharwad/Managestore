@@ -155,8 +155,6 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
     const status = searchParams.get('status');
     const assignee = searchParams.get('assignee');
     const search = searchParams.get('search');
@@ -192,15 +190,6 @@ export async function GET(req: NextRequest) {
     }
 
     query += ' ORDER BY j.created_at DESC';
-    
-    const offset = (page - 1) * limit;
-    paramCount++;
-    query += ` LIMIT $${paramCount}`;
-    params.push(limit);
-    
-    paramCount++;
-    query += ` OFFSET $${paramCount}`;
-    params.push(offset);
 
     const result = await pool.query(query, params);
 
@@ -234,12 +223,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       jobs: result.rows,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      }
+      total
     });
 
   } catch (error) {

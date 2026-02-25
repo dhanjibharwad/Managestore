@@ -97,6 +97,8 @@ const JobPage: React.FC = () => {
   const [viewModal, setViewModal] = useState<{show: boolean, request: any}>({show: false, request: null});
   const [viewJobModal, setViewJobModal] = useState<{show: boolean, job: Job | null}>({show: false, job: null});
   const [imageModal, setImageModal] = useState<{show: boolean, image: string, title: string}>({show: false, image: '', title: ''});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
@@ -147,10 +149,13 @@ const JobPage: React.FC = () => {
       if (response.ok) {
         let jobsData = data.jobs || [];
         
+        console.log('Fetched jobs:', jobsData.length, 'Active tab:', activeTab);
+        
         if (activeTab === 'Open Jobs') {
           jobsData = jobsData.filter((job: Job) => 
             job.status === 'Pending' || job.status === 'In Progress'
           );
+          console.log('Filtered Open Jobs:', jobsData.length);
         }
         
         setJobs(jobsData);
@@ -330,6 +335,10 @@ const JobPage: React.FC = () => {
   }, [searchQuery, jobStatus, assigneeFilter, activeTab]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, jobStatus, assigneeFilter, activeTab]);
+
+  useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);
     if (openDropdown !== null) {
       document.addEventListener('click', handleClickOutside);
@@ -349,6 +358,39 @@ const JobPage: React.FC = () => {
     // 'Job Service Option',
     // 'Overview'
   ];
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentJobs = jobs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(jobs.length / itemsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
 
   return (
     <div className="bg-gray">
@@ -688,7 +730,7 @@ const JobPage: React.FC = () => {
                         <td colSpan={10} className="px-6 py-16 text-center text-gray-500">No jobs found</td>
                       </tr>
                     ) : (
-                      jobs.map((job, index) => (
+                      currentJobs.map((job, index) => (
                         <tr key={job.id} className="border-b border-gray-200 hover:bg-gray-50">
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">{job.job_number}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{job.customer_name}</td>
@@ -742,14 +784,14 @@ const JobPage: React.FC = () => {
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setOpenDropdown(openDropdown === index ? null : index);
+                                  setOpenDropdown(openDropdown === job.id ? null : job.id);
                                 }}
                                 className="text-gray-400 hover:text-gray-600"
                               >
                                 <Settings className="w-5 h-5" />
                               </button>
                             
-                            {openDropdown === index && (
+                            {openDropdown === job.id && (
                               <div className="absolute right-0 top-8 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
                                 <div className="py-1">
                                   <button 
@@ -816,6 +858,48 @@ const JobPage: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+              
+              {/* Pagination */}
+              {jobs.length > 0 && (
+                <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, jobs.length)} of {jobs.length} jobs
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => paginate(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Previous
+                    </button>
+                    {getPageNumbers().map((page, idx) => (
+                      page === '...' ? (
+                        <span key={`ellipsis-${idx}`} className="px-2 text-gray-500">...</span>
+                      ) : (
+                        <button
+                          key={page}
+                          onClick={() => paginate(page as number)}
+                          className={`px-3 py-1 border rounded-md text-sm ${
+                            currentPage === page
+                              ? 'bg-[#4A70A9] text-white border-[#4A70A9]'
+                              : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    ))}
+                    <button
+                      onClick={() => paginate(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </>
         ) : (
