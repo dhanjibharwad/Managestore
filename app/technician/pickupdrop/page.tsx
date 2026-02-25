@@ -119,6 +119,8 @@ export default function PickupDropsPage() {
   };
 
   const getUserById = (idOrName: string | number) => {
+    if (!idOrName) return undefined;
+    
     const byName = users.find(user => user.name === idOrName);
     if (byName) return byName;
     

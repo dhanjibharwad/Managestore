@@ -861,34 +861,32 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-zinc-50">
-      <div className="max-w-[1600px] mx-auto">
-        {/* Stats Grid - Responsive layout */}
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-10">
-          {loading ? (
-            // Loading skeleton
-            [1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-4 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded mb-1"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))
-          ) : (
-            statsConfig.map((stat, index) => (
-              <StatCard
-                key={index}
-                title={stat.title}
-                value={stat.value}
-                percentage={stat.percentage}
-                icon={stat.icon}
-                dateRange={stat.dateRange}
-              />
-            ))
-          )}
-        </div>
-
-        <JobsSection />
+      {/* Stats Grid - Responsive layout */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-4 sm:mb-6 lg:mb-10">
+        {loading ? (
+          // Loading skeleton
+          [1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="bg-white rounded-lg shadow-sm border border-zinc-200 p-3 sm:p-4 lg:p-4 animate-pulse">
+              <div className="h-4 bg-gray-200 rounded mb-2"></div>
+              <div className="h-8 bg-gray-200 rounded mb-1"></div>
+              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          ))
+        ) : (
+          statsConfig.map((stat, index) => (
+            <StatCard
+              key={index}
+              title={stat.title}
+              value={stat.value}
+              percentage={stat.percentage}
+              icon={stat.icon}
+              dateRange={stat.dateRange}
+            />
+          ))
+        )}
       </div>
+
+      <JobsSection />
     </div>
   );
 }
