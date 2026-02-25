@@ -72,7 +72,7 @@
 
     const fetchTasks = async () => {
       try {
-        const response = await fetch('/api/admin/tasks');
+        const response = await fetch('/api/technician/assigned-tasks');
         const data = await response.json();
         if (response.ok) {
           setTasks(data.tasks || []);
@@ -186,7 +186,7 @@
 
       setUpdatingStatus(true);
       try {
-        const response = await fetch(`/api/admin/tasks/${statusModal.task.id}`, {
+        const response = await fetch(`/api/technician/assigned-tasks/${statusModal.task.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
