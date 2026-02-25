@@ -284,7 +284,7 @@
 
             {/* Add Task Button */}
             <Link href="/technician/tasks/add">
-            <button className="bg-[#4A70A9] hover:bg-[#3d5d8f] text-white px-6 py-2 rounded-md flex items-center gap-2 transition-colors">
+            <button className="bg-[#4A70A9] hover:bg-[#3d5d8f] text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors">
               <Plus className="w-5 h-5" />
             </button>
             </Link>

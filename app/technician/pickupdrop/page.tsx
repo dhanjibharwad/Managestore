@@ -260,7 +260,7 @@ export default function PickupDropsPage() {
             {/* Add Button */}
              
              <Link href="/technician/pickupdrop/add">    
-            <button className="bg-[#4A70A9] hover:bg-[#3d5c8a] text-white px-6 py-2 rounded-lg flex items-center gap-2 transition-colors">
+            <button className="bg-[#4A70A9] hover:bg-[#3d5c8a] text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
               <Plus className="w-5 h-5" />
             </button>
             </Link>
