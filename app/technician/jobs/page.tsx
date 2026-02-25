@@ -368,14 +368,14 @@ const JobPage: React.FC = () => {
 
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Open Lead</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Customer Name</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Mobile</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Email</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Assignee</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Status</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Device Type</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Services</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Comment</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Device Detailed Issue</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider"></th>
                     </tr>
                   </thead>
@@ -423,8 +423,8 @@ const JobPage: React.FC = () => {
                               {request.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.device_type} - {request.brand}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.model}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.device_type} - {request.brand} - {request.model}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.services || '-'}</td>
                           <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate">{request.device_issue || '-'}</td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm">
                             <div className="relative">
@@ -929,7 +929,11 @@ const JobPage: React.FC = () => {
                   <div><p className="text-sm text-gray-600 mb-1">Email</p><p className="text-sm font-medium text-gray-900">{viewModal.request.email}</p></div>
                   <div><p className="text-sm text-gray-600 mb-1">Mobile</p><p className="text-sm font-medium text-gray-900">{viewModal.request.mobile_number}</p></div>
                   <div><p className="text-sm text-gray-600 mb-1">Status</p><span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">{viewModal.request.status}</span></div>
-                  <div className="col-span-2"><p className="text-sm text-gray-600 mb-1">Address</p><p className="text-sm font-medium text-gray-900">{viewModal.request.address_line || 'Not Provided'}</p></div>
+                  <div className="col-span-2"><p className="text-sm text-gray-600 mb-1">Address Line</p><p className="text-sm font-medium text-gray-900">{viewModal.request.address_line || 'Not Provided'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Region/State</p><p className="text-sm font-medium text-gray-900">{viewModal.request.region_state || 'Not Provided'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">City/Town</p><p className="text-sm font-medium text-gray-900">{viewModal.request.city_town || 'Not Provided'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Postal Code</p><p className="text-sm font-medium text-gray-900">{viewModal.request.postal_code || 'Not Provided'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Pickup Date/Time</p><p className="text-sm font-medium text-gray-900">{viewModal.request.pickup_datetime ? formatDateTime(viewModal.request.pickup_datetime) : 'Not Scheduled'}</p></div>
                 </div>
               </div>
               <div className="mb-6">
@@ -952,8 +956,8 @@ const JobPage: React.FC = () => {
                   <h4 className="text-lg font-semibold text-blue-600">Service Info</h4>
                 </div>
                 <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="mb-4"><p className="text-sm text-gray-600 mb-1">Services</p><p className="text-sm font-medium text-gray-900">{viewModal.request.services || 'None'}</p></div>
-                  <div><p className="text-sm text-gray-600 mb-1">Comment</p><p className="text-sm font-medium text-gray-900">{viewModal.request.device_issue || 'No comment'}</p></div>
+                  <div className="mb-4"><p className="text-sm text-gray-600 mb-1">Service Type</p><p className="text-sm font-medium text-gray-900">{viewModal.request.services || 'Not Specified'}</p></div>
+                  <div><p className="text-sm text-gray-600 mb-1">Device Detailed Issue</p><p className="text-sm font-medium text-gray-900 whitespace-pre-wrap">{viewModal.request.device_issue || 'No issue details provided'}</p></div>
                 </div>
               </div>
               {viewModal.request.device_images && viewModal.request.device_images.length > 0 && (

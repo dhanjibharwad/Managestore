@@ -237,10 +237,24 @@ export default function LeadInformationPage() {
     
     switch (name) {
       case 'mobileNumber':
-        if (value && !/^[6-9][0-9]{9}$/.test(value)) {
-          newErrors.mobileNumber = 'Invalid mobile: 10 digits starting with 6-9';
+        if (value && (!/^\d{10}$/.test(value) || value.length !== 10)) {
+          newErrors.mobileNumber = 'Mobile number must be exactly 10 digits';
         } else {
           delete newErrors.mobileNumber;
+        }
+        break;
+      case 'phoneNumber':
+        if (value && (!/^\d{10}$/.test(value) || value.length !== 10)) {
+          newErrors.phoneNumber = 'Phone number must be exactly 10 digits';
+        } else {
+          delete newErrors.phoneNumber;
+        }
+        break;
+      case 'postalCode':
+        if (value && (!/^\d{1,6}$/.test(value) || value.length > 6)) {
+          newErrors.postalCode = 'Postal code must be numbers only (max 6 digits)';
+        } else {
+          delete newErrors.postalCode;
         }
         break;
       case 'emailId':
@@ -266,6 +280,12 @@ export default function LeadInformationPage() {
     // Validate fields on submit
     if (formData.mobileNumber) {
       validateField('mobileNumber', formData.mobileNumber);
+    }
+    if (formData.phoneNumber) {
+      validateField('phoneNumber', formData.phoneNumber);
+    }
+    if (formData.postalCode) {
+      validateField('postalCode', formData.postalCode);
     }
     if (formData.emailId) {
       validateField('emailId', formData.emailId);
@@ -427,16 +447,18 @@ export default function LeadInformationPage() {
                   <input type="text" value="+91" readOnly className="w-16 px-3 py-2.5 border border-gray-300 rounded bg-gray-50 text-center" />
                   <input
                     type="tel"
-                    placeholder="10 digits starting with 6-9"
+                    placeholder="Enter your Number"
                     maxLength={10}
                     className={`flex-1 px-4 py-2.5 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
                       errors.mobileNumber ? 'border-red-500' : 'border-gray-300'
                     }`}
                     value={formData.mobileNumber}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      setFormData({ ...formData, mobileNumber: value });
-                      validateField('mobileNumber', value);
+                      const value = e.target.value.replace(/\D/g, '');
+                      if (value.length <= 10) {
+                        setFormData({ ...formData, mobileNumber: value });
+                        validateField('mobileNumber', value);
+                      }
                     }}
                   />
                 </div>
@@ -470,12 +492,24 @@ export default function LeadInformationPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input
-                  type="text"
-                  placeholder="Eg: 91XXXXXXXX"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                  type="tel"
+                  placeholder="Enter your Number"
+                  maxLength={10}
+                  className={`w-full px-4 py-2.5 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.phoneNumber ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={formData.phoneNumber}
-                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 10) {
+                      setFormData({ ...formData, phoneNumber: value });
+                      validateField('phoneNumber', value);
+                    }
+                  }}
                 />
+                {errors.phoneNumber && (
+                  <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>
+                )}
               </div>
 
               <div>
@@ -674,12 +708,24 @@ export default function LeadInformationPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Postal Code/ Zip Code</label>
                 <input
-                  type="text"
-                  placeholder="Type postal code / zip code"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
+                  type="tel"
+                  placeholder="Numbers only (max 6 digits)"
+                  maxLength={6}
+                  className={`w-full px-4 py-2.5 border rounded focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent ${
+                    errors.postalCode ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   value={formData.postalCode}
-                  onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/\D/g, '');
+                    if (value.length <= 6) {
+                      setFormData({ ...formData, postalCode: value });
+                      validateField('postalCode', value);
+                    }
+                  }}
                 />
+                {errors.postalCode && (
+                  <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>
+                )}
               </div>
             </div>
           </div>
