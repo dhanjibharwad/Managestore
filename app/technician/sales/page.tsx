@@ -14,7 +14,21 @@ interface Sale {
   subtotal: number;
   total_tax: number;
   parts?: string;
+  created_at?: string;
 }
+
+const formatDateTime = (dateString: string | undefined) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+};
 
 export default function SalesPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -149,6 +163,9 @@ export default function SalesPage() {
                   Payment Status
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                  Created On
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -156,13 +173,13 @@ export default function SalesPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
                     Loading...
                   </td>
                 </tr>
               ) : filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-16 text-center text-gray-500">
+                  <td colSpan={9} className="px-6 py-16 text-center text-gray-500">
                     No data
                   </td>
                 </tr>
@@ -195,6 +212,9 @@ export default function SalesPage() {
                       }`}>
                         {sale.payment_status}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                      {formatDateTime(sale.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="relative">

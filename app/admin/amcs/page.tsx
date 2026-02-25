@@ -21,6 +21,7 @@ interface Contract {
   contract_end_date: string;
   amc_type: string;
   auto_renew: boolean;
+  created_at?: string;
 }
 
 interface Employee {
@@ -29,6 +30,19 @@ interface Employee {
   employee_role: string;
   email: string;
 }
+
+const formatDateTime = (dateString: string | undefined) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+};
 
 export default function AMCContractsPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -235,6 +249,9 @@ export default function AMCContractsPage() {
                     Auto Renew
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Created On
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
@@ -242,13 +259,13 @@ export default function AMCContractsPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-32 text-center">
+                    <td colSpan={10} className="px-6 py-32 text-center">
                       <p className="text-gray-400 text-lg">Loading...</p>
                     </td>
                   </tr>
                 ) : filteredContracts.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-6 py-32 text-center">
+                    <td colSpan={10} className="px-6 py-32 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <p className="text-gray-400 text-lg">No data</p>
                       </div>
@@ -300,6 +317,9 @@ export default function AMCContractsPage() {
                         }`}>
                           {contract.auto_renew ? 'Yes' : 'No'}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {formatDateTime(contract.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                         <div className="flex items-center gap-2">
