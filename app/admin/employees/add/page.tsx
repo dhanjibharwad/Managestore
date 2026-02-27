@@ -205,7 +205,7 @@ const EmployeeForm = () => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent"
                 >
                   <option value="">Select employee type</option>
-                  <option value="admin">Admin</option>
+                  {/* <option value="admin">Admin</option> */}
                   <option value="technician">Technician</option>
                   {/* <option value="reception">Reception</option>
                   <option value="delivery">Delivery</option> */}
