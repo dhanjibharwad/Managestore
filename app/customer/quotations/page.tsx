@@ -30,8 +30,11 @@ export default function QuotationsPage() {
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [processingQuotation, setProcessingQuotation] = useState<string | null>(null);
+  const [customerName, setCustomerName] = useState<string>('');
+  const [confirmModal, setConfirmModal] = useState<{show: boolean, quotation: Quotation | null, action: 'approved' | 'rejected' | null}>({show: false, quotation: null, action: null});
 
   useEffect(() => {
+    fetchCustomerSession();
     fetchQuotations();
   }, []);
 
@@ -45,6 +48,18 @@ export default function QuotationsPage() {
 
   const removeToast = (id: number) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const fetchCustomerSession = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.user?.customerName) {
+        setCustomerName(data.user.customerName);
+      }
+    } catch (error) {
+      console.error('Failed to fetch customer session:', error);
+    }
   };
 
   const fetchQuotations = async () => {
@@ -62,7 +77,12 @@ export default function QuotationsPage() {
     }
   };
 
-  const handleQuotationAction = async (quotationId: string, action: 'approved' | 'rejected') => {
+  const handleQuotationAction = async () => {
+    if (!confirmModal.quotation || !confirmModal.action) return;
+    
+    const quotationId = confirmModal.quotation.id;
+    const action = confirmModal.action;
+    
     setProcessingQuotation(quotationId);
     try {
       const response = await fetch('/api/customer/quotations', {
@@ -74,10 +94,11 @@ export default function QuotationsPage() {
       if (response.ok) {
         setQuotations(prev => prev.map(q => 
           q.id === quotationId 
-            ? { ...q, status: action, approved_rejected_by: 'Customer' }
+            ? { ...q, status: action, approved_rejected_by: customerName || 'Customer' }
             : q
         ));
         showToast(`Quotation ${action} successfully`, 'success');
+        setConfirmModal({show: false, quotation: null, action: null});
       } else {
         const data = await response.json();
         showToast(data.error || `Failed to ${action.slice(0, -1)} quotation`, 'error');
@@ -135,7 +156,7 @@ export default function QuotationsPage() {
                   Quotations
                 </th>
                 <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
-                  Quotation For
+                  Quotation Notes
                 </th>
                 <th className="text-left px-6 py-3 text-sm font-medium text-zinc-700">
                   Customer Name
@@ -202,7 +223,7 @@ export default function QuotationsPage() {
                         {(!quotation.status || quotation.status === 'pending') && (
                           <>
                             <button
-                              onClick={() => handleQuotationAction(quotation.id, 'approved')}
+                              onClick={() => setConfirmModal({show: true, quotation, action: 'approved'})}
                               disabled={processingQuotation === quotation.id}
                               className="p-1 text-green-600 hover:text-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Approve"
@@ -210,7 +231,7 @@ export default function QuotationsPage() {
                               <CheckCircle className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleQuotationAction(quotation.id, 'rejected')}
+                              onClick={() => setConfirmModal({show: true, quotation, action: 'rejected'})}
                               disabled={processingQuotation === quotation.id}
                               className="p-1 text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               title="Reject"
@@ -227,6 +248,66 @@ export default function QuotationsPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Confirmation Modal */}
+        {confirmModal.show && confirmModal.quotation && confirmModal.action && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    confirmModal.action === 'approved' ? 'bg-green-100' : 'bg-red-100'
+                  }`}>
+                    {confirmModal.action === 'approved' ? (
+                      <CheckCircle className="w-6 h-6 text-green-600" />
+                    ) : (
+                      <XCircle className="w-6 h-6 text-red-600" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {confirmModal.action === 'approved' ? 'Approve' : 'Reject'} Quotation
+                    </h3>
+                    <p className="text-sm text-gray-500">Please confirm your action</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 mb-6">
+                  Are you sure you want to {confirmModal.action === 'approved' ? 'approve' : 'reject'} quotation{' '}
+                  <strong>{confirmModal.quotation.quotation_number}</strong>?
+                  {confirmModal.action === 'approved' && ' This will mark the quotation as accepted.'}
+                  {confirmModal.action === 'rejected' && ' This action cannot be undone.'}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setConfirmModal({show: false, quotation: null, action: null})}
+                    disabled={processingQuotation !== null}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleQuotationAction}
+                    disabled={processingQuotation !== null}
+                    className={`flex-1 px-4 py-2 text-white rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${
+                      confirmModal.action === 'approved' 
+                        ? 'bg-green-600 hover:bg-green-700' 
+                        : 'bg-red-600 hover:bg-red-700'
+                    }`}
+                  >
+                    {processingQuotation ? (
+                      <>
+                        <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                        Processing...
+                      </>
+                    ) : (
+                      confirmModal.action === 'approved' ? 'Approve' : 'Reject'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Toast Notifications */}

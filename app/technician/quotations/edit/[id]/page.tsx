@@ -69,6 +69,7 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
   const [companyServices, setCompanyServices] = useState<any[]>([]);
   const [quotationParts, setQuotationParts] = useState<any[]>([]);
   const [companyId, setCompanyId] = useState<number | null>(null);
+  const [originalCustomerValue, setOriginalCustomerValue] = useState('');
 
   useEffect(() => {
     const getParams = async () => {
@@ -87,6 +88,19 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
       fetchQuotationParts();
     }
   }, [companyId]);
+
+  // Match customer when customers list is loaded
+  useEffect(() => {
+    if (customers.length > 0 && originalCustomerValue && !customerName) {
+      const matchedCustomer = customers.find(c => 
+        c.id.toString() === originalCustomerValue || 
+        c.customer_name === originalCustomerValue
+      );
+      if (matchedCustomer) {
+        setCustomerName(matchedCustomer.id.toString());
+      }
+    }
+  }, [customers, originalCustomerValue]);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const toast: Toast = { id: Date.now(), message, type };
@@ -189,42 +203,71 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
         const { quotation, services: fetchedServices, parts: fetchedParts } = data;
         
         setQuotationNumber(quotation.quotation_number);
-        setCustomerName(quotation.customer_name);
+        
+        // Store original customer value and try to set it
+        const customerValue = quotation.customer_name;
+        if (customerValue) {
+          setOriginalCustomerValue(customerValue);
+          const isNumeric = !isNaN(Number(customerValue));
+          if (isNumeric) {
+            setCustomerName(customerValue.toString());
+          }
+        }
+        
         setExpiredOn(quotation.expired_on ? quotation.expired_on.split('T')[0] : '');
         setNote(quotation.note || '');
         setTermsConditions(quotation.terms_conditions || '');
         
-        // Format services
-        const formattedServices = fetchedServices.map((s: any) => ({
-          id: s.id.toString(),
-          serviceName: s.service_name,
-          description: s.description || '',
-          price: parseFloat(s.price) || 0,
-          disc: parseFloat(s.disc) || 0,
-          subTotal: parseFloat(s.price) - parseFloat(s.disc) || 0,
-          taxCode: s.tax_code || '',
-          tax: parseFloat(s.tax) || 0,
-          taxAmt: parseFloat(s.total) * parseFloat(s.tax) / (100 + parseFloat(s.tax)) || 0,
-          total: parseFloat(s.total) || 0,
-          rateIncludingTax: s.rate_including_tax || false
-        }));
+        // Format services with correct field mapping
+        const formattedServices = fetchedServices.map((s: any) => {
+          const price = parseFloat(s.price) || 0;
+          const disc = parseFloat(s.discount) || 0;
+          const taxRate = parseFloat(s.tax_rate) || 0;
+          const taxAmt = parseFloat(s.tax_amount) || 0;
+          const total = parseFloat(s.total) || 0;
+          const subTotal = price - disc;
+          
+          return {
+            id: s.id.toString(),
+            serviceName: s.service_name,
+            description: s.description || '',
+            price: price,
+            disc: disc,
+            subTotal: subTotal,
+            taxCode: s.tax_code || '',
+            tax: taxRate,
+            taxAmt: taxAmt,
+            total: total,
+            rateIncludingTax: s.rate_including_tax || false
+          };
+        });
         
-        // Format parts
-        const formattedParts = fetchedParts.map((p: any) => ({
-          id: p.id.toString(),
-          description: p.description,
-          taxCode: p.tax_code || '',
-          qty: parseInt(p.qty) || 0,
-          price: parseFloat(p.price) || 0,
-          disc: parseFloat(p.disc) || 0,
-          tax: parseFloat(p.tax) || 0,
-          taxAmt: parseFloat(p.total) * parseFloat(p.tax) / (100 + parseFloat(p.tax)) || 0,
-          subTotal: (parseFloat(p.price) * parseInt(p.qty)) - parseFloat(p.disc) || 0,
-          total: parseFloat(p.total) || 0,
-          serialNumber: p.serial_number || '',
-          warranty: p.warranty || '',
-          rateIncludingTax: p.rate_including_tax || false
-        }));
+        // Format parts with correct field mapping
+        const formattedParts = fetchedParts.map((p: any) => {
+          const price = parseFloat(p.price) || 0;
+          const qty = parseInt(p.quantity) || 0;
+          const disc = parseFloat(p.discount) || 0;
+          const taxRate = parseFloat(p.tax_rate) || 0;
+          const taxAmt = parseFloat(p.tax_amount) || 0;
+          const total = parseFloat(p.total) || 0;
+          const subTotal = (price * qty) - disc;
+          
+          return {
+            id: p.id.toString(),
+            description: p.part_name || p.description,
+            taxCode: p.tax_code || '',
+            qty: qty,
+            price: price,
+            disc: disc,
+            tax: taxRate,
+            taxAmt: taxAmt,
+            subTotal: subTotal,
+            total: total,
+            serialNumber: p.serial_number || '',
+            warranty: p.warranty || '',
+            rateIncludingTax: p.rate_including_tax || false
+          };
+        });
         
         setServices(formattedServices);
         setParts(formattedParts);
@@ -240,13 +283,18 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
   const openServiceModal = (service?: Service) => {
     if (service) {
       setEditingService(service);
+      let taxValue = '';
+      if (service.tax === 18) taxValue = 'gst';
+      else if (service.tax === 5) taxValue = 'gst5';
+      else if (service.tax > 0) taxValue = 'gst';
+      
       setServiceForm({
         repairService: service.serviceName,
         description: service.description,
         price: service.price.toString(),
         discount: service.disc.toString(),
         subTotal: service.subTotal.toString(),
-        tax: service.tax === 18 ? 'gst' : service.tax === 5 ? 'gst5' : '',
+        tax: taxValue,
         taxAmount: service.taxAmt.toString(),
         taxCode: service.taxCode,
         totalAmount: service.total.toString(),
@@ -351,6 +399,11 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
   const openPartModal = (part?: Part) => {
     if (part) {
       setEditingPart(part);
+      let taxValue = '';
+      if (part.tax === 18) taxValue = 'gst';
+      else if (part.tax === 5) taxValue = 'gst5';
+      else if (part.tax > 0) taxValue = 'gst';
+      
       setPartForm({
         part: '',
         partName: part.description,
@@ -362,7 +415,7 @@ export default function EditQuotationPage({ params }: { params: Promise<{ id: st
         rateIncludingTax: part.rateIncludingTax || false,
         discount: part.disc.toString(),
         subTotal: part.subTotal.toString(),
-        tax: part.tax === 18 ? 'gst' : part.tax === 5 ? 'gst5' : '',
+        tax: taxValue,
         taxAmount: part.taxAmt.toString(),
         taxCode: part.taxCode,
         totalAmount: part.total.toString(),

@@ -134,19 +134,13 @@ export default function CustomerSaleInvoice() {
           </div>
           <div className="grid grid-cols-3 gap-8 p-4 border border-gray-300 border-t-0">
             <div>
-              <div className="mb-2">
-                <span className="font-medium">Name:</span> {sale.customer_name}
-              </div>
               <div>
-                <span className="font-medium">Tax No:</span> {sale.customer_tax_no || 'N/A'}
+                <span className="font-medium">Name:</span> {sale.customer_name}
               </div>
             </div>
             <div>
-              <div className="mb-2">
-                <span className="font-medium">Phone:</span> {sale.customer_phone || 'N/A'}
-              </div>
               <div>
-                <span className="font-medium">Address:</span> {sale.customer_address || 'N/A'}
+                <span className="font-medium">Phone:</span> {sale.customer_phone || 'N/A'}
               </div>
             </div>
             <div>
