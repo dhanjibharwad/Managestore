@@ -1,74 +1,56 @@
 /* eslint-disable */
 
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+interface Feature {
+  name: string;
+  included: boolean;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  popular: boolean;
+  period: string;
+  buttonText: string;
+  buttonStyle: string;
+  features: Feature[];
+}
 
 const PlansPage = () => {
-  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const plans = [
-    {
-      name: 'FREE',
-      price: billingPeriod === 'monthly' ? 0 : 0,
-      period: billingPeriod === 'monthly' ? '/month' : '/year',
-      popular: false,
-      description: 'Perfect for individuals getting started',
-      features: [
-        { name: '10 Jobs Records', included: true },
-        { name: 'Up to 1 Employees', included: true },
-        { name: 'Jobs & Sales Records', included: true },
-        { name: 'Upload Device Images', included: true },
-        { name: 'Individual Dashboards', included: false },
-        // { name: 'Developer support', included: false },
-        // { name: 'A/B Testing', included: false },
-        // { name: 'A/B Testing', included: false },
-      ],
-      buttonText: 'Get Started',
-      buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
-    },
-    {
-      name: 'BASIC',
-      price: billingPeriod === 'monthly' ? 249 : 2490,
-      period: billingPeriod === 'monthly' ? '/month' : '/year',
-      popular: true,
-      description: 'Best for growing teams and businesses',
-      features: [
-        { name: '1000 Jobs & Sales Records', included: true },
-        { name: 'Up to 6 Employees', included: true },
-        { name: 'Unlimited Jobs & Sales Records', included: true },
-        { name: 'Upload Device Images', included: true },
-        { name: 'Individual Dashboards', included: true },
-        { name: 'Role-Based Access Rights', included: true },
-        { name: 'Attachments', included: true },
-        { name: 'AMC(Annual Maintenance Contract)', included: false },
-      ],
-      buttonText: 'Start Here',
-      buttonStyle: 'bg-gradient-to-r from-sky-400 to-sky-500 text-white hover:from-sky-500 hover:to-sky-600 shadow-lg hover:shadow-xl',
-    },
-    {
-      name: 'Enterprise',
-      price: billingPeriod === 'monthly' ? 499 : 4990,
-      period: billingPeriod === 'monthly' ? '/month' : '/year',
-      popular: false,
-      description: 'Advanced features for large enterprises',
-      features: [
-        { name: 'Unlimited Jobs & Sales Records', included: true },
-        { name: 'Unlimited Employees', included: true },
-        { name: 'Unlimited Emails Accounts', included: true },
-        { name: 'Upload Device Images', included: true },
-        { name: 'Individual Dashboards', included: true },
-        { name: 'Attachments', included: true },
-        { name: 'AMC(Annual Maintenance Contract)', included: true },
-        { name: 'Inventory Module', included: true },
-        { name: 'Purchase Management', included: true },
-        { name: 'Pickup Drop', included: true },
-      ],
-      buttonText: 'Get Started',
-      buttonStyle: 'border-2 border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-md',
-    },
-  ];
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const fetchPlans = async () => {
+    try {
+      const res = await fetch('/api/pricing');
+      const data = await res.json();
+      setPlans(data);
+    } catch (error) {
+      console.error('Error fetching plans:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white py-20 px-4 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading pricing plans...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white py-20 px-4">
@@ -87,42 +69,6 @@ const PlansPage = () => {
             Select the perfect plan that scales with your business needs. 
             All plans include our core features with premium support.
           </p>
-          
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center mb-16">
-            <div className="relative bg-white p-1.5 rounded-2xl shadow-lg border border-slate-200">
-              <div
-                className={`absolute top-1.5 bottom-1.5 bg-slate-900 rounded-xl transition-all duration-300 ease-out ${
-                  billingPeriod === 'monthly' ? 'left-1.5 right-1/2' : 'left-1/2 right-1.5'
-                }`}
-              />
-              <button
-                onClick={() => setBillingPeriod('monthly')}
-                className={`relative z-10 px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  billingPeriod === 'monthly'
-                    ? 'text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Monthly
-              </button>
-              <button
-                onClick={() => setBillingPeriod('yearly')}
-                className={`relative z-10 px-8 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  billingPeriod === 'yearly'
-                    ? 'text-white'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                Yearly
-              </button>
-            </div>
-            {billingPeriod === 'yearly' && (
-              <div className="ml-6 bg-gradient-to-r from-sky-400 to-sky-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg animate-pulse">
-                🎉 Save 20%
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Plans Section */}
@@ -150,7 +96,7 @@ const PlansPage = () => {
             
             {plans.map((plan, index) => (
               <div
-                key={plan.name}
+                key={plan.id}
                 className={`plan-card relative rounded-3xl transition-all duration-500 hover:scale-[1.02] cursor-pointer group ${
                   plan.popular
                     ? 'bg-gradient-to-b from-gray-900 via-gray-500 to-gray-800 text-white shadow-2xl transform scale-105 ring-4 ring-gray-300'
@@ -184,11 +130,6 @@ const PlansPage = () => {
                         {plan.period}
                       </span>
                     </div>
-                    {billingPeriod === 'yearly' && plan.price > 0 && (
-                      <p className={`text-sm ${plan.popular ? 'text-gray-200' : 'text-slate-400'}`}>
-                        ₹{Math.round(plan.price / 12)}/month billed annually
-                      </p>
-                    )}
                   </div>
 
                   {/* Features List */}

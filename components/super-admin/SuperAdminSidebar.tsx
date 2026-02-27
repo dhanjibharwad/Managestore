@@ -12,13 +12,15 @@ import {
   ChevronLeft, 
   ChevronRight,
   NotebookTabs,
-  MessageSquare 
+  MessageSquare,
+  DollarSign
 } from 'lucide-react';
 
 const navItems = [
   { label: "Dashboard", href: "/super-admin/dashboard", icon: LayoutDashboard },
   { label: "Companies", href: "/super-admin/companies", icon: Building2 },
   { label: "Subscriptions", href: "/super-admin/subscriptions", icon: CreditCard },
+  { label: "Pricing Plans", href: "/super-admin/pricing", icon: DollarSign },
   { label: "Contact Messages", href: "/super-admin/contact-messages", icon: MessageSquare },
   // { label: "Usage", href: "/super-admin/usage", icon: BarChart3 },
   // { label: "Admins", href: "/super-admin/admins", icon: UserCog },
