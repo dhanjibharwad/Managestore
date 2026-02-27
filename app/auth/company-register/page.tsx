@@ -1,20 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Building2, User, Mail, Phone, Globe, CreditCard, CheckCircle2 } from 'lucide-react';
+
+interface PricingPlan {
+  id: string;
+  name: string;
+  price: number;
+}
 
 export default function CompanyRegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [pricingPlans, setPricingPlans] = useState<PricingPlan[]>([]);
   const [formData, setFormData] = useState({
     companyName: '',
     companyOwnerName: '',
     email: '',
     phone: '',
     country: '',
-    subscriptionPlan: 'free'
+    subscriptionPlan: 'Basic'
   });
+
+  useEffect(() => {
+    fetchPricingPlans();
+  }, []);
+
+  const fetchPricingPlans = async () => {
+    try {
+      const res = await fetch('/api/pricing');
+      const data = await res.json();
+      setPricingPlans(data);
+      if (data.length > 0) {
+        setFormData(prev => ({ ...prev, subscriptionPlan: data[0].name }));
+      }
+    } catch (error) {
+      console.error('Error fetching pricing plans:', error);
+    }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -286,14 +310,11 @@ export default function CompanyRegisterPage() {
                       onChange={handleInputChange}
                       className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all hover:border-gray-300 appearance-none bg-gray-50 focus:bg-white text-gray-900 font-medium cursor-pointer"
                     >
-                      {/* <option value="free">Free Plan - ₹0/month</option>
-                      <option value="basic">Basic Plan - ₹29/month</option>
-                      <option value="pro">Pro Plan - ₹79/month</option>
-                      <option value="enterprise">Enterprise Plan - ₹199/month</option> */}
-                      <option value="free">Free Plan</option>
-                      <option value="basic">Basic Plan</option>
-                      {/* <option value="pro">Pro Plan</option> */}
-                      <option value="enterprise">Enterprise Plan</option>
+                      {pricingPlans.map((plan) => (
+                        <option key={plan.id} value={plan.name}>
+                          {plan.name} - ₹{plan.price}/month
+                        </option>
+                      ))}
                     </select>
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
