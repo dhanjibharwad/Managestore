@@ -33,6 +33,8 @@ export default function CustomersPage() {
   const [deleteModal, setDeleteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
   const [inviteModal, setInviteModal] = useState<{show: boolean, customer: Customer | null}>({show: false, customer: null});
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const showToast = (message: string, type: 'success' | 'error' | 'warning') => {
     const id = Date.now();
@@ -83,6 +85,10 @@ export default function CustomersPage() {
   }, [searchQuery]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
+  useEffect(() => {
     const handleClickOutside = () => setOpenDropdown(null);
     if (openDropdown !== null) {
       document.addEventListener('click', handleClickOutside);
@@ -114,6 +120,39 @@ export default function CustomersPage() {
     } finally {
       setSendingInvite(null);
     }
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCustomers = customers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(customers.length / itemsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
   };
 
   const handleDeleteCustomer = async (customerId: number, customerName: string) => {
@@ -172,6 +211,7 @@ export default function CustomersPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-zinc-50 border-b border-zinc-200">
             <tr>
@@ -208,7 +248,7 @@ export default function CustomersPage() {
                 </td>
               </tr>
             ) : (
-              customers.map((customer, index) => (
+              currentCustomers.map((customer, index) => (
                 <tr key={customer.id} className="border-b border-zinc-200 hover:bg-zinc-50">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -315,6 +355,49 @@ export default function CustomersPage() {
             )}
           </tbody>
         </table>
+        </div>
+        
+        {/* Pagination */}
+        {customers.length > 0 && totalPages > 0 && (
+          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Showing {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, customers.length)} of {customers.length} customers
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              {getPageNumbers().map((page, idx) => (
+                page === '...' ? (
+                  <span key={`ellipsis-${idx}`} className="px-2 text-gray-500">...</span>
+                ) : (
+                  <button
+                    key={page}
+                    onClick={() => paginate(page as number)}
+                    className={`px-3 py-1 border rounded-md text-sm ${
+                      currentPage === page
+                        ? 'bg-[#4A70A9] text-white border-[#4A70A9]'
+                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              ))}
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Invite Modal */}

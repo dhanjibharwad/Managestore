@@ -90,8 +90,6 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '10');
     const type = searchParams.get('type');
     const search = searchParams.get('search');
 
@@ -112,46 +110,11 @@ export async function GET(req: NextRequest) {
     }
 
     query += ' ORDER BY created_at DESC';
-    
-    const offset = (page - 1) * limit;
-    paramCount++;
-    query += ` LIMIT $${paramCount}`;
-    params.push(limit);
-    
-    paramCount++;
-    query += ` OFFSET $${paramCount}`;
-    params.push(offset);
 
     const result = await pool.query(query, params);
 
-    // Get total count
-    let countQuery = 'SELECT COUNT(*) FROM customers WHERE company_id = $1';
-    const countParams: any[] = [session.company.id];
-    let countParamCount = 1;
-
-    if (type) {
-      countParamCount++;
-      countQuery += ` AND customer_type = $${countParamCount}`;
-      countParams.push(type);
-    }
-
-    if (search) {
-      countParamCount++;
-      countQuery += ` AND (customer_name ILIKE $${countParamCount} OR mobile_number ILIKE $${countParamCount} OR email_id ILIKE $${countParamCount} OR customer_id ILIKE $${countParamCount})`;
-      countParams.push(`%${search}%`);
-    }
-
-    const countResult = await pool.query(countQuery, countParams);
-    const total = parseInt(countResult.rows[0].count);
-
     return NextResponse.json({
-      customers: result.rows,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit)
-      }
+      customers: result.rows
     });
 
   } catch (error) {
