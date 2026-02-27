@@ -123,7 +123,7 @@ const PlansPage = () => {
                     </p>
                     <div className="flex items-baseline justify-center mb-2">
                       <span className={`text-lg font-semibold ${plan.popular ? 'text-gray-100' : 'text-slate-500'}`}>₹</span>
-                      <span className={`text-6xl font-bold ${plan.popular ? 'text-white' : 'text-slate-900'}`}>
+                      <span className={`text-5xl font-bold ${plan.popular ? 'text-white' : 'text-slate-900'}`}>
                         {plan.price}
                       </span>
                       <span className={`text-lg ml-1 ${plan.popular ? 'text-gray-100' : 'text-slate-500'}`}>
