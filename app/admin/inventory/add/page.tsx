@@ -232,19 +232,26 @@ export default function AddPartPage() {
       
       // Upload files if any
       if (uploadedFiles.length > 0) {
-        const fileFormData = new FormData();
-        uploadedFiles.forEach(file => {
-          fileFormData.append('files', file);
-        });
-        
-        const uploadResponse = await fetch('/api/admin/upload', {
-          method: 'POST',
-          body: fileFormData,
-        });
-        
-        if (uploadResponse.ok) {
-          const uploadResult = await uploadResponse.json();
-          uploadedFileUrls = uploadResult.files.map((f: any) => f.url);
+        try {
+          const fileFormData = new FormData();
+          uploadedFiles.forEach(file => {
+            fileFormData.append('files', file);
+          });
+          
+          const uploadResponse = await fetch('/api/admin/upload', {
+            method: 'POST',
+            body: fileFormData,
+          });
+          
+          if (uploadResponse.ok) {
+            const uploadResult = await uploadResponse.json();
+            uploadedFileUrls = uploadResult.files.map((f: any) => f.url);
+          } else {
+            showToast('Failed to upload images, but continuing with part creation', 'warning');
+          }
+        } catch (uploadError) {
+          console.error('Upload error:', uploadError);
+          showToast('Failed to upload images, but continuing with part creation', 'warning');
         }
       }
       
