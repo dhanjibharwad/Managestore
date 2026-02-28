@@ -31,7 +31,7 @@ export default function AddPartPage() {
     lowStockAlert: true,
     purchasePrice: '0',
     sellingPrice: '',
-    tax: 'GST 18%',
+    tax: '',
     hsnCode: '',
     partDescription: ''
   });
@@ -596,21 +596,18 @@ export default function AddPartPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2.5">Tax</label>
-                <div className="flex gap-2">
-                  <select
-                    name="tax"
-                    value={formData.tax}
-                    onChange={handleInputChange}
-                    className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
-                  >
-                    <option value="GST 18%">GST 18%</option>
-                    <option value="GST 12%">IGST 18%</option>
-                    <option value="GST 5%">GST 5%</option>
-                  </select>
-                  {/* <button className="px-3.5 py-3 border border-gray-300 rounded-md text-gray-500 hover:bg-gray-50 transition-colors">
-                    <X size={20} />
-                  </button> */}
-                </div>
+                <select
+                  name="tax"
+                  value={formData.tax}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-[#4A70A9] focus:border-transparent text-sm"
+                >
+                  <option value="">Select tax</option>
+                  <option value="GST 18%">GST 18%</option>
+                  <option value="IGST 18%">IGST 18%</option>
+                  <option value="GST 12%">GST 12%</option>
+                  <option value="GST 5%">GST 5%</option>
+                </select>
               </div>
 
               <div>

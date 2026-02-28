@@ -16,6 +16,7 @@ interface Part {
   category: string;
   sub_category: string;
   low_stock_units: number;
+  images?: string[];
 }
 
 const InventoryPage: React.FC = () => {
@@ -161,6 +162,19 @@ const InventoryPage: React.FC = () => {
                       {part.category && !/^\d+$/.test(part.category.toString().trim()) && (
                         <div className="text-xs text-blue-600">
                           {part.category}{part.sub_category && !/^\d+$/.test(part.sub_category.toString().trim()) && ` > ${part.sub_category}`}
+                        </div>
+                      )}
+                      {part.images && part.images.length > 0 && (
+                        <div className="text-xs mt-1">
+                          {part.images.map((image, index) => (
+                            <button
+                              key={index}
+                              onClick={() => window.open(image, '_blank')}
+                              className="text-blue-600 hover:text-blue-800 underline mr-2"
+                            >
+                              Attachment {index + 1}
+                            </button>
+                          ))}
                         </div>
                       )}
                     </td>

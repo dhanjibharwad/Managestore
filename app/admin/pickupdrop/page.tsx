@@ -293,6 +293,9 @@ export default function PickupDropsPage() {
                   Schedule Time
                 </th>
                 <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
+                  Created On
+                </th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-gray-700">
                   Actions
                 </th>
               </tr>
@@ -300,13 +303,13 @@ export default function PickupDropsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     Loading...
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-gray-400">
+                  <td colSpan={9} className="text-center py-16 text-gray-400">
                     No data
                   </td>
                 </tr>
@@ -363,6 +366,9 @@ export default function PickupDropsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
                       {formatDate(item.schedule_date)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-800">
+                      {formatDate(item.created_at)}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-800">
                       <div className="flex items-center gap-2">
