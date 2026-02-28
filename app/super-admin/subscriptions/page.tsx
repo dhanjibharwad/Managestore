@@ -95,13 +95,16 @@ export default function SubscriptionsPage() {
     }
   };
 
-  const getDaysUntilExpiry = (endDate: string) => {
-    if (!endDate) return null;
-    const today = new Date();
-    const expiry = new Date(endDate);
-    const diffTime = expiry.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+  const formatDateTime = (dateString: string) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
   if (loading) {
@@ -156,13 +159,12 @@ export default function SubscriptionsPage() {
                   <th className="text-left py-3 px-4">Plan</th>
                   <th className="text-left py-3 px-4">Status</th>
                   <th className="text-left py-3 px-4">Start Date</th>
-                  <th className="text-left py-3 px-4">End Date</th>
                 </tr>
               </thead>
               <tbody>
                 {companies.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="text-center py-8 text-gray-500">
+                    <td colSpan={4} className="text-center py-8 text-gray-500">
                       No subscription data found
                     </td>
                   </tr>
@@ -188,16 +190,7 @@ export default function SubscriptionsPage() {
                         </Badge>
                       </td>
                       <td className="py-3 px-4 text-sm text-gray-600">
-                        {company.subscription_start_date 
-                          ? new Date(company.subscription_start_date).toLocaleDateString()
-                          : 'N/A'
-                        }
-                      </td>
-                      <td className="py-3 px-4 text-sm text-gray-600">
-                        {company.subscription_end_date 
-                          ? new Date(company.subscription_end_date).toLocaleDateString()
-                          : 'N/A'
-                        }
+                        {formatDateTime(company.subscription_start_date)}
                       </td>
                     </tr>
                   ))
