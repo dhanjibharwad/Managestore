@@ -20,6 +20,7 @@ interface Purchase {
   status: string;
   purchasedOn: string;
   dueDate: string;
+  attachments?: {url: string; filename: string; size: number}[];
 }
 
 export default function PurchasePage() {
@@ -82,7 +83,8 @@ export default function PurchasePage() {
           remainingAmount: p.payment_status === 'paid' ? 0 : parseFloat(p.total_amount) || 0,
           status: p.payment_status === 'paid' ? 'Paid' : p.payment_status === 'partially-paid' ? 'Partial' : 'Unpaid',
           purchasedOn: new Date(p.purchase_date).toLocaleDateString(),
-          dueDate: p.due_date ? new Date(p.due_date).toLocaleDateString() : '-'
+          dueDate: p.due_date ? new Date(p.due_date).toLocaleDateString() : '-',
+          attachments: p.attachments ? (typeof p.attachments === 'string' ? JSON.parse(p.attachments) : p.attachments) : []
         }));
         setPurchases(formattedPurchases);
       }
@@ -264,7 +266,22 @@ export default function PurchasePage() {
                   )
                   .map((purchase) => (
                     <tr key={purchase.id} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="px-6 py-4 text-sm text-gray-800">{purchase.purchase}</td>
+                      <td className="px-6 py-4 text-sm text-gray-800">
+                        <div>{purchase.purchase}</div>
+                        {purchase.attachments && purchase.attachments.length > 0 && (
+                          <div className="text-xs mt-1">
+                            {purchase.attachments.map((attachment, index) => (
+                              <button
+                                key={index}
+                                onClick={() => window.open(attachment.url, '_blank')}
+                                className="text-blue-600 hover:text-blue-800 underline mr-2"
+                              >
+                                Attachment {index + 1}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.supplier}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">{purchase.partyInvoiceNumber}</td>
                       <td className="px-6 py-4 text-sm text-gray-800">₹{purchase.amount.toFixed(2)}</td>

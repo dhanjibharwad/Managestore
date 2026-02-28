@@ -47,6 +47,7 @@ export async function GET(req: NextRequest) {
         p.due_date,
         p.payment_status,
         p.amount,
+        p.attachments,
         COALESCE(SUM(pi.total), 0) as total_amount
       FROM purchases p
       LEFT JOIN purchase_items pi ON p.id = pi.purchase_id
