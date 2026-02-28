@@ -68,6 +68,18 @@ export default function AddPartPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    
+    // Validate numeric fields
+    if (['openingStock', 'lowStockUnits', 'barcodeNumber'].includes(name)) {
+      // Only allow positive integers
+      if (value && !/^\d+$/.test(value)) return;
+    }
+    
+    if (['purchasePrice', 'sellingPrice'].includes(name)) {
+      // Only allow positive numbers with up to 2 decimal places
+      if (value && !/^\d*\.?\d{0,2}$/.test(value)) return;
+    }
+    
     setFormData(prev => ({ ...prev, [name]: value }));
     
     // Load subcategories when category changes
